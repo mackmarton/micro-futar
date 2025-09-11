@@ -49,7 +49,7 @@ A csomagszállító alkalmazás teljes microservice architektúrája modulonkén
 
 ### Központi modulok:
 
-- **Felhasználó kezelés:**  
+- **Felhasználó kezelés (key cloak pl):**  
   Auth: Jogosultságok, profilok, regisztráció, login.
 - **Megossztott könytár:**  
   Közös osztályok pl DTO -k tárolása.
