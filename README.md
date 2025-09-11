@@ -49,7 +49,7 @@ A csomagszállító alkalmazás teljes microservice architektúrája modulonkén
   Útvonal- és járatszervezés, futárokhoz rendelés, priorizálás, raktári mozgatás.
 - **Futár szolgáltatás:**  
   Futár profilok, beosztások, feladatlista, státuszmódosítás.
-- **Központi modul:**
+- **Központi modul:**  
   Auth: Jogosultságok, profilok, regisztráció, login.
 
 ### API Gateway
