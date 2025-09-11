@@ -27,17 +27,17 @@
 A csomagszállító alkalmazás funkcióit jól el lehet különíteni egy **microservice architektúrában**; minden fő modul külön mikroszolgáltatásként jelenik meg, önálló API-val.
 
 ### Frontend
-A csomagszállító alkalmazás teljes microservice architektúrája modulonként szétosztva, dedikált frontendelemekkel a felhasználótípusok és üzleti funkciók szerint épül fel.[1][2]
+A csomagszállító alkalmazás teljes microservice architektúrája modulonként szétosztva, dedikált frontendelemekkel a felhasználótípusok és üzleti funkciók szerint épül fel.
 
 - **Feladói/Követési UI:**  
   Web/mobil alkalmazás a feladók, címzettek számára csomagfeladásra és -követésre  
-  Backend-for-Frontend (BFF): csak a feladói/követési UI-hoz kiszolgáló saját REST API.[1]
+  Backend-for-Frontend (BFF): csak a feladói/követési UI-hoz kiszolgáló saját REST API.
 - **Logisztikai UI:**  
   Admin/járatszervező felület logisztikusoknak: csomag-kiosztás, útvonaltervezés, raktárkezelés  
-  BFF: csak logisztikai UI-t szolgálja ki, logisztikai backendnek proxyzik.[1]
+  BFF: csak logisztikai UI-t szolgálja ki, logisztikai backendnek proxyzik.
 - **Futár UI:**  
   Mobil/web felület futároknak: rangsorolt címek, navigáció, státuszkezelés  
-  BFF: a futárokhoz tartozó adatok és endpointok, jogosultság szerinti adat-szűrés.[1]
+  BFF: a futárokhoz tartozó adatok és endpointok, jogosultság szerinti adat-szűrés.
 
 ### Backend 
 
