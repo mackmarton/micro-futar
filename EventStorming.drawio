@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:142.0) Gecko/20100101 Firefox/142.0" version="28.2.3">
   <diagram name="Page-1" id="tdrJWICteNO9RwJ1yDNZ">
-    <mxGraphModel dx="1516" dy="1171" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="4681" math="0" shadow="0">
+    <mxGraphModel dx="1512" dy="1171" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="4681" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -259,11 +259,11 @@
         <mxCell id="GBAODm6x_kVhTdQ0W2DW-11" value="A megadott adatok illetve kalkulált ár kiírása" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
           <mxGeometry x="1460" y="290" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="GBAODm6x_kVhTdQ0W2DW-12" value="Aznap felvevendő csomagok listája" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="880" y="910" width="120" height="120" as="geometry" />
+        <mxCell id="GBAODm6x_kVhTdQ0W2DW-12" value="Felvevendő csomag adatai" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="820" width="120" height="120" as="geometry" />
         </mxCell>
         <mxCell id="GBAODm6x_kVhTdQ0W2DW-13" value="Átvevő futár" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1030" y="910" width="120" height="120" as="geometry" />
+          <mxGeometry x="1010" y="820" width="120" height="120" as="geometry" />
         </mxCell>
         <mxCell id="GBAODm6x_kVhTdQ0W2DW-14" value="Mely futárok dolgoznak és mely csomagokat kell az adott napon felvenni" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
           <mxGeometry x="820" y="600" width="160" height="120" as="geometry" />
@@ -283,8 +283,27 @@
         <mxCell id="GBAODm6x_kVhTdQ0W2DW-19" value="Logisztikai szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
           <mxGeometry x="1910" y="230" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="GBAODm6x_kVhTdQ0W2DW-20" value="Visszaigazoló email" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="2060" y="230" width="120" height="120" as="geometry" />
+        <mxCell id="GBAODm6x_kVhTdQ0W2DW-20" value="Visszaigazoló email küldése mely tartalmazza a csomagra ragasztandó cimkét pdf ben" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2060" y="230" width="180" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GBAODm6x_kVhTdQ0W2DW-21" value="Feladó értesítése, hogy a futár aznap felveszi a csomagot" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="600" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GBAODm6x_kVhTdQ0W2DW-22" value="Csomag felvétele" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="770" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GBAODm6x_kVhTdQ0W2DW-23" value="&lt;div&gt;Sikertelen felvétel&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="910" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="GBAODm6x_kVhTdQ0W2DW-24" value="" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0;exitY=0;exitDx=120;exitDy=75;exitPerimeter=0;entryX=0;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="GBAODm6x_kVhTdQ0W2DW-23" target="GBAODm6x_kVhTdQ0W2DW-14">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1040" y="790" as="sourcePoint" />
+            <mxPoint x="1090" y="740" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1380" y="1140" />
+              <mxPoint x="700" y="920" />
+            </Array>
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
