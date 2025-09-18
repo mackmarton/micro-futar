@@ -4,89 +4,116 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-2" value="Csomag Feladási Form Kitöltve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-2" value="Csomag Feladási Form Kitöltve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="90" y="90" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-3" value="Ár Kalkuláció kész" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-3" value="Ár Kalkuláció kész" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="240" y="90" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-4" value="&lt;li class=&quot;py-0 my-0 prose-p:pt-0 prose-p:mb-2 prose-p:my-0 [&amp;amp;&amp;gt;p]:pt-0 [&amp;amp;&amp;gt;p]:mb-2 [&amp;amp;&amp;gt;p]:my-0&quot;&gt;&lt;br/&gt;&lt;p class=&quot;my-2 [&amp;amp;+p]:mt-4 [&amp;amp;_strong:has(+br)]:inline-block [&amp;amp;_strong:has(+br)]:pb-2&quot;&gt;Rendelés Rögzítve&lt;/p&gt;&lt;br/&gt;&lt;/li&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-4" value="&lt;li class=&quot;py-0 my-0 prose-p:pt-0 prose-p:mb-2 prose-p:my-0 [&amp;amp;&amp;gt;p]:pt-0 [&amp;amp;&amp;gt;p]:mb-2 [&amp;amp;&amp;gt;p]:my-0&quot;&gt;&lt;br/&gt;&lt;p class=&quot;my-2 [&amp;amp;+p]:mt-4 [&amp;amp;_strong:has(+br)]:inline-block [&amp;amp;_strong:has(+br)]:pb-2&quot;&gt;Rendelés Rögzítve&lt;/p&gt;&lt;br/&gt;&lt;/li&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="390" y="90" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-5" value="Csomag Átvéve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-5" value="Csomag Átvéve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="90" y="230" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-6" value="Csomag depóba érkezett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-6" value="Csomag depóba érkezett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="240" y="230" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-7" value="Csomag végső depóba érkezett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-7" value="Csomag végső depóba érkezett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="390" y="230" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-8" value="Csomag Futárhoz Rendelve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-8" value="Csomag Futárhoz Rendelve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="90" y="370" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-9" value="Csomag Futárnál" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-9" value="Csomag Futárnál" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="240" y="370" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-10" value="Csomag Kiszállítva" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-10" value="Csomag Kiszállítva" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="390" y="370" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-11" value="Csomag kézbesítése sikertelen" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-11" value="Csomag kézbesítése sikertelen" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="90" y="510" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-12" value="Csomag Státusz Frissítve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-12" value="Csomag Státusz Frissítve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="240" y="510" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-13" value="Értesítés elküldve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-13" value="Értesítés elküldve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="390" y="510" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-14" value="Feladó" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-14" value="Feladó" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="90" y="680" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-15" value="Csomag Feladási Form Kitöltve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-15" value="Csomag Feladási Form Kitöltve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="240" y="680" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-16" value="Ár Kalkuláció kész" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="390" y="680" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-17" value="&lt;li class=&quot;py-0 my-0 prose-p:pt-0 prose-p:mb-2 prose-p:my-0 [&amp;amp;&amp;gt;p]:pt-0 [&amp;amp;&amp;gt;p]:mb-2 [&amp;amp;&amp;gt;p]:my-0&quot;&gt;&lt;br/&gt;&lt;p class=&quot;my-2 [&amp;amp;+p]:mt-4 [&amp;amp;_strong:has(+br)]:inline-block [&amp;amp;_strong:has(+br)]:pb-2&quot;&gt;Rendelés Rögzítve&lt;/p&gt;&lt;br/&gt;&lt;/li&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="540" y="680" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-18" value="Átvevő futár" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="90" y="820" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-19" value="Csomag Átvéve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="240" y="820" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-20" value="Logisztika" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="90" y="960" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-21" value="Csomag depóba érkezett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="240" y="960" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-22" value="Csomag végső depóba érkezett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="390" y="960" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-23" value="Csomag Futárhoz Rendelve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="540" y="960" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-24" value="Kiszállító futár" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="90" y="1100" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-25" value="Csomag Futárnál" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="240" y="1100" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-26" value="Csomag Kiszállítva" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="390" y="1100" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-27" value="Csomag kézbesítése sikertelen" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="540" y="1100" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-28" value="Csomag Státusz Frissítve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-16" value="Ár Kalkuláció kész" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="240" y="1240" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="OkvGjO-pTR2yJRHpKqQb-29" value="Értesítés elküldve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-17" value="&lt;li class=&quot;py-0 my-0 prose-p:pt-0 prose-p:mb-2 prose-p:my-0 [&amp;amp;&amp;gt;p]:pt-0 [&amp;amp;&amp;gt;p]:mb-2 [&amp;amp;&amp;gt;p]:my-0&quot;&gt;&lt;br/&gt;&lt;p class=&quot;my-2 [&amp;amp;+p]:mt-4 [&amp;amp;_strong:has(+br)]:inline-block [&amp;amp;_strong:has(+br)]:pb-2&quot;&gt;Rendelés Rögzítve&lt;/p&gt;&lt;br/&gt;&lt;/li&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="540" y="680" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-18" value="Átvevő futár" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="90" y="820" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-19" value="Csomag Átvéve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="240" y="820" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-20" value="Logisztika" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="90" y="960" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-21" value="Csomag depóba érkezett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="240" y="960" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-22" value="Csomag végső depóba érkezett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="390" y="960" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-23" value="Csomag Futárhoz Rendelve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="540" y="960" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-24" value="Kiszállító futár" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="90" y="1100" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-25" value="Csomag Futárnál" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="240" y="1100" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-26" value="Csomag Kiszállítva" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="390" y="1100" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-27" value="Csomag kézbesítése sikertelen" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="540" y="1100" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-28" value="Csomag Státusz Frissítve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="390" y="1240" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="OkvGjO-pTR2yJRHpKqQb-29" value="Értesítés elküldve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="540" y="1240" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tMBHwN0ZsUPaGt-Wvjw5-1" value="..." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="1240" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tMBHwN0ZsUPaGt-Wvjw5-2" value="Rendelési igény jelzése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="1420" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tMBHwN0ZsUPaGt-Wvjw5-3" value="Kalkulált ár elfogadva" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="680" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tMBHwN0ZsUPaGt-Wvjw5-4" value="Csomag Feladási Form Kitöltve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="1420" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tMBHwN0ZsUPaGt-Wvjw5-5" value="Kalkulált ár elfogadva" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="1700" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tMBHwN0ZsUPaGt-Wvjw5-6" value="Árkalkuláció készítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="1560" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tMBHwN0ZsUPaGt-Wvjw5-7" value="Ár Kalkuláció kész" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="1560" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tMBHwN0ZsUPaGt-Wvjw5-8" value="Rendelés véglegesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="1700" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tMBHwN0ZsUPaGt-Wvjw5-9" value="&lt;li class=&quot;py-0 my-0 prose-p:pt-0 prose-p:mb-2 prose-p:my-0 [&amp;amp;&amp;gt;p]:pt-0 [&amp;amp;&amp;gt;p]:mb-2 [&amp;amp;&amp;gt;p]:my-0&quot;&gt;&lt;br/&gt;&lt;p class=&quot;my-2 [&amp;amp;+p]:mt-4 [&amp;amp;_strong:has(+br)]:inline-block [&amp;amp;_strong:has(+br)]:pb-2&quot;&gt;Rendelés Rögzítve&lt;/p&gt;&lt;br/&gt;&lt;/li&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="1700" width="120" height="120" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
