@@ -439,7 +439,7 @@
         <mxCell id="8BKmqN_YOmAgWMdcuxL3-47" value="" style="shape=cross;whiteSpace=wrap;html=1;rotation=-45;fillColor=light-dark(#A20025,#FF0000);fontColor=#ffffff;strokeColor=#6F0000;" vertex="1" parent="1">
           <mxGeometry x="1859.9985424949239" y="2119.9985424949236" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-48" value="Csomag adatainak lekérése a logisztikai szolgáltatástól illetve a futár szolgáltatástól" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-48" value="Csomag adatainak lekérése a logisztikai illetve a futár szolgáltatástól" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
           <mxGeometry x="1840" y="1950" width="120" height="120" as="geometry" />
         </mxCell>
         <mxCell id="8BKmqN_YOmAgWMdcuxL3-49" value="Adatok megjelenítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
