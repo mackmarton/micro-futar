@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:142.0) Gecko/20100101 Firefox/142.0" version="28.2.3">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:143.0) Gecko/20100101 Firefox/143.0" version="28.2.5">
   <diagram name="Page-1" id="tdrJWICteNO9RwJ1yDNZ">
-    <mxGraphModel dx="1542" dy="1077" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="4681" math="0" shadow="0">
+    <mxGraphModel dx="1431" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3300" pageHeight="4681" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -78,144 +78,171 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-1" value="Csomag Átvéve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-1" value="Csomag Átvéve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1700" y="780" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-2" value="Feladó és címzett értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1850" y="780" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-3" value="Csomag depónak leadása" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="2140" y="780" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-4" value="Csomag depóba érkezett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="2290" y="780" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-5" value="Logisztikai szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="2440" y="780" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-6" value="Csomag részletei illetve depónak átadás opció" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1850" y="1290" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-7" value="&lt;div&gt;Más depóba szállítandó csomagok&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1250" y="1140" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-9" value="Logisztika" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1400" y="1140" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-10" value="Csomag a címéhez legközelebb eső depóhoz rendelése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1550" y="1140" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-11" value="Csomag átszállító futárhoz rendelve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1700" y="1140" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-12" value="Futár szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1850" y="1140" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-13" value="&lt;div&gt;Átszállító futár&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1400" y="1290" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-14" value="&lt;div&gt;Átszállítandó csomagok&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1250" y="1290" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-15" value="Csomag felvétele átszállításra" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1550" y="1290" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-16" value="Csomag Átvéve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1700" y="1290" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-17" value="Csomag részletei illetve depónak átadás opció" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-2" value="Feladó és címzett értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="2000" y="780" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-18" value="Csomag depónak leadása" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-3" value="Csomag depónak leadása" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="2290" y="780" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-4" value="Csomag depóba érkezett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="2440" y="780" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-5" value="Logisztikai szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="2590" y="780" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-6" value="Csomag részletei illetve depónak átadás opció" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="1850" y="1290" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-7" value="&lt;div&gt;Más depóba szállítandó csomagok&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="1250" y="1140" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-9" value="Logisztika" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="1400" y="1140" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-10" value="Csomag a címéhez legközelebb eső depóhoz rendelése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="1550" y="1140" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-11" value="Csomag átszállító futárhoz rendelve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="1700" y="1140" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-12" value="Futár szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="1850" y="1140" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-13" value="&lt;div&gt;Átszállító futár&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="1400" y="1290" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-14" value="&lt;div&gt;Átszállítandó csomagok&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="1250" y="1290" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-15" value="Csomag felvétele átszállításra" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="1550" y="1290" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-16" value="Csomag Átvéve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="1700" y="1290" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-17" value="Csomag részletei illetve depónak átadás opció" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="2150" y="780" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-18" value="Csomag depónak leadása" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="2000" y="1290" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-19" value="Csomag végső depóba érkezett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-19" value="Csomag végső depóba érkezett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="2150" y="1290" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-20" value="Logisztikai szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-20" value="Logisztikai szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="2300" y="1290" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-22" value="Mely futárok dolgoznak és mely csomagokat kell az adott napon kiszállítani" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-22" value="Mely futárok dolgoznak és mely csomagokat kell az adott napon kiszállítani" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1210" y="1440" width="160" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-23" value="Kiszállító futár" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-23" value="Kiszállító futár" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1400" y="1440" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-24" value="Csomag futárhoz rendelve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-24" value="Csomag futárhoz rendelve" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1700" y="1440" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-25" value="Csomagok és futárok összekapcsolása" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-25" value="Csomagok és futárok összekapcsolása" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1550" y="1440" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-26" value="Futár szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-26" value="Futár szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1850" y="1440" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-27" value="Címzett értesítése, hogy a futár aznap kiszállítja a csomagot" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="2000" y="1440" width="120" height="120" as="geometry" />
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-27" value="Címzett értesítése, hogy a futár aznap kiszállítja a csomagot" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="2150" y="1440" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-28" value="&lt;div&gt;Kiszállítandó csomag adatai&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-28" value="&lt;div&gt;Kiszállítandó csomag adatai&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1250" y="1639" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-29" value="Kiszállító futár" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-29" value="Kiszállító futár" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1400" y="1639" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-30" value="Csomag kiszállítása" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-30" value="Csomag kiszállítása" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1550" y="1639" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-32" value="Csomag kiszállítva" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-32" value="Csomag kiszállítva" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1700" y="1589" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-33" value="Feladó és címzett értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1850" y="1589" width="120" height="120" as="geometry" />
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-33" value="Feladó és címzett értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="2150" y="1729" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-36" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;MAX 3x&lt;/font&gt;" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0;exitY=0;exitDx=120;exitDy=75;exitPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="8BKmqN_YOmAgWMdcuxL3-39" target="8BKmqN_YOmAgWMdcuxL3-22">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-36" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;MAX 3x&lt;/font&gt;" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0;exitY=0;exitDx=120;exitDy=75;exitPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="8BKmqN_YOmAgWMdcuxL3-39" target="8BKmqN_YOmAgWMdcuxL3-22" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="1740" y="1570" as="sourcePoint" />
             <mxPoint x="1790" y="1520" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="2570" y="1930" />
-              <mxPoint x="1030" y="1880" />
+              <mxPoint x="3050" y="1930" />
+              <mxPoint x="960" y="1890" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-37" value="Csomag depónak leadása" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="2000" y="1729" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-38" value="Csomag depóba érkezett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="2150" y="1729" width="120" height="120" as="geometry" />
-        </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-39" value="Logisztikai szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-37" value="Csomag depónak leadása" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="2300" y="1729" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-40" value="Csomag kiszállítása sikertelen" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-38" value="Csomag depóba érkezett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="2450" y="1729" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-39" value="Logisztikai szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="2750" y="1729" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-40" value="Csomag kiszállítása sikertelen" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1700" y="1729" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-41" value="Megmaradt csomagok adatai illetve depónak átadás opció" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-41" value="Megmaradt csomagok adatai illetve depónak átadás opció" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1850" y="1729" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-42" value="Csomag számát bekérő form" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-42" value="Csomag számát bekérő form" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1250" y="2009" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-43" value="Címzett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-43" value="Címzett" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#FEE750;strokeColor=none;fontSize=18;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1400" y="2010" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-44" value="Csomag számának megadása" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-44" value="Csomag számának megadása" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#a7c5fc;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1550" y="2010" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-45" value="Csomag azonosítva" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-45" value="Csomag azonosítva" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1700" y="1950" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-46" value="&lt;div&gt;Adott számmal nem létezik csomag&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-46" value="&lt;div&gt;Adott számmal nem létezik csomag&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#feae57;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1700" y="2100" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-47" value="" style="shape=cross;whiteSpace=wrap;html=1;rotation=-45;fillColor=light-dark(#A20025,#FF0000);fontColor=#ffffff;strokeColor=#6F0000;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-47" value="" style="shape=cross;whiteSpace=wrap;html=1;rotation=-45;fillColor=light-dark(#A20025,#FF0000);fontColor=#ffffff;strokeColor=#6F0000;" parent="1" vertex="1">
           <mxGeometry x="1859.9985424949239" y="2119.9985424949236" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-48" value="Csomag adatainak lekérése a logisztikai illetve a futár szolgáltatástól" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-48" value="Csomag adatainak lekérése a logisztikai illetve a futár szolgáltatástól" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1840" y="1950" width="120" height="120" as="geometry" />
         </mxCell>
-        <mxCell id="8BKmqN_YOmAgWMdcuxL3-49" value="Adatok megjelenítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+        <mxCell id="8BKmqN_YOmAgWMdcuxL3-49" value="Adatok megjelenítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#b0deb3;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" parent="1" vertex="1">
           <mxGeometry x="1990" y="1950" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="IJo-eiQ_mL_y7wwXc7Cr-1" value="Nyomonkövető szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2660" y="240" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="IJo-eiQ_mL_y7wwXc7Cr-2" value="Nyomonkövető szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2150" y="610" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="IJo-eiQ_mL_y7wwXc7Cr-3" value="Nyomonkövető szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2730" y="780" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="IJo-eiQ_mL_y7wwXc7Cr-4" value="Nyomonkövető szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1850" y="780" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="IJo-eiQ_mL_y7wwXc7Cr-5" value="Nyomonkövető szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2450" y="1290" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="IJo-eiQ_mL_y7wwXc7Cr-6" value="Nyomonkövető szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2000" y="1440" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="IJo-eiQ_mL_y7wwXc7Cr-7" value="Nyomonkövető szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1850" y="1589" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="IJo-eiQ_mL_y7wwXc7Cr-8" value="Nyomonkövető szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2600" y="1729" width="120" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="IJo-eiQ_mL_y7wwXc7Cr-9" value="Nyomonkövető szolgáltatás értesítése" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#da99e6;strokeColor=none;fontSize=16;fontStyle=0;rotation=0;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="2000" y="1729" width="120" height="120" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
