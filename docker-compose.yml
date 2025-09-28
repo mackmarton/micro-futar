@@ -66,9 +66,9 @@ services:
     networks:
       - microservice-net
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/orders_db
-      SPRING_DATASOURCE_USERNAME: orders_db
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      DATASOURCE_URL: jdbc:postgresql://postgres:5432/orders_db
+      DATASOURCE_USERNAME: orders_db
+      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
       postgres:
@@ -88,9 +88,9 @@ services:
     networks:
       - microservice-net
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/logistics_db
-      SPRING_DATASOURCE_USERNAME: logistics_db
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      DATASOURCE_URL: jdbc:postgresql://postgres:5432/logistics_db
+      DATASOURCE_USERNAME: logistics_db
+      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
       postgres:
@@ -110,9 +110,9 @@ services:
     networks:
       - microservice-net
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/courier_db
-      SPRING_DATASOURCE_USERNAME: courier_db
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      DATASOURCE_URL: jdbc:postgresql://postgres:5432/courier_db
+      DATASOURCE_USERNAME: courier_db
+      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
       postgres:
@@ -132,9 +132,9 @@ services:
     networks:
       - microservice-net
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tracking_db
-      SPRING_DATASOURCE_USERNAME: tracking_db
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      DATASOURCE_URL: jdbc:postgresql://postgres:5432/tracking_db
+      DATASOURCE_USERNAME: tracking_db
+      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
       postgres:
