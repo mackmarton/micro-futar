@@ -1,5 +1,6 @@
-# Micro-futár alkalmazás
-## Funkcionalitasok:
+# Micro-futár alkalmazás 🚚
+
+## Funkcionalitások:
 ### Feladó felület
 - **Csomag feladása:** Űrlap, ahol a feladó megadja a csomag adatait (méret, súly, tartalom), felvételi címet, címzett címét, szállítási opciókat, fizetési módot.
 - **Árkalkuláció:** Automatikus díjszámítás a megadott paraméterek alapján.
