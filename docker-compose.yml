@@ -55,6 +55,7 @@ services:
       - zookeeper
 
   orders:
+    profiles: ["apps"]
     build:
       context: ./orders
       dockerfile: Dockerfile
@@ -76,6 +77,7 @@ services:
         condition: service_started
 
   logistics:
+    profiles: ["apps"]
     build:
       context: ./logistics
       dockerfile: Dockerfile
@@ -97,6 +99,7 @@ services:
         condition: service_started
 
   courier:
+    profiles: ["apps"]
     build:
       context: ./courier
       dockerfile: Dockerfile
@@ -118,6 +121,7 @@ services:
         condition: service_started
 
   tracking:
+    profiles: ["apps"]
     build:
       context: ./tracking
       dockerfile: Dockerfile
