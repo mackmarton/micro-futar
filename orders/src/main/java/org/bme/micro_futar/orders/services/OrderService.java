@@ -6,6 +6,9 @@ import org.bme.micro_futar.orders.exceptions.NoServiceException;
 import org.bme.micro_futar.orders.mappers.OrderMapper;
 import org.bme.micro_futar.orders.repositories.OrderRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -15,14 +18,20 @@ public class OrderService {
     private final CountryPriceService countryPriceService;
     private final OrderMapper orderMapper;
 
+    @Transactional
     public OrderDTO newOrder(OrderDTO orderDTO) {
         orderDTO.setPrice(calculatePrice(orderDTO));
         orderDTO.setConfirmed(false);
-        return save(orderDTO);
+        var orderEntity = orderMapper.toEntity(orderDTO);
+        var savedEntity = orderRepository.save(orderEntity);
+        return orderMapper.toDTO(savedEntity);
     }
 
-    private OrderDTO save(OrderDTO orderDTO){
-        var orderEntity = orderMapper.toEntity(orderDTO);
+    @Transactional
+    public OrderDTO confirm(long id) {
+        var orderEntity = orderRepository.findById(id).orElseThrow();
+        orderEntity.setConfirmed(true);
+        orderEntity.setParcelNumber(UUID.randomUUID().toString());
         var savedEntity = orderRepository.save(orderEntity);
         return orderMapper.toDTO(savedEntity);
     }
