@@ -1,4 +1,4 @@
-package dtos;
+package org.bme.micro_futar.shared.dtos;
 
 import lombok.Data;
 import lombok.NonNull;

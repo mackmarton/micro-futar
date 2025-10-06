@@ -1,8 +1,8 @@
 package org.bme.micro_futar.orders.controllers;
 
-import dtos.OrderDTO;
 import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.orders.services.OrderService;
+import org.bme.micro_futar.shared.dtos.OrderDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
