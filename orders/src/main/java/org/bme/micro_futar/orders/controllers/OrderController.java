@@ -19,6 +19,7 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.newOrder(orderDTO));
     }
 
+    //ONLY SENDER
     @PostMapping("confirm/{id}")
     public ResponseEntity<OrderDTO>  confirmOrder(@PathVariable long id){
         return ResponseEntity.ok(orderService.confirm(id));
