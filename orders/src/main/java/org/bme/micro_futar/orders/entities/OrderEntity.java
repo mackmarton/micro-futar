@@ -1,13 +1,8 @@
 package org.bme.micro_futar.orders.entities;
 
-import enums.PackageSize;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 @Entity
 @Data
@@ -30,7 +25,8 @@ public class OrderEntity {
     public String recipientZip;
     public String recipientLocationCityId;
     public String recipientAddress;
-    public PackageSize packageSize;
+    public Long packageSizeId;
+    public boolean confirmed;
     //Not filled straight away
     public String parcelNumber;
     public Double price;
