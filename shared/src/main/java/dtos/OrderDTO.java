@@ -1,6 +1,5 @@
 package dtos;
 
-import enums.PackageSize;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -28,15 +27,16 @@ public class OrderDTO {
     @NonNull
     public String recipientPhone;
     @NonNull
-    public String recipientLocationCountryId;
+    public Long recipientLocationCountryId;
     @NonNull
     public String recipientZip;
     @NonNull
-    public String recipientLocationCityId;
+    public Long recipientLocationCityId;
     @NonNull
     public String recipientAddress;
     @NonNull
-    public PackageSize packageSize;
+    public Long packageSizeId;
+    public boolean confirmed;
     //Not filled straight away
     public String parcelNumber;
     public Double price;
