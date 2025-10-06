@@ -1,7 +1,7 @@
 package org.bme.micro_futar.orders.mappers;
 
-import dtos.OrderDTO;
 import org.bme.micro_futar.orders.entities.OrderEntity;
+import org.bme.micro_futar.shared.dtos.OrderDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
