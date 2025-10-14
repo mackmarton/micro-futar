@@ -3,6 +3,7 @@ package org.bme.micro_futar.orders.services;
 import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.orders.exceptions.NoServiceException;
 import org.bme.micro_futar.orders.mappers.OrderMapper;
+import org.bme.micro_futar.orders.producers.OrderProducer;
 import org.bme.micro_futar.orders.repositories.OrderRepository;
 import org.bme.micro_futar.shared.dtos.OrderDTO;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final CountryPriceService countryPriceService;
     private final OrderMapper orderMapper;
+    private final OrderProducer orderProducer;
 
     @Transactional
     public OrderDTO newOrder(OrderDTO orderDTO) {
@@ -24,7 +26,9 @@ public class OrderService {
         orderDTO.setConfirmed(false);
         var orderEntity = orderMapper.toEntity(orderDTO);
         var savedEntity = orderRepository.save(orderEntity);
-        return orderMapper.toDTO(savedEntity);
+        OrderDTO savedOrderDTO = orderMapper.toDTO(savedEntity);
+        orderProducer.sendOrder(savedOrderDTO);
+        return savedOrderDTO;
     }
 
     @Transactional
@@ -33,7 +37,9 @@ public class OrderService {
         orderEntity.setConfirmed(true);
         orderEntity.setParcelNumber(UUID.randomUUID().toString());
         var savedEntity = orderRepository.save(orderEntity);
-        return orderMapper.toDTO(savedEntity);
+        OrderDTO confirmedOrderDTO = orderMapper.toDTO(savedEntity);
+        orderProducer.sendOrder(confirmedOrderDTO);
+        return confirmedOrderDTO;
     }
 
     private double calculatePrice(OrderDTO orderDTO) {
