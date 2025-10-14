@@ -1,21 +1,23 @@
 package org.bme.micro_futar.orders.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.orders.services.CountryPriceService;
 import org.bme.micro_futar.shared.dtos.CountryPriceDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/country-prices")
 public class CountryPriceController {
 
-    @Autowired
-    private CountryPriceService countryPriceService;
+    private final CountryPriceService countryPriceService;
 
     @GetMapping
     public ResponseEntity<List<CountryPriceDTO>> getAllCountryPrices() {
@@ -30,22 +32,4 @@ public class CountryPriceController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<CountryPriceDTO> createCountryPrice(@RequestBody CountryPriceDTO countryPriceDTO) {
-        CountryPriceDTO createdCountryPrice = countryPriceService.createCountryPrice(countryPriceDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCountryPrice);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<CountryPriceDTO> updateCountryPrice(@PathVariable Long id, @RequestBody CountryPriceDTO countryPriceDTO) {
-        Optional<CountryPriceDTO> updatedCountryPrice = countryPriceService.updateCountryPrice(id, countryPriceDTO);
-        return updatedCountryPrice.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCountryPrice(@PathVariable Long id) {
-        boolean deleted = countryPriceService.deleteCountryPrice(id);
-        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
-    }
 }
