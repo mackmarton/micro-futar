@@ -1,4 +1,4 @@
-package org.bme.micro_futar.logistics.consumers;
+package org.bme.micro_futar.logistics.kafka;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
