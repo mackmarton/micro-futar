@@ -30,14 +30,12 @@ public class LocationRegionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    //ADMIN
     @PostMapping
     public ResponseEntity<LocationRegionDTO> createRegion(@RequestBody LocationRegionDTO locationRegionDTO) {
         LocationRegionDTO createdRegion = locationRegionService.createRegion(locationRegionDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdRegion);
     }
 
-    //ADMIN
     @PutMapping("/{id}")
     public ResponseEntity<LocationRegionDTO> updateRegion(@PathVariable Long id, @RequestBody LocationRegionDTO locationRegionDTO) {
         Optional<LocationRegionDTO> updatedRegion = locationRegionService.updateRegion(id, locationRegionDTO);
@@ -45,7 +43,6 @@ public class LocationRegionController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    //ADMIN
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRegion(@PathVariable Long id) {
         boolean deleted = locationRegionService.deleteRegion(id);
