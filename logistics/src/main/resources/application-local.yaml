@@ -1,3 +1,6 @@
+spring:
+  jpa:
+    generate-ddl: true
 kafka:
   topics:
     location-region-topic: location-regions
