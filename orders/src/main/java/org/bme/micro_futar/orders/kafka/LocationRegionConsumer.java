@@ -15,7 +15,7 @@ public class LocationRegionConsumer {
 
     private final LocationRegionService locationRegionService;
 
-    @KafkaListener(topics = "location-region", groupId = "orders-service")
+    @KafkaListener(topics = "${kafka.topics.location-region-topic}", groupId = "orders-service")
     public void consumeLocationRegion(LocationRegionDTO locationRegionDTO) {
         log.info("Received location region message: {}", locationRegionDTO);
 

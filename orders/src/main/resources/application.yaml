@@ -25,3 +25,11 @@ jwt:
     converter:
       resource-id: orders-client
       principal-attribute: preferred_username
+kafka:
+  topics:
+    location-region-topic: ${LOCATION_REGION_TOPIC}
+    location-country-topic: ${LOCATION_COUNTRY_TOPIC}
+    location-city-topic: ${LOCATION_CITY_TOPIC}
+    country-price-topic: ${COUNTRY_PRICE_TOPIC}
+    package-size-topic: ${PACKAGE_SIZE_TOPIC}
+    order-topic: ${ORDER_TOPIC}
