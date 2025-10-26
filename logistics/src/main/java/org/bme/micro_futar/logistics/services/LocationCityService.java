@@ -2,6 +2,7 @@ package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.logistics.entities.LocationCity;
+import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.LocationCityMapper;
 import org.bme.micro_futar.logistics.repositories.LocationCityRepository;
 import org.bme.micro_futar.shared.dtos.LocationCityDTO;
@@ -18,6 +19,7 @@ public class LocationCityService {
 
     private final LocationCityRepository locationCityRepository;
     private final LocationCityMapper locationCityMapper;
+    private final KafkaProducerService kafkaProducerService;
 
     public List<LocationCityDTO> getAllCities() {
         return locationCityRepository.findAll().stream()
@@ -34,7 +36,9 @@ public class LocationCityService {
     public LocationCityDTO createCity(LocationCityDTO locationCityDTO) {
         LocationCity locationCity = locationCityMapper.toEntity(locationCityDTO);
         LocationCity savedCity = locationCityRepository.save(locationCity);
-        return locationCityMapper.toDTO(savedCity);
+        LocationCityDTO result = locationCityMapper.toDTO(savedCity);
+        kafkaProducerService.sendLocationCity(result);
+        return result;
     }
 
     @Transactional
@@ -47,7 +51,9 @@ public class LocationCityService {
                 .map(existingCity -> {
                     LocationCity updatedCity = locationCityMapper.toEntity(locationCityDTO);
                     LocationCity savedCity = locationCityRepository.save(updatedCity);
-                    return locationCityMapper.toDTO(savedCity);
+                    LocationCityDTO result = locationCityMapper.toDTO(savedCity);
+                    kafkaProducerService.sendLocationCity(result);
+                    return result;
                 });
     }
 

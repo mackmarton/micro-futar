@@ -2,6 +2,7 @@ package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.logistics.entities.LocationCountry;
+import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.LocationCountryMapper;
 import org.bme.micro_futar.logistics.repositories.LocationCountryRepository;
 import org.bme.micro_futar.shared.dtos.LocationCountryDTO;
@@ -18,6 +19,7 @@ public class LocationCountryService {
 
     private final LocationCountryRepository locationCountryRepository;
     private final LocationCountryMapper locationCountryMapper;
+    private final KafkaProducerService kafkaProducerService;
 
     public List<LocationCountryDTO> getAllCountries() {
         return locationCountryRepository.findAll().stream()
@@ -34,7 +36,9 @@ public class LocationCountryService {
     public LocationCountryDTO createCountry(LocationCountryDTO locationCountryDTO) {
         LocationCountry locationCountry = locationCountryMapper.toEntity(locationCountryDTO);
         LocationCountry savedCountry = locationCountryRepository.save(locationCountry);
-        return locationCountryMapper.toDTO(savedCountry);
+        LocationCountryDTO result = locationCountryMapper.toDTO(savedCountry);
+        kafkaProducerService.sendLocationCountry(result);
+        return result;
     }
 
     @Transactional
@@ -47,7 +51,9 @@ public class LocationCountryService {
                 .map(existingCountry -> {
                     LocationCountry updatedCountry = locationCountryMapper.toEntity(locationCountryDTO);
                     LocationCountry savedCountry = locationCountryRepository.save(updatedCountry);
-                    return locationCountryMapper.toDTO(savedCountry);
+                    LocationCountryDTO result = locationCountryMapper.toDTO(savedCountry);
+                    kafkaProducerService.sendLocationCountry(result);
+                    return result;
                 });
     }
 

@@ -2,6 +2,7 @@ package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.logistics.entities.PackageSize;
+import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.PackageSizeMapper;
 import org.bme.micro_futar.logistics.repositories.PackageSizeRepository;
 import org.bme.micro_futar.shared.dtos.PackageSizeDTO;
@@ -18,6 +19,7 @@ public class PackageSizeService {
 
     private final PackageSizeRepository packageSizeRepository;
     private final PackageSizeMapper packageSizeMapper;
+    private final KafkaProducerService kafkaProducerService;
 
     public List<PackageSizeDTO> getAllPackageSizes() {
         return packageSizeRepository.findAll().stream()
@@ -34,7 +36,9 @@ public class PackageSizeService {
     public PackageSizeDTO createPackageSize(PackageSizeDTO packageSizeDTO) {
         PackageSize packageSize = packageSizeMapper.toEntity(packageSizeDTO);
         PackageSize savedPackageSize = packageSizeRepository.save(packageSize);
-        return packageSizeMapper.toDTO(savedPackageSize);
+        PackageSizeDTO result = packageSizeMapper.toDTO(savedPackageSize);
+        kafkaProducerService.sendPackageSize(result);
+        return result;
     }
 
     @Transactional
@@ -47,7 +51,9 @@ public class PackageSizeService {
                 .map(existingPackageSize -> {
                     PackageSize updatedPackageSize = packageSizeMapper.toEntity(packageSizeDTO);
                     PackageSize savedPackageSize = packageSizeRepository.save(updatedPackageSize);
-                    return packageSizeMapper.toDTO(savedPackageSize);
+                    PackageSizeDTO result = packageSizeMapper.toDTO(savedPackageSize);
+                    kafkaProducerService.sendPackageSize(result);
+                    return result;
                 });
     }
 
