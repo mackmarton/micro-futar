@@ -1,3 +1,11 @@
 spring:
   jpa:
     generate-ddl: true
+kafka:
+  topics:
+    location-region-topic: location-regions
+    location-country-topic: location-countries
+    location-city-topic: location-cities
+    country-price-topic: country-prices
+    package-size-topic: package-sizes
+    order-topic: orders

@@ -3,7 +3,7 @@ package org.bme.micro_futar.orders.services;
 import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.orders.exceptions.NoServiceException;
 import org.bme.micro_futar.orders.mappers.OrderMapper;
-import org.bme.micro_futar.orders.producers.OrderProducer;
+import org.bme.micro_futar.orders.kafka.OrderProducer;
 import org.bme.micro_futar.orders.repositories.OrderRepository;
 import org.bme.micro_futar.shared.dtos.OrderDTO;
 import org.springframework.stereotype.Service;

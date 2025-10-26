@@ -15,7 +15,7 @@ public class LocationCityConsumer {
 
     private final LocationCityService locationCityService;
 
-    @KafkaListener(topics = "location-city", groupId = "orders-service")
+    @KafkaListener(topics = "${kafka.topics.location-city-topic}", groupId = "orders-service")
     public void consumeLocationCity(LocationCityDTO locationCityDTO) {
         log.info("Received location city message: {}", locationCityDTO);
 

@@ -15,7 +15,7 @@ public class PackageSizeConsumer {
 
     private final PackageSizeService packageSizeService;
 
-    @KafkaListener(topics = "package-size", groupId = "orders-service")
+    @KafkaListener(topics = "${kafka.topics.package-size-topic}", groupId = "orders-service")
     public void consumePackageSize(PackageSizeDTO packageSizeDTO) {
         log.info("Received package size message: {}", packageSizeDTO);
 
