@@ -30,14 +30,12 @@ public class LocationCityController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    //ADMIN
     @PostMapping
     public ResponseEntity<LocationCityDTO> createCity(@RequestBody LocationCityDTO locationCityDTO) {
         LocationCityDTO createdCity = locationCityService.createCity(locationCityDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCity);
     }
 
-    //ADMIN
     @PutMapping("/{id}")
     public ResponseEntity<LocationCityDTO> updateCity(@PathVariable Long id, @RequestBody LocationCityDTO locationCityDTO) {
         Optional<LocationCityDTO> updatedCity = locationCityService.updateCity(id, locationCityDTO);
@@ -45,7 +43,6 @@ public class LocationCityController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    //ADMIN
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCity(@PathVariable Long id) {
         boolean deleted = locationCityService.deleteCity(id);

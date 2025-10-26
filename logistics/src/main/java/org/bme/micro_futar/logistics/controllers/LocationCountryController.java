@@ -30,14 +30,12 @@ public class LocationCountryController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    //ADMIN
     @PostMapping
     public ResponseEntity<LocationCountryDTO> createCountry(@RequestBody LocationCountryDTO locationCountryDTO) {
         LocationCountryDTO createdCountry = locationCountryService.createCountry(locationCountryDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCountry);
     }
 
-    //ADMIN
     @PutMapping("/{id}")
     public ResponseEntity<LocationCountryDTO> updateCountry(@PathVariable Long id, @RequestBody LocationCountryDTO locationCountryDTO) {
         Optional<LocationCountryDTO> updatedCountry = locationCountryService.updateCountry(id, locationCountryDTO);
@@ -45,7 +43,6 @@ public class LocationCountryController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    //ADMIN
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCountry(@PathVariable Long id) {
         boolean deleted = locationCountryService.deleteCountry(id);
