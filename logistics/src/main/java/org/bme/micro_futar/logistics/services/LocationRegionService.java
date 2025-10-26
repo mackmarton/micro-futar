@@ -2,6 +2,7 @@ package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.logistics.entities.LocationRegion;
+import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.LocationRegionMapper;
 import org.bme.micro_futar.logistics.repositories.LocationRegionRepository;
 import org.bme.micro_futar.shared.dtos.LocationRegionDTO;
@@ -18,6 +19,7 @@ public class LocationRegionService {
 
     private final LocationRegionRepository locationRegionRepository;
     private final LocationRegionMapper locationRegionMapper;
+    private final KafkaProducerService kafkaProducerService;
 
     public List<LocationRegionDTO> getAllRegions() {
         return locationRegionRepository.findAll().stream()
@@ -34,7 +36,9 @@ public class LocationRegionService {
     public LocationRegionDTO createRegion(LocationRegionDTO locationRegionDTO) {
         LocationRegion locationRegion = locationRegionMapper.toEntity(locationRegionDTO);
         LocationRegion savedRegion = locationRegionRepository.save(locationRegion);
-        return locationRegionMapper.toDTO(savedRegion);
+        LocationRegionDTO result = locationRegionMapper.toDTO(savedRegion);
+        kafkaProducerService.sendLocationRegion(result);
+        return result;
     }
 
     @Transactional
@@ -47,7 +51,9 @@ public class LocationRegionService {
                 .map(existingRegion -> {
                     LocationRegion updatedRegion = locationRegionMapper.toEntity(locationRegionDTO);
                     LocationRegion savedRegion = locationRegionRepository.save(updatedRegion);
-                    return locationRegionMapper.toDTO(savedRegion);
+                    LocationRegionDTO result = locationRegionMapper.toDTO(savedRegion);
+                    kafkaProducerService.sendLocationRegion(result);
+                    return result;
                 });
     }
 

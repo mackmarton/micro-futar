@@ -14,7 +14,7 @@ public class OrderConsumer {
 
     private final OrderService orderService;
 
-    @KafkaListener(topics = "orders", groupId = "logistics-group")
+    @KafkaListener(topics = "${kafka.topics.order-topic}", groupId = "logistics-group")
     public void consumeOrder(OrderDTO orderDTO) {
         log.info("Received order message: {}", orderDTO);
         try {
@@ -22,8 +22,6 @@ public class OrderConsumer {
             log.info("Successfully processed order with ID: {}", orderDTO.getId());
         } catch (Exception e) {
             log.error("Error processing order with ID: {}", orderDTO.getId(), e);
-            // You can add error handling logic here (e.g., dead letter queue)
         }
     }
 }
-
