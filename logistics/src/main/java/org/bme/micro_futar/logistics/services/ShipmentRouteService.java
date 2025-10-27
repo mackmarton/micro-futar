@@ -26,5 +26,9 @@ public class ShipmentRouteService {
         return shipmentRouteRepository.findById(id)
                 .map(shipmentRouteMapper::toDTO);
     }
+
+    public void saveAll(List<ShipmentRouteDTO> shipmentRouteDTOs){
+        shipmentRouteRepository.saveAll(shipmentRouteMapper.toEntityList(shipmentRouteDTOs));
+    }
 }
 

@@ -4,10 +4,14 @@ import org.bme.micro_futar.logistics.dtos.ShipmentRouteDTO;
 import org.bme.micro_futar.logistics.entities.ShipmentRoute;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface ShipmentRouteMapper {
 
     ShipmentRoute toEntity(ShipmentRouteDTO shipmentRouteDTO);
 
     ShipmentRouteDTO toDTO(ShipmentRoute shipmentRoute);
+
+    List<ShipmentRoute> toEntityList(List<ShipmentRouteDTO> shipmentRouteDTOs);
 }
