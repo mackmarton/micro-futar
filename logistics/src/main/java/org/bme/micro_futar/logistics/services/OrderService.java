@@ -12,13 +12,15 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final OrderRepository orderRepository;
+    private final ShipmentRoutePlanner shipmentRoutePlanner;
 
     @Transactional
     public void processOrder(OrderDTO orderDTO) {
         OrderEntity orderEntity = orderMapper.toEntity(orderDTO);
         orderRepository.save(orderEntity);
+        shipmentRoutePlanner.planRouteForOrder(orderDTO);
     }
 
     public OrderDTO getOrderById(Long id) {
