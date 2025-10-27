@@ -6,6 +6,6 @@ import lombok.Data;
 public class VehicleDTO {
     private Long id;
     private String registrationNumber;
-    private Long maximumPackableVolume;
+    private Double maximumPackableVolume;
 }
 
