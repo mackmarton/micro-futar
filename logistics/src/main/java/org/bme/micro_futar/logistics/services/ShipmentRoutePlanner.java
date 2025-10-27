@@ -24,65 +24,123 @@ public class ShipmentRoutePlanner {
     private final ShipmentRouteService shipmentRouteService;
 
     public void planRouteForOrder(OrderDTO order) {
-        LocationCountryDTO senderCountry = locationCountryService.getCountryById(order.getSenderLocationCountryId()).orElseThrow();
-        LocationCityDTO senderCity = locationCityService.getCityById(order.getSenderLocationCityId()).orElseThrow();
-        String originAddress = senderCountry.getName() + " " + order.senderZip + " " + senderCity.getName() + " " + order.getSenderAddress();
-        double[] originCoordinates = openRouteServiceFetcher.geocode(originAddress);
+        DepoDTO originDepo = findClosestDepo(
+                order.getSenderLocationCountryId(),
+                order.getSenderLocationCityId(),
+                order.getSenderZip(),
+                order.getSenderAddress()
+        );
 
-        List<DepoDTO> deposInOriginCountry = depoService.getAllDeposByCountryId(senderCountry.getId());
-        List<double[]> depoCoordinatesInOriginCountry = new ArrayList<>();
-        for (var depo : deposInOriginCountry) {
-            depoCoordinatesInOriginCountry.add(new double[]{depo.getLongitude(), depo.getLatitude()});
-        }
-        DepoDTO originDepo = deposInOriginCountry.get(openRouteServiceFetcher.getClosestIndexByDuration(originCoordinates, depoCoordinatesInOriginCountry));
+        DepoDTO destinationDepo = findClosestDepo(
+                order.getRecipientLocationCountryId(),
+                order.getRecipientLocationCityId(),
+                order.getRecipientZip(),
+                order.getRecipientAddress()
+        );
 
-        LocationCountryDTO destinationCountry = locationCountryService.getCountryById(order.getRecipientLocationCountryId()).orElseThrow();
-        LocationCityDTO destinationCity = locationCityService.getCityById(order.getRecipientLocationCityId()).orElseThrow();
-        String destinationAddress = destinationCountry.getName() + " " + order.recipientZip + " " + destinationCity.getName() + " " + order.getRecipientAddress();
-        double[] destinationCoordinates = openRouteServiceFetcher.geocode(destinationAddress);
-
-        List<DepoDTO> deposInDestinationCountry = depoService.getAllDeposByCountryId(destinationCountry.getId());
-        List<double[]> depoCoordinatesInDestinationCountry = new ArrayList<>();
-        for (var depo : deposInDestinationCountry) {
-            depoCoordinatesInDestinationCountry.add(new double[]{depo.getLongitude(), depo.getLatitude()});
-        }
-        DepoDTO destinationDepo = deposInDestinationCountry.get(openRouteServiceFetcher.getClosestIndexByDuration(destinationCoordinates, depoCoordinatesInDestinationCountry));
-
-        List<Long> cheapestRoute = depoRouteFinderService.findCheapestRoute(
+        List<Long> cheapestRoute = findCheapestDepoRoute(
                 originDepo.getId(),
                 destinationDepo.getId(),
                 order.getPackageSizeId()
         );
 
-        if (cheapestRoute.isEmpty()) {
-            throw new NoRouteFoundException("No route found between origin depo " + originDepo.getId() + " and destination depo " + destinationDepo.getId());
+        List<ShipmentRouteDTO> shipmentRoutes = buildShipmentRoutes(
+                order.getId(),
+                originDepo,
+                destinationDepo,
+                cheapestRoute,
+                buildAddress(order.getSenderLocationCountryId(), order.getSenderLocationCityId(),
+                        order.getSenderZip(), order.getSenderAddress()),
+                buildAddress(order.getRecipientLocationCountryId(), order.getRecipientLocationCityId(),
+                        order.getRecipientZip(), order.getRecipientAddress())
+        );
+
+        shipmentRouteService.saveAll(shipmentRoutes);
+    }
+
+    private DepoDTO findClosestDepo(Long countryId, Long cityId, String zip, String address) {
+        LocationCountryDTO country = locationCountryService.getCountryById(countryId)
+                .orElseThrow(() -> new IllegalArgumentException("Country not found with id: " + countryId));
+        LocationCityDTO city = locationCityService.getCityById(cityId)
+                .orElseThrow(() -> new IllegalArgumentException("City not found with id: " + cityId));
+
+        String fullAddress = buildAddress(country, city, zip, address);
+        double[] coordinates = openRouteServiceFetcher.geocode(fullAddress);
+
+        List<DepoDTO> deposInCountry = depoService.getAllDeposByCountryId(countryId);
+        if (deposInCountry.isEmpty()) {
+            throw new IllegalStateException("No depos found in country with id: " + countryId);
         }
 
+        List<double[]> depoCoordinates = extractDepoCoordinates(deposInCountry);
+        int closestDepoIndex = openRouteServiceFetcher.getClosestIndexByDuration(coordinates, depoCoordinates);
+
+        return deposInCountry.get(closestDepoIndex);
+    }
+
+    private String buildAddress(Long countryId, Long cityId, String zip, String address) {
+        LocationCountryDTO country = locationCountryService.getCountryById(countryId)
+                .orElseThrow(() -> new IllegalArgumentException("Country not found with id: " + countryId));
+        LocationCityDTO city = locationCityService.getCityById(cityId)
+                .orElseThrow(() -> new IllegalArgumentException("City not found with id: " + cityId));
+        return buildAddress(country, city, zip, address);
+    }
+
+    private String buildAddress(LocationCountryDTO country, LocationCityDTO city, String zip, String address) {
+        return String.format("%s %s %s %s", country.getName(), zip, city.getName(), address);
+    }
+
+    private List<double[]> extractDepoCoordinates(List<DepoDTO> depos) {
+        List<double[]> coordinates = new ArrayList<>();
+        for (DepoDTO depo : depos) {
+            coordinates.add(new double[]{depo.getLongitude(), depo.getLatitude()});
+        }
+        return coordinates;
+    }
+
+    private List<Long> findCheapestDepoRoute(Long originDepoId, Long destinationDepoId, Long packageSizeId) {
+        List<Long> route = depoRouteFinderService.findCheapestRoute(
+                originDepoId,
+                destinationDepoId,
+                packageSizeId
+        );
+
+        if (route.isEmpty()) {
+            throw new NoRouteFoundException(
+                    String.format("No route found between origin depo %d and destination depo %d", originDepoId, destinationDepoId));
+        }
+
+        return route;
+    }
+
+    private List<ShipmentRouteDTO> buildShipmentRoutes(Long orderId, DepoDTO originDepo, DepoDTO destinationDepo, List<Long> depoRoute,
+                                                       String originAddress, String destinationAddress) {
+        List<ShipmentRouteDTO> shipmentRoutes = new ArrayList<>();
         int routePartNumber = 0;
-        List<ShipmentRouteDTO> shipmentRouteList = new ArrayList<>();
-        shipmentRouteList.add(ShipmentRouteDTO.builder()
-                .orderId(order.getId())
+
+        shipmentRoutes.add(ShipmentRouteDTO.builder()
+                .orderId(orderId)
                 .routePartNumber(routePartNumber++)
                 .originAddress(originAddress)
                 .destinationDepoId(originDepo.getId())
                 .build());
-        for (int i = 1; i < cheapestRoute.size(); i++) {
-            Long currentDepoId = cheapestRoute.get(i);
-            Long previousDepoId = cheapestRoute.get(i - 1);
-            shipmentRouteList.add(ShipmentRouteDTO.builder()
-                    .orderId(order.getId())
+
+        for (int i = 1; i < depoRoute.size(); i++) {
+            shipmentRoutes.add(ShipmentRouteDTO.builder()
+                    .orderId(orderId)
                     .routePartNumber(routePartNumber++)
-                    .originDepoId(previousDepoId)
-                    .destinationDepoId(currentDepoId)
+                    .originDepoId(depoRoute.get(i - 1))
+                    .destinationDepoId(depoRoute.get(i))
                     .build());
         }
-        shipmentRouteList.add(ShipmentRouteDTO.builder()
-                .orderId(order.getId())
+
+        shipmentRoutes.add(ShipmentRouteDTO.builder()
+                .orderId(orderId)
                 .routePartNumber(routePartNumber)
                 .originDepoId(destinationDepo.getId())
                 .destinationAddress(destinationAddress)
                 .build());
 
-        shipmentRouteService.saveAll(shipmentRouteList);
+        return shipmentRoutes;
     }
 }
