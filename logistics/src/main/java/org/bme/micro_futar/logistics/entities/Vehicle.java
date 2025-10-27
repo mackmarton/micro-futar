@@ -15,5 +15,5 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String registrationNumber;
-    private Long maximumPackableVolume;
+    private Double maximumPackableVolume;
 }
