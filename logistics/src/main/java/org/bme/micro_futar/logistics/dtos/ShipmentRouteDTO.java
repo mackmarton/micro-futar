@@ -2,6 +2,8 @@ package org.bme.micro_futar.logistics.dtos;
 
 import lombok.Data;
 
+import java.sql.Timestamp;
+
 @Data
 public class ShipmentRouteDTO {
     private Long id;
@@ -10,4 +12,5 @@ public class ShipmentRouteDTO {
     private String originAddress;
     private String destinationAddress;
     private Integer routePartNumber;
+    private Timestamp fulfillmentTime;
 }
