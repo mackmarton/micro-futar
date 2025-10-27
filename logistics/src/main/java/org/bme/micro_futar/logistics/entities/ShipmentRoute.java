@@ -17,6 +17,7 @@ public class ShipmentRoute {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long orderId;
     @Nullable
     private Long originDepoId;
     @Nullable
