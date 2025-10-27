@@ -9,5 +9,7 @@ public class DepoDTO {
     private String zip;
     private Long locationCityId;
     private String address;
+    private Double latitude;
+    private Double longitude;
     private boolean isMainDepo;
 }
