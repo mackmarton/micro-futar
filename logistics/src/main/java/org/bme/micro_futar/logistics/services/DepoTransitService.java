@@ -3,7 +3,6 @@ package org.bme.micro_futar.logistics.services;
 import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.logistics.dtos.DepoTransitDTO;
 import org.bme.micro_futar.logistics.entities.DepoTransit;
-import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.DepoTransitMapper;
 import org.bme.micro_futar.logistics.repositories.DepoTransitRepository;
 import org.springframework.stereotype.Service;
@@ -11,20 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class DepoTransitService {
 
-    private final DepoTransitRepository depoTransitRepository;
     private final DepoTransitMapper depoTransitMapper;
-    private final KafkaProducerService kafkaProducerService;
+    private final DepoTransitRepository depoTransitRepository;
 
     public List<DepoTransitDTO> getAllDepoTransits() {
         return depoTransitRepository.findAll().stream()
                 .map(depoTransitMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Optional<DepoTransitDTO> getDepoTransitById(Long id) {
@@ -46,7 +43,7 @@ public class DepoTransitService {
         }
 
         return depoTransitRepository.findById(id)
-                .map(existingDepoTransit -> {
+                .map(_ -> {
                     DepoTransit updatedDepoTransit = depoTransitMapper.toEntity(depoTransitDTO);
                     updatedDepoTransit.setId(id);
                     DepoTransit savedDepoTransit = depoTransitRepository.save(updatedDepoTransit);
