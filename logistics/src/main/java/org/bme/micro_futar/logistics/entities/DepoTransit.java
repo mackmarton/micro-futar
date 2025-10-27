@@ -20,4 +20,5 @@ public class DepoTransit {
     private Long packageSizeId;
     private TransportType transportType;
     private Double price;
+    private Double durationInHours;
 }
