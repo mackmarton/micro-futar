@@ -59,5 +59,9 @@ public class DepoService {
         }
         return false;
     }
+
+    public List<DepoDTO> getAllDeposByCountryId(Long countryId) {
+        return depoMapper.toDTOList(depoRepository.findAllByLocationCountryId(countryId));
+    }
 }
 
