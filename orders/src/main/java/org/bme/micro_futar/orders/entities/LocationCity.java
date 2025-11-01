@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class LocationCity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
-    public Long countryId;
-    public String name;
+    private Long id;
+    private Long countryId;
+    private String name;
 }

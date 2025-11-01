@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 public class LocationRegion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
-    public String name;
+    private Long id;
+    private String name;
 }

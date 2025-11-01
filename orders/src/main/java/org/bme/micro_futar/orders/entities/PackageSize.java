@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class PackageSize {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
-    public String name;
-    public Double maxLength;
+    private Long id;
+    private String name;
+    private Double maxLength;
 }

@@ -44,8 +44,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     }
 
     private String determineErrorMessage(AuthenticationException authException) {
-        if (authException instanceof InvalidBearerTokenException) {
-            InvalidBearerTokenException bearerException = (InvalidBearerTokenException) authException;
+        if (authException instanceof InvalidBearerTokenException bearerException) {
             String exceptionMessage = bearerException.getMessage();
 
             // Check if it's a JWT validation error
