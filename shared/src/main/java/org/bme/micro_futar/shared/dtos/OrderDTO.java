@@ -5,39 +5,39 @@ import lombok.NonNull;
 
 @Data
 public class OrderDTO {
-    public Long id;
+    private Long id;
     @NonNull
-    public String senderName;
+    private String senderName;
     @NonNull
-    public String senderEmail;
+    private String senderEmail;
     @NonNull
-    public String senderPhone;
+    private String senderPhone;
     @NonNull
-    public Long senderLocationCountryId;
+    private Long senderLocationCountryId;
     @NonNull
-    public String senderZip;
+    private String senderZip;
     @NonNull
-    public Long senderLocationCityId;
+    private Long senderLocationCityId;
     @NonNull
-    public String senderAddress;
+    private String senderAddress;
     @NonNull
-    public String recipientName;
+    private String recipientName;
     @NonNull
-    public String recipientEmail;
+    private String recipientEmail;
     @NonNull
-    public String recipientPhone;
+    private String recipientPhone;
     @NonNull
-    public Long recipientLocationCountryId;
+    private Long recipientLocationCountryId;
     @NonNull
-    public String recipientZip;
+    private String recipientZip;
     @NonNull
-    public Long recipientLocationCityId;
+    private Long recipientLocationCityId;
     @NonNull
-    public String recipientAddress;
+    private String recipientAddress;
     @NonNull
-    public Long packageSizeId;
-    public boolean confirmed;
+    private Long packageSizeId;
+    private boolean confirmed;
     //Not filled straight away
-    public String parcelNumber;
-    public Double price;
+    private String parcelNumber;
+    private Double price;
 }

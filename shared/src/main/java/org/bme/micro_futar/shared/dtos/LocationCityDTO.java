@@ -5,9 +5,9 @@ import lombok.NonNull;
 
 @Data
 public class LocationCityDTO {
-    public Long id;
+    private Long id;
     @NonNull
-    public Long countryId;
+    private Long countryId;
     @NonNull
-    public String name;
+    private String name;
 }

@@ -5,13 +5,13 @@ import lombok.NonNull;
 
 @Data
 public class CountryPriceDTO {
-    public Long id;
+    private Long id;
     @NonNull
-    public Long originCountryId;
+    private Long originCountryId;
     @NonNull
-    public Long destinationCountryId;
+    private Long destinationCountryId;
     @NonNull
-    public Long packageSizeId;
+    private Long packageSizeId;
     @NonNull
-    public Double price;
+    private Double price;
 }
