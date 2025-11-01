@@ -10,24 +10,24 @@ import lombok.NoArgsConstructor;
 public class OrderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
-    public String senderName;
-    public String senderEmail;
-    public String senderPhone;
-    public Long senderLocationCountryId;
-    public String senderZip;
-    public Long senderLocationCityId;
-    public String senderAddress;
-    public String recipientName;
-    public String recipientEmail;
-    public String recipientPhone;
-    public String recipientLocationCountryId;
-    public String recipientZip;
-    public String recipientLocationCityId;
-    public String recipientAddress;
-    public Long packageSizeId;
-    public boolean confirmed;
+    private Long id;
+    private String senderName;
+    private String senderEmail;
+    private String senderPhone;
+    private Long senderLocationCountryId;
+    private String senderZip;
+    private Long senderLocationCityId;
+    private String senderAddress;
+    private String recipientName;
+    private String recipientEmail;
+    private String recipientPhone;
+    private String recipientLocationCountryId;
+    private String recipientZip;
+    private String recipientLocationCityId;
+    private String recipientAddress;
+    private Long packageSizeId;
+    private boolean confirmed;
     //Not filled straight away
-    public String parcelNumber;
-    public Double price;
+    private String parcelNumber;
+    private Double price;
 }

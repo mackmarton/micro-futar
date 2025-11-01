@@ -14,8 +14,8 @@ public class LocationCountry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
-    public Long regionId;
-    public String name;
+    private Long id;
+    private Long regionId;
+    private String name;
 
 }
