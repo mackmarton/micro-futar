@@ -2,7 +2,6 @@ package org.bme.micro_futar.orders.kafka;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bme.micro_futar.orders.entities.CountryPrice;
 import org.bme.micro_futar.orders.services.CountryPriceService;
 import org.bme.micro_futar.shared.dtos.CountryPriceDTO;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -20,7 +19,7 @@ public class CountryPriceConsumer {
         log.info("Received country price message: {}", countryPriceDTO);
 
         try {
-            CountryPrice countryPrice = countryPriceService.saveCountryPrice(countryPriceDTO);
+            CountryPriceDTO countryPrice = countryPriceService.saveCountryPrice(countryPriceDTO);
             log.info("Successfully saved country price with ID: {}", countryPrice.getId());
         } catch (Exception e) {
             log.error("Error processing country price message: {}", countryPriceDTO, e);

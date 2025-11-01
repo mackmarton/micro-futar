@@ -29,13 +29,15 @@ public class CountryPriceService {
                 .map(countryPriceMapper::toDTO);
     }
 
-    public Optional<CountryPrice> findPriceByCountriesAndSize(long originCountryId, long destinationCountryId, long packageSizeId) {
-        return countryPriceRepository.findByOriginCountryIdAndDestinationCountryIdAndPackageSizeId(originCountryId, destinationCountryId, packageSizeId);
+    public Optional<CountryPriceDTO> findPriceByCountriesAndSize(long originCountryId, long destinationCountryId, long packageSizeId) {
+        return countryPriceRepository
+                .findByOriginCountryIdAndDestinationCountryIdAndPackageSizeId(originCountryId, destinationCountryId, packageSizeId)
+                .map(countryPriceMapper::toDTO);
     }
 
     @Transactional
-    public CountryPrice saveCountryPrice(CountryPriceDTO countryPriceDTO) {
+    public CountryPriceDTO saveCountryPrice(CountryPriceDTO countryPriceDTO) {
         CountryPrice countryPrice = countryPriceMapper.toEntity(countryPriceDTO);
-        return countryPriceRepository.save(countryPrice);
+        return countryPriceMapper.toDTO(countryPriceRepository.save(countryPrice));
     }
 }
