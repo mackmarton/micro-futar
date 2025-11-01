@@ -20,5 +20,4 @@ public class Depo {
     private String address;
     private Double latitude;
     private Double longitude;
-    private boolean isMainDepo;
 }

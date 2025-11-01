@@ -32,4 +32,4 @@ kafka:
     location-city-topic: ${LOCATION_CITY_TOPIC}
     country-price-topic: ${COUNTRY_PRICE_TOPIC}
     package-size-topic: ${PACKAGE_SIZE_TOPIC}
-    order-topic: ${ORDER_TOPIC}
+    shipment-topic: ${SHIPMENT_TOPIC}

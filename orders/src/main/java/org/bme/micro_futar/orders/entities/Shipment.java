@@ -1,15 +1,15 @@
-package org.bme.micro_futar.logistics.entities;
+package org.bme.micro_futar.orders.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Entity
+@Data
 @NoArgsConstructor
-public class OrderEntity {
+public class Shipment {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String senderName;
     private String senderEmail;

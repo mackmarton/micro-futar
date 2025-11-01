@@ -8,4 +8,4 @@ kafka:
     location-city-topic: location-cities
     country-price-topic: country-prices
     package-size-topic: package-sizes
-    order-topic: orders
+    shipment-topic: shipments

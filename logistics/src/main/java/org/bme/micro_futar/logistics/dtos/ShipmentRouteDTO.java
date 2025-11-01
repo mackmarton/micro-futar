@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class ShipmentRouteDTO {
     private Long id;
-    private Long orderId;
+    private Long shipmentId;
     private Long originDepoId;
     private Long destinationDepoId;
     private String originAddress;
