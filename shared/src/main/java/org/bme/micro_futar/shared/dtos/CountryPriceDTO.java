@@ -1,9 +1,10 @@
 package org.bme.micro_futar.shared.dtos;
 
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class CountryPriceDTO {
     private Long id;
     @NonNull

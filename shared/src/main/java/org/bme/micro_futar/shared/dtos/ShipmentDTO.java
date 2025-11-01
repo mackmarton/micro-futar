@@ -1,9 +1,11 @@
 package org.bme.micro_futar.shared.dtos;
 
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ShipmentDTO {
     private Long id;
     @NonNull
