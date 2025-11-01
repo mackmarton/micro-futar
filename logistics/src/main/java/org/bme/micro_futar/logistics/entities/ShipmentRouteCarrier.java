@@ -7,15 +7,17 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
+
 @Data
 @Entity
 @NoArgsConstructor
-public class LocationCountry {
-
+public class ShipmentRouteCarrier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long regionId;
-    private String name;
-
+    private Long carrierId;
+    private Long shipmentRouteId;
+    private Date dateAssignedFor;
+    private Boolean failed = false;
 }

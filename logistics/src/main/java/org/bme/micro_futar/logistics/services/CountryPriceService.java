@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class CountryPriceService {
     public List<CountryPriceDTO> getAllCountryPrices() {
         return countryPriceRepository.findAll().stream()
                 .map(countryPriceMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Optional<CountryPriceDTO> getCountryPriceById(Long id) {

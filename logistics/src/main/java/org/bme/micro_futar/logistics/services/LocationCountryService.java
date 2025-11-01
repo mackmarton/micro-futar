@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class LocationCountryService {
     public List<LocationCountryDTO> getAllCountries() {
         return locationCountryRepository.findAll().stream()
                 .map(locationCountryMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Optional<LocationCountryDTO> getCountryById(Long id) {

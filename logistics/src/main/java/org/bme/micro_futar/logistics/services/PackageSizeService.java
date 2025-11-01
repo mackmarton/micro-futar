@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class PackageSizeService {
     public List<PackageSizeDTO> getAllPackageSizes() {
         return packageSizeRepository.findAll().stream()
                 .map(packageSizeMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Optional<PackageSizeDTO> getPackageSizeById(Long id) {

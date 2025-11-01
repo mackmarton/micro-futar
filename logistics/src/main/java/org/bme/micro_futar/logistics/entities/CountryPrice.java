@@ -7,15 +7,15 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
+@Entity
 @NoArgsConstructor
 public class CountryPrice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
-    public Long originCountryId;
-    public Long destinationCountryId;
-    public Long packageSizeId;
-    public Double price;
+    private Long id;
+    private Long originCountryId;
+    private Long destinationCountryId;
+    private Long packageSizeId;
+    private Double price;
 }

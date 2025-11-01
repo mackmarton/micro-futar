@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class LocationCityService {
     public List<LocationCityDTO> getAllCities() {
         return locationCityRepository.findAll().stream()
                 .map(locationCityMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Optional<LocationCityDTO> getCityById(Long id) {
