@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class LocationRegionService {
     public List<LocationRegionDTO> getAllRegions() {
         return locationRegionRepository.findAll().stream()
                 .map(locationRegionMapper::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Optional<LocationRegionDTO> getRegionById(Long id) {
