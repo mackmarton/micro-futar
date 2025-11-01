@@ -6,7 +6,7 @@ import org.bme.micro_futar.logistics.dtos.ShipmentRouteDTO;
 import org.bme.micro_futar.logistics.exceptions.NoRouteFoundException;
 import org.bme.micro_futar.shared.dtos.LocationCityDTO;
 import org.bme.micro_futar.shared.dtos.LocationCountryDTO;
-import org.bme.micro_futar.shared.dtos.OrderDTO;
+import org.bme.micro_futar.shared.dtos.ShipmentDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,36 +23,36 @@ public class ShipmentRoutePlanner {
     private final DepoRouteFinderService depoRouteFinderService;
     private final ShipmentRouteService shipmentRouteService;
 
-    public void planRouteForOrder(OrderDTO order) {
+    public void planRouteForShipment(ShipmentDTO shipment) {
         DepoDTO originDepo = findClosestDepo(
-                order.getSenderLocationCountryId(),
-                order.getSenderLocationCityId(),
-                order.getSenderZip(),
-                order.getSenderAddress()
+                shipment.getSenderLocationCountryId(),
+                shipment.getSenderLocationCityId(),
+                shipment.getSenderZip(),
+                shipment.getSenderAddress()
         );
 
         DepoDTO destinationDepo = findClosestDepo(
-                order.getRecipientLocationCountryId(),
-                order.getRecipientLocationCityId(),
-                order.getRecipientZip(),
-                order.getRecipientAddress()
+                shipment.getRecipientLocationCountryId(),
+                shipment.getRecipientLocationCityId(),
+                shipment.getRecipientZip(),
+                shipment.getRecipientAddress()
         );
 
         List<Long> cheapestRoute = findCheapestDepoRoute(
                 originDepo.getId(),
                 destinationDepo.getId(),
-                order.getPackageSizeId()
+                shipment.getPackageSizeId()
         );
 
         List<ShipmentRouteDTO> shipmentRoutes = buildShipmentRoutes(
-                order.getId(),
+                shipment.getId(),
                 originDepo,
                 destinationDepo,
                 cheapestRoute,
-                buildAddress(order.getSenderLocationCountryId(), order.getSenderLocationCityId(),
-                        order.getSenderZip(), order.getSenderAddress()),
-                buildAddress(order.getRecipientLocationCountryId(), order.getRecipientLocationCityId(),
-                        order.getRecipientZip(), order.getRecipientAddress())
+                buildAddress(shipment.getSenderLocationCountryId(), shipment.getSenderLocationCityId(),
+                        shipment.getSenderZip(), shipment.getSenderAddress()),
+                buildAddress(shipment.getRecipientLocationCountryId(), shipment.getRecipientLocationCityId(),
+                        shipment.getRecipientZip(), shipment.getRecipientAddress())
         );
 
         shipmentRouteService.saveAll(shipmentRoutes);
@@ -113,13 +113,13 @@ public class ShipmentRoutePlanner {
         return route;
     }
 
-    private List<ShipmentRouteDTO> buildShipmentRoutes(Long orderId, DepoDTO originDepo, DepoDTO destinationDepo, List<Long> depoRoute,
+    private List<ShipmentRouteDTO> buildShipmentRoutes(Long shipmentId, DepoDTO originDepo, DepoDTO destinationDepo, List<Long> depoRoute,
                                                        String originAddress, String destinationAddress) {
         List<ShipmentRouteDTO> shipmentRoutes = new ArrayList<>();
         int routePartNumber = 0;
 
         shipmentRoutes.add(ShipmentRouteDTO.builder()
-                .orderId(orderId)
+                .shipmentId(shipmentId)
                 .routePartNumber(routePartNumber++)
                 .originAddress(originAddress)
                 .destinationDepoId(originDepo.getId())
@@ -127,7 +127,7 @@ public class ShipmentRoutePlanner {
 
         for (int i = 1; i < depoRoute.size(); i++) {
             shipmentRoutes.add(ShipmentRouteDTO.builder()
-                    .orderId(orderId)
+                    .shipmentId(shipmentId)
                     .routePartNumber(routePartNumber++)
                     .originDepoId(depoRoute.get(i - 1))
                     .destinationDepoId(depoRoute.get(i))
@@ -135,7 +135,7 @@ public class ShipmentRoutePlanner {
         }
 
         shipmentRoutes.add(ShipmentRouteDTO.builder()
-                .orderId(orderId)
+                .shipmentId(shipmentId)
                 .routePartNumber(routePartNumber)
                 .originDepoId(destinationDepo.getId())
                 .destinationAddress(destinationAddress)

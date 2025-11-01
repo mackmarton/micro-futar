@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.NonNull;
 
 @Data
-public class OrderDTO {
+public class ShipmentDTO {
     private Long id;
     @NonNull
     private String senderName;

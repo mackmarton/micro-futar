@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/orders")
-public class OrderController {
+@RequestMapping(path = "api/shipments")
+public class ShipmentController {
 
 }
