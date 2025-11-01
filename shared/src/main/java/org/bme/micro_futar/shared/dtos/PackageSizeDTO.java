@@ -5,9 +5,9 @@ import lombok.NonNull;
 
 @Data
 public class PackageSizeDTO {
-    public Long id;
+    private Long id;
     @NonNull
-    public String name;
+    private String name;
     @NonNull
-    public Double maxLength;
+    private Double maxLength;
 }
