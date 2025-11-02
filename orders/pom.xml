@@ -16,6 +16,7 @@
 	<properties>
 		<java.version>25</java.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
+        <sonar.organization>mackmarton</sonar.organization>
 	</properties>
 	<dependencies>
         <dependency>
