@@ -20,7 +20,9 @@ jobs:
           cache-dependency-path: |
             shared/pom.xml
             orders/pom.xml
-
+      - name: Build and install shared module
+        run: mvn clean install -DskipTests --batch-mode --errors --fail-at-end --show-version
+        working-directory: shared
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
