@@ -1,7 +1,7 @@
 package org.bme.micro_futar.logistics.mappers;
 
-import org.bme.micro_futar.logistics.dtos.DepoDTO;
 import org.bme.micro_futar.logistics.entities.Depo;
+import org.bme.micro_futar.shared.dtos.DepoDTO;
 import org.mapstruct.Mapper;
 
 import java.util.List;

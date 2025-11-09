@@ -9,4 +9,8 @@ kafka:
     country-price-topic: country-prices
     package-size-topic: package-sizes
     shipment-topic: shipments
+    depo-topic: depos
     depo-shipment-topic: depo-shipments
+    shipment-route-carrier-topic: shipment-route-carriers
+    shipment-route-topic: shipment-routes
+    courier-topic: couriers

@@ -7,13 +7,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bme.micro_futar.shared.enums.CarrierType;
+import org.bme.micro_futar.shared.enums.CourierType;
 import org.bme.micro_futar.shared.enums.TransportType;
 
 @Data
 @Entity
 @NoArgsConstructor
-public class Carrier {
+public class Courier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,7 +22,7 @@ public class Carrier {
     private String telephone;
     private Long vehicleId;
     private TransportType qualifiedFor;
-    private CarrierType carrierType;
+    private CourierType courierType;
     @Nullable
     private Long depoId;
 }

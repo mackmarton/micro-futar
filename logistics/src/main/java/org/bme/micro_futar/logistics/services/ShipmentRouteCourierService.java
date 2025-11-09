@@ -14,17 +14,17 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ShipmentRouteCarrierService {
+public class ShipmentRouteCourierService {
 
     private final ShipmentRouteCarrierRepository shipmentRouteCarrierRepository;
     private final ShipmentRouteCarrierMapper shipmentRouteCarrierMapper;
     private final KafkaProducerService kafkaProducerService;
 
-    public long countByCarrierIdAndDate(Long carrierId, Date date) {
+    public long countByCourierIdAndDate(Long carrierId, Date date) {
         return shipmentRouteCarrierRepository.countByCarrierIdAndDate(carrierId, date);
     }
 
-    public List<ShipmentRouteCarrierDTO> findByCarrierIdAndDateAssignedFor(Long carrierId, Date date) {
+    public List<ShipmentRouteCarrierDTO> findByCourierIdAndDateAssignedFor(Long carrierId, Date date) {
         return shipmentRouteCarrierRepository.findByCarrierIdAndDateAssignedFor(carrierId, date).stream()
                 .map(shipmentRouteCarrierMapper::toDTO)
                 .toList();
