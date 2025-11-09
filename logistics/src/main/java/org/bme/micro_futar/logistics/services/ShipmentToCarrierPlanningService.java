@@ -2,9 +2,12 @@ package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bme.micro_futar.logistics.dtos.*;
+import org.bme.micro_futar.logistics.dtos.CarrierDTO;
+import org.bme.micro_futar.logistics.dtos.ShipmentRouteDTO;
+import org.bme.micro_futar.logistics.dtos.VehicleDTO;
 import org.bme.micro_futar.shared.dtos.PackageSizeDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentDTO;
+import org.bme.micro_futar.shared.dtos.ShipmentRouteCarrierDTO;
 import org.bme.micro_futar.shared.enums.CarrierType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

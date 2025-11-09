@@ -1,4 +1,4 @@
-package org.bme.micro_futar.logistics.dtos;
+package org.bme.micro_futar.shared.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
