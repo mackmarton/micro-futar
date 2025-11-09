@@ -25,3 +25,4 @@ kafka:
     country-price-topic: ${COUNTRY_PRICE_TOPIC}
     package-size-topic: ${PACKAGE_SIZE_TOPIC}
     shipment-topic: ${SHIPMENT_TOPIC}
+    depo-shipment-topic: ${DEPO_SHIPMENT_TOPIC}
