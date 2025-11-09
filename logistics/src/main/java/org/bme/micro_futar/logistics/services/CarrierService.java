@@ -59,5 +59,10 @@ public class CarrierService {
         }
         return false;
     }
-}
 
+    public List<CarrierDTO> getCarriersByDepoIdAndType(Long depoId, org.bme.micro_futar.shared.enums.CarrierType carrierType) {
+        return carrierRepository.findByDepoIdAndCarrierType(depoId, carrierType).stream()
+                .map(carrierMapper::toDTO)
+                .toList();
+    }
+}

@@ -30,5 +30,16 @@ public class ShipmentRouteService {
     public void saveAll(List<ShipmentRouteDTO> shipmentRouteDTOs){
         shipmentRouteRepository.saveAll(shipmentRouteMapper.toEntityList(shipmentRouteDTOs));
     }
-}
 
+    public List<ShipmentRouteDTO> getDeliveryRoutes(Long depoId) {
+        return shipmentRouteRepository.findDeliveryRoutes(depoId).stream()
+                .map(shipmentRouteMapper::toDTO)
+                .toList();
+    }
+
+    public List<ShipmentRouteDTO> getPickupRoutes(Long depoId) {
+        return shipmentRouteRepository.findPickupRoutes(depoId).stream()
+                .map(shipmentRouteMapper::toDTO)
+                .toList();
+    }
+}
