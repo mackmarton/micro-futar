@@ -1,6 +1,6 @@
 package org.bme.micro_futar.shared.enums;
 
-public enum CarrierType {
+public enum CourierType {
     CROSS_DEPO,
     DELIVERY
 }

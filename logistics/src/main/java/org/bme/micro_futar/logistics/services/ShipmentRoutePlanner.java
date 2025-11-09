@@ -1,12 +1,8 @@
 package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
-import org.bme.micro_futar.logistics.dtos.DepoDTO;
-import org.bme.micro_futar.logistics.dtos.ShipmentRouteDTO;
 import org.bme.micro_futar.logistics.exceptions.NoRouteFoundException;
-import org.bme.micro_futar.shared.dtos.LocationCityDTO;
-import org.bme.micro_futar.shared.dtos.LocationCountryDTO;
-import org.bme.micro_futar.shared.dtos.ShipmentDTO;
+import org.bme.micro_futar.shared.dtos.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

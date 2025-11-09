@@ -1,10 +1,11 @@
 package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
-import org.bme.micro_futar.logistics.dtos.DepoDTO;
 import org.bme.micro_futar.logistics.entities.Depo;
+import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.DepoMapper;
 import org.bme.micro_futar.logistics.repositories.DepoRepository;
+import org.bme.micro_futar.shared.dtos.DepoDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ public class DepoService {
 
     private final DepoRepository depoRepository;
     private final DepoMapper depoMapper;
+    private final KafkaProducerService kafkaProducerService;
 
     public List<DepoDTO> getAllDepos() {
         return depoRepository.findAll().stream()
@@ -33,7 +35,9 @@ public class DepoService {
     public DepoDTO createDepo(DepoDTO depoDTO) {
         Depo depo = depoMapper.toEntity(depoDTO);
         Depo savedDepo = depoRepository.save(depo);
-        return depoMapper.toDTO(savedDepo);
+        DepoDTO result = depoMapper.toDTO(savedDepo);
+        kafkaProducerService.sendDepo(result);
+        return result;
     }
 
     @Transactional
@@ -47,7 +51,9 @@ public class DepoService {
                     Depo updatedDepo = depoMapper.toEntity(depoDTO);
                     updatedDepo.setId(id);
                     Depo savedDepo = depoRepository.save(updatedDepo);
-                    return depoMapper.toDTO(savedDepo);
+                    DepoDTO result = depoMapper.toDTO(savedDepo);
+                    kafkaProducerService.sendDepo(result);
+                    return result;
                 });
     }
 
@@ -64,4 +70,3 @@ public class DepoService {
         return depoMapper.toDTOList(depoRepository.findAllByLocationCountryId(countryId));
     }
 }
-

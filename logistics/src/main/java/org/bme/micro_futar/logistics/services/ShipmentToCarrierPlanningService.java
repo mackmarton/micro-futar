@@ -2,13 +2,9 @@ package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bme.micro_futar.logistics.dtos.CarrierDTO;
-import org.bme.micro_futar.logistics.dtos.ShipmentRouteDTO;
 import org.bme.micro_futar.logistics.dtos.VehicleDTO;
-import org.bme.micro_futar.shared.dtos.PackageSizeDTO;
-import org.bme.micro_futar.shared.dtos.ShipmentDTO;
-import org.bme.micro_futar.shared.dtos.ShipmentRouteCarrierDTO;
-import org.bme.micro_futar.shared.enums.CarrierType;
+import org.bme.micro_futar.shared.dtos.*;
+import org.bme.micro_futar.shared.enums.CourierType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +17,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ShipmentToCarrierPlanningService {
 
-    private final CarrierService carrierService;
+    private final CourierService courierService;
     private final ShipmentRouteService shipmentRouteService;
     private final ShipmentRouteCarrierService shipmentRouteCarrierService;
     private final VehicleService vehicleService;
@@ -34,7 +30,7 @@ public class ShipmentToCarrierPlanningService {
     public Map<String, Object> planShipmentsForDepo(Long depoId) {
         Date today = Date.valueOf(LocalDate.now());
 
-        List<CarrierDTO> deliveryCarriers = carrierService.getCarriersByDepoIdAndType(depoId, CarrierType.DELIVERY);
+        List<CourierDTO> deliveryCarriers = courierService.getCouriersByDepoIdAndType(depoId, CourierType.DELIVERY);
 
         if (deliveryCarriers.isEmpty()) {
             log.warn("No delivery carriers found for depo {}", depoId);
@@ -55,7 +51,7 @@ public class ShipmentToCarrierPlanningService {
         }
 
         Map<Long, CarrierCapacity> carrierCapacities = new HashMap<>();
-        for (CarrierDTO carrier : deliveryCarriers) {
+        for (CourierDTO carrier : deliveryCarriers) {
             CarrierCapacity capacity = calculateCarrierCapacity(carrier, today);
             if (capacity != null) {
                 carrierCapacities.put(carrier.getId(), capacity);
@@ -73,7 +69,7 @@ public class ShipmentToCarrierPlanningService {
         return createResult(assignedCount, allRoutes.size(), deliveryCarriers.size(), "Planning completed successfully");
     }
 
-    private CarrierCapacity calculateCarrierCapacity(CarrierDTO carrier, Date date) {
+    private CarrierCapacity calculateCarrierCapacity(CourierDTO carrier, Date date) {
         if (carrier.getVehicleId() == null) {
             log.warn("Carrier {} has no vehicle assigned", carrier.getId());
             return null;

@@ -30,6 +30,18 @@ public class KafkaProducerService {
     @Value("${kafka.topics.package-size-topic}")
     private String packageSizeTopic;
 
+    @Value("${kafka.topics.shipment-route-carrier-topic}")
+    private String shipmentRouteCarrierTopic;
+
+    @Value("${kafka.topics.depo-topic}")
+    private String depoTopic;
+
+    @Value("${kafka.topics.shipment-route-topic}")
+    private String shipmentRouteTopic;
+
+    @Value("${kafka.topics.courier-topic}")
+    private String courierTopic;
+
     public void sendLocationRegion(LocationRegionDTO locationRegionDTO) {
         log.info("Sending location region message to topic {}: {}", locationRegionTopic, locationRegionDTO);
         try {
@@ -122,6 +134,82 @@ public class KafkaProducerService {
         } catch (Exception e) {
             log.error("Error sending package size message to Kafka", e);
             throw new KafkaException("Failed to send package size message", e);
+        }
+    }
+
+    public void sendShipmentRouteCarrier(ShipmentRouteCarrierDTO shipmentRouteCarrierDTO) {
+        log.info("Sending shipment route carrier message to topic {}: {}", shipmentRouteCarrierTopic, shipmentRouteCarrierDTO);
+        try {
+            kafkaTemplate.send(shipmentRouteCarrierTopic, shipmentRouteCarrierDTO.getId().toString(), shipmentRouteCarrierDTO)
+                    .whenComplete((_, ex) -> {
+                        if (ex == null) {
+                            log.info("Successfully sent shipment route carrier with ID: {} to topic: {}",
+                                    shipmentRouteCarrierDTO.getId(), shipmentRouteCarrierTopic);
+                        } else {
+                            log.error("Failed to send shipment route carrier with ID: {} to topic: {}",
+                                    shipmentRouteCarrierDTO.getId(), shipmentRouteCarrierTopic, ex);
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("Error sending shipment route carrier message to Kafka", e);
+            throw new KafkaException("Failed to send shipment route carrier message", e);
+        }
+    }
+
+    public void sendDepo(DepoDTO depoDTO) {
+        log.info("Sending depo message to topic {}: {}", depoTopic, depoDTO);
+        try {
+            kafkaTemplate.send(depoTopic, depoDTO.getId().toString(), depoDTO)
+                    .whenComplete((_, ex) -> {
+                        if (ex == null) {
+                            log.info("Successfully sent depo with ID: {} to topic: {}",
+                                    depoDTO.getId(), depoTopic);
+                        } else {
+                            log.error("Failed to send depo with ID: {} to topic: {}",
+                                    depoDTO.getId(), depoTopic, ex);
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("Error sending depo message to Kafka", e);
+            throw new KafkaException("Failed to send depo message", e);
+        }
+    }
+
+    public void sendShipmentRoute(ShipmentRouteDTO shipmentRouteDTO) {
+        log.info("Sending shipment route message to topic {}: {}", shipmentRouteTopic, shipmentRouteDTO);
+        try {
+            kafkaTemplate.send(shipmentRouteTopic, shipmentRouteDTO.getId().toString(), shipmentRouteDTO)
+                    .whenComplete((_, ex) -> {
+                        if (ex == null) {
+                            log.info("Successfully sent shipment route with ID: {} to topic: {}",
+                                    shipmentRouteDTO.getId(), shipmentRouteTopic);
+                        } else {
+                            log.error("Failed to send shipment route with ID: {} to topic: {}",
+                                    shipmentRouteDTO.getId(), shipmentRouteTopic, ex);
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("Error sending shipment route message to Kafka", e);
+            throw new KafkaException("Failed to send shipment route message", e);
+        }
+    }
+
+    public void sendCourier(CourierDTO courierDTO) {
+        log.info("Sending courier message to topic {}: {}", courierTopic, courierDTO);
+        try {
+            kafkaTemplate.send(courierTopic, courierDTO.getId().toString(), courierDTO)
+                    .whenComplete((_, ex) -> {
+                        if (ex == null) {
+                            log.info("Successfully sent courier with ID: {} to topic: {}",
+                                    courierDTO.getId(), courierTopic);
+                        } else {
+                            log.error("Failed to send courier with ID: {} to topic: {}",
+                                    courierDTO.getId(), courierTopic, ex);
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("Error sending courier message to Kafka", e);
+            throw new KafkaException("Failed to send courier message", e);
         }
     }
 }
