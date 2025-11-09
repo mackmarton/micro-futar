@@ -9,3 +9,4 @@ kafka:
     country-price-topic: country-prices
     package-size-topic: package-sizes
     shipment-topic: shipments
+    depo-shipment-topic: depo-shipments
