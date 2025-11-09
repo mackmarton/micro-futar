@@ -1,7 +1,7 @@
 package org.bme.micro_futar.logistics.mappers;
 
-import org.bme.micro_futar.logistics.dtos.ShipmentRouteCarrierDTO;
 import org.bme.micro_futar.logistics.entities.ShipmentRouteCarrier;
+import org.bme.micro_futar.shared.dtos.ShipmentRouteCarrierDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
