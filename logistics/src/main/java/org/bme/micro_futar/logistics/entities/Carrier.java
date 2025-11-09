@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bme.micro_futar.shared.enums.CarrierType;
 import org.bme.micro_futar.shared.enums.TransportType;
 
 @Data
@@ -21,6 +22,7 @@ public class Carrier {
     private String telephone;
     private Long vehicleId;
     private TransportType qualifiedFor;
+    private CarrierType carrierType;
     @Nullable
     private Long depoId;
 }
