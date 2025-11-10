@@ -30,3 +30,4 @@ kafka:
     depo-topic: ${DEPO_TOPIC}
     shipment-route-topic: ${SHIPMENT_ROUTE_TOPIC}
     courier-topic: ${COURIER_TOPIC}
+    vehicle-topic: ${VEHICLE_TOPIC}

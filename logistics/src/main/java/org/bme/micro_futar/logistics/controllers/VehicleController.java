@@ -1,8 +1,8 @@
 package org.bme.micro_futar.logistics.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.bme.micro_futar.logistics.dtos.VehicleDTO;
 import org.bme.micro_futar.logistics.services.VehicleService;
+import org.bme.micro_futar.shared.dtos.VehicleDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
