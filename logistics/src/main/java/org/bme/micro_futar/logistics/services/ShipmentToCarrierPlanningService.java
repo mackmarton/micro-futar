@@ -2,7 +2,6 @@ package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bme.micro_futar.logistics.dtos.VehicleDTO;
 import org.bme.micro_futar.shared.dtos.*;
 import org.bme.micro_futar.shared.enums.CourierType;
 import org.springframework.stereotype.Service;

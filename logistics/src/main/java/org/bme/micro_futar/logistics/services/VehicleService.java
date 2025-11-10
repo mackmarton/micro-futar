@@ -1,10 +1,11 @@
 package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
-import org.bme.micro_futar.logistics.dtos.VehicleDTO;
 import org.bme.micro_futar.logistics.entities.Vehicle;
+import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.VehicleMapper;
 import org.bme.micro_futar.logistics.repositories.VehicleRepository;
+import org.bme.micro_futar.shared.dtos.VehicleDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ public class VehicleService {
 
     private final VehicleRepository vehicleRepository;
     private final VehicleMapper vehicleMapper;
+    private final KafkaProducerService kafkaProducerService;
 
     public List<VehicleDTO> getAllVehicles() {
         return vehicleRepository.findAll().stream()
@@ -33,7 +35,9 @@ public class VehicleService {
     public VehicleDTO createVehicle(VehicleDTO vehicleDTO) {
         Vehicle vehicle = vehicleMapper.toEntity(vehicleDTO);
         Vehicle savedVehicle = vehicleRepository.save(vehicle);
-        return vehicleMapper.toDTO(savedVehicle);
+        VehicleDTO resultDTO = vehicleMapper.toDTO(savedVehicle);
+        kafkaProducerService.sendVehicle(resultDTO);
+        return resultDTO;
     }
 
     @Transactional
@@ -47,7 +51,9 @@ public class VehicleService {
                     Vehicle updatedVehicle = vehicleMapper.toEntity(vehicleDTO);
                     updatedVehicle.setId(id);
                     Vehicle savedVehicle = vehicleRepository.save(updatedVehicle);
-                    return vehicleMapper.toDTO(savedVehicle);
+                    VehicleDTO resultDTO = vehicleMapper.toDTO(savedVehicle);
+                    kafkaProducerService.sendVehicle(resultDTO);
+                    return resultDTO;
                 });
     }
 
@@ -60,4 +66,3 @@ public class VehicleService {
         return false;
     }
 }
-

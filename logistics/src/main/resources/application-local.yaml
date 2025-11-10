@@ -14,3 +14,4 @@ kafka:
     shipment-route-carrier-topic: shipment-route-carriers
     shipment-route-topic: shipment-routes
     courier-topic: couriers
+    vehicle-topic: vehicles

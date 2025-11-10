@@ -42,6 +42,9 @@ public class KafkaProducerService {
     @Value("${kafka.topics.courier-topic}")
     private String courierTopic;
 
+    @Value("${kafka.topics.vehicle-topic}")
+    private String vehicleTopic;
+
     public void sendLocationRegion(LocationRegionDTO locationRegionDTO) {
         log.info("Sending location region message to topic {}: {}", locationRegionTopic, locationRegionDTO);
         try {
@@ -210,6 +213,25 @@ public class KafkaProducerService {
         } catch (Exception e) {
             log.error("Error sending courier message to Kafka", e);
             throw new KafkaException("Failed to send courier message", e);
+        }
+    }
+
+    public void sendVehicle(VehicleDTO vehicleDTO) {
+        log.info("Sending vehicle message to topic {}: {}", vehicleTopic, vehicleDTO);
+        try {
+            kafkaTemplate.send(vehicleTopic, vehicleDTO.getId().toString(), vehicleDTO)
+                    .whenComplete((_, ex) -> {
+                        if (ex == null) {
+                            log.info("Successfully sent vehicle with ID: {} to topic: {}",
+                                    vehicleDTO.getId(), vehicleTopic);
+                        } else {
+                            log.error("Failed to send vehicle with ID: {} to topic: {}",
+                                    vehicleDTO.getId(), vehicleTopic, ex);
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("Error sending vehicle message to Kafka", e);
+            throw new KafkaException("Failed to send vehicle message", e);
         }
     }
 }

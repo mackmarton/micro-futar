@@ -20,4 +20,3 @@ public class ShipmentPlanningController {
         return ResponseEntity.ok(result);
     }
 }
-
