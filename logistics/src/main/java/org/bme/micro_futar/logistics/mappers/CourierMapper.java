@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface CourierMapper {
 
-    Courier toEntity(CourierDTO CourierDTO);
+    Courier toEntity(CourierDTO courierDTO);
 
     CourierDTO toDTO(Courier courier);
 }
