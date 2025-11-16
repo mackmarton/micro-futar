@@ -1,7 +1,7 @@
 package org.bme.micro_futar.logistics.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.bme.micro_futar.logistics.services.ShipmentToCarrierPlanningService;
+import org.bme.micro_futar.logistics.services.ShipmentToCourierPlanningService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +12,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ShipmentPlanningController {
 
-    private final ShipmentToCarrierPlanningService planningService;
+    private final ShipmentToCourierPlanningService planningService;
 
     @PostMapping("/depo/{depoId}/assign-shipments")
     public ResponseEntity<Map<String, Object>> planShipmentsForDepo(@PathVariable Long depoId) {

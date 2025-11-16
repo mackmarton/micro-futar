@@ -11,7 +11,7 @@ kafka:
     shipment-topic: shipments
     depo-topic: depos
     depo-shipment-topic: depo-shipments
-    shipment-route-carrier-topic: shipment-route-carriers
+    shipment-route-courier-topic: shipment-route-couriers
     shipment-route-topic: shipment-routes
     courier-topic: couriers
     vehicle-topic: vehicles
