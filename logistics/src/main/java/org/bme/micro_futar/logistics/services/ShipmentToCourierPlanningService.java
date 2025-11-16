@@ -14,11 +14,11 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ShipmentToCarrierPlanningService {
+public class ShipmentToCourierPlanningService {
 
     private final CourierService courierService;
     private final ShipmentRouteService shipmentRouteService;
-    private final ShipmentRouteCarrierService shipmentRouteCarrierService;
+    private final ShipmentRouteCourierService shipmentRouteCourierService;
     private final VehicleService vehicleService;
     private final ShipmentService shipmentService;
     private final PackageSizeService packageSizeService;
@@ -29,11 +29,11 @@ public class ShipmentToCarrierPlanningService {
     public Map<String, Object> planShipmentsForDepo(Long depoId) {
         Date today = Date.valueOf(LocalDate.now());
 
-        List<CourierDTO> deliveryCarriers = courierService.getCouriersByDepoIdAndType(depoId, CourierType.DELIVERY);
+        List<CourierDTO> deliveryCouriers = courierService.getCouriersByDepoIdAndType(depoId, CourierType.DELIVERY);
 
-        if (deliveryCarriers.isEmpty()) {
-            log.warn("No delivery carriers found for depo {}", depoId);
-            return createResult(0, 0, 0, "No delivery carriers available");
+        if (deliveryCouriers.isEmpty()) {
+            log.warn("No delivery couriers found for depo {}", depoId);
+            return createResult(0, 0, 0, "No delivery couriers available");
         }
 
         List<ShipmentRouteDTO> deliveryRoutes = shipmentRouteService.getDeliveryRoutes(depoId);
@@ -46,37 +46,37 @@ public class ShipmentToCarrierPlanningService {
 
         if (allRoutes.isEmpty()) {
             log.info("No pending shipment routes found for depo {}", depoId);
-            return createResult(0, 0, deliveryCarriers.size(), "No pending shipments");
+            return createResult(0, 0, deliveryCouriers.size(), "No pending shipments");
         }
 
-        Map<Long, CarrierCapacity> carrierCapacities = new HashMap<>();
-        for (CourierDTO carrier : deliveryCarriers) {
-            CarrierCapacity capacity = calculateCarrierCapacity(carrier, today);
+        Map<Long, CourierCapacity> courierCapacities = new HashMap<>();
+        for (CourierDTO courier : deliveryCouriers) {
+            CourierCapacity capacity = calculateCourierCapacity(courier, today);
             if (capacity != null) {
-                carrierCapacities.put(carrier.getId(), capacity);
+                courierCapacities.put(courier.getId(), capacity);
             }
         }
 
-        if (carrierCapacities.isEmpty()) {
-            log.warn("No carriers with available capacity for depo {}", depoId);
-            return createResult(0, allRoutes.size(), deliveryCarriers.size(), "No carriers with available capacity");
+        if (courierCapacities.isEmpty()) {
+            log.warn("No couriers with available capacity for depo {}", depoId);
+            return createResult(0, allRoutes.size(), deliveryCouriers.size(), "No couriers with available capacity");
         }
 
-        // Assign shipments to carriers
-        int assignedCount = assignShipmentsToCarriers(allRoutes, carrierCapacities, today);
+        // Assign shipments to couriers
+        int assignedCount = assignShipmentsToCouriers(allRoutes, courierCapacities, today);
 
-        return createResult(assignedCount, allRoutes.size(), deliveryCarriers.size(), "Planning completed successfully");
+        return createResult(assignedCount, allRoutes.size(), deliveryCouriers.size(), "Planning completed successfully");
     }
 
-    private CarrierCapacity calculateCarrierCapacity(CourierDTO carrier, Date date) {
-        if (carrier.getVehicleId() == null) {
-            log.warn("Carrier {} has no vehicle assigned", carrier.getId());
+    private CourierCapacity calculateCourierCapacity(CourierDTO courier, Date date) {
+        if (courier.getVehicleId() == null) {
+            log.warn("Courier {} has no vehicle assigned", courier.getId());
             return null;
         }
 
-        Optional<VehicleDTO> vehicleOpt = vehicleService.getVehicleById(carrier.getVehicleId());
+        Optional<VehicleDTO> vehicleOpt = vehicleService.getVehicleById(courier.getVehicleId());
         if (vehicleOpt.isEmpty()) {
-            log.warn("Vehicle {} not found for carrier {}", carrier.getVehicleId(), carrier.getId());
+            log.warn("Vehicle {} not found for courier {}", courier.getVehicleId(), courier.getId());
             return null;
         }
 
@@ -86,16 +86,16 @@ public class ShipmentToCarrierPlanningService {
             return null;
         }
 
-        long alreadyAssignedCount = shipmentRouteCarrierService.countByCarrierIdAndDate(carrier.getId(), date);
-        List<ShipmentRouteCarrierDTO> alreadyAssigned = shipmentRouteCarrierService.findByCarrierIdAndDateAssignedFor(carrier.getId(), date);
+        long alreadyAssignedCount = shipmentRouteCourierService.countByCourierIdAndDate(courier.getId(), date);
+        List<ShipmentRouteCourierDTO> alreadyAssigned = shipmentRouteCourierService.findByCourierIdAndDateAssignedFor(courier.getId(), date);
 
-        CarrierCapacity capacity = new CarrierCapacity();
-        capacity.carrierId = carrier.getId();
+        CourierCapacity capacity = new CourierCapacity();
+        capacity.courierId = courier.getId();
         capacity.maxVolume = vehicle.getMaximumPackableVolume();
         capacity.remainingVolume = vehicle.getMaximumPackableVolume();
 
         // Subtract volume of already assigned packages
-        for (ShipmentRouteCarrierDTO assignedShipment : alreadyAssigned) {
+        for (ShipmentRouteCourierDTO assignedShipment : alreadyAssigned) {
             Optional<ShipmentRouteDTO> routeOpt = shipmentRouteService.getShipmentRouteById(assignedShipment.getShipmentRouteId());
             if (routeOpt.isPresent()) {
                 double volume = getShipmentVolume(routeOpt.get().getShipmentId());
@@ -109,7 +109,7 @@ public class ShipmentToCarrierPlanningService {
         return capacity;
     }
 
-    private int assignShipmentsToCarriers(List<ShipmentRouteDTO> routes, Map<Long, CarrierCapacity> carrierCapacities, Date date) {
+    private int assignShipmentsToCouriers(List<ShipmentRouteDTO> routes, Map<Long, CourierCapacity> courierCapacities, Date date) {
         int assignedCount = 0;
 
         routes.sort((r1, r2) -> {
@@ -121,44 +121,44 @@ public class ShipmentToCarrierPlanningService {
         for (ShipmentRouteDTO route : routes) {
             double volume = getShipmentVolume(route.getShipmentId());
 
-            CarrierCapacity selectedCarrier = findBestCarrier(carrierCapacities, volume);
+            CourierCapacity selectedCourier = findBestCourier(courierCapacities, volume);
 
-            if (selectedCarrier != null) {
-                ShipmentRouteCarrierDTO assignment = ShipmentRouteCarrierDTO.builder()
-                        .carrierId(selectedCarrier.carrierId)
+            if (selectedCourier != null) {
+                ShipmentRouteCourierDTO assignment = ShipmentRouteCourierDTO.builder()
+                        .courierId(selectedCourier.courierId)
                         .shipmentRouteId(route.getId())
                         .dateAssignedFor(date)
                         .failed(false)
                         .build();
 
-                shipmentRouteCarrierService.save(assignment);
+                shipmentRouteCourierService.save(assignment);
 
-                selectedCarrier.remainingVolume -= volume;
-                selectedCarrier.remainingPackages--;
+                selectedCourier.remainingVolume -= volume;
+                selectedCourier.remainingPackages--;
 
                 assignedCount++;
-                log.debug("Assigned shipment route {} to carrier {}", route.getId(), selectedCarrier.carrierId);
+                log.debug("Assigned shipment route {} to courier {}", route.getId(), selectedCourier.courierId);
             } else {
-                log.warn("Could not assign shipment route {} - no carrier with sufficient capacity", route.getId());
+                log.warn("Could not assign shipment route {} - no courier with sufficient capacity", route.getId());
             }
         }
 
         return assignedCount;
     }
 
-    private CarrierCapacity findBestCarrier(Map<Long, CarrierCapacity> carrierCapacities, double requiredVolume) {
-        CarrierCapacity bestCarrier = null;
+    private CourierCapacity findBestCourier(Map<Long, CourierCapacity> courierCapacities, double requiredVolume) {
+        CourierCapacity bestCourier = null;
         double smallestRemainingVolume = Double.MAX_VALUE;
 
-        for (CarrierCapacity capacity : carrierCapacities.values()) {
+        for (CourierCapacity capacity : courierCapacities.values()) {
             if ((capacity.remainingPackages > 0 && capacity.remainingVolume >= requiredVolume)
                     && (capacity.remainingVolume < smallestRemainingVolume)) {
-                bestCarrier = capacity;
+                bestCourier = capacity;
                 smallestRemainingVolume = capacity.remainingVolume;
             }
         }
 
-        return bestCarrier;
+        return bestCourier;
     }
 
     private double getShipmentVolume(Long shipmentId) {
@@ -188,17 +188,17 @@ public class ShipmentToCarrierPlanningService {
         return packageSize.getMaxLength() * packageSize.getMaxLength() * packageSize.getMaxLength();
     }
 
-    private Map<String, Object> createResult(int assignedCount, int totalRoutes, int totalCarriers, String message) {
+    private Map<String, Object> createResult(int assignedCount, int totalRoutes, int totalCouriers, String message) {
         Map<String, Object> result = new HashMap<>();
         result.put("assignedCount", assignedCount);
         result.put("totalPendingRoutes", totalRoutes);
-        result.put("totalDeliveryCarriers", totalCarriers);
+        result.put("totalDeliveryCouriers", totalCouriers);
         result.put("message", message);
         return result;
     }
 
-    private static class CarrierCapacity {
-        Long carrierId;
+    private static class CourierCapacity {
+        Long courierId;
         double maxVolume;
         double remainingVolume;
         int maxPackages;

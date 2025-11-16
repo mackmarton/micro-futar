@@ -30,8 +30,8 @@ public class KafkaProducerService {
     @Value("${kafka.topics.package-size-topic}")
     private String packageSizeTopic;
 
-    @Value("${kafka.topics.shipment-route-carrier-topic}")
-    private String shipmentRouteCarrierTopic;
+    @Value("${kafka.topics.shipment-route-courier-topic}")
+    private String shipmentRouteCourierTopic;
 
     @Value("${kafka.topics.depo-topic}")
     private String depoTopic;
@@ -140,22 +140,22 @@ public class KafkaProducerService {
         }
     }
 
-    public void sendShipmentRouteCarrier(ShipmentRouteCarrierDTO shipmentRouteCarrierDTO) {
-        log.info("Sending shipment route carrier message to topic {}: {}", shipmentRouteCarrierTopic, shipmentRouteCarrierDTO);
+    public void sendShipmentRouteCourier(ShipmentRouteCourierDTO shipmentRouteCourierDTO) {
+        log.info("Sending shipment route courier message to topic {}: {}", shipmentRouteCourierTopic, shipmentRouteCourierDTO);
         try {
-            kafkaTemplate.send(shipmentRouteCarrierTopic, shipmentRouteCarrierDTO.getId().toString(), shipmentRouteCarrierDTO)
+            kafkaTemplate.send(shipmentRouteCourierTopic, shipmentRouteCourierDTO.getId().toString(), shipmentRouteCourierDTO)
                     .whenComplete((_, ex) -> {
                         if (ex == null) {
-                            log.info("Successfully sent shipment route carrier with ID: {} to topic: {}",
-                                    shipmentRouteCarrierDTO.getId(), shipmentRouteCarrierTopic);
+                            log.info("Successfully sent shipment route courier with ID: {} to topic: {}",
+                                    shipmentRouteCourierDTO.getId(), shipmentRouteCourierTopic);
                         } else {
-                            log.error("Failed to send shipment route carrier with ID: {} to topic: {}",
-                                    shipmentRouteCarrierDTO.getId(), shipmentRouteCarrierTopic, ex);
+                            log.error("Failed to send shipment route courier with ID: {} to topic: {}",
+                                    shipmentRouteCourierDTO.getId(), shipmentRouteCourierTopic, ex);
                         }
                     });
         } catch (Exception e) {
-            log.error("Error sending shipment route carrier message to Kafka", e);
-            throw new KafkaException("Failed to send shipment route carrier message", e);
+            log.error("Error sending shipment route courier message to Kafka", e);
+            throw new KafkaException("Failed to send shipment route courier message", e);
         }
     }
 

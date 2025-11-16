@@ -11,9 +11,9 @@ import java.sql.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ShipmentRouteCarrierDTO {
+public class ShipmentRouteCourierDTO {
     private Long id;
-    private Long carrierId;
+    private Long courierId;
     private Long shipmentRouteId;
     private Date dateAssignedFor;
     private Boolean failed;

@@ -12,11 +12,11 @@ import java.sql.Date;
 @Data
 @Entity
 @NoArgsConstructor
-public class ShipmentRouteCarrier {
+public class ShipmentRouteCourier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long carrierId;
+    private Long courierId;
     private Long shipmentRouteId;
     private Date dateAssignedFor;
     private Boolean failed = false;
