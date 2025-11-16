@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.courier.services.ShipmentRouteCourierService;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,6 +30,20 @@ public class ShipmentRouteCourierController {
         return shipmentRouteCourierService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/{id}/fulfill")
+    public ResponseEntity<Void> fulfillShipmentRouteAssignment(@PathVariable Long id) {
+        return shipmentRouteCourierService.fulfillAssignment(id) ?
+                ResponseEntity.ok().build() :
+                ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/{id}/fail")
+    public ResponseEntity<Void> failShipmentRouteAssignment(@PathVariable Long id) {
+        return shipmentRouteCourierService.failAssignment(id) ?
+                ResponseEntity.ok().build() :
+                ResponseEntity.notFound().build();
     }
 }
 

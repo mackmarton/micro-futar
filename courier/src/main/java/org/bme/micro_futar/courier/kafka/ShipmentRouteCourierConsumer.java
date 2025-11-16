@@ -18,7 +18,7 @@ public class ShipmentRouteCourierConsumer {
     public void consumeShipmentRouteCourier(ShipmentRouteCourierDTO shipmentRouteCourierDTO) {
         log.info("Received shipmentRouteCourier message: {}", shipmentRouteCourierDTO);
         try {
-            shipmentRouteCourierService.save(shipmentRouteCourierDTO);
+            shipmentRouteCourierService.saveWithoutTopicSend(shipmentRouteCourierDTO);
             log.info("Successfully processed shipmentRouteCourier: {}", shipmentRouteCourierDTO.getId());
         } catch (Exception e) {
             log.error("Error processing shipmentRouteCourier message: {}", shipmentRouteCourierDTO, e);
