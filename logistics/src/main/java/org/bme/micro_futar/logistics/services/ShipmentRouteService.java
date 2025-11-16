@@ -1,6 +1,8 @@
 package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.bme.micro_futar.logistics.entities.ShipmentRoute;
 import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.ShipmentRouteMapper;
 import org.bme.micro_futar.logistics.repositories.ShipmentRouteRepository;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ShipmentRouteService {
@@ -30,12 +33,6 @@ public class ShipmentRouteService {
                 .map(shipmentRouteMapper::toDTO);
     }
 
-    @Transactional
-    public void saveAll(List<ShipmentRouteDTO> shipmentRouteDTOs){
-        shipmentRouteRepository.saveAll(shipmentRouteMapper.toEntityList(shipmentRouteDTOs));
-        shipmentRouteDTOs.forEach(kafkaProducerService::sendShipmentRoute);
-    }
-
     public List<ShipmentRouteDTO> getDeliveryRoutes(Long depoId) {
         return shipmentRouteRepository.findDeliveryRoutes(depoId).stream()
                 .map(shipmentRouteMapper::toDTO)
@@ -46,5 +43,19 @@ public class ShipmentRouteService {
         return shipmentRouteRepository.findPickupRoutes(depoId).stream()
                 .map(shipmentRouteMapper::toDTO)
                 .toList();
+    }
+
+    @Transactional
+    public void saveAll(List<ShipmentRouteDTO> shipmentRouteDTOs){
+        shipmentRouteRepository.saveAll(shipmentRouteMapper.toEntityList(shipmentRouteDTOs));
+        shipmentRouteDTOs.forEach(kafkaProducerService::sendShipmentRoute);
+    }
+
+    @Transactional
+    public ShipmentRouteDTO saveWithoutTopicSend(ShipmentRouteDTO shipmentRouteDTO) {
+        log.info("Saving shipmentRoute: {}", shipmentRouteDTO);
+        ShipmentRoute shipmentRoute = shipmentRouteMapper.toEntity(shipmentRouteDTO);
+        ShipmentRoute savedShipmentRoute = shipmentRouteRepository.save(shipmentRoute);
+        return shipmentRouteMapper.toDTO(savedShipmentRoute);
     }
 }
