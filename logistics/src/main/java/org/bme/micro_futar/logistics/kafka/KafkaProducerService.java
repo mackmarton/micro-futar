@@ -2,8 +2,8 @@ package org.bme.micro_futar.logistics.kafka;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bme.micro_futar.logistics.exceptions.KafkaException;
 import org.bme.micro_futar.shared.dtos.*;
+import org.bme.micro_futar.shared.exceptions.KafkaException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
