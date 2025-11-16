@@ -1,4 +1,4 @@
-package org.bme.micro_futar.logistics.exceptions;
+package org.bme.micro_futar.shared.exceptions;
 
 public class KafkaException extends RuntimeException {
     public KafkaException(String message) {
