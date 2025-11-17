@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: logistics
+    name: courier
   profiles:
     active: ${SPRING_PROFILE}
   jpa:
