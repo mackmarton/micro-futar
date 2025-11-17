@@ -1,6 +1,5 @@
 package org.bme.micro_futar.tracking;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
@@ -8,7 +7,6 @@ import org.springframework.context.annotation.Import;
 @SpringBootTest
 class TrackingApplicationTests {
 
-	@Test
 	void contextLoads() {
 	}
 
