@@ -32,6 +32,13 @@ public class ShipmentRouteCourierController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PostMapping("/{id}/pickup")
+    public ResponseEntity<Void> pickUpShipmentForDelivery(@PathVariable Long id) {
+        return shipmentRouteCourierService.pickUpShipmentForDelivery(id) ?
+                ResponseEntity.ok().build() :
+                ResponseEntity.notFound().build();
+    }
+
     @PostMapping("/{id}/fulfill")
     public ResponseEntity<Void> fulfillShipmentRouteAssignment(@PathVariable Long id) {
         return shipmentRouteCourierService.fulfillAssignment(id) ?
