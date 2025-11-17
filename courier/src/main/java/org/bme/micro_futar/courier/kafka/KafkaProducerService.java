@@ -8,6 +8,7 @@ import org.bme.micro_futar.shared.exceptions.KafkaException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Slf4j
@@ -22,6 +23,7 @@ public class KafkaProducerService {
     @Value("${kafka.topics.shipment-route-courier-topic}")
     private String shipmentRouteCourierTopic;
 
+    @Transactional
     public void sendShipmentRoute(ShipmentRouteDTO shipmentRouteDTO) {
         log.info("Sending shipment route message to topic {}: {}", shipmentRouteTopic, shipmentRouteDTO);
         try {
@@ -41,6 +43,7 @@ public class KafkaProducerService {
         }
     }
 
+    @Transactional
     public void sendShipmentRouteCourier(ShipmentRouteCourierDTO shipmentRouteCourierDTO) {
         log.info("Sending shipment route courier message to topic {}: {}", shipmentRouteCourierTopic, shipmentRouteCourierDTO);
         try {

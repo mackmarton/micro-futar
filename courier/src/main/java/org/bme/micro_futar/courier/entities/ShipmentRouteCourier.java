@@ -16,5 +16,6 @@ public class ShipmentRouteCourier {
     private Long courierId;
     private Long shipmentRouteId;
     private Date dateAssignedFor;
+    private Boolean pickedUpForDelivery = false;
     private Boolean failed = false;
 }

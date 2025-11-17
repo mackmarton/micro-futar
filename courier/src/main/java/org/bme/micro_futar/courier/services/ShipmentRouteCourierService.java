@@ -38,6 +38,17 @@ public class ShipmentRouteCourierService {
                 .toList();
     }
 
+    public boolean pickUpShipmentForDelivery(long id) {
+        var shipmentRouteCourierOptional = findById(id);
+        if (shipmentRouteCourierOptional.isEmpty()) {
+            return false;
+        }
+        var shipmentRouteCourier = shipmentRouteCourierOptional.get();
+        shipmentRouteCourier.setPickedUpForDelivery(true);
+        save(shipmentRouteCourier);
+        return true;
+    }
+
     public boolean fulfillAssignment(Long id) {
         var shipmentRouteCourierOptional = findById(id);
         if (shipmentRouteCourierOptional.isEmpty()) {

@@ -16,6 +16,7 @@ public class ShipmentRouteCourierDTO {
     private Long courierId;
     private Long shipmentRouteId;
     private Date dateAssignedFor;
+    private Boolean pickedUpForDelivery;
     private Boolean failed;
 }
 
