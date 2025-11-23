@@ -24,3 +24,6 @@ kafka:
     shipment-route-topic: ${SHIPMENT_ROUTE_TOPIC}
     courier-topic: ${COURIER_TOPIC}
     vehicle-topic: ${VEHICLE_TOPIC}
+    location-region-topic: ${LOCATION_REGION_TOPIC}
+    location-country-topic: ${LOCATION_COUNTRY_TOPIC}
+    location-city-topic: ${LOCATION_CITY_TOPIC}

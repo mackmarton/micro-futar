@@ -10,3 +10,6 @@ kafka:
     shipment-route-topic: shipment-routes
     courier-topic: couriers
     vehicle-topic: vehicles
+    location-region-topic: location-regions
+    location-country-topic: location-countries
+    location-city-topic: location-cities
