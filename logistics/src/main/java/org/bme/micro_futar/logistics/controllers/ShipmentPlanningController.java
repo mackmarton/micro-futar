@@ -1,7 +1,7 @@
 package org.bme.micro_futar.logistics.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.bme.micro_futar.logistics.services.ShipmentToCourierPlanningService;
+import org.bme.micro_futar.logistics.services.planners.ShipmentToCourierPlanningService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
