@@ -7,8 +7,6 @@ import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Slf4j
 @RestController
 @RequestMapping("/api/shipment-route-couriers")
@@ -17,17 +15,18 @@ public class ShipmentRouteCourierController {
 
     private final ShipmentRouteCourierService shipmentRouteCourierService;
 
-    @GetMapping
-    public ResponseEntity<List<ShipmentRouteCourierDTO>> findAll() {
-        log.debug("Finding all shipmentRouteCouriers");
-        List<ShipmentRouteCourierDTO> shipmentRouteCouriers = shipmentRouteCourierService.findAll();
-        return ResponseEntity.ok(shipmentRouteCouriers);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<ShipmentRouteCourierDTO> findById(@PathVariable Long id) {
         log.debug("Finding shipmentRouteCourier by id: {}", id);
         return shipmentRouteCourierService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<ShipmentRouteCourierDTO> findByCourierId(@RequestParam Long courierId) {
+        log.debug("Finding shipmentRouteCourier by courierId: {}", courierId);
+        return shipmentRouteCourierService.findByCourierId(courierId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
