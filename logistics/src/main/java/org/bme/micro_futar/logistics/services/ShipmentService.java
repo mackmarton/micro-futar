@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.logistics.entities.Shipment;
 import org.bme.micro_futar.logistics.mappers.ShipmentMapper;
 import org.bme.micro_futar.logistics.repositories.ShipmentRepository;
+import org.bme.micro_futar.logistics.services.planners.ShipmentRoutePlanner;
 import org.bme.micro_futar.shared.dtos.ShipmentDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

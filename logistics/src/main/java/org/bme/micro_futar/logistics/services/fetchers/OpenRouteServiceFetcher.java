@@ -1,4 +1,4 @@
-package org.bme.micro_futar.logistics.services;
+package org.bme.micro_futar.logistics.services.fetchers;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;

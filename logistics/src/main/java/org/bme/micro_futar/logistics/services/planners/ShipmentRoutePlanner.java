@@ -1,7 +1,9 @@
-package org.bme.micro_futar.logistics.services;
+package org.bme.micro_futar.logistics.services.planners;
 
 import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.logistics.exceptions.NoRouteFoundException;
+import org.bme.micro_futar.logistics.services.*;
+import org.bme.micro_futar.logistics.services.fetchers.OpenRouteServiceFetcher;
 import org.bme.micro_futar.shared.dtos.*;
 import org.springframework.stereotype.Service;
 
