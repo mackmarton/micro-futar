@@ -21,13 +21,11 @@ public class ShipmentRouteService {
     private final ShipmentRouteRepository shipmentRouteRepository;
 
     public Optional<ShipmentRouteDTO> findById(Long id) {
-        log.debug("Finding shipmentRoute by id: {}", id);
         return shipmentRouteRepository.findById(id)
                 .map(shipmentRouteMapper::toDTO);
     }
 
     public List<ShipmentRouteDTO> findAll() {
-        log.debug("Finding all shipmentRoutes");
         return shipmentRouteRepository.findAll().stream()
                 .map(shipmentRouteMapper::toDTO)
                 .toList();
@@ -39,6 +37,12 @@ public class ShipmentRouteService {
         ShipmentRoute shipmentRoute = shipmentRouteMapper.toEntity(shipmentRouteDTO);
         ShipmentRoute savedShipmentRoute = shipmentRouteRepository.save(shipmentRoute);
         return shipmentRouteMapper.toDTO(savedShipmentRoute);
+    }
+
+    public List<ShipmentRouteDTO> findAllFulfilledByShipmentId(Long shipmentId) {
+        return shipmentRouteRepository.findAllByShipmentIdEqualsAndFulfillmentTimeIsNotNull(shipmentId).stream()
+                .map(shipmentRouteMapper::toDTO)
+                .toList();
     }
 }
 
