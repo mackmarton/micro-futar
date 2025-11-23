@@ -26,16 +26,20 @@ public class ShipmentRouteCourierService {
     private final ShipmentRouteCourierRepository shipmentRouteCourierRepository;
 
     public Optional<ShipmentRouteCourierDTO> findById(Long id) {
-        log.debug("Finding shipmentRouteCourier by id: {}", id);
         return shipmentRouteCourierRepository.findById(id)
                 .map(shipmentRouteCourierMapper::toDTO);
     }
 
     public List<ShipmentRouteCourierDTO> findAll() {
-        log.debug("Finding all shipmentRouteCouriers");
         return shipmentRouteCourierRepository.findAll().stream()
                 .map(shipmentRouteCourierMapper::toDTO)
                 .toList();
+    }
+
+
+    public Optional<ShipmentRouteCourierDTO> findByCourierId(Long courierId) {
+        return shipmentRouteCourierRepository.findByCourierId(courierId)
+                .map(shipmentRouteCourierMapper::toDTO);
     }
 
     public boolean pickUpShipmentForDelivery(long id) {
