@@ -33,6 +33,11 @@ public class ShipmentService {
                 .toList();
     }
 
+    public Optional<ShipmentDTO> findByParcelNumber(String parcelNumber) {
+        return shipmentRepository.findByParcelNumber(parcelNumber)
+                .map(shipmentMapper::toDTO);
+    }
+
     @Transactional
     public ShipmentDTO save(ShipmentDTO shipmentDTO) {
         log.info("Saving shipment: {}", shipmentDTO);
