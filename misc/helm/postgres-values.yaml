@@ -1,0 +1,80 @@
+global:
+  security:
+    allowInsecureImages: true
+
+image:
+  repository: bitnamilegacy/postgresql
+  registry: docker.io
+  tag: 16-debian-12
+  digest: ""
+
+auth:
+  username: postgres
+  existingSecret: postgres-auth-secret
+  secretKeys:
+    adminPasswordKey: postgresql-password
+
+primary:
+  extraEnvVars:
+    - name: POSTGRES_MULTIPLE_DATABASES
+      value: "orders_db,logistics_db,courier_db,tracking_db,keycloak_db"
+    - name: POSTGRES_USER
+      value: "postgres"
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: postgres-auth-secret
+          key: postgresql-password
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  initdb:
+    scripts:
+      01_multi_db.sh: |
+        #!/bin/bash
+        set -e
+        set -u
+        
+        export PGPASSWORD=$POSTGRES_PASSWORD
+
+        echo "### RUNNING INIT SCRIPT ###"
+        echo "Databases to create: $POSTGRES_MULTIPLE_DATABASES"
+
+        function create_user_and_database() {
+            local database=$1
+            echo "Creating user and database '$database'"
+            psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "postgres" <<-EOSQL
+                CREATE USER $database WITH PASSWORD '$POSTGRES_PASSWORD';
+                CREATE DATABASE $database;
+                GRANT ALL PRIVILEGES ON DATABASE $database TO $database;
+        EOSQL
+            psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$database" <<-EOSQL
+                GRANT ALL PRIVILEGES ON SCHEMA public TO $database;
+                ALTER SCHEMA public OWNER TO $database;
+        EOSQL
+        }
+
+        if [ -n "$POSTGRES_MULTIPLE_DATABASES" ]; then
+            for db in $(echo $POSTGRES_MULTIPLE_DATABASES | tr ',' ' '); do
+                create_user_and_database $db
+            done
+            echo "### SUCCESS: Multiple databases created ###"
+        fi
+  persistence:
+    enabled: true
+    size: 10Gi
+
+readReplicas:
+  replicaCount: 0
+  resources: 
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
