@@ -1,0 +1,48 @@
+global:
+  security:
+    allowInsecureImages: true
+
+image:
+  repository: bitnamilegacy/kafka
+  registry: docker.io
+  tag: 4.0.0-debian-12-r10
+  digest: ""
+
+kraft:
+  enabled: true
+
+zookeeper:
+  enabled: false
+
+controller:
+  replicaCount: 1
+
+listeners:
+  client:
+    protocol: PLAINTEXT
+  controller:
+    protocol: PLAINTEXT
+  interbroker:
+    protocol: PLAINTEXT
+
+persistence:
+  enabled: true
+  storageClass: "standard" 
+  size: 10Gi
+
+# externalAccess:
+#   enabled: true
+#   service:
+#     type: LoadBalancer
+#     ports:
+#       external: 9094
+#   autoDiscovery:
+#     enabled: true
+
+# resources:
+#   limits:
+#     cpu: 1000m
+#     memory: 2Gi
+#   requests:
+#     cpu: 500m
+#     memory: 1Gi
