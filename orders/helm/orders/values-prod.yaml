@@ -1,0 +1,64 @@
+replicaCount: 3
+
+image:
+  repository: orders
+  pullPolicy: Always
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - host: orders.yourdomain.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: orders-tls
+      hosts:
+        - orders.yourdomain.com
+
+resources:
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+  requests:
+    cpu: 1000m
+    memory: 1Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8081"
+  prometheus.io/path: "/actuator/prometheus"
+
+config:
+  serverPort: 8081
+  springProfile: prod
+  datasource:
+    url: jdbc:postgresql://postgres-prod:5432/orders_db
+    username: orders_db
+    passwordSecretName: orders-db-secret-prod
+    passwordSecretKey: password
+  kafka:
+    bootstrapServers: kafka-prod-0:9092,kafka-prod-1:9092,kafka-prod-2:9092
+  keycloak:
+    url: https://auth.yourdomain.com
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
