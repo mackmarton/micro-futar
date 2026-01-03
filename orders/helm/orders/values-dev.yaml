@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: orders
+  repository: ghcr.io/mackmarton/orders
   pullPolicy: Always
   tag: "latest"
 
