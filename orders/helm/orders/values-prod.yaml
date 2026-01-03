@@ -5,6 +5,9 @@ image:
   pullPolicy: Always
   tag: "latest"
 
+imagePullSecrets:
+  - name: github-auth
+
 service:
   type: ClusterIP
   port: 8080

@@ -4,7 +4,8 @@ image:
   repository: orders
   pullPolicy: Always
   tag: "latest"
-  imagePullSecrets:
+
+imagePullSecrets:
     - name: github-auth
 
 service:
