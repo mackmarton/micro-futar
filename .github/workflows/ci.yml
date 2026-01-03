@@ -84,4 +84,4 @@ jobs:
         with:
           context: ./orders
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: ghcr.io/orders:latest
