@@ -4,6 +4,8 @@ image:
   repository: orders
   pullPolicy: Always
   tag: "latest"
+  imagePullSecrets:
+    - name: github-auth
 
 service:
   type: ClusterIP
