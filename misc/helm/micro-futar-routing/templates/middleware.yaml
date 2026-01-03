@@ -1,0 +1,12 @@
+{{- range .Values.apps }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .name }}-strip
+  namespace: {{ $.Values.namespace }}
+spec:
+  replacePathRegex:
+    regex: "^/api/{{ .name }}/(.*)"
+    replacement: "/api/$1"
+{{- end }}
