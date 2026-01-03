@@ -1,0 +1,16 @@
+providers:
+  kubernetesCRD:
+    enabled: true
+
+ports:
+  web:
+    nodePort: 30080
+    expose:
+      default: true
+  websecure:
+    nodePort: 30443
+    expose:
+      default: true
+
+service:
+  type: NodePort

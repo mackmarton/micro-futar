@@ -1,0 +1,19 @@
+{{- range .Values.apps }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .name }}-route
+  namespace: {{ $.Values.namespace }}
+spec:
+  entryPoints:
+    - {{ $.Values.entryPoint }}
+  routes:
+    - match: PathPrefix(`/api/{{ .name }}`)
+      kind: Rule
+      services:
+        - name: {{ .name }}
+          port: {{ .port }}
+      middlewares:
+        - name: {{ .name }}-strip
+{{- end }}
