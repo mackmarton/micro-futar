@@ -65,3 +65,12 @@ podSecurityContext:
   runAsNonRoot: true
   runAsUser: 1000
   fsGroup: 1000
+
+kafka:
+  topics:
+    location_region_topic: location-regions
+    location_country_topic: location-countries
+    location_city_topic: location-cities
+    country_price_topic: country-prices
+    package_size_topic: package-sizes
+    shipment_topic: shipments
