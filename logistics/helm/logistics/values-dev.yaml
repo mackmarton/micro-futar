@@ -13,11 +13,6 @@ service:
   port: 8080
   targetPort: 8080
 
-resources:
-  limits:
-    cpu: 500m
-    memory: 512Mi
-
 autoscaling:
   enabled: false
 
