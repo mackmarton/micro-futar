@@ -25,7 +25,7 @@ config:
   serverPort: 8080
   springProfile: dev
   datasource:
-    url: jdbc:postgresql://postgres-dev:5432/orders_db_dev
+    url: jdbc:postgresql://postgres-db-postgresql.micro-futar-services-dev:5432/orders_db
     username: orders_db_dev
     passwordSecretName: orders-db-secret-dev
     passwordSecretKey: PASSWORD
