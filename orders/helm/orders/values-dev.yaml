@@ -17,9 +17,6 @@ resources:
   limits:
     cpu: 500m
     memory: 512Mi
-  requests:
-    cpu: 250m
-    memory: 256Mi
 
 autoscaling:
   enabled: false
@@ -30,10 +27,10 @@ config:
   datasource:
     url: jdbc:postgresql://postgres-dev:5432/orders_db_dev
     username: orders_db_dev
-    passwordSecretName: orders-db-secret
-    passwordSecretKey: password
+    passwordSecretName: orders-db-secret-dev
+    passwordSecretKey: PASSWORD
   kafka:
-    bootstrapServers: kafka-dev:9092
+    bootstrapServers: kafka-futar.micro-futar-services-dev:9092
   keycloak:
     url: http://keycloak-dev:8080
 
