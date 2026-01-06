@@ -1,9 +1,12 @@
 replicaCount: 1
 
 image:
-  repository: logistics
+  repository: ghcr.io/mackmarton/logistics
   pullPolicy: Always
   tag: "latest"
+
+imagePullSecrets:
+  - name: github-auth
 
 service:
   type: ClusterIP
@@ -14,9 +17,6 @@ resources:
   limits:
     cpu: 500m
     memory: 512Mi
-  requests:
-    cpu: 250m
-    memory: 256Mi
 
 autoscaling:
   enabled: false
@@ -25,12 +25,30 @@ config:
   serverPort: 8080
   springProfile: dev
   datasource:
-    url: jdbc:postgresql://postgres-dev:5432/logistics_db
+    url: jdbc:postgresql://postgres-db-postgresql.micro-futar-services-dev:5432/logistics_db
     username: logistics_db
-    passwordSecretName: logistics-db-secret
-    passwordSecretKey: password
+    passwordSecretName: logistics-db-secret-dev
+    passwordSecretKey: PASSWORD
   kafka:
-    bootstrapServers: kafka-dev:9092
+    bootstrapServers: kafka-futar.micro-futar-services-dev:9092
   keycloak:
     url: http://keycloak-dev:8080
+  api:
+    openRouteService:
+      keySecretName: open-route-service-secret-dev
+      keySecretKey: KEY
 
+
+kafka:
+  topics:
+    location_region_topic: location-regions
+    location_country_topic: location-countries
+    location_city_topic: location-cities
+    country_price_topic: country-prices
+    package_size_topic: package-sizes
+    shipment_topic: shipments
+    depo_topic: depos
+    shipment_route_courier_topic: shipment-route-couriers
+    shipment_route_topic: shipment-routes
+    courier_topic: couriers
+    vehicle_topic: vehicles
