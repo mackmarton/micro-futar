@@ -33,3 +33,13 @@ config:
     bootstrapServers: kafka.micro-futar-services:9092
   keycloak:
     url: http://localhost:8090
+
+kafka:
+  topics:
+    package_size_topic: package-sizes
+    shipment_topic: shipments
+    shipment_route_courier_topic: shipment-route-couriers
+    depo_topic: depos
+    shipment_route_topic: shipment-routes
+    courier_topic: couriers
+    vehicle_topic: vehicles
