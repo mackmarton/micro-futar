@@ -45,6 +45,7 @@ jobs:
     - name: Publish Test Results
       uses: dorny/test-reporter@v1
       if: always()
+      continue-on-error: true
       with:
         name: Test Results
         path: tracking/target/surefire-reports/TEST-*.xml
@@ -54,6 +55,7 @@ jobs:
     - name: Upload test reports
       uses: actions/upload-artifact@v4
       if: always()
+      continue-on-error: true
       with:
         name: test-reports
         path: tracking/target/surefire-reports/
