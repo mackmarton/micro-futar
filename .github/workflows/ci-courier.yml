@@ -2,17 +2,15 @@ name: CI
 
 on:
   push:
-    branches: [ main, master, develop ]
+    branches: [ main, develop ]
     paths:
-      - 'orders/**'
-      - 'shared/**'
-      - '.github/workflows/ci.yml'
+      - 'courier/**'
+      - '.github/workflows/ci-courier.yml'
   pull_request:
-    branches: [ main, master, develop ]
+    branches: [ main, develop ]
     paths:
-      - 'orders/**'
-      - 'shared/**'
-      - '.github/workflows/ci.yml'
+      - 'courier/**'
+      - '.github/workflows/ci-courier.yml'
 
 jobs:
   test:
@@ -34,22 +32,22 @@ jobs:
         cache: maven
         cache-dependency-path: |
           shared/pom.xml
-          orders/pom.xml
+          courier/pom.xml
 
     - name: Build and install shared module
       run: mvn clean install -DskipTests --batch-mode --errors --fail-at-end --show-version
       working-directory: shared
 
-    - name: Run tests for orders module
+    - name: Run tests for courier module
       run: mvn clean test --batch-mode --errors --fail-at-end --show-version
-      working-directory: orders
+      working-directory: courier
 
     - name: Publish Test Results
       uses: dorny/test-reporter@v1
       if: always()
       with:
         name: Test Results
-        path: orders/target/surefire-reports/TEST-*.xml
+        path: courier/target/surefire-reports/TEST-*.xml
         reporter: java-junit
         fail-on-error: false
 
@@ -58,7 +56,7 @@ jobs:
       if: always()
       with:
         name: test-reports
-        path: orders/target/surefire-reports/
+        path: courier/target/surefire-reports/
         retention-days: 30
   
   build-and-push-image:
@@ -83,8 +81,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./orders/Dockerfile
+          file: ./courier/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/orders:latest
-            ghcr.io/${{ github.repository_owner }}/orders:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/courier:latest
+            ghcr.io/${{ github.repository_owner }}/courier:${{ github.sha }}
