@@ -2,10 +2,12 @@ package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.logistics.entities.Depo;
+import org.bme.micro_futar.logistics.events.DepoChangedEvent;
 import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.DepoMapper;
 import org.bme.micro_futar.logistics.repositories.DepoRepository;
 import org.bme.micro_futar.shared.dtos.DepoDTO;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ public class DepoService {
     private final DepoRepository depoRepository;
     private final DepoMapper depoMapper;
     private final KafkaProducerService kafkaProducerService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public List<DepoDTO> getAllDepos() {
         return depoRepository.findAll().stream()
@@ -37,6 +40,7 @@ public class DepoService {
         Depo savedDepo = depoRepository.save(depo);
         DepoDTO result = depoMapper.toDTO(savedDepo);
         kafkaProducerService.sendDepo(result);
+        eventPublisher.publishEvent(new DepoChangedEvent(this, DepoChangedEvent.ChangeType.CREATED));
         return result;
     }
 
@@ -46,7 +50,7 @@ public class DepoService {
             throw new IllegalArgumentException("Path ID does not match DTO ID");
         }
 
-        return depoRepository.findById(id)
+        var updatedDepoDTO = depoRepository.findById(id)
                 .map(_ -> {
                     Depo updatedDepo = depoMapper.toEntity(depoDTO);
                     updatedDepo.setId(id);
@@ -55,12 +59,15 @@ public class DepoService {
                     kafkaProducerService.sendDepo(result);
                     return result;
                 });
+        eventPublisher.publishEvent(new DepoChangedEvent(this, DepoChangedEvent.ChangeType.UPDATED));
+        return updatedDepoDTO;
     }
 
     @Transactional
     public boolean deleteDepo(Long id) {
         if (depoRepository.existsById(id)) {
             depoRepository.deleteById(id);
+            eventPublisher.publishEvent(new DepoChangedEvent(this, DepoChangedEvent.ChangeType.DELETED));
             return true;
         }
         return false;

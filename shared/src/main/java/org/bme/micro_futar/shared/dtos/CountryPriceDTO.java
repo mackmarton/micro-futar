@@ -14,5 +14,7 @@ public class CountryPriceDTO {
     @NonNull
     private Long packageSizeId;
     @NonNull
-    private Double price;
+    private Double minPrice;
+    @NonNull
+    private Double maxPrice;
 }
