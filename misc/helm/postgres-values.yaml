@@ -1,6 +1,7 @@
 global:
   security:
     allowInsecureImages: true
+  storageClass: "local-path"
 
 image:
   repository: bitnamilegacy/postgresql
@@ -67,6 +68,7 @@ primary:
   persistence:
     enabled: true
     size: 10Gi
+    storageClass: "local-path"
 
 readReplicas:
   replicaCount: 0
