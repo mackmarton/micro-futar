@@ -1,0 +1,15 @@
+entryPoint: web
+
+apps:
+  - name: orders
+    port: 8080
+    namespace: micro-futar-apps-prod
+  - name: courier
+    port: 8080
+    namespace: micro-futar-apps-prod
+  - name: logistics
+    port: 8080
+    namespace: micro-futar-apps-prod
+  - name: tracking
+    port: 8080
+    namespace: micro-futar-apps-prod

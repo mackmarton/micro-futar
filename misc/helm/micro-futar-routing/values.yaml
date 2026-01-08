@@ -1,13 +1,18 @@
-namespace: micro-futar-apps
-
 entryPoint: web
 
 apps:
   - name: orders
     port: 8081
+    namespace: micro-futar-apps
   - name: courier
     port: 8081
+    namespace: micro-futar-apps
   - name: logistics
     port: 8081
+    namespace: micro-futar-apps
   - name: tracking
     port: 8081
+    namespace: micro-futar-apps
+  - name: keycloak
+    port: 8080
+    namespace: micro-futar-services
