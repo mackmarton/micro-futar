@@ -1,0 +1,28 @@
+global:
+  security:
+    allowInsecureImages: true
+
+image:
+  repository: bitnamilegacy/keycloak
+  registry: docker.io
+  tag: 26.3.3-debian-12-r0
+  digest: ""
+
+auth:
+  adminUser: admin
+  existingSecret: "keycloak-secrets"
+  passwordSecretKey: "ADMINPASSWORD"
+
+postgresql:
+  enabled: false
+
+externalDatabase:
+  host: "postgres-db-postgresql"
+  port: 5432
+  user: "keycloak_db"
+  database: "keycloak_db"
+  existingSecret: "keycloak-secrets"
+  existingSecretPasswordKey: "DBPASSWORD"
+
+proxy: edge
+httpRelativePath: /auth/
