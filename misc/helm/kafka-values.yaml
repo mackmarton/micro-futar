@@ -16,6 +16,10 @@ zookeeper:
 
 controller:
   replicaCount: 1
+  persistence:
+    enabled: true
+    storageClass: "local-path"
+    size: 1Gi
 
 listeners:
   client:
@@ -27,8 +31,8 @@ listeners:
 
 persistence:
   enabled: true
-  storageClass: "standard" 
-  size: 10Gi
+  storageClass: "local-path" 
+  size: 1Gi
 
 # externalAccess:
 #   enabled: true
