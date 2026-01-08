@@ -23,6 +23,17 @@ public class DepoRouteFinderService {
         return dijkstra(graph, originDepoId, destinationDepoId);
     }
 
+    public Double findCheapestRoutePrice(Long originDepoId, Long destinationDepoId, Long packageSizeId) {
+        List<DepoTransitDTO> allTransits = depoTransitService.getAllDepoTransits();
+
+        List<DepoTransitDTO> relevantTransits = allTransits.stream()
+                .filter(transit -> transit.getPackageSizeId().equals(packageSizeId))
+                .toList();
+
+        Map<Long, List<Edge>> graph = buildGraph(relevantTransits);
+        return dijkstraPrice(graph, originDepoId, destinationDepoId);
+    }
+
     private Map<Long, List<Edge>> buildGraph(List<DepoTransitDTO> transits) {
         Map<Long, List<Edge>> graph = new HashMap<>();
 
@@ -85,6 +96,56 @@ public class DepoRouteFinderService {
 
         // No path found
         return Collections.emptyList();
+    }
+
+    private Double dijkstraPrice(Map<Long, List<Edge>> graph, Long start, Long end) {
+        // Distance map: depoId -> minimum cost to reach it
+        Map<Long, Double> distances = new HashMap<>();
+        // Priority queue: sorts by distance
+        PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparingDouble(n -> n.distance));
+        // Visited set
+        Set<Long> visited = new HashSet<>();
+
+        // Initialize
+        distances.put(start, 0.0);
+        pq.offer(new Node(start, 0.0));
+
+        while (!pq.isEmpty()) {
+            Node current = pq.poll();
+            Long currentDepoId = current.depoId;
+
+            // Skip if already visited
+            if (visited.contains(currentDepoId)) {
+                continue;
+            }
+
+            visited.add(currentDepoId);
+
+            // If we reached the destination, return the cost
+            if (currentDepoId.equals(end)) {
+                return distances.get(end);
+            }
+
+            // Get neighbors
+            List<Edge> neighbors = graph.getOrDefault(currentDepoId, Collections.emptyList());
+
+            for (Edge edge : neighbors) {
+                if (visited.contains(edge.destinationDepoId)) {
+                    continue;
+                }
+
+                double newDistance = distances.get(currentDepoId) + edge.cost;
+                double currentDistance = distances.getOrDefault(edge.destinationDepoId, Double.MAX_VALUE);
+
+                if (newDistance < currentDistance) {
+                    distances.put(edge.destinationDepoId, newDistance);
+                    pq.offer(new Node(edge.destinationDepoId, newDistance));
+                }
+            }
+        }
+
+        // No path found
+        return null;
     }
 
     private List<Long> reconstructPath(Map<Long, Long> parents, Long start, Long end) {
