@@ -1,5 +1,6 @@
 package org.bme.micro_futar.logistics.kafka;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.logistics.services.ShipmentRouteCourierService;
@@ -13,17 +14,17 @@ import org.springframework.stereotype.Component;
 public class ShipmentRouteCourierConsumer {
 
     private final ShipmentRouteCourierService shipmentRouteCourierService;
+    private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "${kafka.topics.shipment-route-courier-topic}", groupId = "courier-group", containerFactory = "kafkaListenerContainerFactory")
-    public void consumeShipmentRouteCourier(ShipmentRouteCourierDTO shipmentRouteCourierDTO) {
-        log.info("Received shipmentRouteCourier message: {}", shipmentRouteCourierDTO);
+    @KafkaListener(topics = "${kafka.topics.shipment-route-courier-topic}", groupId = "courier-group")
+    public void consumeShipmentRouteCourier(String message) {
+        log.info("Received shipmentRouteCourier message: {}", message);
         try {
+            ShipmentRouteCourierDTO shipmentRouteCourierDTO = objectMapper.readValue(message, ShipmentRouteCourierDTO.class);
             shipmentRouteCourierService.saveWithoutTopicSend(shipmentRouteCourierDTO);
             log.info("Successfully processed shipmentRouteCourier: {}", shipmentRouteCourierDTO.getId());
         } catch (Exception e) {
-            log.error("Error processing shipmentRouteCourier message: {}", shipmentRouteCourierDTO, e);
-            throw e;
+            log.error("Error processing shipmentRouteCourier message: {}", message, e);
         }
     }
 }
-
