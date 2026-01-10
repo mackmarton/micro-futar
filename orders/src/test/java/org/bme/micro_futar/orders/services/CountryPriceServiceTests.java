@@ -43,21 +43,18 @@ class CountryPriceServiceTests {
         countryPrice1.setOriginCountryId(1L);
         countryPrice1.setDestinationCountryId(2L);
         countryPrice1.setPackageSizeId(1L);
-        countryPrice1.setPrice(25.99);
 
         countryPrice2 = new CountryPrice();
         countryPrice2.setId(2L);
         countryPrice2.setOriginCountryId(1L);
         countryPrice2.setDestinationCountryId(3L);
         countryPrice2.setPackageSizeId(2L);
-        countryPrice2.setPrice(45.99);
 
         countryPriceDTO1 = CountryPriceDTO.builder()
                 .id(1L)
                 .originCountryId(1L)
                 .destinationCountryId(2L)
                 .packageSizeId(1L)
-                .price(25.99)
                 .build();
 
         countryPriceDTO2 = CountryPriceDTO.builder()
@@ -65,7 +62,6 @@ class CountryPriceServiceTests {
                 .originCountryId(1L)
                 .destinationCountryId(3L)
                 .packageSizeId(2L)
-                .price(45.99)
                 .build();
     }
 
@@ -79,8 +75,6 @@ class CountryPriceServiceTests {
         List<CountryPriceDTO> result = countryPriceService.getAllCountryPrices();
 
         assertThat(result).hasSize(2);
-        assertThat(result.get(0).getPrice()).isEqualTo(25.99);
-        assertThat(result.get(1).getPrice()).isEqualTo(45.99);
         verify(countryPriceRepository).findAll();
         verify(countryPriceMapper, times(2)).toDTO(any(CountryPrice.class));
     }
@@ -104,7 +98,6 @@ class CountryPriceServiceTests {
 
         assertThat(result).isPresent();
         assertThat(result.get().getId()).isEqualTo(1L);
-        assertThat(result.get().getPrice()).isEqualTo(25.99);
         verify(countryPriceRepository).findById(1L);
         verify(countryPriceMapper).toDTO(countryPrice1);
     }
@@ -138,7 +131,6 @@ class CountryPriceServiceTests {
         assertThat(result.get().getOriginCountryId()).isEqualTo(originCountryId);
         assertThat(result.get().getDestinationCountryId()).isEqualTo(destinationCountryId);
         assertThat(result.get().getPackageSizeId()).isEqualTo(packageSizeId);
-        assertThat(result.get().getPrice()).isEqualTo(25.99);
         verify(countryPriceRepository).findByOriginCountryIdAndDestinationCountryIdAndPackageSizeId(
                 originCountryId, destinationCountryId, packageSizeId);
     }
@@ -172,7 +164,6 @@ class CountryPriceServiceTests {
 
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.getPrice()).isEqualTo(25.99);
         verify(countryPriceMapper).toEntity(countryPriceDTO1);
         verify(countryPriceRepository).save(countryPrice1);
         verify(countryPriceMapper).toDTO(countryPrice1);

@@ -89,7 +89,6 @@ class ShipmentServiceTests {
                 .originCountryId(1L)
                 .destinationCountryId(2L)
                 .packageSizeId(1L)
-                .price(25.99)
                 .build();
     }
 

@@ -37,7 +37,6 @@ class CountryPriceControllerTests {
                 .originCountryId(1L)
                 .destinationCountryId(2L)
                 .packageSizeId(1L)
-                .price(25.99)
                 .build();
 
         CountryPriceDTO price2 = CountryPriceDTO.builder()
@@ -45,7 +44,6 @@ class CountryPriceControllerTests {
                 .originCountryId(1L)
                 .destinationCountryId(3L)
                 .packageSizeId(2L)
-                .price(45.99)
                 .build();
 
         List<CountryPriceDTO> prices = Arrays.asList(price1, price2);
@@ -82,7 +80,6 @@ class CountryPriceControllerTests {
                 .originCountryId(1L)
                 .destinationCountryId(2L)
                 .packageSizeId(1L)
-                .price(25.99)
                 .build();
 
         when(countryPriceService.getCountryPriceById(1L)).thenReturn(Optional.of(price));
