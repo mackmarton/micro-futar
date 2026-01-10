@@ -1,14 +1,12 @@
 package org.bme.micro_futar.logistics.services.fetchers;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.*;
 
 @Service
@@ -21,12 +19,21 @@ public class OpenRouteServiceFetcher {
 
     @SuppressWarnings("unchecked")
     public double[] geocode(String address) {
-        String url = UriComponentsBuilder
+        UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString("https://api.openrouteservice.org/geocode/search")
                 .queryParam("api_key", apiKey)
-                .queryParam("text", address)
-                .toUriString();
-        ResponseEntity<Map<String, Object>> res = restTemplate.getForEntity(url, (Class<Map<String, Object>>)(Class<?>)Map.class);
+                .queryParam("text", address);
+        URI uri = builder.build().toUri();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Spring-RestTemplate");
+        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+        ResponseEntity<Map<String, Object>> res = restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                httpEntity,
+                (Class<Map<String, Object>>) (Class<?>) Map.class
+        );
         Map<String, Object> body = res.getBody();
         if (body == null) {
             throw new IllegalStateException("No response body from geocoding service");
@@ -49,6 +56,9 @@ public class OpenRouteServiceFetcher {
 
     @SuppressWarnings("unchecked")
     public int getClosestIndexByDuration(double[] origin, List<double[]> destinations) {
+        if (destinations.size() == 1) {
+            return 0;
+        }
         String url = "https://api.openrouteservice.org/v2/matrix/driving-car";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -57,16 +67,19 @@ public class OpenRouteServiceFetcher {
         List<double[]> allLocations = new ArrayList<>();
         allLocations.add(origin);
         allLocations.addAll(destinations);
+        List<Integer> destinationsIndexList = new ArrayList<>();
+        for (int i = 1; i < allLocations.size(); i++) {
+            destinationsIndexList.add(i);
+        }
 
         Map<String, Object> payload = new HashMap<>();
         payload.put("locations", allLocations);
         payload.put("sources", Collections.singletonList(0));
-        payload.put("destinations", 0);
+        payload.put("destinations", destinationsIndexList);
         payload.put("metrics", Collections.singletonList("duration"));
-        payload.put("units", "m"); // Optional
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
-        ResponseEntity<Map<String, Object>> res = restTemplate.postForEntity(url, entity, (Class<Map<String, Object>>)(Class<?>)Map.class);
+        ResponseEntity<Map<String, Object>> res = restTemplate.postForEntity(url, entity, (Class<Map<String, Object>>) (Class<?>) Map.class);
         Map<String, Object> body = res.getBody();
         if (body == null) {
             throw new IllegalStateException("No response body from matrix service");
