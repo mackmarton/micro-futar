@@ -37,7 +37,26 @@ public class CountryPriceService {
 
     @Transactional
     public CountryPriceDTO saveCountryPrice(CountryPriceDTO countryPriceDTO) {
-        CountryPrice countryPrice = countryPriceMapper.toEntity(countryPriceDTO);
+        CountryPrice countryPrice;
+
+        // Check if entity already exists to avoid optimistic locking issues
+        if (countryPriceDTO.getId() != null) {
+            Optional<CountryPrice> existing = countryPriceRepository.findById(countryPriceDTO.getId());
+            if (existing.isPresent()) {
+                countryPrice = existing.get();
+                // Update existing entity fields
+                countryPrice.setOriginCountryId(countryPriceDTO.getOriginCountryId());
+                countryPrice.setDestinationCountryId(countryPriceDTO.getDestinationCountryId());
+                countryPrice.setPackageSizeId(countryPriceDTO.getPackageSizeId());
+                countryPrice.setMinPrice(countryPriceDTO.getMinPrice());
+                countryPrice.setMaxPrice(countryPriceDTO.getMaxPrice());
+            } else {
+                countryPrice = countryPriceMapper.toEntity(countryPriceDTO);
+            }
+        } else {
+            countryPrice = countryPriceMapper.toEntity(countryPriceDTO);
+        }
+
         return countryPriceMapper.toDTO(countryPriceRepository.save(countryPrice));
     }
 }
