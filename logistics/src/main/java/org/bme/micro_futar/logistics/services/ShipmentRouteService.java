@@ -46,9 +46,9 @@ public class ShipmentRouteService {
     }
 
     @Transactional
-    public void saveAll(List<ShipmentRouteDTO> shipmentRouteDTOs){
-        shipmentRouteRepository.saveAll(shipmentRouteMapper.toEntityList(shipmentRouteDTOs));
-        shipmentRouteDTOs.forEach(kafkaProducerService::sendShipmentRoute);
+    public void saveAll(List<ShipmentRouteDTO> shipmentRouteDTOs) {
+        List<ShipmentRoute> savedShipmentRoutes = shipmentRouteRepository.saveAll(shipmentRouteMapper.toEntityList(shipmentRouteDTOs));
+        shipmentRouteMapper.toDTOList(savedShipmentRoutes).forEach(kafkaProducerService::sendShipmentRoute);
     }
 
     @Transactional
