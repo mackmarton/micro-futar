@@ -30,14 +30,14 @@ public class CourierController {
     }
 
     @PostMapping
-    public ResponseEntity<CourierDTO> createCourier(@RequestBody CourierDTO CourierDTO) {
-        CourierDTO createdCourier = courierService.createCourier(CourierDTO);
+    public ResponseEntity<CourierDTO> createCourier(@RequestBody CourierDTO courierDTO) {
+        CourierDTO createdCourier = courierService.createCourier(courierDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCourier);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CourierDTO> updateCourier(@PathVariable Long id, @RequestBody CourierDTO CourierDTO) {
-        return courierService.updateCourier(id, CourierDTO)
+    public ResponseEntity<CourierDTO> updateCourier(@PathVariable Long id, @RequestBody CourierDTO courierDTO) {
+        return courierService.updateCourier(id, courierDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
