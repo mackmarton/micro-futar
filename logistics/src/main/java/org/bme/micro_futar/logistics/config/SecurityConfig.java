@@ -1,9 +1,9 @@
-package org.bme.micro_futar.config;
+package org.bme.micro_futar.logistics.config;
 
 import lombok.RequiredArgsConstructor;
-import org.bme.micro_futar.config.auth.CustomAccessDeniedHandler;
-import org.bme.micro_futar.config.auth.CustomAuthenticationEntryPoint;
-import org.bme.micro_futar.config.auth.JwtAuthConverter;
+import org.bme.micro_futar.logistics.config.auth.CustomAccessDeniedHandler;
+import org.bme.micro_futar.logistics.config.auth.CustomAuthenticationEntryPoint;
+import org.bme.micro_futar.logistics.config.auth.JwtAuthConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;

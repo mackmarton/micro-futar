@@ -1,4 +1,4 @@
-package org.bme.micro_futar.config.auth;
+package org.bme.micro_futar.logistics.config.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

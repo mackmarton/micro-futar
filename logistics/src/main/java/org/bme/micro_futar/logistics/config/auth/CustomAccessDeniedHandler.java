@@ -1,4 +1,4 @@
-package org.bme.micro_futar.config.auth;
+package org.bme.micro_futar.logistics.config.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
