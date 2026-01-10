@@ -31,7 +31,23 @@ public class LocationCountryService {
 
     @Transactional
     public LocationCountry saveLocationCountry(LocationCountryDTO locationCountryDTO) {
-        LocationCountry locationCountry = locationCountryMapper.toEntity(locationCountryDTO);
+        LocationCountry locationCountry;
+
+        // Check if entity already exists to avoid optimistic locking issues
+        if (locationCountryDTO.getId() != null) {
+            Optional<LocationCountry> existing = locationCountryRepository.findById(locationCountryDTO.getId());
+            if (existing.isPresent()) {
+                locationCountry = existing.get();
+                // Update existing entity fields
+                locationCountry.setRegionId(locationCountryDTO.getRegionId());
+                locationCountry.setName(locationCountryDTO.getName());
+            } else {
+                locationCountry = locationCountryMapper.toEntity(locationCountryDTO);
+            }
+        } else {
+            locationCountry = locationCountryMapper.toEntity(locationCountryDTO);
+        }
+
         return locationCountryRepository.save(locationCountry);
     }
 }

@@ -31,7 +31,22 @@ public class LocationRegionService {
 
     @Transactional
     public LocationRegion saveLocationRegion(LocationRegionDTO locationRegionDTO) {
-        LocationRegion locationRegion = locationRegionMapper.toEntity(locationRegionDTO);
+        LocationRegion locationRegion;
+
+        // Check if entity already exists to avoid optimistic locking issues
+        if (locationRegionDTO.getId() != null) {
+            Optional<LocationRegion> existing = locationRegionRepository.findById(locationRegionDTO.getId());
+            if (existing.isPresent()) {
+                locationRegion = existing.get();
+                // Update existing entity fields
+                locationRegion.setName(locationRegionDTO.getName());
+            } else {
+                locationRegion = locationRegionMapper.toEntity(locationRegionDTO);
+            }
+        } else {
+            locationRegion = locationRegionMapper.toEntity(locationRegionDTO);
+        }
+
         return locationRegionRepository.save(locationRegion);
     }
 }
