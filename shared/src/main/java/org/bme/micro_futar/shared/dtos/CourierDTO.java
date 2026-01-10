@@ -1,10 +1,12 @@
 package org.bme.micro_futar.shared.dtos;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.bme.micro_futar.shared.enums.CourierType;
 import org.bme.micro_futar.shared.enums.TransportType;
 
 @Data
+@NoArgsConstructor
 public class CourierDTO {
     private Long id;
     private String name;
