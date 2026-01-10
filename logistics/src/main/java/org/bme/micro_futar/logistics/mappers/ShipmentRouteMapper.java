@@ -14,4 +14,7 @@ public interface ShipmentRouteMapper {
     ShipmentRouteDTO toDTO(ShipmentRoute shipmentRoute);
 
     List<ShipmentRoute> toEntityList(List<ShipmentRouteDTO> shipmentRouteDTOs);
+
+    List<ShipmentRouteDTO> toDTOList(List<ShipmentRoute> shipmentRouteList);
+
 }
