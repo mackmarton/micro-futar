@@ -27,7 +27,7 @@ services:
       retries: 5
 
   zookeeper:
-    image: bitnami/zookeeper:latest
+    image: bitnamilegacy/zookeeper:3.9.3-debian-12-r22
     container_name: zookeeper
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
@@ -37,7 +37,7 @@ services:
       - microservice-net
 
   kafka:
-    image: bitnami/kafka:3.9.0
+    image: bitnamilegacy/kafka:3.9.0-debian-12-r9
     container_name: kafka
     ports:
       - "9092:9092"
