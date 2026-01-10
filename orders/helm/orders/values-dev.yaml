@@ -6,17 +6,12 @@ image:
   tag: "latest"
 
 imagePullSecrets:
-    - name: github-auth
+  - name: github-auth
 
 service:
   type: ClusterIP
   port: 8080
   targetPort: 8080
-
-resources:
-  limits:
-    cpu: 500m
-    memory: 512Mi
 
 autoscaling:
   enabled: false
