@@ -14,5 +14,6 @@ public class CountryPrice {
     private Long originCountryId;
     private Long destinationCountryId;
     private Long packageSizeId;
-    private Double price;
+    private Double minPrice;
+    private Double maxPrice;
 }
