@@ -55,6 +55,8 @@ class CountryPriceServiceTests {
                 .originCountryId(1L)
                 .destinationCountryId(2L)
                 .packageSizeId(1L)
+                .minPrice(10.0)
+                .maxPrice(15.0)
                 .build();
 
         countryPriceDTO2 = CountryPriceDTO.builder()
@@ -62,6 +64,8 @@ class CountryPriceServiceTests {
                 .originCountryId(1L)
                 .destinationCountryId(3L)
                 .packageSizeId(2L)
+                .minPrice(10.0)
+                .maxPrice(15.0)
                 .build();
     }
 

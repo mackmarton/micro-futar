@@ -37,6 +37,8 @@ class CountryPriceControllerTests {
                 .originCountryId(1L)
                 .destinationCountryId(2L)
                 .packageSizeId(1L)
+                .minPrice(10.0)
+                .maxPrice(15.0)
                 .build();
 
         CountryPriceDTO price2 = CountryPriceDTO.builder()
@@ -44,6 +46,8 @@ class CountryPriceControllerTests {
                 .originCountryId(1L)
                 .destinationCountryId(3L)
                 .packageSizeId(2L)
+                .minPrice(11.0)
+                .maxPrice(16.0)
                 .build();
 
         List<CountryPriceDTO> prices = Arrays.asList(price1, price2);
@@ -56,12 +60,14 @@ class CountryPriceControllerTests {
                 .andExpect(jsonPath("$[0].originCountryId").value(1))
                 .andExpect(jsonPath("$[0].destinationCountryId").value(2))
                 .andExpect(jsonPath("$[0].packageSizeId").value(1))
-                .andExpect(jsonPath("$[0].price").value(25.99))
+                .andExpect(jsonPath("$[0].minPrice").value(10.0))
+                .andExpect(jsonPath("$[0].maxPrice").value(15.0))
                 .andExpect(jsonPath("$[1].id").value(2))
                 .andExpect(jsonPath("$[1].originCountryId").value(1))
                 .andExpect(jsonPath("$[1].destinationCountryId").value(3))
                 .andExpect(jsonPath("$[1].packageSizeId").value(2))
-                .andExpect(jsonPath("$[1].price").value(45.99));
+                .andExpect(jsonPath("$[1].minPrice").value(11.0))
+                .andExpect(jsonPath("$[1].maxPrice").value(16.0));
     }
 
     @Test
@@ -80,6 +86,8 @@ class CountryPriceControllerTests {
                 .originCountryId(1L)
                 .destinationCountryId(2L)
                 .packageSizeId(1L)
+                .minPrice(10.0)
+                .maxPrice(15.0)
                 .build();
 
         when(countryPriceService.getCountryPriceById(1L)).thenReturn(Optional.of(price));
@@ -90,7 +98,8 @@ class CountryPriceControllerTests {
                 .andExpect(jsonPath("$.originCountryId").value(1))
                 .andExpect(jsonPath("$.destinationCountryId").value(2))
                 .andExpect(jsonPath("$.packageSizeId").value(1))
-                .andExpect(jsonPath("$.price").value(25.99));
+                .andExpect(jsonPath("$.minPrice").value(10.0))
+                .andExpect(jsonPath("$.maxPrice").value(15.0));
     }
 
     @Test

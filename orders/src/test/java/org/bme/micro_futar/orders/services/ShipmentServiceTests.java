@@ -1,7 +1,6 @@
 package org.bme.micro_futar.orders.services;
 
 import org.bme.micro_futar.orders.entities.Shipment;
-import org.bme.micro_futar.orders.exceptions.NoServiceException;
 import org.bme.micro_futar.orders.kafka.ShipmentProducer;
 import org.bme.micro_futar.orders.mappers.ShipmentMapper;
 import org.bme.micro_futar.orders.repositories.ShipmentRepository;
@@ -89,13 +88,13 @@ class ShipmentServiceTests {
                 .originCountryId(1L)
                 .destinationCountryId(2L)
                 .packageSizeId(1L)
+                .minPrice(10.0)
+                .maxPrice(20.0)
                 .build();
     }
 
     @Test
     void testNewShipment_Success() {
-        when(countryPriceService.findPriceByCountriesAndSize(1L, 2L, 1L))
-                .thenReturn(Optional.of(countryPriceDTO));
         when(shipmentMapper.toEntity(any(ShipmentDTO.class))).thenReturn(shipmentEntity);
         when(shipmentRepository.save(any(Shipment.class))).thenReturn(shipmentEntity);
 
@@ -128,26 +127,12 @@ class ShipmentServiceTests {
         assertThat(result.getPrice()).isEqualTo(25.99);
         assertThat(result.isConfirmed()).isFalse();
 
-        verify(countryPriceService).findPriceByCountriesAndSize(1L, 2L, 1L);
         verify(shipmentMapper).toEntity(any(ShipmentDTO.class));
         verify(shipmentRepository).save(any(Shipment.class));
         verify(shipmentMapper).toDTO(shipmentEntity);
         verify(shipmentProducer).sendShipmentToTopic(any(ShipmentDTO.class));
     }
 
-    @Test
-    void testNewShipment_NoServiceException() {
-        when(countryPriceService.findPriceByCountriesAndSize(1L, 2L, 1L))
-                .thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> shipmentService.newShipment(shipmentDTO))
-                .isInstanceOf(NoServiceException.class)
-                .hasMessageContaining("There is no service between the origin and destination countries");
-
-        verify(countryPriceService).findPriceByCountriesAndSize(1L, 2L, 1L);
-        verify(shipmentRepository, never()).save(any());
-        verify(shipmentProducer, never()).sendShipmentToTopic(any());
-    }
 
     @Test
     void testConfirm_Success() {

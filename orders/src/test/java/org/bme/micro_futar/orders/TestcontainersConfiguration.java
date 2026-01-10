@@ -8,6 +8,8 @@ import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.DockerImageName;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.time.Duration;
 
 class TestcontainersConfiguration implements ApplicationContextInitializer<ConfigurableApplicationContext> {
@@ -23,6 +25,8 @@ class TestcontainersConfiguration implements ApplicationContextInitializer<Confi
     static {
         Startables.deepStart(kafka, postgreSQL).join();
 
+        waitForDatabaseReady();
+
         System.setProperty("SPRING_PROFILE", "local");
         System.setProperty("SERVER_PORT", "8080");
         System.setProperty("DATASOURCE_URL", postgreSQL.getJdbcUrl());
@@ -30,6 +34,32 @@ class TestcontainersConfiguration implements ApplicationContextInitializer<Confi
         System.setProperty("DATASOURCE_PASSWORD", postgreSQL.getPassword());
         System.setProperty("KAFKA_BOOTSTRAP_SERVERS", kafka.getBootstrapServers());
         System.setProperty("KEYCLOAK_URL", "url");
+    }
+
+    private static void waitForDatabaseReady() {
+        int maxRetries = 30;
+        int retryCount = 0;
+        while (retryCount < maxRetries) {
+            try (Connection conn = DriverManager.getConnection(
+                    postgreSQL.getJdbcUrl(),
+                    postgreSQL.getUsername(),
+                    postgreSQL.getPassword())) {
+                // Connection successful, database is ready
+                System.out.println("Database connection verified successfully");
+                return;
+            } catch (Exception e) {
+                retryCount++;
+                if (retryCount >= maxRetries) {
+                    throw new RuntimeException("Database did not become ready in time", e);
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Interrupted while waiting for database", ie);
+                }
+            }
+        }
     }
 
     @Override

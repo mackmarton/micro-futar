@@ -85,6 +85,8 @@ class ShipmentControllerTests {
                         .originCountryId(1L)
                         .destinationCountryId(2L)
                         .packageSizeId(3L)
+                        .minPrice(10.0)
+                        .maxPrice(15.0)
                         .build()));
 
         when(shipmentService.newShipment(shipmentDTO)).thenReturn(savedShipment);
@@ -143,6 +145,8 @@ class ShipmentControllerTests {
                         .originCountryId(3L)
                         .destinationCountryId(4L)
                         .packageSizeId(2L)
+                        .minPrice(10.0)
+                        .maxPrice(15.0)
                         .build()));
 
         when(shipmentService.newShipment(shipmentDTO)).thenReturn(savedShipment);
