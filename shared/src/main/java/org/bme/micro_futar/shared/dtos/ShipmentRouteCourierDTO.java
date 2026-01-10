@@ -9,8 +9,8 @@ import java.sql.Date;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ShipmentRouteCourierDTO {
     private Long id;
     private Long courierId;
