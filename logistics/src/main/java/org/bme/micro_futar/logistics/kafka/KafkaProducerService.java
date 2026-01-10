@@ -1,5 +1,6 @@
 package org.bme.micro_futar.logistics.kafka;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.shared.dtos.*;
@@ -13,7 +14,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KafkaProducerService {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
 
     @Value("${kafka.topics.location-region-topic}")
     private String locationRegionTopic;
@@ -48,7 +50,8 @@ public class KafkaProducerService {
     public void sendLocationRegion(LocationRegionDTO locationRegionDTO) {
         log.info("Sending location region message to topic {}: {}", locationRegionTopic, locationRegionDTO);
         try {
-            kafkaTemplate.send(locationRegionTopic, locationRegionDTO.getId().toString(), locationRegionDTO)
+            String message = objectMapper.writeValueAsString(locationRegionDTO);
+            kafkaTemplate.send(locationRegionTopic, locationRegionDTO.getId().toString(), message)
                     .whenComplete((_, ex) -> {
                         if (ex == null) {
                             log.info("Successfully sent location region with ID: {} to topic: {}",
@@ -67,7 +70,8 @@ public class KafkaProducerService {
     public void sendLocationCountry(LocationCountryDTO locationCountryDTO) {
         log.info("Sending location country message to topic {}: {}", locationCountryTopic, locationCountryDTO);
         try {
-            kafkaTemplate.send(locationCountryTopic, locationCountryDTO.getId().toString(), locationCountryDTO)
+            String message = objectMapper.writeValueAsString(locationCountryDTO);
+            kafkaTemplate.send(locationCountryTopic, locationCountryDTO.getId().toString(), message)
                     .whenComplete((_, ex) -> {
                         if (ex == null) {
                             log.info("Successfully sent location country with ID: {} to topic: {}",
@@ -86,7 +90,8 @@ public class KafkaProducerService {
     public void sendLocationCity(LocationCityDTO locationCityDTO) {
         log.info("Sending location city message to topic {}: {}", locationCityTopic, locationCityDTO);
         try {
-            kafkaTemplate.send(locationCityTopic, locationCityDTO.getId().toString(), locationCityDTO)
+            String message = objectMapper.writeValueAsString(locationCityDTO);
+            kafkaTemplate.send(locationCityTopic, locationCityDTO.getId().toString(), message)
                     .whenComplete((_, ex) -> {
                         if (ex == null) {
                             log.info("Successfully sent location city with ID: {} to topic: {}",
@@ -105,7 +110,8 @@ public class KafkaProducerService {
     public void sendCountryPrice(CountryPriceDTO countryPriceDTO) {
         log.info("Sending country price message to topic {}: {}", countryPriceTopic, countryPriceDTO);
         try {
-            kafkaTemplate.send(countryPriceTopic, countryPriceDTO.getId().toString(), countryPriceDTO)
+            String message = objectMapper.writeValueAsString(countryPriceDTO);
+            kafkaTemplate.send(countryPriceTopic, countryPriceDTO.getId().toString(), message)
                     .whenComplete((_, ex) -> {
                         if (ex == null) {
                             log.info("Successfully sent country price with ID: {} to topic: {}",
@@ -124,7 +130,8 @@ public class KafkaProducerService {
     public void sendPackageSize(PackageSizeDTO packageSizeDTO) {
         log.info("Sending package size message to topic {}: {}", packageSizeTopic, packageSizeDTO);
         try {
-            kafkaTemplate.send(packageSizeTopic, packageSizeDTO.getId().toString(), packageSizeDTO)
+            String message = objectMapper.writeValueAsString(packageSizeDTO);
+            kafkaTemplate.send(packageSizeTopic, packageSizeDTO.getId().toString(), message)
                     .whenComplete((_, ex) -> {
                         if (ex == null) {
                             log.info("Successfully sent package size with ID: {} to topic: {}",
@@ -143,7 +150,8 @@ public class KafkaProducerService {
     public void sendShipmentRouteCourier(ShipmentRouteCourierDTO shipmentRouteCourierDTO) {
         log.info("Sending shipment route courier message to topic {}: {}", shipmentRouteCourierTopic, shipmentRouteCourierDTO);
         try {
-            kafkaTemplate.send(shipmentRouteCourierTopic, shipmentRouteCourierDTO.getId().toString(), shipmentRouteCourierDTO)
+            String message = objectMapper.writeValueAsString(shipmentRouteCourierDTO);
+            kafkaTemplate.send(shipmentRouteCourierTopic, shipmentRouteCourierDTO.getId().toString(), message)
                     .whenComplete((_, ex) -> {
                         if (ex == null) {
                             log.info("Successfully sent shipment route courier with ID: {} to topic: {}",
@@ -162,7 +170,8 @@ public class KafkaProducerService {
     public void sendDepo(DepoDTO depoDTO) {
         log.info("Sending depo message to topic {}: {}", depoTopic, depoDTO);
         try {
-            kafkaTemplate.send(depoTopic, depoDTO.getId().toString(), depoDTO)
+            String message = objectMapper.writeValueAsString(depoDTO);
+            kafkaTemplate.send(depoTopic, depoDTO.getId().toString(), message)
                     .whenComplete((_, ex) -> {
                         if (ex == null) {
                             log.info("Successfully sent depo with ID: {} to topic: {}",
@@ -181,7 +190,8 @@ public class KafkaProducerService {
     public void sendShipmentRoute(ShipmentRouteDTO shipmentRouteDTO) {
         log.info("Sending shipment route message to topic {}: {}", shipmentRouteTopic, shipmentRouteDTO);
         try {
-            kafkaTemplate.send(shipmentRouteTopic, shipmentRouteDTO.getId().toString(), shipmentRouteDTO)
+            String message = objectMapper.writeValueAsString(shipmentRouteDTO);
+            kafkaTemplate.send(shipmentRouteTopic, shipmentRouteDTO.getId().toString(), message)
                     .whenComplete((_, ex) -> {
                         if (ex == null) {
                             log.info("Successfully sent shipment route with ID: {} to topic: {}",
@@ -200,7 +210,8 @@ public class KafkaProducerService {
     public void sendCourier(CourierDTO courierDTO) {
         log.info("Sending courier message to topic {}: {}", courierTopic, courierDTO);
         try {
-            kafkaTemplate.send(courierTopic, courierDTO.getId().toString(), courierDTO)
+            String message = objectMapper.writeValueAsString(courierDTO);
+            kafkaTemplate.send(courierTopic, courierDTO.getId().toString(), message)
                     .whenComplete((_, ex) -> {
                         if (ex == null) {
                             log.info("Successfully sent courier with ID: {} to topic: {}",
@@ -219,7 +230,8 @@ public class KafkaProducerService {
     public void sendVehicle(VehicleDTO vehicleDTO) {
         log.info("Sending vehicle message to topic {}: {}", vehicleTopic, vehicleDTO);
         try {
-            kafkaTemplate.send(vehicleTopic, vehicleDTO.getId().toString(), vehicleDTO)
+            String message = objectMapper.writeValueAsString(vehicleDTO);
+            kafkaTemplate.send(vehicleTopic, vehicleDTO.getId().toString(), message)
                     .whenComplete((_, ex) -> {
                         if (ex == null) {
                             log.info("Successfully sent vehicle with ID: {} to topic: {}",
