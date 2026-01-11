@@ -57,6 +57,7 @@ config:
     bootstrapServers: kafka-prod-0:9092,kafka-prod-1:9092,kafka-prod-2:9092
   keycloak:
     url: https://auth.yourdomain.com
+    issuer_uri: http://localhost:8090/auth/realms/logistics
 
 podSecurityContext:
   runAsNonRoot: true
