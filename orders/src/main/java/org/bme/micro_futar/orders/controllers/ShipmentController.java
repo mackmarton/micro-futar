@@ -18,10 +18,4 @@ public class ShipmentController {
     public ResponseEntity<ShipmentDTO> newShipment(@RequestBody ShipmentDTO shipmentDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(shipmentService.newShipment(shipmentDTO));
     }
-
-    //ONLY SENDER
-    @PostMapping("confirm/{id}")
-    public ResponseEntity<ShipmentDTO> confirmShipment(@PathVariable long id) {
-        return ResponseEntity.ok(shipmentService.confirm(id));
-    }
 }
