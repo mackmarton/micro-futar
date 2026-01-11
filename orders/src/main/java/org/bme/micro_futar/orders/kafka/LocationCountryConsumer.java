@@ -18,7 +18,7 @@ public class LocationCountryConsumer {
     private final LocationCountryService locationCountryService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "${kafka.topics.location-country-topic}", groupId = "orders-service")
+    @KafkaListener(topics = "${kafka.topics.location-country-topic}", groupId = "orders-location-country")
     public void consumeLocationCountry(String message) {
         log.info("Received location country message: {}", message);
 
