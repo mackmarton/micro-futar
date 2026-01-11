@@ -29,7 +29,6 @@ public class ShipmentToCourierPlanningService {
     @Transactional
     public Map<String, Object> planShipmentsForDepo(Long depoId) {
         Date today = Date.valueOf(LocalDate.now());
-
         List<CourierDTO> deliveryCouriers = courierService.getCouriersByDepoIdAndType(depoId, CourierType.DELIVERY);
 
         if (deliveryCouriers.isEmpty()) {
@@ -67,6 +66,40 @@ public class ShipmentToCourierPlanningService {
         int assignedCount = assignShipmentsToCouriers(allRoutes, courierCapacities, today);
 
         return createResult(assignedCount, allRoutes.size(), deliveryCouriers.size(), "Planning completed successfully");
+    }
+
+    public Map<String, Object> planCrossDepoShipmentsForDepo(Long depoId) {
+        Date today = Date.valueOf(LocalDate.now());
+        List<CourierDTO> couriers = courierService.getCouriersByDepoIdAndType(depoId, CourierType.CROSS_DEPO);
+
+        if (couriers.isEmpty()) {
+            log.warn("No couriers found for depo {}", depoId);
+            return createResult(0, 0, 0, "No delivery couriers available");
+        }
+
+        List<ShipmentRouteDTO> crossDepoRoutes = shipmentRouteService.getCrossDepoRoutes(depoId);
+
+        if (crossDepoRoutes.isEmpty()) {
+            log.info("No pending cross depo shipment routes found for depo {}", depoId);
+            return createResult(0, 0, couriers.size(), "No pending shipments");
+        }
+
+        Map<Long, CourierCapacity> courierCapacities = new HashMap<>();
+        for (CourierDTO courier : couriers) {
+            CourierCapacity capacity = calculateCourierCapacity(courier, today);
+            if (capacity != null) {
+                courierCapacities.put(courier.getId(), capacity);
+            }
+        }
+
+        if (courierCapacities.isEmpty()) {
+            log.warn("No cross depo couriers with available capacity for depo {}", depoId);
+            return createResult(0, crossDepoRoutes.size(), couriers.size(), "No couriers with available capacity");
+        }
+
+        int assignedCount = assignShipmentsToCouriers(crossDepoRoutes, courierCapacities, today);
+
+        return createResult(assignedCount, crossDepoRoutes.size(), couriers.size(), "Planning completed successfully");
     }
 
     private CourierCapacity calculateCourierCapacity(CourierDTO courier, Date date) {
@@ -113,11 +146,13 @@ public class ShipmentToCourierPlanningService {
     private int assignShipmentsToCouriers(List<ShipmentRouteDTO> routes, Map<Long, CourierCapacity> courierCapacities, Date date) {
         int assignedCount = 0;
 
-        routes.sort((r1, r2) -> {
-            double vol1 = getShipmentVolume(r1.getShipmentId());
-            double vol2 = getShipmentVolume(r2.getShipmentId());
-            return Double.compare(vol2, vol1);
-        });
+        if (routes.size() > 1) {
+            routes.sort((r1, r2) -> {
+                double vol1 = getShipmentVolume(r1.getShipmentId());
+                double vol2 = getShipmentVolume(r2.getShipmentId());
+                return Double.compare(vol2, vol1);
+            });
+        }
 
         for (ShipmentRouteDTO route : routes) {
             double volume = getShipmentVolume(route.getShipmentId());
