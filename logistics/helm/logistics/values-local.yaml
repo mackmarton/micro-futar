@@ -33,6 +33,7 @@ config:
     bootstrapServers: kafka.micro-futar-services:9092
   keycloak:
     url: http://localhost:8090
+    issuer_uri: http://localhost:8090/auth/realms/logistics
   api:
     openRouteService:
       keySecretName: open-route-service-secret

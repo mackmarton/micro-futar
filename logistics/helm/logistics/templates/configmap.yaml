@@ -11,6 +11,7 @@ data:
   SERVER_PORT: {{ .Values.config.serverPort | quote }}
   SPRING_PROFILE: {{ .Values.config.springProfile | quote }}
   KEYCLOAK_URL: {{ .Values.config.keycloak.url | quote }}
+  KEYCLOAK_ISSUER_URI: {{ .Values.config.keycloak.issuer_uri | quote }}
   LOCATION_REGION_TOPIC: {{ .Values.kafka.topics.location_region_topic | quote }}
   LOCATION_COUNTRY_TOPIC: {{ .Values.kafka.topics.location_country_topic | quote }}
   LOCATION_CITY_TOPIC: {{ .Values.kafka.topics.location_city_topic | quote }}
