@@ -17,7 +17,7 @@ public class CountryPriceConsumer {
     private final CountryPriceService countryPriceService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "${kafka.topics.country-price-topic}", groupId = "orders-service")
+    @KafkaListener(topics = "${kafka.topics.country-price-topic}", groupId = "orders-country-price")
     public void consumeCountryPrice(String message) {
         log.info("Received country price message: {}", message);
 
