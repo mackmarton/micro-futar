@@ -1,22 +1,17 @@
 replicaCount: 1
 
 image:
-  repository: tracking
+  repository: ghcr.io/mackmarton/tracking
   pullPolicy: Always
   tag: "latest"
+
+imagePullSecrets:
+  - name: github-auth
 
 service:
   type: ClusterIP
   port: 8080
   targetPort: 8080
-
-resources:
-  limits:
-    cpu: 500m
-    memory: 512Mi
-  requests:
-    cpu: 250m
-    memory: 256Mi
 
 autoscaling:
   enabled: false
@@ -25,12 +20,19 @@ config:
   serverPort: 8080
   springProfile: dev
   datasource:
-    url: jdbc:postgresql://postgres-dev:5432/tracking_db
+    url: jdbc:postgresql://postgres-db-postgresql.micro-futar-services-dev:5432/tracking_db
     username: tracking_db
-    passwordSecretName: tracking-db-secret
-    passwordSecretKey: password
+    passwordSecretName: tracking-db-secret-dev
+    passwordSecretKey: PASSWORD
   kafka:
-    bootstrapServers: kafka-dev:9092
+    bootstrapServers: kafka-futar.micro-futar-services-dev:9092
   keycloak:
     url: http://keycloak-dev:8080
 
+kafka:
+  topics:
+    location_country_topic: location-countries
+    location_city_topic: location-cities
+    shipment_topic: shipments
+    depo_topic: depos
+    shipment_route_topic: shipment-routes
