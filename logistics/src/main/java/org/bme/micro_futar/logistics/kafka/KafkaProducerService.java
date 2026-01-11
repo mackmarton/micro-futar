@@ -38,6 +38,9 @@ public class KafkaProducerService {
     @Value("${kafka.topics.depo-topic}")
     private String depoTopic;
 
+    @Value("${kafka.topics.shipment-topic}")
+    private String shipmentTopic;
+
     @Value("${kafka.topics.shipment-route-topic}")
     private String shipmentRouteTopic;
 
@@ -184,6 +187,26 @@ public class KafkaProducerService {
         } catch (Exception e) {
             log.error("Error sending depo message to Kafka", e);
             throw new KafkaException("Failed to send depo message", e);
+        }
+    }
+
+    public void sendShipment(ShipmentDTO shipmentDTO) {
+        log.info("Sending shipment message to topic {}: {}", shipmentTopic, shipmentDTO);
+        try {
+            String message = objectMapper.writeValueAsString(shipmentDTO);
+            kafkaTemplate.send(shipmentTopic, shipmentDTO.getId().toString(), message)
+                    .whenComplete((_, ex) -> {
+                        if (ex == null) {
+                            log.info("Successfully sent shipment with ID: {} to topic: {}",
+                                    shipmentDTO.getId(), shipmentTopic);
+                        } else {
+                            log.error("Failed to send shipment with ID: {} to topic: {}",
+                                    shipmentDTO.getId(), shipmentTopic, ex);
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("Error sending shipment message to Kafka", e);
+            throw new KafkaException("Failed to send shipment message", e);
         }
     }
 

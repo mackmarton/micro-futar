@@ -249,6 +249,28 @@ public class KafkaBulkSenderController {
     }
 
     /**
+     * Send Shipment entities to Kafka.
+     */
+    @PostMapping("/send-shipments")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, String>> sendShipments() {
+        log.info("Received request to send Shipment entities to Kafka");
+        try {
+            kafkaBulkSenderService.sendShipments();
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "message", "Shipment entities sent to Kafka successfully"
+            ));
+        } catch (Exception e) {
+            log.error("Error sending Shipment entities to Kafka", e);
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "status", "error",
+                    "message", "Failed to send Shipment entities to Kafka: " + e.getMessage()
+            ));
+        }
+    }
+
+    /**
      * Send ShipmentRoute entities to Kafka.
      */
     @PostMapping("/send-shipment-routes")
