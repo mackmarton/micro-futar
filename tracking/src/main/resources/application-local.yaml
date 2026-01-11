@@ -3,13 +3,8 @@ spring:
     generate-ddl: true
 kafka:
   topics:
-    package-size-topic: package-sizes
     shipment-topic: shipments
     depo-topic: depos
-    shipment-route-courier-topic: shipment-route-couriers
     shipment-route-topic: shipment-routes
-    courier-topic: couriers
-    vehicle-topic: vehicles
-    location-region-topic: location-regions
     location-country-topic: location-countries
     location-city-topic: location-cities
