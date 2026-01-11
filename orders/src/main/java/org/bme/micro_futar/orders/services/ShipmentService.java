@@ -21,23 +21,12 @@ public class ShipmentService {
 
     @Transactional
     public ShipmentDTO newShipment(ShipmentDTO shipmentDTO) {
-        shipmentDTO.setConfirmed(false);
+        shipmentDTO.setConfirmed(true);
+        shipmentDTO.setParcelNumber(UUID.randomUUID().toString());
         var shipmentEntity = shipmentMapper.toEntity(shipmentDTO);
         var savedEntity = shipmentRepository.save(shipmentEntity);
         ShipmentDTO savedShipmentDTO = shipmentMapper.toDTO(savedEntity);
         shipmentProducer.sendShipmentToTopic(savedShipmentDTO);
         return savedShipmentDTO;
     }
-
-    @Transactional
-    public ShipmentDTO confirm(long id) {
-        var shipmentEntity = shipmentRepository.findById(id).orElseThrow();
-        shipmentEntity.setConfirmed(true);
-        shipmentEntity.setParcelNumber(UUID.randomUUID().toString());
-        var savedEntity = shipmentRepository.save(shipmentEntity);
-        ShipmentDTO confirmedShipmentDTO = shipmentMapper.toDTO(savedEntity);
-        shipmentProducer.sendShipmentToTopic(confirmedShipmentDTO);
-        return confirmedShipmentDTO;
-    }
-
 }
