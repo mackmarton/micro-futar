@@ -45,6 +45,12 @@ public class ShipmentRouteService {
                 .toList();
     }
 
+    public List<ShipmentRouteDTO> getCrossDepoRoutes(Long depoId) {
+        return shipmentRouteRepository.findCrossDepoRoutesForDepo(depoId).stream()
+                .map(shipmentRouteMapper::toDTO)
+                .toList();
+    }
+
     @Transactional
     public void saveAll(List<ShipmentRouteDTO> shipmentRouteDTOs) {
         List<ShipmentRoute> savedShipmentRoutes = shipmentRouteRepository.saveAll(shipmentRouteMapper.toEntityList(shipmentRouteDTOs));

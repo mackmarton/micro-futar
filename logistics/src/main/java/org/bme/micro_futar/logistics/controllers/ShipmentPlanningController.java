@@ -19,4 +19,10 @@ public class ShipmentPlanningController {
         Map<String, Object> result = planningService.planShipmentsForDepo(depoId);
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/depo/{depoId}/assign-cross-depo-shipments")
+    public ResponseEntity<Map<String, Object>> planCrossDepoShipmentsForDepo(@PathVariable Long depoId) {
+        Map<String, Object> result = planningService.planCrossDepoShipmentsForDepo(depoId);
+        return ResponseEntity.ok(result);
+    }
 }

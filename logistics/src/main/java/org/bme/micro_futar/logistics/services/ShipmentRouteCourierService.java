@@ -39,6 +39,7 @@ public class ShipmentRouteCourierService {
         return shipmentRouteCourierMapper.toDTO(saved);
     }
 
+    @Transactional
     public ShipmentRouteCourierDTO save(ShipmentRouteCourierDTO dto) {
         var self = applicationContext.getBean(ShipmentRouteCourierService.class);
         var savedDTO = self.saveWithoutTopicSend(dto);
