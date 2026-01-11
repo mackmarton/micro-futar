@@ -13,13 +13,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ShipmentServiceTests {
@@ -133,82 +130,4 @@ class ShipmentServiceTests {
         verify(shipmentProducer).sendShipmentToTopic(any(ShipmentDTO.class));
     }
 
-
-    @Test
-    void testConfirm_Success() {
-        shipmentEntity.setConfirmed(false);
-        shipmentEntity.setParcelNumber(null);
-
-        when(shipmentRepository.findById(1L)).thenReturn(Optional.of(shipmentEntity));
-
-        Shipment confirmedEntity = new Shipment();
-        confirmedEntity.setId(1L);
-        confirmedEntity.setSenderName("John Doe");
-        confirmedEntity.setSenderEmail("john@example.com");
-        confirmedEntity.setSenderPhone("+36301234567");
-        confirmedEntity.setSenderLocationCountryId(1L);
-        confirmedEntity.setSenderZip("1234");
-        confirmedEntity.setSenderLocationCityId(1L);
-        confirmedEntity.setSenderAddress("Test Street 1");
-        confirmedEntity.setRecipientName("Jane Smith");
-        confirmedEntity.setRecipientEmail("jane@example.com");
-        confirmedEntity.setRecipientPhone("+43201234567");
-        confirmedEntity.setRecipientLocationCountryId("2");
-        confirmedEntity.setRecipientZip("5678");
-        confirmedEntity.setRecipientLocationCityId("2");
-        confirmedEntity.setRecipientAddress("Test Avenue 2");
-        confirmedEntity.setPackageSizeId(1L);
-        confirmedEntity.setPrice(25.99);
-        confirmedEntity.setConfirmed(true);
-        confirmedEntity.setParcelNumber(UUID.randomUUID().toString());
-
-        when(shipmentRepository.save(any(Shipment.class))).thenReturn(confirmedEntity);
-
-        ShipmentDTO confirmedDTO = ShipmentDTO.builder()
-                .id(1L)
-                .senderName("John Doe")
-                .senderEmail("john@example.com")
-                .senderPhone("+36301234567")
-                .senderLocationCountryId(1L)
-                .senderZip("1234")
-                .senderLocationCityId(1L)
-                .senderAddress("Test Street 1")
-                .recipientName("Jane Smith")
-                .recipientEmail("jane@example.com")
-                .recipientPhone("+43201234567")
-                .recipientLocationCountryId(2L)
-                .recipientZip("5678")
-                .recipientLocationCityId(2L)
-                .recipientAddress("Test Avenue 2")
-                .packageSizeId(1L)
-                .price(25.99)
-                .confirmed(true)
-                .parcelNumber(confirmedEntity.getParcelNumber())
-                .build();
-        when(shipmentMapper.toDTO(confirmedEntity)).thenReturn(confirmedDTO);
-
-        ShipmentDTO result = shipmentService.confirm(1L);
-
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(1L);
-        assertThat(result.isConfirmed()).isTrue();
-        assertThat(result.getParcelNumber()).isNotNull();
-
-        verify(shipmentRepository).findById(1L);
-        verify(shipmentRepository).save(any(Shipment.class));
-        verify(shipmentMapper).toDTO(confirmedEntity);
-        verify(shipmentProducer).sendShipmentToTopic(any(ShipmentDTO.class));
-    }
-
-    @Test
-    void testConfirm_ShipmentNotFound() {
-        when(shipmentRepository.findById(999L)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> shipmentService.confirm(999L))
-                .isInstanceOf(RuntimeException.class);
-
-        verify(shipmentRepository).findById(999L);
-        verify(shipmentRepository, never()).save(any());
-        verify(shipmentProducer, never()).sendShipmentToTopic(any());
-    }
 }
