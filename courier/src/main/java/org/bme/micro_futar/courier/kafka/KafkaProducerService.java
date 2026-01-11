@@ -1,5 +1,7 @@
 package org.bme.micro_futar.courier.kafka;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
@@ -16,7 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class KafkaProducerService {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
 
     @Value("${kafka.topics.shipment-route-topic}")
     private String shipmentRouteTopic;
@@ -27,7 +30,8 @@ public class KafkaProducerService {
     public void sendShipmentRoute(ShipmentRouteDTO shipmentRouteDTO) {
         log.info("Sending shipment route message to topic {}: {}", shipmentRouteTopic, shipmentRouteDTO);
         try {
-            kafkaTemplate.send(shipmentRouteTopic, shipmentRouteDTO.getId().toString(), shipmentRouteDTO)
+            String jsonMessage = objectMapper.writeValueAsString(shipmentRouteDTO);
+            kafkaTemplate.send(shipmentRouteTopic, shipmentRouteDTO.getId().toString(), jsonMessage)
                     .whenComplete((_, ex) -> {
                         if (ex == null) {
                             log.info("Successfully sent shipment route with ID: {} to topic: {}",
@@ -37,6 +41,9 @@ public class KafkaProducerService {
                                     shipmentRouteDTO.getId(), shipmentRouteTopic, ex);
                         }
                     });
+        } catch (JsonProcessingException e) {
+            log.error("Error serializing shipment route message to JSON", e);
+            throw new KafkaException("Failed to serialize shipment route message", e);
         } catch (Exception e) {
             log.error("Error sending shipment route message to Kafka", e);
             throw new KafkaException("Failed to send shipment route message", e);
@@ -47,7 +54,8 @@ public class KafkaProducerService {
     public void sendShipmentRouteCourier(ShipmentRouteCourierDTO shipmentRouteCourierDTO) {
         log.info("Sending shipment route courier message to topic {}: {}", shipmentRouteCourierTopic, shipmentRouteCourierDTO);
         try {
-            kafkaTemplate.send(shipmentRouteCourierTopic, shipmentRouteCourierDTO.getId().toString(), shipmentRouteCourierDTO)
+            String jsonMessage = objectMapper.writeValueAsString(shipmentRouteCourierDTO);
+            kafkaTemplate.send(shipmentRouteCourierTopic, shipmentRouteCourierDTO.getId().toString(), jsonMessage)
                     .whenComplete((_, ex) -> {
                         if (ex == null) {
                             log.info("Successfully sent shipment route courier with ID: {} to topic: {}",
@@ -57,6 +65,9 @@ public class KafkaProducerService {
                                     shipmentRouteCourierDTO.getId(), shipmentRouteCourierTopic, ex);
                         }
                     });
+        } catch (JsonProcessingException e) {
+            log.error("Error serializing shipment route courier message to JSON", e);
+            throw new KafkaException("Failed to serialize shipment route courier message", e);
         } catch (Exception e) {
             log.error("Error sending shipment route courier message to Kafka", e);
             throw new KafkaException("Failed to send shipment route courier message", e);
