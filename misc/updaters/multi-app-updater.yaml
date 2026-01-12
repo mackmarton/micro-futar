@@ -1,7 +1,7 @@
 apiVersion: argocd-image-updater.argoproj.io/v1alpha1
 kind: ImageUpdater
 metadata:
-  name: courier-updater
+  name: multi-app-updater
 spec:
   namespace: argocd
   writeBackConfig:
@@ -40,5 +40,14 @@ spec:
           commonUpdateSettings:
             updateStrategy: "newest-build"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
-
-  
+    - namePattern: "tracking"
+      images:
+        - alias: "tracking"
+          imageName: "ghcr.io/mackmarton/tracking"
+          manifestTargets:
+            helm:
+              name: "ghcr.io/mackmarton/tracking"
+              tag: "image.tag"
+          commonUpdateSettings:
+            updateStrategy: "newest-build"
+            pullSecret: "pullsecret:argocd/ghcr-login-secret"
