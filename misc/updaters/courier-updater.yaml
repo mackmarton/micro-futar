@@ -17,6 +17,6 @@ spec:
               tag: "image.tag"
           commonUpdateSettings:
             updateStrategy: "latest"
-            pullSecret: "secret:my-namespace/my-secret#username"
+            pullSecret: "pullsecret:argocd/ghcr-login-secret"
 
   
