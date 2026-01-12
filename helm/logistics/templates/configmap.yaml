@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "logistics.fullname" . }}-config
+  labels:
+    {{- include "logistics.labels" . | nindent 4 }}
+data:
+  DATASOURCE_URL: {{ .Values.config.datasource.url | quote }}
+  DATASOURCE_USERNAME: {{ .Values.config.datasource.username | quote }}
+  KAFKA_BOOTSTRAP_SERVERS: {{ .Values.config.kafka.bootstrapServers | quote }}
+  SERVER_PORT: {{ .Values.config.serverPort | quote }}
+  SPRING_PROFILE: {{ .Values.config.springProfile | quote }}
+  KEYCLOAK_URL: {{ .Values.config.keycloak.url | quote }}
+  KEYCLOAK_ISSUER_URI: {{ .Values.config.keycloak.issuer_uri | quote }}
+  LOCATION_REGION_TOPIC: {{ .Values.kafka.topics.location_region_topic | quote }}
+  LOCATION_COUNTRY_TOPIC: {{ .Values.kafka.topics.location_country_topic | quote }}
+  LOCATION_CITY_TOPIC: {{ .Values.kafka.topics.location_city_topic | quote }}
+  COUNTRY_PRICE_TOPIC: {{ .Values.kafka.topics.country_price_topic | quote }}
+  PACKAGE_SIZE_TOPIC: {{ .Values.kafka.topics.package_size_topic | quote }}
+  SHIPMENT_TOPIC: {{ .Values.kafka.topics.shipment_topic | quote }}
+  SHIPMENT_ROUTE_COURIER_TOPIC: {{ .Values.kafka.topics.shipment_route_courier_topic | quote }}
+  DEPO_TOPIC: {{ .Values.kafka.topics.depo_topic | quote }}
+  SHIPMENT_ROUTE_TOPIC: {{ .Values.kafka.topics.shipment_route_topic | quote }}
+  COURIER_TOPIC: {{ .Values.kafka.topics.courier_topic | quote }}
+  VEHICLE_TOPIC: {{ .Values.kafka.topics.vehicle_topic | quote }}
