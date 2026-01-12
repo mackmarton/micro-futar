@@ -18,5 +18,16 @@ spec:
           commonUpdateSettings:
             updateStrategy: "newest-build"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
+    - namePattern: "logistics"
+      images:
+        - alias: "logistics"
+          imageName: "ghcr.io/mackmarton/logistics"
+          manifestTargets:
+            helm:
+              name: "ghcr.io/mackmarton/logistics"
+              tag: "image.tag"
+          commonUpdateSettings:
+            updateStrategy: "newest-build"
+            pullSecret: "pullsecret:argocd/ghcr-login-secret"
 
   
