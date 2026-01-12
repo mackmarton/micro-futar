@@ -1,0 +1,22 @@
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: courier-updater
+spec:
+  namespace: argocd
+  writeBackConfig:
+    method: "argocd"
+  applicationRefs:
+    - namePattern: "courier"
+      images:
+        - alias: "courier"
+          imageName: "ghcr.io/mackmarton/courier"
+          manifestTargets:
+            helm:
+              name: "ghcr.io/mackmarton/courier"
+              tag: "image.tag"
+          commonUpdateSettings:
+            updateStrategy: "latest"
+            pullSecret: "secret:my-namespace/my-secret#username"
+
+  
