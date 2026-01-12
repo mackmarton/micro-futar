@@ -1,0 +1,54 @@
+replicaCount: 1
+
+image:
+  repository: logistics
+  pullPolicy: Never
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 8081
+  targetPort: 8081
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+autoscaling:
+  enabled: false
+
+config:
+  serverPort: 8081
+  springProfile: local
+  datasource:
+    url: jdbc:postgresql://postgres-db-postgresql.micro-futar-services:5432/logistics_db
+    username: logistics_db
+    passwordSecretName: logistics-db-secret
+    passwordSecretKey: password
+  kafka:
+    bootstrapServers: kafka.micro-futar-services:9092
+  keycloak:
+    url: http://localhost:8090
+    issuer_uri: http://localhost:8090/auth/realms/logistics
+  api:
+    openRouteService:
+      keySecretName: open-route-service-secret
+      keySecretKey: key
+
+kafka:
+  topics:
+    location_region_topic: location-regions
+    location_country_topic: location-countries
+    location_city_topic: location-cities
+    country_price_topic: country-prices
+    package_size_topic: package-sizes
+    shipment_topic: shipments
+    depo_topic: depos
+    shipment_route_courier_topic: shipment-route-couriers
+    shipment_route_topic: shipment-routes
+    courier_topic: couriers
+    vehicle_topic: vehicles
