@@ -1,0 +1,20 @@
+{
+  "name": "ui",
+  "version": "1.0.0",
+  "main": "index.js",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:client": "npm run dev --workspace=apps/client-ui",
+    "dev:logistics": "npm run dev --workspace=apps/logistics-ui",
+    "dev:courier": "npm run dev --workspace=apps/courier-ui"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "private": true
+}
