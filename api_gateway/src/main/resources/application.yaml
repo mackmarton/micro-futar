@@ -1,5 +1,5 @@
 server:
-  port: { SERVER_PORT }
+  port: ${SERVER_PORT}
 
 spring:
   application:
@@ -11,7 +11,7 @@ spring:
       client:
         provider:
           keycloak:
-            issuer-uri: http://localhost:8180/realms/micro-futar-realm
+            issuer-uri: http://localhost:8090/realms/micro-futar-realm
         registration:
           keycloak:
             provider: keycloak
@@ -29,9 +29,9 @@ spring:
             - id: order-service
               uri: ${ORDER_SERVICE_URI}
               predicates:
-                - Path=/api/order/**
+                - Path=/api/orders/**
               filters:
-                - RewritePath=/api/order/(?<segment>.*), /api/$\{segment}
+                - RewritePath=/api/orders/(?<segment>.*), /api/$\{segment}
             - id: tracking-service
               uri: ${TRACKING_SERVICE_URI}
               predicates:
