@@ -1,56 +1,44 @@
-import {useState} from 'react'
-import './App.css'
-import {apiClient} from '@package/shared-core'; // Importálod a monorepo közös csomagjából
-import {Navbar} from '@package/shared-ui';
+import { useEffect, useState } from 'react';
+import { CreateOrderPage } from './components/CreateOrderPage';
+import { DashboardPage } from './components/DashboardPage';
+import { TrackingPage } from './components/TrackingPage';
+
+type AppRoute = '/my-shipments' | '/create-order' | '/tracking';
+
+const DEFAULT_ROUTE: AppRoute = '/my-shipments';
+
+const getRouteFromHash = (): AppRoute => {
+  const hash = window.location.hash.replace('#', '');
+  if (hash === '/tracking') return '/tracking';
+  if (hash === '/create-order') return '/create-order';
+  return '/my-shipments';
+};
 
 function App() {
-    const [csomagok, setCsomagok] = useState([]);
-    const [loading, setLoading] = useState(false);
+  const [route, setRoute] = useState<AppRoute>(getRouteFromHash);
 
-    // Kézi bejelentkezés gomb (átirányít a Gateway-re)
-    const handleLogin = () => {
-        window.location.href = 'http://localhost:8085/oauth2/authorization/keycloak';
+  useEffect(() => {
+    if (!window.location.hash) {
+      window.location.hash = DEFAULT_ROUTE;
+    }
+
+    const handleHashChange = () => {
+      setRoute(getRouteFromHash());
     };
 
-    // Védett adat lekérése
-    const fetchCsomagok = async () => {
-        setLoading(true);
-        try {
-            // Ez a Gateway-en keresztül a localhost:8081-re fog menni az útvonal újraírás miatt
-            const response = await apiClient.get('/api/orders/country-prices');
-            setCsomagok(response.data);
-        } catch (error) {
-            console.error("Hiba a lekérés során", error);
-            // A 401-es hibát az interceptor már lekezeli és átirányít!
-        } finally {
-            setLoading(false);
-        }
-    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
-    return (
-        <div style={{minHeight: '100vh', backgroundColor: '#f3f4f6', margin: 0}}>
-            <Navbar/>
-            <div style={{padding: '20px'}}>
-                <h1>📦 Csomagfeladó Rendszer</h1>
+  if (route === '/create-order') {
+    return <CreateOrderPage />;
+  }
 
-                <button onClick={handleLogin} style={{marginRight: '10px'}}>
-                    Bejelentkezés
-                </button>
+  if (route === '/tracking') {
+    return <TrackingPage />;
+  }
 
-                <button onClick={fetchCsomagok}>
-                    Saját csomagjaim lekérése
-                </button>
-
-                {loading && <p>Töltés...</p>}
-
-                <ul>
-                    {csomagok.map((csomag, idx) => (
-                        <li key={idx}>{csomag}</li>
-                    ))}
-                </ul>
-            </div>
-        </div>
-    );
+  return <DashboardPage />;
 }
 
 export default App;
