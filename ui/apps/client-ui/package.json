@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-orders-api": "swagger-typescript-api generate -p ../../../orders/target/openapi.json -o ./src/api -n OrdersApiClient.ts --fetch",
+    "generate-tracking-api": "swagger-typescript-api generate -p ../../../tracking/target/openapi.json -o ./src/api -n TrackingApiClient.ts --fetch"
   },
   "dependencies": {
     "@package/shared-core": "^1.0.0",
@@ -30,6 +32,7 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
     "postcss": "^8.5.6",
+    "swagger-typescript-api": "^13.6.5",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.48.0",
