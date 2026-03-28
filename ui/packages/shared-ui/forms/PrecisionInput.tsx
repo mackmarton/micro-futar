@@ -4,6 +4,7 @@ export type PrecisionInputProps = {
   label: string;
   value: string | number;
   className?: string;
+  wrapperClassName?: string;
 } & Pick<InputHTMLAttributes<HTMLInputElement>, 'placeholder' | 'type' | 'name' | 'id' | 'onChange' | 'onBlur' | 'disabled' | 'required' | 'autoComplete'>;
 
 const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
@@ -14,6 +15,7 @@ export const PrecisionInput = ({
   type = 'text',
   value,
   className,
+  wrapperClassName,
   id,
   onChange,
   onBlur,
@@ -25,7 +27,7 @@ export const PrecisionInput = ({
   const inputId = id ?? name ?? label.toLowerCase().replace(/\s+/g, '-');
 
   return (
-    <div>
+    <div className={wrapperClassName}>
       <label
         htmlFor={inputId}
         className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3 block"

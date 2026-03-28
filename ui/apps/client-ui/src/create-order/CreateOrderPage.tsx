@@ -1,18 +1,12 @@
 import { useState } from 'react';
 import { BottomNavBar, SideNavBar, TopNavBar } from '@package/shared-ui';
-import { AddressSection, type AddressSectionValue } from './components/AddressSection.tsx';
 import { OrderSummaryCard } from './components/OrderSummaryCard.tsx';
 import {
   PackageDetailsSection,
   type PackageDetailsValue,
   type PackageSize,
 } from './components/PackageDetailsSection.tsx';
-import {
-  ShippingOptionsSection,
-  type PaymentMethod,
-  type ShippingSpeed,
-  type ShippingOptionsValue,
-} from './components/ShippingOptionsSection.tsx';
+import { AddressCard, type AddressCardField, type AddressCardValue } from './components/AddressCard.tsx';
 
 const sideNavigationItems = [
   { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'package_2', onlyLoggedIn: true },
@@ -20,46 +14,38 @@ const sideNavigationItems = [
   { label: 'Nyomonkövetés', href: '#/tracking', icon: 'local_shipping' },
 ];
 
-const initialAddress: AddressSectionValue = {
-  pickup: {
-    city: '',
-    street: '',
-    houseNumber: '',
-    postalCode: '',
-  },
-  recipient: {
-    city: '',
-    street: '',
-    houseNumber: '',
-    postalCode: '',
-  },
-};
-
 const initialPackageDetails: PackageDetailsValue = {
   size: 'M',
   weight: '2.5',
   description: '',
 };
 
-const initialShippingOptions: ShippingOptionsValue = {
-  speed: 'express',
-  paymentMethod: 'card',
+type AddressCardRole = 'sender' | 'recipient';
+
+const initialAddressCardValue: AddressCardValue = {
+  name: '',
+  phone: '',
+  email: '',
+  zipCode: '',
+  country: '',
+  city: '',
+  address: '',
+};
+
+const initialAddressCards: Record<AddressCardRole, AddressCardValue> = {
+  sender: initialAddressCardValue,
+  recipient: initialAddressCardValue,
 };
 
 export const CreateOrderPage = () => {
-  const [addressValue, setAddressValue] = useState<AddressSectionValue>(initialAddress);
+  const [addressCards, setAddressCards] = useState<Record<AddressCardRole, AddressCardValue>>(initialAddressCards);
   const [packageDetailsValue, setPackageDetailsValue] = useState<PackageDetailsValue>(initialPackageDetails);
-  const [shippingOptionsValue, setShippingOptionsValue] = useState<ShippingOptionsValue>(initialShippingOptions);
 
-  const handleAddressChange = (
-    target: keyof AddressSectionValue,
-    field: keyof AddressSectionValue['pickup'],
-    fieldValue: string
-  ) => {
-    setAddressValue((previous) => ({
+  const handleAddressCardChange = (role: AddressCardRole, field: AddressCardField, fieldValue: string) => {
+    setAddressCards((previous) => ({
       ...previous,
-      [target]: {
-        ...previous[target],
+      [role]: {
+        ...previous[role],
         [field]: fieldValue,
       },
     }));
@@ -75,14 +61,6 @@ export const CreateOrderPage = () => {
 
   const handleDescriptionChange = (description: string) => {
     setPackageDetailsValue((previous) => ({ ...previous, description }));
-  };
-
-  const handleSpeedChange = (speed: ShippingSpeed) => {
-    setShippingOptionsValue((previous) => ({ ...previous, speed }));
-  };
-
-  const handlePaymentChange = (paymentMethod: PaymentMethod) => {
-    setShippingOptionsValue((previous) => ({ ...previous, paymentMethod }));
   };
 
   return (
@@ -102,17 +80,23 @@ export const CreateOrderPage = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-8">
-              <AddressSection value={addressValue} onChange={handleAddressChange} />
+              <AddressCard
+                title="Feladó adatai"
+                iconName="person_pin_circle"
+                value={addressCards.sender}
+                onChange={(field, fieldValue) => handleAddressCardChange('sender', field, fieldValue)}
+              />
+              <AddressCard
+                title="Címzett adatai"
+                iconName="local_shipping"
+                value={addressCards.recipient}
+                onChange={(field, fieldValue) => handleAddressCardChange('recipient', field, fieldValue)}
+              />
               <PackageDetailsSection
                 value={packageDetailsValue}
                 onSizeChange={handleSizeChange}
                 onWeightChange={handleWeightChange}
                 onDescriptionChange={handleDescriptionChange}
-              />
-              <ShippingOptionsSection
-                value={shippingOptionsValue}
-                onSpeedChange={handleSpeedChange}
-                onPaymentMethodChange={handlePaymentChange}
               />
             </div>
 
