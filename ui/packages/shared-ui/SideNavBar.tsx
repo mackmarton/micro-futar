@@ -32,15 +32,8 @@ export const SideNavBar = ({
   navigationItems,
   brandName = 'micro-futar',
   brandSubtitle = 'Logistics Portal',
-  ctaHref,
-  onCtaClick,
   className,
 }: SideNavBarProps) => {
-  const ctaButtonClasses = cn(
-    'w-full rounded-lg px-4 py-3 font-bold flex items-center justify-center gap-2',
-    'bg-primary text-on-primary transition-all active:scale-95',
-    'hover:bg-gradient-to-r hover:from-primary hover:to-on-primary-container'
-  );
 
   return (
     <aside className={cn('h-screen w-64 hidden lg:flex flex-col fixed left-0 top-0 p-4 gap-2 z-40 bg-surface-container-low', className)}>

@@ -124,7 +124,7 @@ export const TopNavBar = ({
                 disabled={isLoading}
                 className={cn(
                   'w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-on-surface hover:bg-surface-container transition-colors disabled:opacity-60 disabled:cursor-not-allowed',
-                  user && greetingName && 'mt-3'
+                  Boolean(user && greetingName) && 'mt-3'
                 )}
               >
                 {user ? 'Kijelentkezés' : 'Bejelentkezés'}

@@ -1,6 +1,15 @@
-var _a;
 import axios from 'axios';
-var API_BASE_URL = (_a = import.meta.env.VITE_API_BASE_URL) !== null && _a !== void 0 ? _a : 'http://localhost:8085';
+var resolveApiBaseUrl = function () {
+    var _a, _b;
+    var globalEnv = ((_a = globalThis.__APP_ENV__) !== null && _a !== void 0 ? _a : {});
+    var processEnv = ((_b = globalThis.process) === null || _b === void 0 ? void 0 : _b.env) || {};
+    return globalEnv.VITE_API_BASE_URL ||
+        globalEnv.API_BASE_URL ||
+        processEnv.VITE_API_BASE_URL ||
+        processEnv.API_BASE_URL ||
+        'http://localhost:8085';
+};
+var API_BASE_URL = resolveApiBaseUrl();
 export var apiClient = axios.create({
     baseURL: API_BASE_URL,
     withCredentials: true,
