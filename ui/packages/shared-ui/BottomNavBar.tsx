@@ -5,6 +5,7 @@ export type BottomNavItem = {
   href: string;
   icon: ReactNode | string;
   isActive?: boolean;
+  onlyLoggedIn?: boolean;
 };
 
 export type BottomNavBarProps = {
@@ -27,7 +28,7 @@ const renderIcon = (icon: ReactNode | string) => {
 };
 
 const defaultItems: BottomNavItem[] = [
-  { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'home', isActive: true },
+  { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'home', isActive: true, onlyLoggedIn: true },
   { label: 'Csomag feladása', href: '#/create-order', icon: 'add_box' },
   { label: 'Nyomonkövetés', href: '#/tracking', icon: 'local_shipping' },
   { label: 'Menü', href: '#', icon: 'menu' },

@@ -3,7 +3,7 @@ import { ShipmentCard, type Shipment } from './ShipmentCard';
 import { ShipmentStats } from './ShipmentStats';
 
 const sideNavigationItems = [
-  { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'package_2', isActive: true },
+  { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'package_2', isActive: true, onlyLoggedIn: true },
   { label: 'Csomag feladása', href: '#/create-order', icon: 'add_circle' },
   { label: 'Nyomonkövetés', href: '#/tracking', icon: 'local_shipping' },
 ];
@@ -43,7 +43,7 @@ const shipments: Shipment[] = [
 export const DashboardPage = () => {
   return (
     <div className="bg-surface text-on-surface min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed">
-      <SideNavBar navigationItems={sideNavigationItems} ctaHref="#/create-order" />
+      <SideNavBar navigationItems={sideNavigationItems} />
 
       <main className="lg:ml-64 min-h-screen flex flex-col pb-24 lg:pb-0">
         <TopNavBar title="Saját csomagjaim" />
@@ -103,7 +103,7 @@ export const DashboardPage = () => {
 
       <BottomNavBar
         items={[
-          { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'home', isActive: true },
+          { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'home', isActive: true, onlyLoggedIn: true },
           { label: 'Csomag feladása', href: '#/create-order', icon: 'add_box' },
           { label: 'Nyomonkövetés', href: '#/tracking', icon: 'local_shipping' },
         ]}

@@ -1,21 +1,29 @@
 import { useEffect, useState } from 'react';
+import { useAuth } from '@package/shared-ui';
 import { CreateOrderPage } from './components/CreateOrderPage';
 import { DashboardPage } from './components/DashboardPage';
+import { LandingPage } from './components/LandingPage';
 import { TrackingPage } from './components/TrackingPage';
 
-type AppRoute = '/my-shipments' | '/create-order' | '/tracking';
+type AppRoute = '/' | '/my-shipments' | '/create-order' | '/tracking';
 
-const DEFAULT_ROUTE: AppRoute = '/my-shipments';
+const DEFAULT_ROUTE: AppRoute = '/';
 
 const getRouteFromHash = (): AppRoute => {
   const hash = window.location.hash.replace('#', '');
-  if (hash === '/tracking') return '/tracking';
-  if (hash === '/create-order') return '/create-order';
-  return '/my-shipments';
+  const [path] = hash.split('?');
+
+  if (!path || path === '/') return '/';
+  if (path === '/tracking') return '/tracking';
+  if (path === '/create-order') return '/create-order';
+  if (path === '/my-shipments') return '/my-shipments';
+
+  return '/';
 };
 
 function App() {
   const [route, setRoute] = useState<AppRoute>(getRouteFromHash);
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
     if (!window.location.hash) {
@@ -30,6 +38,10 @@ function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  if (route === '/my-shipments') {
+    return <DashboardPage />;
+  }
+
   if (route === '/create-order') {
     return <CreateOrderPage />;
   }
@@ -38,7 +50,15 @@ function App() {
     return <TrackingPage />;
   }
 
-  return <DashboardPage />;
+  if (isLoading) {
+    return null;
+  }
+
+  if (user) {
+    return <DashboardPage />;
+  }
+
+  return <LandingPage />;
 }
 
 export default App;
