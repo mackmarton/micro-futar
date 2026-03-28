@@ -1,8 +1,8 @@
-import { CourierCard } from './CourierCard';
-import { ShippingInfoCard } from './ShippingInfoCard';
-import { TrackingHero } from './TrackingHero';
-import { TrackingProgressCard } from './TrackingProgressCard';
-import { TrackingTimelineCard } from './TrackingTimelineCard';
+import { CourierCard } from './CourierCard.tsx';
+import { ShippingInfoCard } from './ShippingInfoCard.tsx';
+import { TrackingHero } from './TrackingHero.tsx';
+import { TrackingProgressCard } from './TrackingProgressCard.tsx';
+import { TrackingTimelineCard } from './TrackingTimelineCard.tsx';
 
 export type TrackPackagePageProps = {
   className?: string;

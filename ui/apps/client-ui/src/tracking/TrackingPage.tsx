@@ -1,5 +1,5 @@
 import {BottomNavBar, SideNavBar, TopNavBar} from '@package/shared-ui';
-import {TrackPackagePage} from '../feature-tracking';
+import {TrackPackagePage} from './components';
 
 const sideNavigationItems = [
     {label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'package_2', onlyLoggedIn: true},
