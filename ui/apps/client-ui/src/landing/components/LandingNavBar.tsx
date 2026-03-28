@@ -1,4 +1,4 @@
-import logo from '../assets/micro-futar-logo.svg';
+import logo from '../../assets/micro-futar-logo.svg';
 import { useAuth } from '@package/shared-ui';
 
 

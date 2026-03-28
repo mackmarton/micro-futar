@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import { BottomNavBar, SideNavBar, TopNavBar } from '@package/shared-ui';
-import { AddressSection, type AddressSectionValue } from './AddressSection';
-import { OrderSummaryCard } from './OrderSummaryCard';
+import { AddressSection, type AddressSectionValue } from './components/AddressSection.tsx';
+import { OrderSummaryCard } from './components/OrderSummaryCard.tsx';
 import {
   PackageDetailsSection,
   type PackageDetailsValue,
   type PackageSize,
-} from './PackageDetailsSection';
+} from './components/PackageDetailsSection.tsx';
 import {
   ShippingOptionsSection,
   type PaymentMethod,
   type ShippingSpeed,
   type ShippingOptionsValue,
-} from './ShippingOptionsSection';
+} from './components/ShippingOptionsSection.tsx';
 
 const sideNavigationItems = [
   { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'package_2', onlyLoggedIn: true },

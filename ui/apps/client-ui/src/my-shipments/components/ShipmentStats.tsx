@@ -1,4 +1,4 @@
-type StatStatus = 'active' | 'inProgress' | 'delivered';
+type StatStatus = 'inProgress' | 'delivered';
 
 export type ShipmentStatItem = {
   status: StatStatus;
@@ -7,7 +7,6 @@ export type ShipmentStatItem = {
 };
 
 export type ShipmentStatsObject = {
-  active: number | string;
   inProgress: number | string;
   delivered: number | string;
 };
@@ -20,21 +19,17 @@ export type ShipmentStatsProps = {
 const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 const STAT_META: Record<StatStatus, { label: string; borderClass: string }> = {
-  active: {
-    label: 'Aktív szállítások',
-    borderClass: 'border-primary-fixed',
-  },
   inProgress: {
     label: 'Folyamatban lévő',
     borderClass: 'border-tertiary-fixed',
   },
   delivered: {
-    label: 'Kiszállítva (30 nap)',
+    label: 'Kiszállítva',
     borderClass: 'border-on-primary-container',
   },
 };
 
-const ORDER: StatStatus[] = ['active', 'inProgress', 'delivered'];
+const ORDER: StatStatus[] = ['inProgress', 'delivered'];
 
 const normalizeStats = (stats: ShipmentStatsProps['stats']): ShipmentStatItem[] => {
   if (Array.isArray(stats)) {
@@ -69,7 +64,7 @@ export const ShipmentStats = ({ stats, className }: ShipmentStatsProps) => {
   const cards = normalizeStats(stats);
 
   return (
-    <section className={cn('grid grid-cols-1 md:grid-cols-3 gap-6 mb-12', className)}>
+    <section className={cn('grid grid-cols-1 md:grid-cols-2 gap-6 mb-12', className)}>
       {cards.map((item) => (
         <article
           key={item.status}

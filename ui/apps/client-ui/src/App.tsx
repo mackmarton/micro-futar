@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@package/shared-ui';
-import { CreateOrderPage } from './components/CreateOrderPage';
-import { DashboardPage } from './components/DashboardPage';
-import { LandingPage } from './components/LandingPage';
-import { TrackingPage } from './components/TrackingPage';
+import { CreateOrderPage } from './create-order/CreateOrderPage.tsx';
+import { DashboardPage } from './my-shipments/DashboardPage.tsx';
+import { LandingPage } from './landing/LandingPage.tsx';
+import { TrackingPage } from './tracking/TrackingPage.tsx';
 
 type AppRoute = '/' | '/my-shipments' | '/create-order' | '/tracking';
 

@@ -1,6 +1,6 @@
-import { HeroSection } from './HeroSection';
-import { LandingNavBar } from './LandingNavBar';
-import { ProcessSection } from './ProcessSection';
+import { HeroSection } from './components/HeroSection.tsx';
+import { LandingNavBar } from './components/LandingNavBar.tsx';
+import { ProcessSection } from './components/ProcessSection.tsx';
 
 export type LandingPageProps = {
   className?: string;
