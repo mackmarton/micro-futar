@@ -1,7 +1,24 @@
 import axios from 'axios';
 
-const viteEnv = (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env;
-const API_BASE_URL = viteEnv?.VITE_API_BASE_URL ?? 'http://localhost:8085';
+type RuntimeEnv = {
+  VITE_API_BASE_URL?: string;
+  API_BASE_URL?: string;
+};
+
+const resolveApiBaseUrl = () => {
+  const globalEnv = ((globalThis as { __APP_ENV__?: RuntimeEnv }).__APP_ENV__) ?? {};
+  const processEnv = ((globalThis as { process?: { env?: RuntimeEnv } }).process?.env ?? {});
+
+  return (
+    globalEnv.VITE_API_BASE_URL ??
+    globalEnv.API_BASE_URL ??
+    processEnv.VITE_API_BASE_URL ??
+    processEnv.API_BASE_URL ??
+    'http://localhost:8085'
+  );
+};
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
