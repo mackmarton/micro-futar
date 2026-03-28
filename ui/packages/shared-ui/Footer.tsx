@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react';
-
 export type FooterProps = {
   logoSrc?: string;
   logoAlt?: string;
@@ -10,18 +8,6 @@ export type FooterProps = {
 
 
 const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
-
-const renderIcon = (icon: ReactNode | string) => {
-  if (typeof icon === 'string') {
-    return (
-      <span className="material-symbols-outlined" aria-hidden="true">
-        {icon}
-      </span>
-    );
-  }
-
-  return icon;
-};
 
 export const Footer = ({
   logoSrc = "/micro-futar-logo.svg",
