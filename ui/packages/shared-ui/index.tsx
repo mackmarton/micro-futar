@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 export {AuthProvider, useAuth} from "./AuthContext";
 export type {User} from "./AuthContext";
 export { Navbar } from './Navbar';
@@ -8,9 +7,7 @@ export { TopNavBar } from './TopNavBar';
 export type { TopNavBarProps, TopNavLink } from './TopNavBar';
 export { BottomNavBar } from './BottomNavBar';
 export type { BottomNavBarProps, BottomNavItem } from './BottomNavBar';
+export { Footer } from './Footer';
+export type { FooterProps, FooterActionItem } from './Footer';
 export { FormSection, PrecisionInput } from './forms';
 export type { FormSectionProps, PrecisionInputProps } from './forms';
-
-export const Button = ({ children }: { children: ReactNode }) => {
-  return <button style={{ padding: '10px', background: 'blue', color: 'white' }}>{children}</button>;
-};
