@@ -1,8 +1,5 @@
-import {CourierCard} from './components';
-import {ShippingInfoCard} from './components';
 import {TrackingHero} from './components';
-import {TrackingProgressCard} from './components';
-import {TrackingTimelineCard} from './components';
+import {TrackingDetailsSection} from './components';
 import {BottomNavBar} from "@package/shared-ui/BottomNavBar.tsx";
 import {TopNavBar} from "@package/shared-ui/TopNavBar.tsx";
 import {SideNavBar} from "@package/shared-ui/SideNavBar.tsx";
@@ -26,21 +23,10 @@ export const TrackPackagePage = ({className}: TrackPackagePageProps) => {
 
             <main className="lg:ml-64 min-h-screen flex flex-col pb-24 lg:pb-0">
                 <TopNavBar title="Nyomonkövetés"/>
-            <div className={cn('max-w-7xl mx-auto px-6 py-8 md:p-12', className)}>
-                <TrackingHero/>
-
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    <div className="lg:col-span-8 space-y-8">
-                        <TrackingProgressCard trackingNumber="MF-7281-902" deliveryTimeValue="Ma, 14:15"/>
-                        <TrackingTimelineCard/>
-                    </div>
-
-                    <aside className="lg:col-span-4 space-y-6">
-                        <CourierCard/>
-                        <ShippingInfoCard/>
-                    </aside>
+                <div className={cn('max-w-7xl mx-auto px-6 py-8 md:p-12', className)}>
+                    <TrackingHero/>
+                    <TrackingDetailsSection/>
                 </div>
-            </div>
             </main>
 
             <BottomNavBar
