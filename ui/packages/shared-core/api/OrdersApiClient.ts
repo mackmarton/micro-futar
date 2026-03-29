@@ -427,10 +427,19 @@ export class Api<
      * @name GetAllCountryPrices
      * @request GET:/api/orders/country-prices
      */
-    getAllCountryPrices: (params: RequestParams = {}) =>
+    getAllCountryPrices: (
+      query?: {
+        /** @format int64 */
+        originCountryId?: number;
+        /** @format int64 */
+        destinationCountryId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<CountryPriceDTO[], any>({
         path: `/api/orders/country-prices`,
         method: "GET",
+        query: query,
         ...params,
       }),
 
