@@ -8,6 +8,4 @@ export { CourierCard } from './CourierCard.tsx';
 export type { CourierCardProps } from './CourierCard.tsx';
 export { ShippingInfoCard } from './ShippingInfoCard.tsx';
 export type { ShippingInfoCardProps } from './ShippingInfoCard.tsx';
-export { TrackPackagePage } from './TrackPackagePage.tsx';
-export type { TrackPackagePageProps } from './TrackPackagePage.tsx';
 

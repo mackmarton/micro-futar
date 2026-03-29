@@ -3,7 +3,7 @@ import { useAuth } from '@package/shared-ui';
 import { CreateOrderPage } from './create-order/CreateOrderPage.tsx';
 import { DashboardPage } from './my-shipments/DashboardPage.tsx';
 import { LandingPage } from './landing/LandingPage.tsx';
-import { TrackingPage } from './tracking/TrackingPage.tsx';
+import { TrackPackagePage } from './tracking/TrackPackagePage.tsx';
 
 type AppRoute = '/' | '/my-shipments' | '/create-order' | '/tracking';
 
@@ -47,7 +47,7 @@ function App() {
   }
 
   if (route === '/tracking') {
-    return <TrackingPage />;
+    return <TrackPackagePage />;
   }
 
   if (isLoading) {
