@@ -1,27 +1,25 @@
 import { FormSection } from '@package/shared-ui';
+import type { PackageSizeOption } from '../api/ordersApi.ts';
 
-export type PackageSize = 'S' | 'M' | 'L' | 'XL';
+export type PackageSizeId = number;
 
 export type PackageDetailsValue = {
-  size: PackageSize;
+  sizeId: PackageSizeId;
   weight: string;
   description: string;
 };
 
 export type PackageDetailsSectionProps = {
   value: PackageDetailsValue;
-  onSizeChange?: (size: PackageSize) => void;
+  sizeOptions: PackageSizeOption[];
+  isSizeLoading: boolean;
+  isPackageSizeEnabled?: (sizeId: PackageSizeId) => boolean;
+  sizeAvailabilityHint?: string | null;
+  onSizeChange?: (size: PackageSizeId) => void;
   onWeightChange?: (weight: string) => void;
   onDescriptionChange?: (description: string) => void;
   className?: string;
 };
-
-const SIZE_OPTIONS: Array<{ size: PackageSize; label: string }> = [
-  { size: 'S', label: 'Levél méret' },
-  { size: 'M', label: 'Cipős doboz' },
-  { size: 'L', label: 'Közepes doboz' },
-  { size: 'XL', label: 'Nagyobb tárgy' },
-];
 
 const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
@@ -29,6 +27,10 @@ const labelClassName = 'text-xs font-bold uppercase tracking-widest text-on-surf
 
 export const PackageDetailsSection = ({
   value,
+  sizeOptions,
+  isSizeLoading,
+  isPackageSizeEnabled,
+  sizeAvailabilityHint,
   onSizeChange,
   onWeightChange,
   onDescriptionChange,
@@ -42,29 +44,41 @@ export const PackageDetailsSection = ({
             Csomag mérete
           </label>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {SIZE_OPTIONS.map((option) => {
-              const isActive = value.size === option.size;
+          {isSizeLoading ? (
+            <p className="text-sm text-on-surface-variant">Csomagméretek betöltése...</p>
+          ) : sizeOptions.length === 0 ? (
+            <p className="text-sm text-on-surface-variant">Nincsenek elérhető csomagméretek.</p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              {sizeOptions.map((option) => {
+                const isActive = value.sizeId === option.id;
+                const isEnabled = isPackageSizeEnabled?.(option.id) ?? true;
 
-              return (
-                <button
-                  key={option.size}
-                  type="button"
-                  onClick={() => onSizeChange?.(option.size)}
-                  className={cn(
-                    'flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all group',
-                    isActive
-                      ? 'bg-white border-surface-tint'
-                      : 'bg-surface-container-lowest hover:bg-primary-fixed border-transparent'
-                  )}
-                  aria-pressed={isActive}
-                >
-                  <span className="text-2xl font-bold mb-1 text-on-surface">{option.size}</span>
-                  <span className="text-[10px] text-on-surface-variant group-hover:text-primary">{option.label}</span>
-                </button>
-              );
-            })}
-          </div>
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => onSizeChange?.(option.id)}
+                    disabled={!isEnabled}
+                    className={cn(
+                      'flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all group',
+                      !isEnabled && 'cursor-not-allowed opacity-50',
+                      isActive
+                        ? 'bg-white border-surface-tint'
+                        : 'bg-surface-container-lowest hover:bg-primary-fixed border-transparent'
+                    )}
+                    aria-pressed={isActive}
+                  >
+                    <span className="text-2xl font-bold mb-1 text-on-surface">{option.name}</span>
+                    <span className="text-[10px] text-on-surface-variant group-hover:text-primary">Maximum oldalhossz:<br/>{option.maxLength} cm</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          {sizeAvailabilityHint ? (
+            <p className="mt-3 text-xs text-on-surface-variant">{sizeAvailabilityHint}</p>
+          ) : null}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

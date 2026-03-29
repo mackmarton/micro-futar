@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BottomNavBar, SideNavBar, TopNavBar } from '@package/shared-ui';
 import { OrderSummaryCard } from './components/OrderSummaryCard.tsx';
 import {
   PackageDetailsSection,
   type PackageDetailsValue,
-  type PackageSize,
+  type PackageSizeId,
 } from './components/PackageDetailsSection.tsx';
 import { AddressCard, type AddressCardField, type AddressCardValue } from './components/AddressCard.tsx';
 import { useCountries } from './hooks/useCountries.ts';
 import { useCities } from './hooks/useCities.ts';
+import { usePackageSizes } from './hooks/usePackageSizes.ts';
+import { useCountryPrices } from './hooks/useCountryPrices.ts';
 
 const sideNavigationItems = [
   { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'package_2', onlyLoggedIn: true },
@@ -17,7 +19,7 @@ const sideNavigationItems = [
 ];
 
 const initialPackageDetails: PackageDetailsValue = {
-  size: 'M',
+  sizeId: 0,
   weight: '2.5',
   description: '',
 };
@@ -55,6 +57,53 @@ export const CreateOrderPage = () => {
     errorMessage: recipientCitiesErrorMessage,
     retry: retryRecipientCities,
   } = useCities(addressCards.recipient.country);
+  const {
+    packageSizeOptions,
+    isLoading: isPackageSizesLoading,
+    errorMessage: packageSizesErrorMessage,
+    retry: retryPackageSizes,
+  } = usePackageSizes();
+  const {
+    countryPrices,
+    isLoading: isCountryPricesLoading,
+    errorMessage: countryPricesErrorMessage,
+    retry: retryCountryPrices,
+  } = useCountryPrices(addressCards.sender.country, addressCards.recipient.country);
+
+  const isRouteSelected = Boolean(addressCards.sender.country && addressCards.recipient.country);
+  const availablePackageSizeIds = useMemo(
+    () => new Set(countryPrices.map((countryPrice) => countryPrice.packageSizeId)),
+    [countryPrices],
+  );
+
+  const isPackageSizeEnabled = useCallback(
+    (sizeId: PackageSizeId) => {
+      if (!isRouteSelected || isCountryPricesLoading || countryPricesErrorMessage) {
+        return false;
+      }
+
+      return availablePackageSizeIds.has(sizeId);
+    },
+    [availablePackageSizeIds, countryPricesErrorMessage, isCountryPricesLoading, isRouteSelected],
+  );
+
+  useEffect(() => {
+    if (!packageDetailsValue.sizeId || isPackageSizesLoading) {
+      return;
+    }
+
+    const selectedPackageSizeExists = packageSizeOptions.some((option) => option.id === packageDetailsValue.sizeId);
+    const selectedPackageSizeAllowed = isPackageSizeEnabled(packageDetailsValue.sizeId);
+
+    if (!selectedPackageSizeExists || !selectedPackageSizeAllowed) {
+      setPackageDetailsValue((previous) => ({ ...previous, sizeId: 0 }));
+    }
+  }, [
+    isPackageSizeEnabled,
+    isPackageSizesLoading,
+    packageDetailsValue.sizeId,
+    packageSizeOptions,
+  ]);
 
   const handleAddressCardChange = (role: AddressCardRole, field: AddressCardField, fieldValue: string) => {
     setAddressCards((previous) => ({
@@ -67,8 +116,8 @@ export const CreateOrderPage = () => {
     }));
   };
 
-  const handleSizeChange = (size: PackageSize) => {
-    setPackageDetailsValue((previous) => ({ ...previous, size }));
+  const handleSizeChange = (sizeId: PackageSizeId) => {
+    setPackageDetailsValue((previous) => ({ ...previous, sizeId }));
   };
 
   const handleWeightChange = (weight: string) => {
@@ -118,11 +167,13 @@ export const CreateOrderPage = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-8">
-              {countriesErrorMessage || senderCitiesErrorMessage || recipientCitiesErrorMessage ? (
+              {countriesErrorMessage || senderCitiesErrorMessage || recipientCitiesErrorMessage || packageSizesErrorMessage || countryPricesErrorMessage ? (
                 <div className="rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-700">
                   {countriesErrorMessage ? <p>{countriesErrorMessage}</p> : null}
                   {senderCitiesErrorMessage ? <p>Felado varosok: {senderCitiesErrorMessage}</p> : null}
                   {recipientCitiesErrorMessage ? <p>Cimzett varosok: {recipientCitiesErrorMessage}</p> : null}
+                  {packageSizesErrorMessage ? <p>Csomagmeretek: {packageSizesErrorMessage}</p> : null}
+                  {countryPricesErrorMessage ? <p>Orszagpar arak: {countryPricesErrorMessage}</p> : null}
                   <div className="mt-3 flex gap-2">
                     {countriesErrorMessage ? (
                       <button
@@ -151,6 +202,24 @@ export const CreateOrderPage = () => {
                         Cimzett varosok ujratoltese
                       </button>
                     ) : null}
+                    {packageSizesErrorMessage ? (
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700"
+                        onClick={retryPackageSizes}
+                      >
+                        Csomagmeretek ujratoltese
+                      </button>
+                    ) : null}
+                    {countryPricesErrorMessage ? (
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700"
+                        onClick={retryCountryPrices}
+                      >
+                        Orszagpar arak ujratoltese
+                      </button>
+                    ) : null}
                   </div>
                 </div>
               ) : null}
@@ -159,6 +228,16 @@ export const CreateOrderPage = () => {
               <AddressCard {...recipientAddressCardProps} />
               <PackageDetailsSection
                 value={packageDetailsValue}
+                sizeOptions={packageSizeOptions}
+                isSizeLoading={isPackageSizesLoading}
+                isPackageSizeEnabled={isPackageSizeEnabled}
+                sizeAvailabilityHint={
+                  !isRouteSelected
+                    ? 'A csomagméretek az országpár kiválasztása után válnak elérhetővé.'
+                    : isCountryPricesLoading
+                      ? 'Az országpárhoz tartozó csomagméretek betöltése folyamatban van.'
+                      : null
+                }
                 onSizeChange={handleSizeChange}
                 onWeightChange={handleWeightChange}
                 onDescriptionChange={handleDescriptionChange}
