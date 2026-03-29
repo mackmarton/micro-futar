@@ -7,6 +7,7 @@ import {
   type PackageSize,
 } from './components/PackageDetailsSection.tsx';
 import { AddressCard, type AddressCardField, type AddressCardValue } from './components/AddressCard.tsx';
+import { useCountries } from './hooks/useCountries.ts';
 
 const sideNavigationItems = [
   { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'package_2', onlyLoggedIn: true },
@@ -40,6 +41,7 @@ const initialAddressCards: Record<AddressCardRole, AddressCardValue> = {
 export const CreateOrderPage = () => {
   const [addressCards, setAddressCards] = useState<Record<AddressCardRole, AddressCardValue>>(initialAddressCards);
   const [packageDetailsValue, setPackageDetailsValue] = useState<PackageDetailsValue>(initialPackageDetails);
+  const { countryOptions, isLoading: isCountryLoading, errorMessage: countriesErrorMessage, retry } = useCountries();
 
   const handleAddressCardChange = (role: AddressCardRole, field: AddressCardField, fieldValue: string) => {
     setAddressCards((previous) => ({
@@ -80,16 +82,33 @@ export const CreateOrderPage = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-8">
+              {countriesErrorMessage ? (
+                <div className="rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-700">
+                  <p>{countriesErrorMessage}</p>
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700"
+                    onClick={retry}
+                  >
+                    Újrapróbálkozás
+                  </button>
+                </div>
+              ) : null}
+
               <AddressCard
                 title="Feladó adatai"
                 iconName="person_pin_circle"
                 value={addressCards.sender}
+                countryOptions={countryOptions}
+                isCountryLoading={isCountryLoading}
                 onChange={(field, fieldValue) => handleAddressCardChange('sender', field, fieldValue)}
               />
               <AddressCard
                 title="Címzett adatai"
                 iconName="local_shipping"
                 value={addressCards.recipient}
+                countryOptions={countryOptions}
+                isCountryLoading={isCountryLoading}
                 onChange={(field, fieldValue) => handleAddressCardChange('recipient', field, fieldValue)}
               />
               <PackageDetailsSection
