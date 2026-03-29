@@ -1,6 +1,12 @@
 import { Api, type LocationCountryDTO } from '@package/shared-core/api/OrdersApiClient';
+import type { LocationCityDTO } from '@package/shared-core/api/OrdersApiClient';
 
 export type CountryOption = {
+  value: string;
+  label: string;
+};
+
+export type CityOption = {
   value: string;
   label: string;
 };
@@ -36,6 +42,17 @@ const isValidCountry = (
   return typeof country.id === 'number' && typeof country.name === 'string' && country.name.trim().length > 0;
 };
 
+const isValidCity = (
+  city: LocationCityDTO,
+): city is Required<Pick<LocationCityDTO, 'id' | 'name' | 'countryId'>> => {
+  return (
+    typeof city.id === 'number' &&
+    typeof city.name === 'string' &&
+    city.name.trim().length > 0 &&
+    typeof city.countryId === 'number'
+  );
+};
+
 export const fetchCountryOptions = async (signal?: AbortSignal): Promise<CountryOption[]> => {
   const response = await ordersApiClient.api.getAllCountries({
     signal,
@@ -47,6 +64,30 @@ export const fetchCountryOptions = async (signal?: AbortSignal): Promise<Country
     .map((country) => ({
       value: String(country.id),
       label: country.name,
+    }))
+    .sort((left, right) => left.label.localeCompare(right.label, 'hu'));
+};
+
+export const fetchCityOptionsByCountryId = async (
+  countryId: string,
+  signal?: AbortSignal,
+): Promise<CityOption[]> => {
+  const parsedCountryId = Number(countryId);
+
+  if (!Number.isInteger(parsedCountryId)) {
+    return [];
+  }
+
+  const response = await ordersApiClient.api.getAllCitiesByCountryId(parsedCountryId, {
+    signal,
+    format: 'json',
+  });
+
+  return (response.data ?? [])
+    .filter(isValidCity)
+    .map((city) => ({
+      value: String(city.id),
+      label: city.name,
     }))
     .sort((left, right) => left.label.localeCompare(right.label, 'hu'));
 };

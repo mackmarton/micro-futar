@@ -8,6 +8,7 @@ import {
 } from './components/PackageDetailsSection.tsx';
 import { AddressCard, type AddressCardField, type AddressCardValue } from './components/AddressCard.tsx';
 import { useCountries } from './hooks/useCountries.ts';
+import { useCities } from './hooks/useCities.ts';
 
 const sideNavigationItems = [
   { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'package_2', onlyLoggedIn: true },
@@ -42,12 +43,25 @@ export const CreateOrderPage = () => {
   const [addressCards, setAddressCards] = useState<Record<AddressCardRole, AddressCardValue>>(initialAddressCards);
   const [packageDetailsValue, setPackageDetailsValue] = useState<PackageDetailsValue>(initialPackageDetails);
   const { countryOptions, isLoading: isCountryLoading, errorMessage: countriesErrorMessage, retry } = useCountries();
+  const {
+    cityOptions: senderCityOptions,
+    isLoading: isSenderCityLoading,
+    errorMessage: senderCitiesErrorMessage,
+    retry: retrySenderCities,
+  } = useCities(addressCards.sender.country);
+  const {
+    cityOptions: recipientCityOptions,
+    isLoading: isRecipientCityLoading,
+    errorMessage: recipientCitiesErrorMessage,
+    retry: retryRecipientCities,
+  } = useCities(addressCards.recipient.country);
 
   const handleAddressCardChange = (role: AddressCardRole, field: AddressCardField, fieldValue: string) => {
     setAddressCards((previous) => ({
       ...previous,
       [role]: {
         ...previous[role],
+        ...(field === 'country' ? { city: '' } : {}),
         [field]: fieldValue,
       },
     }));
@@ -63,6 +77,28 @@ export const CreateOrderPage = () => {
 
   const handleDescriptionChange = (description: string) => {
     setPackageDetailsValue((previous) => ({ ...previous, description }));
+  };
+
+  const senderAddressCardProps = {
+    title: 'Feladó adatai',
+    iconName: 'person_pin_circle',
+    value: addressCards.sender,
+    countryOptions,
+    isCountryLoading,
+    cityOptions: senderCityOptions,
+    isCityLoading: isSenderCityLoading,
+    onChange: (field: AddressCardField, fieldValue: string) => handleAddressCardChange('sender', field, fieldValue),
+  };
+
+  const recipientAddressCardProps = {
+    title: 'Címzett adatai',
+    iconName: 'local_shipping',
+    value: addressCards.recipient,
+    countryOptions,
+    isCountryLoading,
+    cityOptions: recipientCityOptions,
+    isCityLoading: isRecipientCityLoading,
+    onChange: (field: AddressCardField, fieldValue: string) => handleAddressCardChange('recipient', field, fieldValue),
   };
 
   return (
@@ -82,35 +118,45 @@ export const CreateOrderPage = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-8">
-              {countriesErrorMessage ? (
+              {countriesErrorMessage || senderCitiesErrorMessage || recipientCitiesErrorMessage ? (
                 <div className="rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-700">
-                  <p>{countriesErrorMessage}</p>
-                  <button
-                    type="button"
-                    className="mt-3 inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700"
-                    onClick={retry}
-                  >
-                    Újrapróbálkozás
-                  </button>
+                  {countriesErrorMessage ? <p>{countriesErrorMessage}</p> : null}
+                  {senderCitiesErrorMessage ? <p>Felado varosok: {senderCitiesErrorMessage}</p> : null}
+                  {recipientCitiesErrorMessage ? <p>Cimzett varosok: {recipientCitiesErrorMessage}</p> : null}
+                  <div className="mt-3 flex gap-2">
+                    {countriesErrorMessage ? (
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700"
+                        onClick={retry}
+                      >
+                        Orszagok ujratoltese
+                      </button>
+                    ) : null}
+                    {senderCitiesErrorMessage ? (
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700"
+                        onClick={retrySenderCities}
+                      >
+                        Felado varosok ujratoltese
+                      </button>
+                    ) : null}
+                    {recipientCitiesErrorMessage ? (
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700"
+                        onClick={retryRecipientCities}
+                      >
+                        Cimzett varosok ujratoltese
+                      </button>
+                    ) : null}
+                  </div>
                 </div>
               ) : null}
 
-              <AddressCard
-                title="Feladó adatai"
-                iconName="person_pin_circle"
-                value={addressCards.sender}
-                countryOptions={countryOptions}
-                isCountryLoading={isCountryLoading}
-                onChange={(field, fieldValue) => handleAddressCardChange('sender', field, fieldValue)}
-              />
-              <AddressCard
-                title="Címzett adatai"
-                iconName="local_shipping"
-                value={addressCards.recipient}
-                countryOptions={countryOptions}
-                isCountryLoading={isCountryLoading}
-                onChange={(field, fieldValue) => handleAddressCardChange('recipient', field, fieldValue)}
-              />
+              <AddressCard {...senderAddressCardProps} />
+              <AddressCard {...recipientAddressCardProps} />
               <PackageDetailsSection
                 value={packageDetailsValue}
                 onSizeChange={handleSizeChange}

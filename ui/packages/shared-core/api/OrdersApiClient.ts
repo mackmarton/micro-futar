@@ -479,6 +479,20 @@ export class Api<
     /**
      * No description
      *
+     * @tags location-country-controller
+     * @name GetAllCitiesByCountryId
+     * @request GET:/api/orders/countries/{id}/cities
+     */
+    getAllCitiesByCountryId: (id: number, params: RequestParams = {}) =>
+      this.request<LocationCityDTO[], any>({
+        path: `/api/orders/countries/${id}/cities`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags location-city-controller
      * @name GetAllCities
      * @request GET:/api/orders/cities
