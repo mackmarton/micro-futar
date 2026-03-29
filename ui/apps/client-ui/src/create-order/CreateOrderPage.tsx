@@ -7,6 +7,7 @@ import {
   type PackageSizeId,
 } from './components/PackageDetailsSection.tsx';
 import { AddressCard, type AddressCardField, type AddressCardValue } from './components/AddressCard.tsx';
+import { createShipment } from './api/ordersApi.ts';
 import { useCountries } from './hooks/useCountries.ts';
 import { useCities } from './hooks/useCities.ts';
 import { usePackageSizes } from './hooks/usePackageSizes.ts';
@@ -56,6 +57,9 @@ const initialAddressCards: Record<AddressCardRole, AddressCardValue> = {
 export const CreateOrderPage = () => {
   const [addressCards, setAddressCards] = useState<Record<AddressCardRole, AddressCardValue>>(initialAddressCards);
   const [packageDetailsValue, setPackageDetailsValue] = useState<PackageDetailsValue>(initialPackageDetails);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(null);
+  const [submitSuccessMessage, setSubmitSuccessMessage] = useState<string | null>(null);
   const { countryOptions, isLoading: isCountryLoading, errorMessage: countriesErrorMessage, retry } = useCountries();
   const {
     cityOptions: senderCityOptions,
@@ -144,6 +148,9 @@ export const CreateOrderPage = () => {
   ]);
 
   const handleAddressCardChange = (role: AddressCardRole, field: AddressCardField, fieldValue: string) => {
+    setSubmitErrorMessage(null);
+    setSubmitSuccessMessage(null);
+
     setAddressCards((previous) => ({
       ...previous,
       [role]: {
@@ -155,6 +162,8 @@ export const CreateOrderPage = () => {
   };
 
   const handleSizeChange = (sizeId: PackageSizeId) => {
+    setSubmitErrorMessage(null);
+    setSubmitSuccessMessage(null);
     setPackageDetailsValue((previous) => ({ ...previous, sizeId }));
   };
 
@@ -194,10 +203,66 @@ export const CreateOrderPage = () => {
     packageDetailsValue.sizeId > 0
   );
 
+  const parseSelectedId = (value: string) => {
+    const parsedValue = Number(value);
+    return Number.isInteger(parsedValue) ? parsedValue : null;
+  };
+
+  const handleSubmitOrder = async () => {
+    if (isSubmitDisabled || isSubmitting) {
+      return;
+    }
+
+    const senderCountryId = parseSelectedId(addressCards.sender.country);
+    const senderCityId = parseSelectedId(addressCards.sender.city);
+    const recipientCountryId = parseSelectedId(addressCards.recipient.country);
+    const recipientCityId = parseSelectedId(addressCards.recipient.city);
+
+    if (!senderCountryId || !senderCityId || !recipientCountryId || !recipientCityId) {
+      setSubmitErrorMessage('A rendeléshez érvényes ország és város kiválasztása szükséges.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitErrorMessage(null);
+    setSubmitSuccessMessage(null);
+
+    try {
+      await createShipment({
+        senderName: addressCards.sender.name.trim(),
+        senderEmail: addressCards.sender.email.trim(),
+        senderPhone: addressCards.sender.phone.trim(),
+        senderLocationCountryId: senderCountryId,
+        senderZip: addressCards.sender.zipCode.trim(),
+        senderLocationCityId: senderCityId,
+        senderAddress: addressCards.sender.address.trim(),
+        recipientName: addressCards.recipient.name.trim(),
+        recipientEmail: addressCards.recipient.email.trim(),
+        recipientPhone: addressCards.recipient.phone.trim(),
+        recipientLocationCountryId: recipientCountryId,
+        recipientZip: addressCards.recipient.zipCode.trim(),
+        recipientLocationCityId: recipientCityId,
+        recipientAddress: addressCards.recipient.address.trim(),
+        packageSizeId: packageDetailsValue.sizeId
+      });
+
+      setSubmitSuccessMessage('A rendelést sikeresen rögzítettük.');
+    } catch (error) {
+      console.error('Failed to create shipment.', error);
+      setSubmitErrorMessage('A rendelés mentése nem sikerült. Kérjük próbálja újra.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const orderSummaryCardProps = {
     minPrice: selectedCountryPrice?.minPrice,
     maxPrice: selectedCountryPrice?.maxPrice,
-    isSubmitDisabled
+    isSubmitDisabled: isSubmitDisabled || isSubmitting,
+    isSubmitting,
+    submitErrorMessage,
+    submitSuccessMessage,
+    onSubmit: handleSubmitOrder,
   };
 
   return (

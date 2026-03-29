@@ -2,6 +2,9 @@ export type OrderSummaryCardProps = {
     minPrice?: number;
     maxPrice?: number;
     isSubmitDisabled?: boolean;
+    isSubmitting?: boolean;
+    submitErrorMessage?: string | null;
+    submitSuccessMessage?: string | null;
     className?: string;
     onSubmit?: () => void;
 };
@@ -12,6 +15,9 @@ export const OrderSummaryCard = ({
                                      minPrice,
                                      maxPrice,
                                      isSubmitDisabled,
+                                     isSubmitting,
+                                     submitErrorMessage,
+                                     submitSuccessMessage,
                                      className,
                                      onSubmit
                                  }: OrderSummaryCardProps) => {
@@ -42,14 +48,21 @@ export const OrderSummaryCard = ({
                 <button
                     type="button"
                     onClick={onSubmit}
-                    disabled={isSubmitDisabled}
+                    disabled={isSubmitDisabled || isSubmitting}
                     className="w-full py-5 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-on-primary-container transition-all active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-primary"
                 >
-                    Rendelés leadása
+                    {isSubmitting ? 'Feldolgozás...' : 'Rendelés leadása'}
                     <span className="material-symbols-outlined text-sm" aria-hidden="true">
             arrow_forward
           </span>
                 </button>
+
+                {submitErrorMessage ? (
+                    <p className="mt-3 text-xs text-red-600">{submitErrorMessage}</p>
+                ) : null}
+                {!submitErrorMessage && submitSuccessMessage ? (
+                    <p className="mt-3 text-xs text-green-700">{submitSuccessMessage}</p>
+                ) : null}
 
                 <p className="text-[10px] text-center text-on-surface-variant mt-4 leading-relaxed">
                     A gombra kattintva elfogadja az Általános Szerződési Feltételeket és az Adatkezelési Tájékoztatót.

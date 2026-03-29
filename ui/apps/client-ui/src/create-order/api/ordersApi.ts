@@ -2,6 +2,7 @@ import {Api, type LocationCountryDTO} from '@package/shared-core/api/OrdersApiCl
 import type {LocationCityDTO} from '@package/shared-core/api/OrdersApiClient';
 import type {PackageSizeDTO} from '@package/shared-core/api/OrdersApiClient';
 import type {CountryPriceDTO} from '@package/shared-core/api/OrdersApiClient';
+import type {ShipmentDTO} from '@package/shared-core/api/OrdersApiClient';
 
 export type CountryOption = {
     value: string;
@@ -27,6 +28,25 @@ export type CountryPriceOption = {
     minPrice: number;
     maxPrice: number;
 };
+
+export type CreateShipmentPayload = Required<Pick<
+    ShipmentDTO,
+    | 'senderName'
+    | 'senderEmail'
+    | 'senderPhone'
+    | 'senderLocationCountryId'
+    | 'senderZip'
+    | 'senderLocationCityId'
+    | 'senderAddress'
+    | 'recipientName'
+    | 'recipientEmail'
+    | 'recipientPhone'
+    | 'recipientLocationCountryId'
+    | 'recipientZip'
+    | 'recipientLocationCityId'
+    | 'recipientAddress'
+    | 'packageSizeId'
+>>;
 
 type RuntimeEnv = {
     VITE_API_BASE_URL?: string;
@@ -182,5 +202,13 @@ export const fetchCountryPrices = async (
             minPrice: countryPrice.minPrice,
             maxPrice: countryPrice.maxPrice,
         }));
+};
+
+export const createShipment = async (payload: CreateShipmentPayload): Promise<ShipmentDTO> => {
+    const response = await ordersApiClient.api.newShipment(payload, {
+        format: 'json',
+    });
+
+    return response.data;
 };
 
