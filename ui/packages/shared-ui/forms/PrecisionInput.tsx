@@ -33,6 +33,11 @@ export const PrecisionInput = ({
         className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3 block"
       >
         {label}
+        {required ? (
+          <span className="ml-1 text-red-600" aria-hidden="true">
+            *
+          </span>
+        ) : null}
       </label>
       <input
         id={inputId}

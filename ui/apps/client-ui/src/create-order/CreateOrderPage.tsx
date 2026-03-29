@@ -12,6 +12,18 @@ import { useCities } from './hooks/useCities.ts';
 import { usePackageSizes } from './hooks/usePackageSizes.ts';
 import { useCountryPrices } from './hooks/useCountryPrices.ts';
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const isAddressCardValid = (addressCard: AddressCardValue) => {
+  const hasRequiredTextValues = (
+    ['name', 'phone', 'zipCode', 'country', 'city', 'address'] satisfies AddressCardField[]
+  ).every((field) => addressCard[field].trim().length > 0);
+
+  const hasValidEmail = EMAIL_PATTERN.test(addressCard.email.trim());
+
+  return hasRequiredTextValues && hasValidEmail;
+};
+
 const sideNavigationItems = [
   { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'package_2', onlyLoggedIn: true },
   { label: 'Csomag feladása', href: '#/create-order', icon: 'add_circle', isActive: true },
@@ -71,6 +83,32 @@ export const CreateOrderPage = () => {
   } = useCountryPrices(addressCards.sender.country, addressCards.recipient.country);
 
   const isRouteSelected = Boolean(addressCards.sender.country && addressCards.recipient.country);
+  const selectedCountryPrice = useMemo(() => {
+    if (!isRouteSelected || !packageDetailsValue.sizeId) {
+      return undefined;
+    }
+
+    const originCountryId = Number(addressCards.sender.country);
+    const destinationCountryId = Number(addressCards.recipient.country);
+
+    if (!Number.isInteger(originCountryId) || !Number.isInteger(destinationCountryId)) {
+      return undefined;
+    }
+
+    return countryPrices.find(
+      (countryPrice) =>
+        countryPrice.originCountryId === originCountryId &&
+        countryPrice.destinationCountryId === destinationCountryId &&
+        countryPrice.packageSizeId === packageDetailsValue.sizeId,
+    );
+  }, [
+    addressCards.recipient.country,
+    addressCards.sender.country,
+    countryPrices,
+    isRouteSelected,
+    packageDetailsValue.sizeId,
+  ]);
+
   const availablePackageSizeIds = useMemo(
     () => new Set(countryPrices.map((countryPrice) => countryPrice.packageSizeId)),
     [countryPrices],
@@ -148,6 +186,18 @@ export const CreateOrderPage = () => {
     cityOptions: recipientCityOptions,
     isCityLoading: isRecipientCityLoading,
     onChange: (field: AddressCardField, fieldValue: string) => handleAddressCardChange('recipient', field, fieldValue),
+  };
+
+  const isSubmitDisabled = !(
+    isAddressCardValid(addressCards.sender) &&
+    isAddressCardValid(addressCards.recipient) &&
+    packageDetailsValue.sizeId > 0
+  );
+
+  const orderSummaryCardProps = {
+    minPrice: selectedCountryPrice?.minPrice,
+    maxPrice: selectedCountryPrice?.maxPrice,
+    isSubmitDisabled
   };
 
   return (
@@ -243,8 +293,7 @@ export const CreateOrderPage = () => {
                 onDescriptionChange={handleDescriptionChange}
               />
             </div>
-
-            <OrderSummaryCard />
+            <OrderSummaryCard {...orderSummaryCardProps} />
           </div>
         </div>
       </main>
