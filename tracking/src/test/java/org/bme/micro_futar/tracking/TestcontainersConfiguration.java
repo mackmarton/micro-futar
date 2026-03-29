@@ -34,6 +34,7 @@ class TestcontainersConfiguration implements ApplicationContextInitializer<Confi
 		System.setProperty("DATASOURCE_PASSWORD", postgreSQL.getPassword());
 		System.setProperty("KAFKA_BOOTSTRAP_SERVERS", kafka.getBootstrapServers());
 		System.setProperty("KEYCLOAK_URL", "url");
+		System.setProperty("API_GATEWAY_URL", "http://localhost:8085");
 	}
 
 	private static void waitForDatabaseReady() {
