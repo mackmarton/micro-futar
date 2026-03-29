@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.orders.services.CountryPriceService;
 import org.bme.micro_futar.shared.dtos.CountryPriceDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +17,13 @@ public class CountryPriceController {
     private final CountryPriceService countryPriceService;
 
     @GetMapping
-    public ResponseEntity<List<CountryPriceDTO>> getAllCountryPrices() {
+    public ResponseEntity<List<CountryPriceDTO>> getAllCountryPrices(
+            @RequestParam(required = false) Long originCountryId,
+            @RequestParam(required = false) Long destinationCountryId) {
+        if (originCountryId != null && destinationCountryId != null) {
+            List<CountryPriceDTO> countryPricesByCountries = countryPriceService.getAllCountryPricesByCountries(originCountryId, destinationCountryId);
+            return ResponseEntity.ok(countryPricesByCountries);
+        }
         List<CountryPriceDTO> countryPrices = countryPriceService.getAllCountryPrices();
         return ResponseEntity.ok(countryPrices);
     }
