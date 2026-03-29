@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { BottomNavBar, SideNavBar, TopNavBar } from '@package/shared-ui';
+import { BottomNavBar, SideNavBar, TopNavBar, useAuth } from '@package/shared-ui';
 import { OrderSummaryCard } from './components/OrderSummaryCard.tsx';
 import {
   PackageDetailsSection,
@@ -57,9 +57,12 @@ const initialAddressCards: Record<AddressCardRole, AddressCardValue> = {
 export const CreateOrderPage = () => {
   const [addressCards, setAddressCards] = useState<Record<AddressCardRole, AddressCardValue>>(initialAddressCards);
   const [packageDetailsValue, setPackageDetailsValue] = useState<PackageDetailsValue>(initialPackageDetails);
+  const [isSenderNameTouched, setIsSenderNameTouched] = useState(false);
+  const [isSenderEmailTouched, setIsSenderEmailTouched] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitErrorMessage, setSubmitErrorMessage] = useState<string | null>(null);
   const [submitSuccessMessage, setSubmitSuccessMessage] = useState<string | null>(null);
+  const { user, isLoading: isAuthLoading } = useAuth();
   const { countryOptions, isLoading: isCountryLoading, errorMessage: countriesErrorMessage, retry } = useCountries();
   const {
     cityOptions: senderCityOptions,
@@ -147,7 +150,49 @@ export const CreateOrderPage = () => {
     packageSizeOptions,
   ]);
 
+  useEffect(() => {
+    if (isAuthLoading || !user) {
+      return;
+    }
+
+    const senderNameFromUser = user.name?.trim() || user.preferred_username?.trim() || '';
+    const senderEmailFromUser = user.email?.trim() || '';
+
+    setAddressCards((previous) => {
+      const senderName = previous.sender.name.trim();
+      const senderEmail = previous.sender.email.trim();
+
+      const nextSenderName = !isSenderNameTouched && !senderName && senderNameFromUser
+        ? senderNameFromUser
+        : previous.sender.name;
+      const nextSenderEmail = !isSenderEmailTouched && !senderEmail && senderEmailFromUser
+        ? senderEmailFromUser
+        : previous.sender.email;
+
+      if (nextSenderName === previous.sender.name && nextSenderEmail === previous.sender.email) {
+        return previous;
+      }
+
+      return {
+        ...previous,
+        sender: {
+          ...previous.sender,
+          name: nextSenderName,
+          email: nextSenderEmail,
+        },
+      };
+    });
+  }, [isAuthLoading, isSenderEmailTouched, isSenderNameTouched, user]);
+
   const handleAddressCardChange = (role: AddressCardRole, field: AddressCardField, fieldValue: string) => {
+    if (role === 'sender' && field === 'name') {
+      setIsSenderNameTouched(true);
+    }
+
+    if (role === 'sender' && field === 'email') {
+      setIsSenderEmailTouched(true);
+    }
+
     setSubmitErrorMessage(null);
     setSubmitSuccessMessage(null);
 
