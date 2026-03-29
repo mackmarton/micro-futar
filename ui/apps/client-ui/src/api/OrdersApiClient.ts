@@ -137,7 +137,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = "http://localhost:61384";
+  public baseUrl: string = "http://localhost:8085";
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -342,7 +342,7 @@ export class HttpClient<SecurityDataType = unknown> {
 /**
  * @title OpenAPI definition
  * @version v0
- * @baseUrl http://localhost:61384
+ * @baseUrl http://localhost:8085
  */
 export class Api<
   SecurityDataType extends unknown,
@@ -353,11 +353,11 @@ export class Api<
      *
      * @tags shipment-controller
      * @name NewShipment
-     * @request POST:/api/shipments/new
+     * @request POST:/api/orders/shipments/new
      */
     newShipment: (data: ShipmentDTO, params: RequestParams = {}) =>
       this.request<ShipmentDTO, any>({
-        path: `/api/shipments/new`,
+        path: `/api/orders/shipments/new`,
         method: "POST",
         body: data,
         type: ContentType.Json,
@@ -369,11 +369,11 @@ export class Api<
      *
      * @tags location-region-controller
      * @name GetAllRegions
-     * @request GET:/api/regions
+     * @request GET:/api/orders/regions
      */
     getAllRegions: (params: RequestParams = {}) =>
       this.request<LocationRegionDTO[], any>({
-        path: `/api/regions`,
+        path: `/api/orders/regions`,
         method: "GET",
         ...params,
       }),
@@ -383,11 +383,11 @@ export class Api<
      *
      * @tags location-region-controller
      * @name GetRegionById
-     * @request GET:/api/regions/{id}
+     * @request GET:/api/orders/regions/{id}
      */
     getRegionById: (id: number, params: RequestParams = {}) =>
       this.request<LocationRegionDTO, any>({
-        path: `/api/regions/${id}`,
+        path: `/api/orders/regions/${id}`,
         method: "GET",
         ...params,
       }),
@@ -397,11 +397,11 @@ export class Api<
      *
      * @tags package-size-controller
      * @name GetAllPackageSizes
-     * @request GET:/api/package-sizes
+     * @request GET:/api/orders/package-sizes
      */
     getAllPackageSizes: (params: RequestParams = {}) =>
       this.request<PackageSizeDTO[], any>({
-        path: `/api/package-sizes`,
+        path: `/api/orders/package-sizes`,
         method: "GET",
         ...params,
       }),
@@ -411,11 +411,11 @@ export class Api<
      *
      * @tags package-size-controller
      * @name GetPackageSizeById
-     * @request GET:/api/package-sizes/{id}
+     * @request GET:/api/orders/package-sizes/{id}
      */
     getPackageSizeById: (id: number, params: RequestParams = {}) =>
       this.request<PackageSizeDTO, any>({
-        path: `/api/package-sizes/${id}`,
+        path: `/api/orders/package-sizes/${id}`,
         method: "GET",
         ...params,
       }),
@@ -425,11 +425,11 @@ export class Api<
      *
      * @tags country-price-controller
      * @name GetAllCountryPrices
-     * @request GET:/api/country-prices
+     * @request GET:/api/orders/country-prices
      */
     getAllCountryPrices: (params: RequestParams = {}) =>
       this.request<CountryPriceDTO[], any>({
-        path: `/api/country-prices`,
+        path: `/api/orders/country-prices`,
         method: "GET",
         ...params,
       }),
@@ -439,11 +439,11 @@ export class Api<
      *
      * @tags country-price-controller
      * @name GetCountryPriceById
-     * @request GET:/api/country-prices/{id}
+     * @request GET:/api/orders/country-prices/{id}
      */
     getCountryPriceById: (id: number, params: RequestParams = {}) =>
       this.request<CountryPriceDTO, any>({
-        path: `/api/country-prices/${id}`,
+        path: `/api/orders/country-prices/${id}`,
         method: "GET",
         ...params,
       }),
@@ -453,11 +453,11 @@ export class Api<
      *
      * @tags location-country-controller
      * @name GetAllCountries
-     * @request GET:/api/countries
+     * @request GET:/api/orders/countries
      */
     getAllCountries: (params: RequestParams = {}) =>
       this.request<LocationCountryDTO[], any>({
-        path: `/api/countries`,
+        path: `/api/orders/countries`,
         method: "GET",
         ...params,
       }),
@@ -467,11 +467,11 @@ export class Api<
      *
      * @tags location-country-controller
      * @name GetCountryById
-     * @request GET:/api/countries/{id}
+     * @request GET:/api/orders/countries/{id}
      */
     getCountryById: (id: number, params: RequestParams = {}) =>
       this.request<LocationCountryDTO, any>({
-        path: `/api/countries/${id}`,
+        path: `/api/orders/countries/${id}`,
         method: "GET",
         ...params,
       }),
@@ -481,11 +481,11 @@ export class Api<
      *
      * @tags location-city-controller
      * @name GetAllCities
-     * @request GET:/api/cities
+     * @request GET:/api/orders/cities
      */
     getAllCities: (params: RequestParams = {}) =>
       this.request<LocationCityDTO[], any>({
-        path: `/api/cities`,
+        path: `/api/orders/cities`,
         method: "GET",
         ...params,
       }),
@@ -495,11 +495,11 @@ export class Api<
      *
      * @tags location-city-controller
      * @name GetCityById
-     * @request GET:/api/cities/{id}
+     * @request GET:/api/orders/cities/{id}
      */
     getCityById: (id: number, params: RequestParams = {}) =>
       this.request<LocationCityDTO, any>({
-        path: `/api/cities/${id}`,
+        path: `/api/orders/cities/${id}`,
         method: "GET",
         ...params,
       }),

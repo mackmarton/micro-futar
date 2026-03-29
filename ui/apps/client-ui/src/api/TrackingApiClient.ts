@@ -74,7 +74,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = "http://localhost:61954";
+  public baseUrl: string = "http://localhost:8085";
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -279,7 +279,7 @@ export class HttpClient<SecurityDataType = unknown> {
 /**
  * @title OpenAPI definition
  * @version v0
- * @baseUrl http://localhost:61954
+ * @baseUrl http://localhost:8085
  */
 export class Api<
   SecurityDataType extends unknown,
@@ -290,11 +290,11 @@ export class Api<
      *
      * @tags tracking-controller
      * @name TrackPackage
-     * @request GET:/api/track/{parcelNumber}
+     * @request GET:/api/orders/track/{parcelNumber}
      */
     trackPackage: (parcelNumber: string, params: RequestParams = {}) =>
       this.request<TrackingDTO, any>({
-        path: `/api/track/${parcelNumber}`,
+        path: `/api/orders/track/${parcelNumber}`,
         method: "GET",
         ...params,
       }),
