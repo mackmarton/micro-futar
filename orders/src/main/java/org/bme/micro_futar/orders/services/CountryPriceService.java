@@ -35,6 +35,13 @@ public class CountryPriceService {
                 .map(countryPriceMapper::toDTO);
     }
 
+    public List<CountryPriceDTO> getAllCountryPricesByCountries(Long originCountryId, Long destinationCountryId) {
+        return countryPriceRepository
+                .findAllByOriginCountryIdAndDestinationCountryId(originCountryId, destinationCountryId).stream()
+                .map(countryPriceMapper::toDTO)
+                .toList();
+    }
+
     @Transactional
     public CountryPriceDTO saveCountryPrice(CountryPriceDTO countryPriceDTO) {
         CountryPrice countryPrice;
