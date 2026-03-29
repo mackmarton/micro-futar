@@ -22,3 +22,6 @@ kafka:
     shipment-route-topic: ${SHIPMENT_ROUTE_TOPIC}
     location-country-topic: ${LOCATION_COUNTRY_TOPIC}
     location-city-topic: ${LOCATION_CITY_TOPIC}
+
+url:
+  api-gateway: ${API_GATEWAY_URL}:http://localhost:8085

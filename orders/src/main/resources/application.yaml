@@ -33,3 +33,6 @@ kafka:
     country-price-topic: ${COUNTRY_PRICE_TOPIC}
     package-size-topic: ${PACKAGE_SIZE_TOPIC}
     shipment-topic: ${SHIPMENT_TOPIC}
+
+url:
+  api-gateway: ${API_GATEWAY_URL}:http://localhost:8085
