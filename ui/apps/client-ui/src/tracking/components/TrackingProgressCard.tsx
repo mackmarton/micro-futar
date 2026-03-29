@@ -10,8 +10,6 @@ export type TrackingProgressStep = {
 export type TrackingProgressCardProps = {
   trackingNumber: string;
   statusLabel?: string;
-  deliveryTimeLabel?: string;
-  deliveryTimeValue: string;
   steps?: TrackingProgressStep[];
   className?: string;
 };
@@ -51,8 +49,6 @@ const getProgressWidth = (steps: TrackingProgressStep[]) => {
 export const TrackingProgressCard = ({
   trackingNumber,
   statusLabel = 'Kézbesítve',
-  deliveryTimeLabel = 'Kézbesítés időpontja',
-  deliveryTimeValue,
   steps = defaultSteps,
   className,
 }: TrackingProgressCardProps) => {
@@ -66,11 +62,6 @@ export const TrackingProgressCard = ({
             {statusLabel}
           </span>
           <h3 className="text-2xl font-bold mt-2 text-on-surface">{trackingNumber}</h3>
-        </div>
-
-        <div className="text-right">
-          <p className="text-xs uppercase tracking-widest text-on-surface-variant font-medium">{deliveryTimeLabel}</p>
-          <p className="text-xl font-bold text-teal-600">{deliveryTimeValue}</p>
         </div>
       </div>
 

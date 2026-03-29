@@ -20,11 +20,6 @@ export const ShippingInfoCard = ({
   title = 'Szállítási információk',
   addressTitle = 'Cím',
   addressPrimary = '1117 Budapest, Infopark sétány 1.',
-  addressSecondary = 'Épület: B, 4. emelet',
-  contentTitle = 'Tartalom',
-  contentValue = 'Elektronikai eszköz (1.2 kg)',
-  noteTitle = 'Megjegyzés',
-  note = '"A kapucsengőn a név: Kovács-Művek. Kérem, a recepción hagyja a csomagot."',
   securityNotice = 'Fényképes igazolvány szükséges.',
   className,
 }: ShippingInfoCardProps) => {
@@ -47,30 +42,7 @@ export const ShippingInfoCard = ({
           <div>
             <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider mb-0.5">{addressTitle}</p>
             <p className="text-sm font-semibold text-on-surface">{addressPrimary}</p>
-            <p className="text-[10px] text-on-surface-variant">{addressSecondary}</p>
           </div>
-        </div>
-
-        <div className="flex gap-4">
-          <div className={iconBoxClassName}>
-            <span className="material-symbols-outlined text-lg" aria-hidden="true">
-              inventory_2
-            </span>
-          </div>
-          <div>
-            <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider mb-0.5">{contentTitle}</p>
-            <p className="text-sm font-semibold text-on-surface">{contentValue}</p>
-          </div>
-        </div>
-
-        <div className="bg-surface-container p-4 rounded-xl border-l-4 border-teal-600">
-          <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider mb-2 flex items-center gap-1">
-            <span className="material-symbols-outlined text-[12px]" aria-hidden="true">
-              sticky_note_2
-            </span>
-            {noteTitle}
-          </p>
-          <p className="text-xs italic text-on-surface leading-relaxed">{note}</p>
         </div>
       </div>
 
