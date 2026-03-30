@@ -34,7 +34,7 @@ public class OpenApiConfig {
     private static @NonNull Paths replacePath(OpenAPI openApi) {
         Paths newPaths = new Paths();
         openApi.getPaths().forEach((path, item) -> {
-            String newPath = path.replaceFirst("^/api/", "/api/orders/");
+            String newPath = path.replaceFirst("^/api/", "/api/tracking/");
             newPaths.addPathItem(newPath, item);
         });
         return newPaths;
