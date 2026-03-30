@@ -290,11 +290,11 @@ export class Api<
      *
      * @tags tracking-controller
      * @name TrackPackage
-     * @request GET:/api/orders/track/{parcelNumber}
+     * @request GET:/api/tracking/track/{parcelNumber}
      */
     trackPackage: (parcelNumber: string, params: RequestParams = {}) =>
       this.request<TrackingDTO, any>({
-        path: `/api/orders/track/${parcelNumber}`,
+        path: `/api/tracking/track/${parcelNumber}`,
         method: "GET",
         ...params,
       }),
