@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bme.micro_futar.shared.dtos.ShipmentDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteDTO;
 import org.bme.micro_futar.shared.exceptions.KafkaException;
@@ -21,10 +22,36 @@ public class KafkaProducerService {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
+    @Value("${kafka.topics.shipment-topic}")
+    private String shipmentTopic;
     @Value("${kafka.topics.shipment-route-topic}")
     private String shipmentRouteTopic;
     @Value("${kafka.topics.shipment-route-courier-topic}")
     private String shipmentRouteCourierTopic;
+
+    @Transactional
+    public void sendShipment(ShipmentDTO shipmentDTO) {
+        log.info("Sending shipment message to topic {}: {}", shipmentTopic, shipmentDTO);
+        try {
+            String jsonMessage = objectMapper.writeValueAsString(shipmentDTO);
+            kafkaTemplate.send(shipmentTopic, shipmentDTO.getId().toString(), jsonMessage)
+                    .whenComplete((_, ex) -> {
+                        if (ex == null) {
+                            log.info("Successfully sent shipment with ID: {} to topic: {}",
+                                    shipmentDTO.getId(), shipmentTopic);
+                        } else {
+                            log.error("Failed to send shipment with ID: {} to topic: {}",
+                                    shipmentDTO.getId(), shipmentTopic, ex);
+                        }
+                    });
+        } catch (JsonProcessingException e) {
+            log.error("Error serializing shipment message to JSON", e);
+            throw new KafkaException("Failed to serialize shipment message", e);
+        } catch (Exception e) {
+            log.error("Error sending shipment message to Kafka", e);
+            throw new KafkaException("Failed to send shipment message", e);
+        }
+    }
 
     @Transactional
     public void sendShipmentRoute(ShipmentRouteDTO shipmentRouteDTO) {

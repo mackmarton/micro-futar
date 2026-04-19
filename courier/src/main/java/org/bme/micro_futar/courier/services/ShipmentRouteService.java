@@ -6,6 +6,7 @@ import org.bme.micro_futar.courier.entities.ShipmentRoute;
 import org.bme.micro_futar.courier.kafka.KafkaProducerService;
 import org.bme.micro_futar.courier.mappers.ShipmentRouteMapper;
 import org.bme.micro_futar.courier.repositories.ShipmentRouteRepository;
+import org.bme.micro_futar.shared.dtos.ShipmentDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteDTO;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ShipmentRouteService {
 
+    private final ShipmentService shipmentService;
     private final ApplicationContext applicationContext;
     private final ShipmentRouteMapper shipmentRouteMapper;
     private final KafkaProducerService kafkaProducerService;
@@ -44,6 +46,11 @@ public class ShipmentRouteService {
         var shipmentRoute = findById(shipmentRouteId).orElseThrow();
         shipmentRoute.setFulfillmentTime(Timestamp.from(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
         save(shipmentRoute);
+        if (shipmentRoute.getDestinationAddress() != null) {
+            ShipmentDTO shipmentDTO = shipmentService.findById(shipmentRoute.getShipmentId()).orElseThrow();
+            shipmentDTO.setDelivered(true);
+            shipmentService.save(shipmentDTO);
+        }
     }
 
     public ShipmentRouteDTO save(ShipmentRouteDTO shipmentRouteDTO) {
