@@ -22,7 +22,7 @@ public class ShipmentConsumer {
         log.info("Received shipment message: {}", message);
         try {
             ShipmentDTO shipmentDTO = objectMapper.readValue(message, ShipmentDTO.class);
-            shipmentService.save(shipmentDTO);
+            shipmentService.saveWithoutTopicSend(shipmentDTO);
             log.info("Successfully processed shipment: {}", shipmentDTO.getId());
         } catch (Exception e) {
             log.error("Error processing shipment message: {}", message, e);
