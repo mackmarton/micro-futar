@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { fetchPackageSizeOptions, type PackageSizeOption } from '../api/ordersApi.ts';
+import { queryKeys } from '../../shared/queryKeys.ts';
 
 type UsePackageSizesResult = {
   packageSizeOptions: PackageSizeOption[];
@@ -9,51 +11,21 @@ type UsePackageSizesResult = {
 };
 
 export const usePackageSizes = (): UsePackageSizesResult => {
-  const [packageSizeOptions, setPackageSizeOptions] = useState<PackageSizeOption[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [requestVersion, setRequestVersion] = useState(0);
+  const packageSizesQuery = useQuery({
+    queryKey: queryKeys.packageSizes,
+    queryFn: ({ signal }) => fetchPackageSizeOptions(signal),
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+  });
 
   const retry = useCallback(() => {
-    setRequestVersion((previous) => previous + 1);
-  }, []);
-
-  useEffect(() => {
-    const abortController = new AbortController();
-
-    const loadPackageSizes = async () => {
-      setIsLoading(true);
-      setErrorMessage(null);
-
-      try {
-        const nextPackageSizeOptions = await fetchPackageSizeOptions(abortController.signal);
-        setPackageSizeOptions(nextPackageSizeOptions);
-      } catch (error) {
-        if (abortController.signal.aborted) {
-          return;
-        }
-
-        setPackageSizeOptions([]);
-        setErrorMessage('A csomagmeretek listaja jelenleg nem erheto el.');
-        console.error('Failed to load package sizes for create order form.', error);
-      } finally {
-        if (!abortController.signal.aborted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    void loadPackageSizes();
-
-    return () => {
-      abortController.abort();
-    };
-  }, [requestVersion]);
+    void packageSizesQuery.refetch();
+  }, [packageSizesQuery]);
 
   return {
-    packageSizeOptions,
-    isLoading,
-    errorMessage,
+    packageSizeOptions: packageSizesQuery.data ?? [],
+    isLoading: packageSizesQuery.isPending,
+    errorMessage: packageSizesQuery.isError ? 'A csomagmeretek listaja jelenleg nem erheto el.' : null,
     retry,
   };
 };

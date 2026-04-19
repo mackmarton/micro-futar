@@ -9,5 +9,7 @@ export { BottomNavBar } from './BottomNavBar';
 export type { BottomNavBarProps, BottomNavItem } from './BottomNavBar';
 export { Footer } from './Footer';
 export type { FooterProps } from './Footer';
+export { PortalLayout } from './PortalLayout';
+export type { PortalLayoutProps } from './PortalLayout';
 export { FormSection, PrecisionInput } from './forms';
 export type { FormSectionProps, PrecisionInputProps } from './forms';

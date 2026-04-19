@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { fetchCountryPrices, type CountryPriceOption } from '../api/ordersApi.ts';
+import { queryKeys } from '../../shared/queryKeys.ts';
 
 type UseCountryPricesResult = {
   countryPrices: CountryPriceOption[];
@@ -12,58 +14,28 @@ export const useCountryPrices = (
   originCountryId: string,
   destinationCountryId: string,
 ): UseCountryPricesResult => {
-  const [countryPrices, setCountryPrices] = useState<CountryPriceOption[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [requestVersion, setRequestVersion] = useState(0);
+  const isEnabled = Boolean(originCountryId && destinationCountryId);
+  const countryPricesQuery = useQuery({
+    queryKey: queryKeys.countryPrices(originCountryId, destinationCountryId),
+    queryFn: ({ signal }) => fetchCountryPrices(originCountryId, destinationCountryId, signal),
+    enabled: isEnabled,
+    staleTime: 60 * 1000,
+    retry: 1,
+  });
 
   const retry = useCallback(() => {
-    setRequestVersion((previous) => previous + 1);
-  }, []);
-
-  useEffect(() => {
-    if (!originCountryId || !destinationCountryId) {
-      setCountryPrices([]);
-      setErrorMessage(null);
-      setIsLoading(false);
+    if (!isEnabled) {
       return;
     }
-
-    const abortController = new AbortController();
-
-    const loadCountryPrices = async () => {
-      setIsLoading(true);
-      setErrorMessage(null);
-
-      try {
-        const nextCountryPrices = await fetchCountryPrices(originCountryId, destinationCountryId, abortController.signal);
-        setCountryPrices(nextCountryPrices);
-      } catch (error) {
-        if (abortController.signal.aborted) {
-          return;
-        }
-
-        setCountryPrices([]);
-        setErrorMessage('Az adott orszagparhoz tartozo arak jelenleg nem erhetoek el.');
-        console.error('Failed to load country prices for selected route.', error);
-      } finally {
-        if (!abortController.signal.aborted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    void loadCountryPrices();
-
-    return () => {
-      abortController.abort();
-    };
-  }, [destinationCountryId, originCountryId, requestVersion]);
+    void countryPricesQuery.refetch();
+  }, [countryPricesQuery, isEnabled]);
 
   return {
-    countryPrices,
-    isLoading,
-    errorMessage,
+    countryPrices: isEnabled ? (countryPricesQuery.data ?? []) : [],
+    isLoading: isEnabled ? countryPricesQuery.isPending : false,
+    errorMessage: isEnabled && countryPricesQuery.isError
+      ? 'Az adott orszagparhoz tartozo arak jelenleg nem erhetoek el.'
+      : null,
     retry,
   };
 };

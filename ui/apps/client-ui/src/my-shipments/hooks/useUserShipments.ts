@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import type { Shipment } from '../components/ShipmentTable.tsx';
 import type { ShipmentStatsObject } from '../components/ShipmentStats.tsx';
 import { fetchShipmentsForUser } from '../api/shipmentsApi.ts';
 import { buildShipmentStats, mapShipmentDtosToShipments } from '../mappers/shipmentMapper.ts';
+import { queryKeys } from '../../shared/queryKeys.ts';
 
 type UseUserShipmentsResult = {
   shipments: Shipment[];
@@ -33,66 +35,32 @@ const toErrorMessage = (error: unknown) => {
 };
 
 export const useUserShipments = (): UseUserShipmentsResult => {
-  const [shipments, setShipments] = useState<Shipment[]>([]);
-  const [stats, setStats] = useState<ShipmentStatsObject>(EMPTY_STATS);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const shipmentsQuery = useQuery({
+    queryKey: queryKeys.userShipments,
+    queryFn: ({ signal }) => fetchShipmentsForUser(signal),
+    retry: 1,
+  });
 
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const requestIdRef = useRef(0);
-
-  const loadShipments = useCallback(async () => {
-    setIsLoading(true);
-    setErrorMessage(null);
-
-    abortControllerRef.current?.abort();
-    const abortController = new AbortController();
-    abortControllerRef.current = abortController;
-
-    const requestId = requestIdRef.current + 1;
-    requestIdRef.current = requestId;
-
-    try {
-      const shipmentDtos = await fetchShipmentsForUser(abortController.signal);
-
-      if (abortController.signal.aborted || requestId !== requestIdRef.current) {
-        return;
-      }
-
-      const mappedShipments = mapShipmentDtosToShipments(shipmentDtos);
-      setShipments(mappedShipments);
-      setStats(buildShipmentStats(mappedShipments));
-    } catch (error) {
-      if (abortController.signal.aborted || requestId !== requestIdRef.current) {
-        return;
-      }
-
-      setShipments([]);
-      setStats(EMPTY_STATS);
-      setErrorMessage(toErrorMessage(error));
-    } finally {
-      if (requestId === requestIdRef.current) {
-        setIsLoading(false);
-      }
+  const shipments = useMemo<Shipment[]>(() => {
+    if (!shipmentsQuery.data) {
+      return [];
     }
-  }, []);
 
-  useEffect(() => {
-    void loadShipments();
+    return mapShipmentDtosToShipments(shipmentsQuery.data);
+  }, [shipmentsQuery.data]);
 
-    return () => {
-      abortControllerRef.current?.abort();
-    };
-  }, [loadShipments]);
+  const stats = useMemo<ShipmentStatsObject>(() => buildShipmentStats(shipments), [shipments]);
+
+  const errorMessage = shipmentsQuery.isError ? toErrorMessage(shipmentsQuery.error) : null;
 
   const retry = useCallback(async () => {
-    await loadShipments();
-  }, [loadShipments]);
+    await shipmentsQuery.refetch();
+  }, [shipmentsQuery]);
 
   return {
     shipments,
-    stats,
-    isLoading,
+    stats: errorMessage ? EMPTY_STATS : stats,
+    isLoading: shipmentsQuery.isPending,
     errorMessage,
     retry,
   };

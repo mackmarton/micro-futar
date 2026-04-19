@@ -12,6 +12,7 @@
     "generate-tracking-api": "swagger-typescript-api generate -p ../../../tracking/target/openapi.json -o ./src/api -n TrackingApiClient.ts --fetch"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.2",
     "@package/shared-core": "^1.0.0",
     "@package/shared-ui": "^1.0.0",
     "react": "^19.2.0",
