@@ -39,6 +39,7 @@ public class ShipmentDTO {
     @NonNull
     private Long packageSizeId;
     private boolean confirmed;
+    private boolean delivered;
     //Not filled straight away
     private String parcelNumber;
     private Double price;
