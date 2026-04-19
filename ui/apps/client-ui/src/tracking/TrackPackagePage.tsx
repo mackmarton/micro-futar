@@ -1,6 +1,8 @@
 import {TrackingHero} from './components';
 import {TrackingDetailsSection} from './components';
 import {useTracking} from './hooks/useTracking.ts';
+import { useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {BottomNavBar} from "@package/shared-ui/BottomNavBar.tsx";
 import {TopNavBar} from "@package/shared-ui/TopNavBar.tsx";
 import {SideNavBar} from "@package/shared-ui/SideNavBar.tsx";
@@ -17,7 +19,17 @@ const sideNavigationItems = [
 const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 export const TrackPackagePage = ({className}: TrackPackagePageProps) => {
+    const [searchParams] = useSearchParams();
     const {hasSearchStarted, isLoading, errorMessage, details, search, retry} = useTracking();
+    const initialTrackingNumber = useMemo(() => searchParams.get('trackingNumber')?.trim() ?? '', [searchParams]);
+
+    useEffect(() => {
+        if (!initialTrackingNumber) {
+            return;
+        }
+
+        void search(initialTrackingNumber);
+    }, [initialTrackingNumber, search]);
 
     const handleSearch = (trackingCode: string) => {
         void search(trackingCode);

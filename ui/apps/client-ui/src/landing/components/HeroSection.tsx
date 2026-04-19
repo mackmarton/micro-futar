@@ -18,11 +18,11 @@ export const HeroSection = ({ className, imageSrc = DEFAULT_IMAGE_SRC }: HeroSec
 
     if (trimmedValue) {
       const query = new URLSearchParams({ trackingNumber: trimmedValue }).toString();
-      window.location.hash = `/tracking?${query}`;
+      window.location.hash = `/portal/tracking?${query}`;
       return;
     }
 
-    window.location.hash = '/tracking';
+    window.location.hash = '/portal/tracking';
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
