@@ -26,9 +26,9 @@ const isAddressCardValid = (addressCard: AddressCardValue) => {
 };
 
 const sideNavigationItems = [
-  { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'package_2', onlyLoggedIn: true },
-  { label: 'Csomag feladása', href: '#/create-order', icon: 'add_circle', isActive: true },
-  { label: 'Nyomonkövetés', href: '#/tracking', icon: 'local_shipping' },
+  { label: 'Saját csomagjaim', href: '#/portal/dashboard', icon: 'package_2', onlyLoggedIn: true },
+  { label: 'Csomag feladása', href: '#/portal/create-order', icon: 'add_circle', isActive: true },
+  { label: 'Nyomonkövetés', href: '#/portal/tracking', icon: 'local_shipping' },
 ];
 
 const initialPackageDetails: PackageDetailsValue = {
@@ -410,9 +410,9 @@ export const CreateOrderPage = () => {
 
       <BottomNavBar
         items={[
-          { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'home', onlyLoggedIn: true},
-          { label: 'Csomag feladása', href: '#/create-order', icon: 'add_box', isActive: true },
-          { label: 'Nyomonkövetés', href: '#/tracking', icon: 'local_shipping' },
+          { label: 'Saját csomagjaim', href: '#/portal/dashboard', icon: 'home', onlyLoggedIn: true},
+          { label: 'Csomag feladása', href: '#/portal/create-order', icon: 'add_box', isActive: true },
+          { label: 'Nyomonkövetés', href: '#/portal/tracking', icon: 'local_shipping' },
         ]}
       />
     </div>

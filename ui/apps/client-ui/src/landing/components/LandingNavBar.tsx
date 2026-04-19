@@ -3,7 +3,7 @@ import { useAuth } from '@package/shared-ui';
 
 
 export const LandingNavBar = () => {
-    const { login } = useAuth();
+    const { user, login } = useAuth();
 
     return (
         <nav className="fixed top-0 w-full z-50 bg-[#f8f9ff]/80 backdrop-blur-xl">
@@ -17,14 +17,20 @@ export const LandingNavBar = () => {
                     <button
                         type="button"
                         className="text-on-surface text-sm font-semibold hover:text-primary transition-all"
-                        onClick={login}
+                        onClick={() => {
+                            if (user) {
+                                window.location.hash = '/portal/dashboard';
+                                return;
+                            }
+                            login();
+                        }}
                     >
-                        Bejelentkezés
+                        {user ? 'Saját csomagjaim' : 'Bejelentkezés'}
                     </button>
                     <button
                         type="button"
                         onClick={() => {
-                            window.location.hash = '/create-order';
+                            window.location.hash = '/portal/create-order';
                         }}
                         className="kinetic-gradient text-on-primary px-6 py-2.5 rounded-lg font-bold text-sm active:scale-95 duration-150 shadow-lg shadow-on-surface/5"
                     >
@@ -35,5 +41,3 @@ export const LandingNavBar = () => {
         </nav>
     );
 };
-
-

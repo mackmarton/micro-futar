@@ -5,7 +5,7 @@ import { DashboardPage } from './my-shipments/DashboardPage.tsx';
 import { LandingPage } from './landing/LandingPage.tsx';
 import { TrackPackagePage } from './tracking/TrackPackagePage.tsx';
 
-type AppRoute = '/' | '/my-shipments' | '/create-order' | '/tracking';
+type AppRoute = '/' | '/portal/dashboard' | '/portal/create-order' | '/portal/tracking';
 
 const DEFAULT_ROUTE: AppRoute = '/';
 
@@ -14,16 +14,16 @@ const getRouteFromHash = (): AppRoute => {
   const [path] = hash.split('?');
 
   if (!path || path === '/') return '/';
-  if (path === '/tracking') return '/tracking';
-  if (path === '/create-order') return '/create-order';
-  if (path === '/my-shipments') return '/my-shipments';
+  if (path === '/portal/tracking') return '/portal/tracking';
+  if (path === '/portal/create-order') return '/portal/create-order';
+  if (path === '/portal/dashboard') return '/portal/dashboard';
 
   return '/';
 };
 
 function App() {
   const [route, setRoute] = useState<AppRoute>(getRouteFromHash);
-  const { user, isLoading } = useAuth();
+  const { isLoading } = useAuth();
 
   useEffect(() => {
     if (!window.location.hash) {
@@ -38,24 +38,20 @@ function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  if (route === '/my-shipments') {
+  if (route === '/portal/dashboard') {
     return <DashboardPage />;
   }
 
-  if (route === '/create-order') {
+  if (route === '/portal/create-order') {
     return <CreateOrderPage />;
   }
 
-  if (route === '/tracking') {
+  if (route === '/portal/tracking') {
     return <TrackPackagePage />;
   }
 
   if (isLoading) {
     return null;
-  }
-
-  if (user) {
-    return <DashboardPage />;
   }
 
   return <LandingPage />;

@@ -34,6 +34,7 @@ export interface ShipmentDTO {
   /** @format int64 */
   packageSizeId?: number;
   confirmed?: boolean;
+  delivered?: boolean;
   parcelNumber?: string;
   /** @format double */
   price?: number;
@@ -361,6 +362,20 @@ export class Api<
         method: "POST",
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags shipment-controller
+     * @name GetShipmentsForUser
+     * @request GET:/api/orders/shipments
+     */
+    getShipmentsForUser: (params: RequestParams = {}) =>
+      this.request<ShipmentDTO[], any>({
+        path: `/api/orders/shipments`,
+        method: "GET",
         ...params,
       }),
 

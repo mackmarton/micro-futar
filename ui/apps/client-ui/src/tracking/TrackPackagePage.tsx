@@ -9,9 +9,9 @@ export type TrackPackagePageProps = {
     className?: string;
 };
 const sideNavigationItems = [
-    {label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'package_2', onlyLoggedIn: true},
-    {label: 'Csomag feladása', href: '#/create-order', icon: 'add_circle'},
-    {label: 'Nyomonkövetés', href: '#/tracking', icon: 'local_shipping', isActive: true},
+    {label: 'Saját csomagjaim', href: '#/portal/dashboard', icon: 'package_2', onlyLoggedIn: true},
+    {label: 'Csomag feladása', href: '#/portal/create-order', icon: 'add_circle'},
+    {label: 'Nyomonkövetés', href: '#/portal/tracking', icon: 'local_shipping', isActive: true},
 ];
 
 const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
@@ -67,9 +67,9 @@ export const TrackPackagePage = ({className}: TrackPackagePageProps) => {
 
             <BottomNavBar
                 items={[
-                    {label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'home', onlyLoggedIn: true},
-                    {label: 'Csomag feladása', href: '#/create-order', icon: 'add_box'},
-                    {label: 'Nyomonkövetés', href: '#/tracking', icon: 'local_shipping', isActive: true},
+                    {label: 'Saját csomagjaim', href: '#/portal/dashboard', icon: 'home', onlyLoggedIn: true},
+                    {label: 'Csomag feladása', href: '#/portal/create-order', icon: 'add_box'},
+                    {label: 'Nyomonkövetés', href: '#/portal/tracking', icon: 'local_shipping', isActive: true},
                 ]}
             />
         </div>
