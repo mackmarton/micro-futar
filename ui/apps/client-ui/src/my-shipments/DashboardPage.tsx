@@ -1,46 +1,17 @@
 import {BottomNavBar, SideNavBar, TopNavBar} from '@package/shared-ui';
-import {type Shipment} from './components/ShipmentTable.tsx';
 import {ShipmentStats} from './components/ShipmentStats.tsx';
 import {ShipmentTable} from "./components/ShipmentTable.tsx";
+import {useUserShipments} from './hooks/useUserShipments.ts';
 
 const sideNavigationItems = [
-    {label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'package_2', isActive: true, onlyLoggedIn: true},
-    {label: 'Csomag feladása', href: '#/create-order', icon: 'add_circle'},
-    {label: 'Nyomonkövetés', href: '#/tracking', icon: 'local_shipping'},
-];
-
-const stats = {
-    inProgress: 4,
-    delivered: 158,
-};
-
-const shipments: Shipment[] = [
-    {
-        id: '#HU-992834-QX',
-        createdAt: '2024. Március 12.',
-        destination: 'Budapest, Hungary',
-        status: 'inProgress',
-        eta: 'Ma, 14:30 - 16:00',
-        progressPercent: 65,
-    },
-    {
-        id: '#HU-110293-BA',
-        createdAt: '2024. Március 10.',
-        destination: 'Debrecen, Hungary',
-        status: 'delivered',
-        deliveredAt: '2024. Március 11.',
-        signerName: 'T. Kovács',
-    },
-    {
-        id: '#HU-882716-ZZ',
-        createdAt: '2024. Március 08.',
-        destination: 'Szeged, Hungary',
-        status: 'failed',
-        errorReason: 'Hibás címzés',
-    },
+    {label: 'Saját csomagjaim', href: '#/portal/dashboard', icon: 'package_2', isActive: true, onlyLoggedIn: true},
+    {label: 'Csomag feladása', href: '#/portal/create-order', icon: 'add_circle'},
+    {label: 'Nyomonkövetés', href: '#/portal/tracking', icon: 'local_shipping'},
 ];
 
 export const DashboardPage = () => {
+    const {shipments, stats, isLoading, errorMessage, retry} = useUserShipments();
+
     return (
         <div
             className="bg-surface text-on-surface min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed">
@@ -61,7 +32,7 @@ export const DashboardPage = () => {
                         </div>
 
                         <a
-                            href="#/create-order"
+                            href="#/portal/create-order"
                             className="hidden md:flex bg-primary text-on-primary px-6 py-3 rounded-lg font-bold items-center gap-2 hover:bg-on-primary-container transition-all"
                         >
               <span className="material-symbols-outlined" aria-hidden="true">
@@ -70,7 +41,40 @@ export const DashboardPage = () => {
                             Új csomag feladása
                         </a>
                     </div>
-                    <ShipmentTable shipments={shipments} />
+
+                    {isLoading ? (
+                        <section className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-8 text-center text-on-surface-variant">
+                            Küldemények betöltése...
+                        </section>
+                    ) : null}
+
+                    {!isLoading && errorMessage ? (
+                        <section className="bg-error-container/30 rounded-2xl border border-error/30 p-8 text-center">
+                            <p className="text-error font-medium mb-4">{errorMessage}</p>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    void retry();
+                                }}
+                                className="inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-lg font-medium hover:bg-on-primary-container transition-all"
+                            >
+                                <span className="material-symbols-outlined" aria-hidden="true">
+                                    refresh
+                                </span>
+                                Újrapróbálás
+                            </button>
+                        </section>
+                    ) : null}
+
+                    {!isLoading && !errorMessage && shipments.length === 0 ? (
+                        <section className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-8 text-center text-on-surface-variant">
+                            Még nincs feladott küldeményed.
+                        </section>
+                    ) : null}
+
+                    {!isLoading && !errorMessage && shipments.length > 0 ? (
+                        <ShipmentTable shipments={shipments}/>
+                    ) : null}
                 </div>
             </main>
 
@@ -78,13 +82,13 @@ export const DashboardPage = () => {
                 items={[
                     {
                         label: 'Saját csomagjaim',
-                        href: '#/my-shipments',
+                        href: '#/portal/dashboard',
                         icon: 'home',
                         isActive: true,
                         onlyLoggedIn: true
                     },
-                    {label: 'Csomag feladása', href: '#/create-order', icon: 'add_box'},
-                    {label: 'Nyomonkövetés', href: '#/tracking', icon: 'local_shipping'},
+                    {label: 'Csomag feladása', href: '#/portal/create-order', icon: 'add_box'},
+                    {label: 'Nyomonkövetés', href: '#/portal/tracking', icon: 'local_shipping'},
                 ]}
             />
         </div>

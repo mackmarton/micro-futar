@@ -28,9 +28,9 @@ const renderIcon = (icon: ReactNode | string) => {
 };
 
 const defaultItems: BottomNavItem[] = [
-  { label: 'Saját csomagjaim', href: '#/my-shipments', icon: 'home', isActive: true, onlyLoggedIn: true },
-  { label: 'Csomag feladása', href: '#/create-order', icon: 'add_box' },
-  { label: 'Nyomonkövetés', href: '#/tracking', icon: 'local_shipping' },
+  { label: 'Saját csomagjaim', href: '#/portal/dashboard', icon: 'home', isActive: true, onlyLoggedIn: true },
+  { label: 'Csomag feladása', href: '#/portal/create-order', icon: 'add_box' },
+  { label: 'Nyomonkövetés', href: '#/portal/tracking', icon: 'local_shipping' },
   { label: 'Menü', href: '#', icon: 'menu' },
 ];
 
