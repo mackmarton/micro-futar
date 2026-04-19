@@ -1,5 +1,5 @@
-import {createContext, type ReactNode, useContext, useEffect, useState} from 'react';
-import {apiClient} from '@package/shared-core';
+import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState} from 'react';
+import {apiClient, buildApiUrl} from '@package/shared-core';
 
 export type User = {
     name: string;
@@ -22,42 +22,24 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await apiClient.get('/api/auth/me');
-                setUser(response.data);
-            } catch (error) {
-                // Ha 401-et kapunk, a user nincs bejelentkezve.
-                // (Ha az Axios interceptorod automatikusan átirányít, akkor ez a sor le se fut,
-                // de érdemes itt hagyni biztonságképpen).
-                setUser(null);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchUser();
-    }, []);
-
-    const login = () => {
+    const login = useCallback(() => {
         const currentPath = window.location.pathname + window.location.search;
         localStorage.setItem('postLoginRedirect', currentPath);
 
-        window.location.href = 'http://localhost:8085/oauth2/authorization/keycloak';
-    };
+        window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }, []);
 
-    const logout = () => {
+    const logout = useCallback(() => {
         const currentPath = window.location.pathname + window.location.search;
         localStorage.setItem('postLogoutRedirect', currentPath);
 
-        window.location.href = 'http://localhost:8085/logout';
-    };
+        window.location.href = buildApiUrl('/logout');
+    }, []);
 
-    const hasRole = (role: string) => {
+    const hasRole = useCallback((role: string) => {
         if (!user || !user.roles) return false;
         return user.roles.map(r => r.toUpperCase()).includes(role.toUpperCase());
-    };
+    }, [user]);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -73,7 +55,7 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
                 } else {
                     const postLogoutRedirect = localStorage.getItem('postLogoutRedirect');
                     if (postLogoutRedirect) {
-                        localStorage.removeItem('postLoginRedirect');
+                        localStorage.removeItem('postLogoutRedirect');
 
                         window.location.replace(postLogoutRedirect);
                     }
@@ -90,8 +72,13 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
         fetchUser();
     }, []);
 
+    const contextValue = useMemo(
+        () => ({user, isLoading, login, logout, hasRole}),
+        [hasRole, isLoading, login, logout, user],
+    );
+
     return (
-        <AuthContext.Provider value={{user, isLoading, login, logout, hasRole}}>
+        <AuthContext.Provider value={contextValue}>
             {children}
         </AuthContext.Provider>
     );

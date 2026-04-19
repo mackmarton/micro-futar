@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useAuth } from './AuthContext';
 
 export type BottomNavItem = {
   label: string;
@@ -35,6 +36,9 @@ const defaultItems: BottomNavItem[] = [
 ];
 
 export const BottomNavBar = ({ items = defaultItems, className }: BottomNavBarProps) => {
+  const { user } = useAuth();
+  const visibleItems = items.filter((item) => !item.onlyLoggedIn || Boolean(user));
+
   return (
     <nav
       className={cn(
@@ -46,7 +50,7 @@ export const BottomNavBar = ({ items = defaultItems, className }: BottomNavBarPr
       )}
       aria-label="Alsó mobil navigáció"
     >
-      {items.map((item) => (
+      {visibleItems.map((item) => (
         <a
           key={`${item.href}-${item.label}`}
           href={item.href}
