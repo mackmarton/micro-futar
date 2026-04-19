@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { fetchCountryOptions, type CountryOption } from '../api/ordersApi.ts';
+import { queryKeys } from '../../shared/queryKeys.ts';
 
 type UseCountriesResult = {
   countryOptions: CountryOption[];
@@ -9,51 +11,21 @@ type UseCountriesResult = {
 };
 
 export const useCountries = (): UseCountriesResult => {
-  const [countryOptions, setCountryOptions] = useState<CountryOption[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [requestVersion, setRequestVersion] = useState(0);
+  const countriesQuery = useQuery({
+    queryKey: queryKeys.countries,
+    queryFn: ({ signal }) => fetchCountryOptions(signal),
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+  });
 
   const retry = useCallback(() => {
-    setRequestVersion((previous) => previous + 1);
-  }, []);
-
-  useEffect(() => {
-    const abortController = new AbortController();
-
-    const loadCountries = async () => {
-      setIsLoading(true);
-      setErrorMessage(null);
-
-      try {
-        const nextCountryOptions = await fetchCountryOptions(abortController.signal);
-        setCountryOptions(nextCountryOptions);
-      } catch (error) {
-        if (abortController.signal.aborted) {
-          return;
-        }
-
-        setCountryOptions([]);
-        setErrorMessage('Az országok listája jelenleg nem érhető el.');
-        console.error('Failed to load countries for address form.', error);
-      } finally {
-        if (!abortController.signal.aborted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    void loadCountries();
-
-    return () => {
-      abortController.abort();
-    };
-  }, [requestVersion]);
+    void countriesQuery.refetch();
+  }, [countriesQuery]);
 
   return {
-    countryOptions,
-    isLoading,
-    errorMessage,
+    countryOptions: countriesQuery.data ?? [],
+    isLoading: countriesQuery.isPending,
+    errorMessage: countriesQuery.isError ? 'Az országok listája jelenleg nem érhető el.' : null,
     retry,
   };
 };

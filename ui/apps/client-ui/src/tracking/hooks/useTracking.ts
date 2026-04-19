@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchTrackingByParcelNumber } from '../api/trackingApi.ts';
 import { mapTrackingDtoToDetails, type TrackingDetailsViewModel } from '../mappers/trackingMapper.ts';
+import { queryKeys } from '../../shared/queryKeys.ts';
 
 type UseTrackingResult = {
   hasSearchStarted: boolean;
@@ -27,14 +29,32 @@ const toErrorMessage = (error: unknown) => {
 };
 
 export const useTracking = (): UseTrackingResult => {
+  const queryClient = useQueryClient();
   const [hasSearchStarted, setHasSearchStarted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [details, setDetails] = useState<TrackingDetailsViewModel | null>(null);
   const [lastTrackingNumber, setLastTrackingNumber] = useState<string | null>(null);
 
-  const abortControllerRef = useRef<AbortController | null>(null);
-  const requestIdRef = useRef(0);
+  const trackingSearchMutation = useMutation({
+    mutationFn: async (trackingNumber: string) => {
+      const normalizedTrackingNumber = trackingNumber.trim();
+      const details = await queryClient.fetchQuery({
+        queryKey: queryKeys.tracking(normalizedTrackingNumber),
+        queryFn: async ({ signal }) => {
+          const trackingDto = await fetchTrackingByParcelNumber(normalizedTrackingNumber, signal);
+          const mappedDetails = mapTrackingDtoToDetails(trackingDto, normalizedTrackingNumber);
+
+          if (!mappedDetails) {
+            throw new Error('NO_TRACKING_RESULT');
+          }
+
+          return mappedDetails;
+        },
+        staleTime: 30 * 1000,
+        retry: 1,
+      });
+
+      return details;
+    },
+  });
 
   const search = useCallback(async (trackingNumber: string) => {
     const normalizedTrackingNumber = trackingNumber.trim();
@@ -45,45 +65,13 @@ export const useTracking = (): UseTrackingResult => {
 
     setHasSearchStarted(true);
     setLastTrackingNumber(normalizedTrackingNumber);
-    setIsLoading(true);
-    setErrorMessage(null);
-
-    abortControllerRef.current?.abort();
-    const abortController = new AbortController();
-    abortControllerRef.current = abortController;
-
-    const requestId = requestIdRef.current + 1;
-    requestIdRef.current = requestId;
 
     try {
-      const trackingDto = await fetchTrackingByParcelNumber(normalizedTrackingNumber, abortController.signal);
-
-      if (requestId !== requestIdRef.current) {
-        return;
-      }
-
-      const mappedDetails = mapTrackingDtoToDetails(trackingDto, normalizedTrackingNumber);
-
-      if (!mappedDetails) {
-        setDetails(null);
-        setErrorMessage('Nincs találat erre a csomagszámra. Ellenőrizd és próbáld újra.');
-        return;
-      }
-
-      setDetails(mappedDetails);
-    } catch (error) {
-      if (abortController.signal.aborted || requestId !== requestIdRef.current) {
-        return;
-      }
-
-      setDetails(null);
-      setErrorMessage(toErrorMessage(error));
-    } finally {
-      if (requestId === requestIdRef.current) {
-        setIsLoading(false);
-      }
+      await trackingSearchMutation.mutateAsync(normalizedTrackingNumber);
+    } catch {
+      // Mutation state already exposes the error message.
     }
-  }, []);
+  }, [trackingSearchMutation]);
 
   const retry = useCallback(async () => {
     if (!lastTrackingNumber) {
@@ -93,17 +81,17 @@ export const useTracking = (): UseTrackingResult => {
     await search(lastTrackingNumber);
   }, [lastTrackingNumber, search]);
 
-  useEffect(() => {
-    return () => {
-      abortControllerRef.current?.abort();
-    };
-  }, []);
+  const errorMessage = trackingSearchMutation.isError
+    ? trackingSearchMutation.error instanceof Error && trackingSearchMutation.error.message === 'NO_TRACKING_RESULT'
+      ? 'Nincs találat erre a csomagszámra. Ellenőrizd és próbáld újra.'
+      : toErrorMessage(trackingSearchMutation.error)
+    : null;
 
   return {
     hasSearchStarted,
-    isLoading,
+    isLoading: trackingSearchMutation.isPending,
     errorMessage,
-    details,
+    details: trackingSearchMutation.data ?? null,
     search,
     retry,
   };

@@ -1,26 +1,13 @@
-import {BottomNavBar, SideNavBar, TopNavBar} from '@package/shared-ui';
+import { PortalLayout } from '@package/shared-ui';
 import {ShipmentStats} from './components/ShipmentStats.tsx';
 import {ShipmentTable} from "./components/ShipmentTable.tsx";
 import {useUserShipments} from './hooks/useUserShipments.ts';
-
-const sideNavigationItems = [
-    {label: 'Saját csomagjaim', href: '#/portal/dashboard', icon: 'package_2', isActive: true, onlyLoggedIn: true},
-    {label: 'Csomag feladása', href: '#/portal/create-order', icon: 'add_circle'},
-    {label: 'Nyomonkövetés', href: '#/portal/tracking', icon: 'local_shipping'},
-];
 
 export const DashboardPage = () => {
     const {shipments, stats, isLoading, errorMessage, retry} = useUserShipments();
 
     return (
-        <div
-            className="bg-surface text-on-surface min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed">
-            <SideNavBar navigationItems={sideNavigationItems}/>
-
-            <main className="lg:ml-64 min-h-screen flex flex-col pb-24 lg:pb-0">
-                <TopNavBar title="Saját csomagjaim"/>
-
-                <div className="max-w-7xl mx-auto p-6 md:p-10 w-full flex-grow">
+        <PortalLayout title="Saját csomagjaim" activeHref="#/portal/dashboard" contentClassName="flex-grow">
                     <ShipmentStats stats={stats}/>
 
                     <div className="flex justify-between items-end mb-8 gap-6">
@@ -75,23 +62,7 @@ export const DashboardPage = () => {
                     {!isLoading && !errorMessage && shipments.length > 0 ? (
                         <ShipmentTable shipments={shipments}/>
                     ) : null}
-                </div>
-            </main>
-
-            <BottomNavBar
-                items={[
-                    {
-                        label: 'Saját csomagjaim',
-                        href: '#/portal/dashboard',
-                        icon: 'home',
-                        isActive: true,
-                        onlyLoggedIn: true
-                    },
-                    {label: 'Csomag feladása', href: '#/portal/create-order', icon: 'add_box'},
-                    {label: 'Nyomonkövetés', href: '#/portal/tracking', icon: 'local_shipping'},
-                ]}
-            />
-        </div>
+        </PortalLayout>
     );
 };
 
