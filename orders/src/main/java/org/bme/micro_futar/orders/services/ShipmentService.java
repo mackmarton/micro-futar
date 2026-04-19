@@ -8,6 +8,7 @@ import org.bme.micro_futar.shared.dtos.ShipmentDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -28,5 +29,12 @@ public class ShipmentService {
         ShipmentDTO savedShipmentDTO = shipmentMapper.toDTO(savedEntity);
         shipmentProducer.sendShipmentToTopic(savedShipmentDTO);
         return savedShipmentDTO;
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShipmentDTO> getShipmentsForUser(String senderEmail) {
+        return shipmentRepository.findBySenderEmail(senderEmail).stream()
+                .map(shipmentMapper::toDTO)
+                .toList();
     }
 }
