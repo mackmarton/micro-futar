@@ -1,35 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Suspense, lazy } from 'react';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
+import { useAuth } from '@package/shared-ui';
+import { hasLogisticsPortalAccess } from './auth/portalAccess';
+
+const LogisticsLandingPage = lazy(() =>
+  import('./landing/LogisticsLandingPage').then((module) => ({ default: module.LogisticsLandingPage })),
+);
+const LogisticsDashboardPage = lazy(() =>
+  import('./portal/LogisticsDashboardPage').then((module) => ({ default: module.LogisticsDashboardPage })),
+);
+const LogisticsDeposPage = lazy(() =>
+  import('./portal/LogisticsDeposPage').then((module) => ({ default: module.LogisticsDeposPage })),
+);
+const LogisticsDepoDetailsPage = lazy(() =>
+  import('./portal/LogisticsDepoDetailsPage').then((module) => ({ default: module.LogisticsDepoDetailsPage })),
+);
+const LogisticsDepoFormPage = lazy(() =>
+  import('./portal/LogisticsDepoFormPage').then((module) => ({ default: module.LogisticsDepoFormPage })),
+);
+
+const RequireLogisticsAccess = () => {
+  const { user } = useAuth();
+  const isAuthorized = hasLogisticsPortalAccess(user);
+
+  if (!isAuthorized) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <Outlet />;
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { isLoading } = useAuth();
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Suspense fallback={null}>
+      <Routes>
+        <Route path="/" element={<LogisticsLandingPage />} />
+        <Route path="/portal" element={<RequireLogisticsAccess />}>
+          <Route path="dashboard" element={<LogisticsDashboardPage />} />
+          <Route path="depos" element={<LogisticsDeposPage />} />
+          <Route path="depos/new" element={<LogisticsDepoFormPage />} />
+          <Route path="depos/:depoId/edit" element={<LogisticsDepoFormPage />} />
+          <Route path="depos/:depoId" element={<LogisticsDepoDetailsPage />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
+  );
 }
 
-export default App
+export default App;
