@@ -68,8 +68,8 @@ const getCityNameById = async (cityId: number): Promise<string | undefined> => {
   return response.data?.name;
 };
 
-const getCountryNameById = async (courierId: number): Promise<string | undefined> => {
-  const response = await logisticsApi.api.getCountryById(courierId, { format: 'json' });
+const getCountryNameById = async (countryId: number): Promise<string | undefined> => {
+  const response = await logisticsApi.api.getCountryById(countryId, { format: 'json' });
   return response.data?.name;
 };
 

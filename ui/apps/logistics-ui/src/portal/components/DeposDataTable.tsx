@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { DepoWithLookups } from '../api/logisticsDeposApi';
 import { Link } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 
 type DeposDataTableProps = {
   depos: DepoWithLookups[];
@@ -11,13 +12,22 @@ const valueOrFallback = (value?: string | number) =>
 
 export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
   const headerCellClass = 'px-5 py-4 align-top text-[10px] uppercase tracking-widest font-semibold';
+  const filterMenuWidth = 224;
+  const filterMenuEstimatedHeight = 260;
 
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
+  const [countrySearchQuery, setCountrySearchQuery] = useState('');
+  const [citySearchQuery, setCitySearchQuery] = useState('');
   const [openFilterMenu, setOpenFilterMenu] = useState<'country' | 'city' | null>(null);
 
   const countryFilterRef = useRef<HTMLTableCellElement | null>(null);
   const cityFilterRef = useRef<HTMLTableCellElement | null>(null);
+  const countryFilterButtonRef = useRef<HTMLButtonElement | null>(null);
+  const cityFilterButtonRef = useRef<HTMLButtonElement | null>(null);
+  const countryFilterMenuRef = useRef<HTMLDivElement | null>(null);
+  const cityFilterMenuRef = useRef<HTMLDivElement | null>(null);
+  const [filterMenuPosition, setFilterMenuPosition] = useState<{ top: number; left: number } | null>(null);
 
   const countryOptions = useMemo(() => {
     return Array.from(
@@ -56,23 +66,70 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
 
   const hasActiveFilters = Boolean(selectedCountry || selectedCity);
 
+  const filteredCountryOptions = useMemo(() => {
+    const query = countrySearchQuery.trim().toLocaleLowerCase();
+    if (!query) {
+      return countryOptions;
+    }
+
+    return countryOptions.filter((country) => country.toLocaleLowerCase().includes(query));
+  }, [countryOptions, countrySearchQuery]);
+
+  const filteredCityOptions = useMemo(() => {
+    const query = citySearchQuery.trim().toLocaleLowerCase();
+    if (!query) {
+      return cityOptions;
+    }
+
+    return cityOptions.filter((city) => city.toLocaleLowerCase().includes(query));
+  }, [cityOptions, citySearchQuery]);
+
+  const updateFilterMenuPosition = (menu: 'country' | 'city') => {
+    const button = menu === 'country' ? countryFilterButtonRef.current : cityFilterButtonRef.current;
+    if (!button) {
+      return;
+    }
+
+    const rect = button.getBoundingClientRect();
+    const viewportPadding = 8;
+
+    let left = rect.left;
+    if (left + filterMenuWidth > window.innerWidth - viewportPadding) {
+      left = window.innerWidth - filterMenuWidth - viewportPadding;
+    }
+    left = Math.max(viewportPadding, left);
+
+    let top = rect.bottom + 8;
+    if (top + filterMenuEstimatedHeight > window.innerHeight - viewportPadding) {
+      top = Math.max(viewportPadding, rect.top - filterMenuEstimatedHeight - 8);
+    }
+
+    setFilterMenuPosition({ top, left });
+  };
+
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       const target = event.target as Node;
 
       if (
         countryFilterRef.current?.contains(target) ||
-        cityFilterRef.current?.contains(target)
+        cityFilterRef.current?.contains(target) ||
+        countryFilterMenuRef.current?.contains(target) ||
+        cityFilterMenuRef.current?.contains(target)
       ) {
         return;
       }
 
       setOpenFilterMenu(null);
+      setCountrySearchQuery('');
+      setCitySearchQuery('');
     };
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setOpenFilterMenu(null);
+        setCountrySearchQuery('');
+        setCitySearchQuery('');
       }
     };
 
@@ -84,6 +141,26 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
       document.removeEventListener('keydown', handleEscape);
     };
   }, []);
+
+  useEffect(() => {
+    if (!openFilterMenu) {
+      return;
+    }
+
+    const initialRaf = window.requestAnimationFrame(() => {
+      updateFilterMenuPosition(openFilterMenu);
+    });
+
+    const handlePositionRefresh = () => updateFilterMenuPosition(openFilterMenu);
+    window.addEventListener('resize', handlePositionRefresh);
+    window.addEventListener('scroll', handlePositionRefresh, true);
+
+    return () => {
+      window.cancelAnimationFrame(initialRaf);
+      window.removeEventListener('resize', handlePositionRefresh);
+      window.removeEventListener('scroll', handlePositionRefresh, true);
+    };
+  }, [openFilterMenu]);
 
   const handleCountryChange = (value: string) => {
     setSelectedCountry(value);
@@ -102,6 +179,12 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
     }
   };
 
+  const toggleFilterMenu = (menu: 'country' | 'city') => {
+    setOpenFilterMenu((previous) => (previous === menu ? null : menu));
+    setCountrySearchQuery('');
+    setCitySearchQuery('');
+  };
+
   return (
     <section className="bg-surface-container-low rounded-3xl p-6 md:p-8">
       <div className="flex items-start justify-between gap-4">
@@ -115,6 +198,8 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
             onClick={() => {
               setSelectedCountry('');
               setSelectedCity('');
+              setCountrySearchQuery('');
+              setCitySearchQuery('');
             }}
             disabled={!hasActiveFilters}
             className="mt-2 rounded-lg bg-surface px-3 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container disabled:cursor-not-allowed disabled:opacity-70"
@@ -124,15 +209,17 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
         </div>
       </div>
 
-      <div className="mt-6 rounded-2xl bg-surface-container-lowest overflow-x-auto">
-        <table className="w-full min-w-[880px] text-left font-body">
+      <div className="mt-6 rounded-2xl bg-surface-container-lowest overflow-visible">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[880px] text-left font-body">
           <thead className="bg-surface-container-low text-on-surface-variant">
             <tr>
               <th ref={countryFilterRef} className={`${headerCellClass} relative pr-14`}>
                 <span className="leading-none">Ország</span>
                 <button
+                  ref={countryFilterButtonRef}
                   type="button"
-                  onClick={() => setOpenFilterMenu((previous) => (previous === 'country' ? null : 'country'))}
+                  onClick={() => toggleFilterMenu('country')}
                   className={`absolute right-5 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg transition-colors ${selectedCountry ? 'bg-primary text-on-primary' : 'bg-surface text-on-surface hover:bg-surface-container'}`}
                   aria-label="Ország szűrő menü"
                   aria-haspopup="listbox"
@@ -143,35 +230,13 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
                     filter_list
                   </span>
                 </button>
-                {openFilterMenu === 'country' ? (
-                  <div
-                    id="depos-country-filter-menu"
-                    className="absolute left-5 top-14 z-20 w-56 rounded-xl bg-surface p-3 shadow-sm"
-                  >
-                    <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Ország szűrő</p>
-                    <select
-                      value={selectedCountry}
-                      onChange={(event) => {
-                        handleCountryChange(event.target.value);
-                        setOpenFilterMenu(null);
-                      }}
-                      className="mt-2 w-full rounded-lg bg-surface-container-lowest px-3 py-2 font-body text-on-surface"
-                    >
-                      <option value="">Minden ország</option>
-                      {countryOptions.map((country) => (
-                        <option key={country} value={country}>
-                          {country}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ) : null}
               </th>
               <th ref={cityFilterRef} className={`${headerCellClass} relative pr-14`}>
                 <span className="leading-none">Város</span>
                 <button
+                  ref={cityFilterButtonRef}
                   type="button"
-                  onClick={() => setOpenFilterMenu((previous) => (previous === 'city' ? null : 'city'))}
+                  onClick={() => toggleFilterMenu('city')}
                   className={`absolute right-5 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg transition-colors ${selectedCity ? 'bg-primary text-on-primary' : 'bg-surface text-on-surface hover:bg-surface-container'}`}
                   aria-label="Város szűrő menü"
                   aria-haspopup="listbox"
@@ -182,29 +247,6 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
                     filter_list
                   </span>
                 </button>
-                {openFilterMenu === 'city' ? (
-                  <div
-                    id="depos-city-filter-menu"
-                    className="absolute left-5 top-14 z-20 w-56 rounded-xl bg-surface p-3 shadow-sm"
-                  >
-                    <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Város szűrő</p>
-                    <select
-                      value={selectedCity}
-                      onChange={(event) => {
-                        setSelectedCity(event.target.value);
-                        setOpenFilterMenu(null);
-                      }}
-                      className="mt-2 w-full rounded-lg bg-surface-container-lowest px-3 py-2 font-body text-on-surface"
-                    >
-                      <option value="">Minden város</option>
-                      {cityOptions.map((city) => (
-                        <option key={city} value={city}>
-                          {city}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ) : null}
               </th>
               <th className={headerCellClass}>Irányítószám</th>
               <th className={headerCellClass}>Cím</th>
@@ -257,8 +299,103 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
               </tr>
             ) : null}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
+
+      {openFilterMenu && filterMenuPosition
+        ? createPortal(
+            <div
+              ref={openFilterMenu === 'country' ? countryFilterMenuRef : cityFilterMenuRef}
+              id={openFilterMenu === 'country' ? 'depos-country-filter-menu' : 'depos-city-filter-menu'}
+              className="fixed z-[1200] w-56 rounded-xl bg-surface p-3 shadow-sm"
+              style={{ top: filterMenuPosition.top, left: filterMenuPosition.left }}
+            >
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">
+                {openFilterMenu === 'country' ? 'Ország szűrő' : 'Város szűrő'}
+              </p>
+              <input
+                type="text"
+                value={openFilterMenu === 'country' ? countrySearchQuery : citySearchQuery}
+                onChange={(event) => {
+                  if (openFilterMenu === 'country') {
+                    setCountrySearchQuery(event.target.value);
+                    return;
+                  }
+
+                  setCitySearchQuery(event.target.value);
+                }}
+                placeholder={openFilterMenu === 'country' ? 'Keresés országra' : 'Keresés városra'}
+                className="mt-2 w-full rounded-lg bg-surface-container-lowest px-3 py-2 font-body text-on-surface placeholder:text-on-surface-variant"
+              />
+
+              {openFilterMenu === 'country' ? (
+                <div className="mt-2 max-h-44 overflow-y-auto rounded-lg bg-surface-container-lowest p-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleCountryChange('');
+                      setOpenFilterMenu(null);
+                      setCountrySearchQuery('');
+                    }}
+                    className={`w-full rounded-md px-2 py-2 text-left font-body transition-colors ${selectedCountry === '' ? 'bg-primary text-on-primary' : 'text-on-surface hover:bg-surface-container-low'}`}
+                  >
+                    Minden ország
+                  </button>
+                  {filteredCountryOptions.map((country) => (
+                    <button
+                      key={country}
+                      type="button"
+                      onClick={() => {
+                        handleCountryChange(country);
+                        setOpenFilterMenu(null);
+                        setCountrySearchQuery('');
+                      }}
+                      className={`mt-1 w-full rounded-md px-2 py-2 text-left font-body transition-colors ${selectedCountry === country ? 'bg-primary text-on-primary' : 'text-on-surface hover:bg-surface-container-low'}`}
+                    >
+                      {country}
+                    </button>
+                  ))}
+                  {filteredCountryOptions.length === 0 ? (
+                    <p className="px-2 py-2 font-body text-on-surface-variant">Nincs találat</p>
+                  ) : null}
+                </div>
+              ) : (
+                <div className="mt-2 max-h-44 overflow-y-auto rounded-lg bg-surface-container-lowest p-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedCity('');
+                      setOpenFilterMenu(null);
+                      setCitySearchQuery('');
+                    }}
+                    className={`w-full rounded-md px-2 py-2 text-left font-body transition-colors ${selectedCity === '' ? 'bg-primary text-on-primary' : 'text-on-surface hover:bg-surface-container-low'}`}
+                  >
+                    Minden város
+                  </button>
+                  {filteredCityOptions.map((city) => (
+                    <button
+                      key={city}
+                      type="button"
+                      onClick={() => {
+                        setSelectedCity(city);
+                        setOpenFilterMenu(null);
+                        setCitySearchQuery('');
+                      }}
+                      className={`mt-1 w-full rounded-md px-2 py-2 text-left font-body transition-colors ${selectedCity === city ? 'bg-primary text-on-primary' : 'text-on-surface hover:bg-surface-container-low'}`}
+                    >
+                      {city}
+                    </button>
+                  ))}
+                  {filteredCityOptions.length === 0 ? (
+                    <p className="px-2 py-2 font-body text-on-surface-variant">Nincs találat</p>
+                  ) : null}
+                </div>
+              )}
+            </div>,
+            document.body,
+          )
+        : null}
     </section>
   );
 };
