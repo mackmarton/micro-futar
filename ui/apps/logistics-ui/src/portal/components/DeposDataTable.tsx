@@ -23,8 +23,11 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
 
   const countryFilterRef = useRef<HTMLTableCellElement | null>(null);
   const cityFilterRef = useRef<HTMLTableCellElement | null>(null);
+  const mobileCountryFilterRef = useRef<HTMLDivElement | null>(null);
+  const mobileCityFilterRef = useRef<HTMLDivElement | null>(null);
   const countryFilterButtonRef = useRef<HTMLButtonElement | null>(null);
   const cityFilterButtonRef = useRef<HTMLButtonElement | null>(null);
+  const activeFilterButtonRef = useRef<HTMLButtonElement | null>(null);
   const countryFilterMenuRef = useRef<HTMLDivElement | null>(null);
   const cityFilterMenuRef = useRef<HTMLDivElement | null>(null);
   const [filterMenuPosition, setFilterMenuPosition] = useState<{ top: number; left: number } | null>(null);
@@ -84,8 +87,9 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
     return cityOptions.filter((city) => city.toLocaleLowerCase().includes(query));
   }, [cityOptions, citySearchQuery]);
 
-  const updateFilterMenuPosition = (menu: 'country' | 'city') => {
-    const button = menu === 'country' ? countryFilterButtonRef.current : cityFilterButtonRef.current;
+  const updateFilterMenuPosition = (fallbackMenu?: 'country' | 'city') => {
+    const button = activeFilterButtonRef.current
+      ?? (fallbackMenu === 'country' ? countryFilterButtonRef.current : cityFilterButtonRef.current);
     if (!button) {
       return;
     }
@@ -114,6 +118,8 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
       if (
         countryFilterRef.current?.contains(target) ||
         cityFilterRef.current?.contains(target) ||
+        mobileCountryFilterRef.current?.contains(target) ||
+        mobileCityFilterRef.current?.contains(target) ||
         countryFilterMenuRef.current?.contains(target) ||
         cityFilterMenuRef.current?.contains(target)
       ) {
@@ -123,6 +129,7 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
       setOpenFilterMenu(null);
       setCountrySearchQuery('');
       setCitySearchQuery('');
+      activeFilterButtonRef.current = null;
     };
 
     const handleEscape = (event: KeyboardEvent) => {
@@ -130,6 +137,7 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
         setOpenFilterMenu(null);
         setCountrySearchQuery('');
         setCitySearchQuery('');
+        activeFilterButtonRef.current = null;
       }
     };
 
@@ -179,8 +187,16 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
     }
   };
 
-  const toggleFilterMenu = (menu: 'country' | 'city') => {
-    setOpenFilterMenu((previous) => (previous === menu ? null : menu));
+  const toggleFilterMenu = (menu: 'country' | 'city', button: HTMLButtonElement) => {
+    activeFilterButtonRef.current = button;
+    setOpenFilterMenu((previous) => {
+      if (previous === menu) {
+        activeFilterButtonRef.current = null;
+        return null;
+      }
+
+      return menu;
+    });
     setCountrySearchQuery('');
     setCitySearchQuery('');
   };
@@ -210,7 +226,73 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
       </div>
 
       <div className="mt-6 rounded-2xl bg-surface-container-lowest overflow-visible">
-        <div className="overflow-x-auto">
+        <div className="p-4 md:hidden">
+          <div className="grid grid-cols-2 gap-2">
+            <div ref={mobileCountryFilterRef}>
+              <button
+                type="button"
+                onClick={(event) => toggleFilterMenu('country', event.currentTarget)}
+                className={`w-full rounded-lg px-3 py-2 text-left font-body text-sm transition-colors ${selectedCountry ? 'bg-primary text-on-primary' : 'bg-surface text-on-surface'}`}
+              >
+                Ország szűrő
+              </button>
+            </div>
+            <div ref={mobileCityFilterRef}>
+              <button
+                type="button"
+                onClick={(event) => toggleFilterMenu('city', event.currentTarget)}
+                className={`w-full rounded-lg px-3 py-2 text-left font-body text-sm transition-colors ${selectedCity ? 'bg-primary text-on-primary' : 'bg-surface text-on-surface'}`}
+              >
+                Város szűrő
+              </button>
+            </div>
+          </div>
+
+          {filteredDepos.length === 0 ? (
+            <p className="mt-4 rounded-xl bg-surface-container-low px-4 py-5 text-center font-body text-on-surface-variant">
+              Nincs találat a kiválasztott ország és város szűrőkre.
+            </p>
+          ) : (
+            <div className="mt-4 space-y-3">
+              {filteredDepos.map((depo, index) => (
+                <article
+                  key={depo.id ?? `${depo.address ?? 'depo-mobile'}-${index}`}
+                  className="rounded-2xl bg-surface-container-low p-4"
+                >
+                  <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Depo</p>
+                  <div className="mt-3 space-y-2 font-body text-sm text-on-surface">
+                    <p><span className="text-on-surface-variant">Ország:</span> {valueOrFallback(depo.countryName)}</p>
+                    <p><span className="text-on-surface-variant">Város:</span> {valueOrFallback(depo.cityName)}</p>
+                    <p><span className="text-on-surface-variant">Irányítószám:</span> {valueOrFallback(depo.zip)}</p>
+                    <p><span className="text-on-surface-variant">Cím:</span> {valueOrFallback(depo.address)}</p>
+                  </div>
+                  <div className="mt-4 flex gap-2">
+                    {typeof depo.id === 'number' ? (
+                      <>
+                        <Link
+                          to={`/portal/depos/${depo.id}`}
+                          className="inline-flex items-center rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-on-primary"
+                        >
+                          Megnyit
+                        </Link>
+                        <Link
+                          to={`/portal/depos/${depo.id}/edit`}
+                          className="inline-flex items-center rounded-lg bg-surface px-3 py-1.5 text-sm font-semibold text-on-surface"
+                        >
+                          Szerkeszt
+                        </Link>
+                      </>
+                    ) : (
+                      <span className="text-on-surface-variant">N/A</span>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[880px] text-left font-body">
           <thead className="bg-surface-container-low text-on-surface-variant">
             <tr>
@@ -219,7 +301,7 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
                 <button
                   ref={countryFilterButtonRef}
                   type="button"
-                  onClick={() => toggleFilterMenu('country')}
+                  onClick={(event) => toggleFilterMenu('country', event.currentTarget)}
                   className={`absolute right-5 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg transition-colors ${selectedCountry ? 'bg-primary text-on-primary' : 'bg-surface text-on-surface hover:bg-surface-container'}`}
                   aria-label="Ország szűrő menü"
                   aria-haspopup="listbox"
@@ -236,7 +318,7 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
                 <button
                   ref={cityFilterButtonRef}
                   type="button"
-                  onClick={() => toggleFilterMenu('city')}
+                  onClick={(event) => toggleFilterMenu('city', event.currentTarget)}
                   className={`absolute right-5 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg transition-colors ${selectedCity ? 'bg-primary text-on-primary' : 'bg-surface text-on-surface hover:bg-surface-container'}`}
                   aria-label="Város szűrő menü"
                   aria-haspopup="listbox"
@@ -291,16 +373,17 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
               </tr>
             ))}
 
-            {filteredDepos.length === 0 ? (
-              <tr>
-                <td className="px-5 py-8 text-center font-body text-on-surface-variant" colSpan={6}>
-                  Nincs találat a kiválasztott ország és város szűrőkre.
-                </td>
-              </tr>
-            ) : null}
           </tbody>
           </table>
         </div>
+
+        {filteredDepos.length === 0 ? (
+          <div className="hidden md:block">
+            <p className="px-5 py-8 text-center font-body text-on-surface-variant">
+              Nincs találat a kiválasztott ország és város szűrőkre.
+            </p>
+          </div>
+        ) : null}
       </div>
 
       {openFilterMenu && filterMenuPosition
