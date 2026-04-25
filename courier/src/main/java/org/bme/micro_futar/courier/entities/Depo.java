@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class Depo {
     @Id
     private Long id;
+    private String name;
     private Long locationCountryId;
     private String zip;
     private Long locationCityId;

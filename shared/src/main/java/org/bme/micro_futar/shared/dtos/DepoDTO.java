@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DepoDTO {
     private Long id;
+    private String name;
     private Long locationCountryId;
     private String zip;
     private Long locationCityId;

@@ -35,6 +35,7 @@ export interface PackageSizeDTO {
 export interface DepoDTO {
   /** @format int64 */
   id?: number;
+  name?: string;
   /** @format int64 */
   locationCountryId?: number;
   zip?: string;
