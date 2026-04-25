@@ -272,7 +272,7 @@ export const AddressCard = ({
                                     </li>
                                 ))
                             ) : (
-                                <li className="px-4 py-2 text-sm text-on-surface-variant">Nincs talalat.</li>
+                                <li className="px-4 py-2 text-sm text-on-surface-variant">Nincs találat.</li>
                             )}
                         </ul>
                     ) : null}
