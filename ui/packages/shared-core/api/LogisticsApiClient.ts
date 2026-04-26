@@ -1306,6 +1306,34 @@ export class Api<
     /**
      * No description
      *
+     * @tags courier-controller
+     * @name GetCrossDepoCouriers
+     * @request GET:/api/logistics/couriers/cross-depo
+     */
+    getCrossDepoCouriers: (params: RequestParams = {}) =>
+      this.request<CourierDTO[], any>({
+        path: `/api/logistics/couriers/cross-depo`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags courier-controller
+     * @name GetCourierByDepoId
+     * @request GET:/api/logistics/couriers/by-depo/{depoId}
+     */
+    getCourierByDepoId: (depoId: number, params: RequestParams = {}) =>
+      this.request<CourierDTO[], any>({
+        path: `/api/logistics/couriers/by-depo/${depoId}`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags country-price-controller
      * @name GetCountryPriceById
      * @request GET:/api/logistics/country-prices/{id}
