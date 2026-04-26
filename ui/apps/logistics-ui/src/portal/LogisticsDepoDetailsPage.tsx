@@ -41,7 +41,7 @@ const decodeTransportType = (transportType: string) => {
         return 'Légi';
     }
     return transportType;
-}
+};
 
 export const LogisticsDepoDetailsPage = () => {
     const params = useParams();
@@ -175,7 +175,22 @@ export const LogisticsDepoDetailsPage = () => {
             mobileLabel: 'Ár',
             cell: (transit) => `${valueOrFallback(transit.price)} Ft`,
         },
-    ], [depoNameById, packageSizeNameById]);
+        {
+            id: 'edit',
+            header: 'Szerkesztés',
+            cell: (transit) =>
+                typeof transit.id === 'number' ? (
+                    <Link
+                        to={`/portal/depos/${depoId}/transits/${transit.id}/edit?direction=outgoing`}
+                        className="inline-flex items-center rounded-lg bg-surface-container-lowest px-3 py-1.5 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container"
+                    >
+                        Szerkeszt
+                    </Link>
+                ) : (
+                    <span className="text-on-surface-variant">N/A</span>
+                ),
+        },
+    ], [depoId, depoNameById, packageSizeNameById]);
 
     const incomingColumns = useMemo<DataTableColumn<DepoTransitDTO>[]>(() => [
         {
@@ -221,7 +236,22 @@ export const LogisticsDepoDetailsPage = () => {
             mobileLabel: 'Ár',
             cell: (transit) => `${valueOrFallback(transit.price)} Ft`,
         },
-    ], [depoNameById, packageSizeNameById]);
+        {
+            id: 'edit',
+            header: 'Szerkesztés',
+            cell: (transit) =>
+                typeof transit.id === 'number' ? (
+                    <Link
+                        to={`/portal/depos/${depoId}/transits/${transit.id}/edit?direction=incoming`}
+                        className="inline-flex items-center rounded-lg bg-surface-container-lowest px-3 py-1.5 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container"
+                    >
+                        Szerkeszt
+                    </Link>
+                ) : (
+                    <span className="text-on-surface-variant">N/A</span>
+                ),
+        },
+    ], [depoId, depoNameById, packageSizeNameById]);
 
     if (!hasValidDepoId) {
         return <Navigate to="/portal/depos" replace/>;
@@ -328,6 +358,15 @@ export const LogisticsDepoDetailsPage = () => {
                     </section>
 
                     <section className="lg:col-span-2">
+                        <div className="mb-3 flex justify-end">
+                            <Link
+                                to={`/portal/depos/${depoId}/transits/new?direction=outgoing`}
+                                className="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
+                            >
+                                Kimenő tranzit hozzáadása
+                            </Link>
+                        </div>
+
                         {isOutgoingLoading || isPackageSizesLoading || isDeposLoading ? (
                             <section className="rounded-2xl bg-surface-container-low p-8">
                                 <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Betöltés</p>
@@ -369,11 +408,32 @@ export const LogisticsDepoDetailsPage = () => {
                                 emptyMessage="Ehhez a depóhoz nem található kimenő tranzit."
                                 mobileCardEyebrow="Kimenő tranzit"
                                 recordCountLabel={(visible, total) => `Megjelenített rekordok: ${visible} / ${total}`}
+                                renderMobileActions={(transit) =>
+                                    typeof transit.id === 'number' ? (
+                                        <Link
+                                            to={`/portal/depos/${depoId}/transits/${transit.id}/edit?direction=outgoing`}
+                                            className="inline-flex items-center rounded-lg bg-surface px-3 py-1.5 text-sm font-semibold text-on-surface"
+                                        >
+                                            Szerkeszt
+                                        </Link>
+                                    ) : (
+                                        <span className="text-on-surface-variant">N/A</span>
+                                    )
+                                }
                             />
                         ) : null}
                     </section>
 
                     <section className="lg:col-span-2">
+                        <div className="mb-3 flex justify-end">
+                            <Link
+                                to={`/portal/depos/${depoId}/transits/new?direction=incoming`}
+                                className="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
+                            >
+                                Bejövő tranzit hozzáadása
+                            </Link>
+                        </div>
+
                         {isIncomingLoading || isPackageSizesLoading || isDeposLoading ? (
                             <section className="rounded-2xl bg-surface-container-low p-8">
                                 <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Betöltés</p>
@@ -415,6 +475,18 @@ export const LogisticsDepoDetailsPage = () => {
                                 emptyMessage="Ehhez a depóhoz nem található bejövő tranzit."
                                 mobileCardEyebrow="Bejövő tranzit"
                                 recordCountLabel={(visible, total) => `Megjelenített rekordok: ${visible} / ${total}`}
+                                renderMobileActions={(transit) =>
+                                    typeof transit.id === 'number' ? (
+                                        <Link
+                                            to={`/portal/depos/${depoId}/transits/${transit.id}/edit?direction=incoming`}
+                                            className="inline-flex items-center rounded-lg bg-surface px-3 py-1.5 text-sm font-semibold text-on-surface"
+                                        >
+                                            Szerkeszt
+                                        </Link>
+                                    ) : (
+                                        <span className="text-on-surface-variant">N/A</span>
+                                    )
+                                }
                             />
                         ) : null}
                     </section>
