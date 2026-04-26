@@ -1,8 +1,12 @@
 import {useMemo} from 'react';
 import {Link, Navigate, useParams} from 'react-router-dom';
-import {useQuery} from '@tanstack/react-query';
+import {useMutation, useQuery} from '@tanstack/react-query';
 import {PortalLayout} from '@package/shared-ui';
-import {getDepoByIdWithLookups} from './api/logisticsDeposApi';
+import {
+    getDepoByIdWithLookups,
+    planCrossDepoShipmentsForDepo,
+    planShipmentsForDepo,
+} from './api/logisticsDeposApi';
 import {DepoTransitDataTables} from './components/DepoTransitDataTables';
 import {logisticsNavigationItems} from './navigation';
 
@@ -36,6 +40,14 @@ export const LogisticsDepoDetailsPage = () => {
         queryKey: ['logistics', 'depo', depoId],
         queryFn: () => getDepoByIdWithLookups(depoId),
         enabled: hasValidDepoId,
+    });
+
+    const planShipmentsMutation = useMutation({
+        mutationFn: () => planShipmentsForDepo(depoId),
+    });
+
+    const planCrossDepoShipmentsMutation = useMutation({
+        mutationFn: () => planCrossDepoShipmentsForDepo(depoId),
     });
 
     const mapEmbedUrl = useMemo(() => {
@@ -103,6 +115,68 @@ export const LogisticsDepoDetailsPage = () => {
 
             {!isLoading && !isError && data ? (
                 <div className="mt-6 grid gap-4">
+
+                    <section className="rounded-2xl bg-surface-container-low p-6 lg:col-span-2">
+                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Tervezés</p>
+                        <h2 className="mt-2 text-2xl font-headline text-on-surface">Küldemények kiosztása</h2>
+
+                        <div className="mt-4 grid gap-4 md:grid-cols-2">
+                            <section className="rounded-xl bg-surface-container-lowest p-4">
+                                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Depó szállítmányok</p>
+                                <p className="mt-2 font-body text-on-surface-variant">
+                                    A depóhoz tartozó szállítmányok automatikus kiosztása futárokhoz.
+                                </p>
+
+                                <button
+                                    type="button"
+                                    onClick={() => planShipmentsMutation.mutate()}
+                                    disabled={planShipmentsMutation.isPending}
+                                    className="mt-4 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
+                                >
+                                    {planShipmentsMutation.isPending ? 'Tervezés...' : 'Szállítmány tervezés indítása'}
+                                </button>
+
+                                {planShipmentsMutation.isSuccess ? (
+                                    <p className="mt-3 font-body text-on-surface-variant">A szállítmány tervezés sikeresen lefutott.</p>
+                                ) : null}
+
+                                {planShipmentsMutation.isError ? (
+                                    <p className="mt-3 font-body text-on-surface-variant">
+                                        {(planShipmentsMutation.error as Error)?.message ?? 'A szállítmány tervezés nem sikerült.'}
+                                    </p>
+                                ) : null}
+                            </section>
+
+                            <section className="rounded-xl bg-surface-container-lowest p-4">
+                                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Cross-depó szállítmányok</p>
+                                <p className="mt-2 font-body text-on-surface-variant">
+                                    A depón áthaladó cross-depó szállítmányok automatikus kiosztása.
+                                </p>
+
+                                <button
+                                    type="button"
+                                    onClick={() => planCrossDepoShipmentsMutation.mutate()}
+                                    disabled={planCrossDepoShipmentsMutation.isPending}
+                                    className="mt-4 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
+                                >
+                                    {planCrossDepoShipmentsMutation.isPending
+                                        ? 'Tervezés...'
+                                        : 'Cross-depó tervezés indítása'}
+                                </button>
+
+                                {planCrossDepoShipmentsMutation.isSuccess ? (
+                                    <p className="mt-3 font-body text-on-surface-variant">A cross-depó tervezés sikeresen lefutott.</p>
+                                ) : null}
+
+                                {planCrossDepoShipmentsMutation.isError ? (
+                                    <p className="mt-3 font-body text-on-surface-variant">
+                                        {(planCrossDepoShipmentsMutation.error as Error)?.message
+                                            ?? 'A cross-depó tervezés nem sikerült.'}
+                                    </p>
+                                ) : null}
+                            </section>
+                        </div>
+                    </section>
                     <section className="rounded-2xl bg-surface-container-low p-6 lg:col-span-2">
                         <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Adatok</p>
                         <div className="mt-4 grid gap-3">
