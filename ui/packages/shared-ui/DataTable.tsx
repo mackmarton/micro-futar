@@ -297,12 +297,12 @@ export const DataTable = <T,>({
           <p className="font-body text-on-surface-variant">
             {recordCountLabel
               ? recordCountLabel(filteredData.length, data.length)
-              : `Megjelenitett rekordok: ${filteredData.length} / ${data.length}`}
+              : `Megjelenített rekordok: ${filteredData.length} / ${data.length}`}
           </p>
           <button
             type="button"
             onClick={resetFilters}
-            disabled={!hasActiveFilters}
+            hidden={!hasActiveFilters}
             className="mt-2 rounded-lg bg-surface px-3 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container disabled:cursor-not-allowed disabled:opacity-70"
           >
             Szűrők törlése
