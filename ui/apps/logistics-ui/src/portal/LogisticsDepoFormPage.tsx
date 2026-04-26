@@ -14,6 +14,7 @@ import { logisticsNavigationItems } from './navigation';
 import { DepoLocationMapPicker, type MapCoordinate } from './components/DepoLocationMapPicker';
 
 type DepoFormState = {
+  name: string;
   locationCountryId: string;
   locationCityId: string;
   zip: string;
@@ -24,6 +25,7 @@ type DepoFormState = {
 };
 
 const emptyFormState: DepoFormState = {
+  name: '',
   locationCountryId: '',
   locationCityId: '',
   zip: '',
@@ -39,6 +41,7 @@ const defaultMapCoordinate: MapCoordinate = {
 };
 
 const toFormState = (depo: DepoDTO): DepoFormState => ({
+  name: depo.name ?? '',
   locationCountryId: typeof depo.locationCountryId === 'number' ? String(depo.locationCountryId) : '',
   locationCityId: typeof depo.locationCityId === 'number' ? String(depo.locationCityId) : '',
   zip: depo.zip ?? '',
@@ -59,6 +62,7 @@ const parseOptionalNumber = (value: string): number | undefined => {
 };
 
 const buildPayload = (formState: DepoFormState): DepoDTO => ({
+  name: formState.name,
   locationCountryId: Number(formState.locationCountryId),
   locationCityId: Number(formState.locationCityId),
   zip: formState.zip.trim(),
@@ -69,20 +73,24 @@ const buildPayload = (formState: DepoFormState): DepoDTO => ({
 });
 
 const validateForm = (formState: DepoFormState): string | null => {
+  if (!formState.name) {
+    return 'A név megadása kötelező.';
+  }
+
   if (!formState.locationCountryId) {
-    return 'A country kiválasztása kötelező.';
+    return 'Az ország kiválasztása kötelező.';
   }
 
   if (!formState.locationCityId) {
-    return 'A city kiválasztása kötelező.';
+    return 'A város kiválasztása kötelező.';
   }
 
   if (!formState.zip.trim()) {
-    return 'A zip mező kitöltése kötelező.';
+    return 'Az irányítószám megadása kötelező.';
   }
 
   if (!formState.address.trim()) {
-    return 'Az address mező kitöltése kötelező.';
+    return 'A cím megadása kötelező.';
   }
 
   const latitude = parseOptionalNumber(formState.latitude);
@@ -368,7 +376,7 @@ export const LogisticsDepoFormPage = () => {
           {isEditMode ? 'Depó szerkesztés' : 'Új depó létrehozás'}
         </h1>
         <p className="mt-3 font-body text-on-surface-variant">
-          A kötelező mezők: ország, város, irányítószám és cím.
+          A kötelező mezők: név, ország, város, irányítószám és cím.
         </p>
 
         <div className="mt-5 flex flex-wrap gap-3">
@@ -399,6 +407,17 @@ export const LogisticsDepoFormPage = () => {
       {!isPageLoading && !isPageError ? (
         <section className="mt-6 rounded-3xl bg-surface-container-low p-6 md:p-8">
           <div className="grid gap-4 md:grid-cols-2">
+            <label className="rounded-2xl bg-surface-container-lowest p-4 col-span-2">
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Név</p>
+              <input
+                  type="text"
+                  value={formState.name}
+                  onChange={(event) => handleInputChange('name', event.target.value)}
+                  className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
+                  placeholder="Pl.: Budapest"
+              />
+            </label>
+
             <label className="rounded-2xl bg-surface-container-lowest p-4">
               <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Ország</p>
               <select
