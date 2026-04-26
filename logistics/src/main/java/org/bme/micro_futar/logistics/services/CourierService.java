@@ -71,4 +71,16 @@ public class CourierService {
                 .map(courierMapper::toDTO)
                 .toList();
     }
+
+    public List<CourierDTO> getCouriersByDepoId(Long depoId) {
+        return courierRepository.findAllByDepoId(depoId).stream()
+                .map(courierMapper::toDTO)
+                .toList();
+    }
+
+    public List<CourierDTO> getCrossDepoCouriers() {
+        return courierRepository.findAllByDepoIdIsNull().stream()
+                .map(courierMapper::toDTO)
+                .toList();
+    }
 }

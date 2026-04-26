@@ -29,6 +29,16 @@ public class CourierController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("by-depo/{depoId}")
+    public ResponseEntity<List<CourierDTO>> getCourierByDepoId(@PathVariable Long depoId) {
+        return ResponseEntity.ok(courierService.getCouriersByDepoId(depoId));
+    }
+
+    @GetMapping("cross-depo")
+    public ResponseEntity<List<CourierDTO>> getCrossDepoCouriers() {
+        return ResponseEntity.ok(courierService.getCrossDepoCouriers());
+    }
+
     @PostMapping
     public ResponseEntity<CourierDTO> createCourier(@RequestBody CourierDTO courierDTO) {
         CourierDTO createdCourier = courierService.createCourier(courierDTO);

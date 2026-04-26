@@ -8,4 +8,8 @@ import java.util.List;
 
 public interface CourierRepository extends JpaRepository<Courier, Long> {
     List<Courier> findByDepoIdAndCourierType(Long depoId, CourierType courierType);
+
+    List<Courier> findAllByDepoId(Long depoId);
+
+    List<Courier> findAllByDepoIdIsNull();
 }
