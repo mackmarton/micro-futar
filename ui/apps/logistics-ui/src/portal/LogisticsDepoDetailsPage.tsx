@@ -357,6 +357,11 @@ export const LogisticsDepoDetailsPage = () => {
                         ) : null}
                     </section>
 
+                    <section className="rounded-2xl bg-surface-container-low p-6 lg:col-span-2">
+                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Szekció</p>
+                        <h2 className="mt-2 text-2xl font-headline text-on-surface">Tranzitok</h2>
+                    </section>
+
                     <section className="lg:col-span-2">
                         <div className="mb-3 flex justify-end">
                             <Link
