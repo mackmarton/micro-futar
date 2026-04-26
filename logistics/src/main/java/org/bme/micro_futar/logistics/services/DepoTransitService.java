@@ -27,6 +27,18 @@ public class DepoTransitService {
                 .toList();
     }
 
+    public List<DepoTransitDTO> getDepoTransitsByOriginDepoId(Long originDepoId) {
+        return depoTransitRepository.findAllByOriginDepoId(originDepoId).stream()
+                .map(depoTransitMapper::toDTO)
+                .toList();
+    }
+
+    public List<DepoTransitDTO> getDepoTransitsByDestinationDepoId(Long destinationDepoId) {
+        return depoTransitRepository.findAllByDestinationDepoId(destinationDepoId).stream()
+                .map(depoTransitMapper::toDTO)
+                .toList();
+    }
+
     public Optional<DepoTransitDTO> getDepoTransitById(Long id) {
         return depoTransitRepository.findById(id)
                 .map(depoTransitMapper::toDTO);
