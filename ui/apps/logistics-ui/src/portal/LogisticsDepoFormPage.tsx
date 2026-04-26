@@ -21,7 +21,6 @@ type DepoFormState = {
   address: string;
   latitude: string;
   longitude: string;
-  mainDepo: boolean;
 };
 
 const emptyFormState: DepoFormState = {
@@ -32,7 +31,6 @@ const emptyFormState: DepoFormState = {
   address: '',
   latitude: '',
   longitude: '',
-  mainDepo: false,
 };
 
 const defaultMapCoordinate: MapCoordinate = {
@@ -48,7 +46,6 @@ const toFormState = (depo: DepoDTO): DepoFormState => ({
   address: depo.address ?? '',
   latitude: typeof depo.latitude === 'number' ? String(depo.latitude) : '',
   longitude: typeof depo.longitude === 'number' ? String(depo.longitude) : '',
-  mainDepo: Boolean(depo.mainDepo),
 });
 
 const parseOptionalNumber = (value: string): number | undefined => {
@@ -69,7 +66,6 @@ const buildPayload = (formState: DepoFormState): DepoDTO => ({
   address: formState.address.trim(),
   latitude: parseOptionalNumber(formState.latitude),
   longitude: parseOptionalNumber(formState.longitude),
-  mainDepo: formState.mainDepo,
 });
 
 const validateForm = (formState: DepoFormState): string | null => {
@@ -499,21 +495,6 @@ export const LogisticsDepoFormPage = () => {
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
                 placeholder="Térképről kerül kitöltésre"
               />
-            </label>
-
-            <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  checked={formState.mainDepo}
-                  onChange={(event) => handleInputChange('mainDepo', event.target.checked)}
-                  className="h-4 w-4"
-                />
-                <div>
-                  <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Main depó</p>
-                  <p className="mt-1 font-body text-on-surface">Jelöld be, ha ez a depó legyen központi depó.</p>
-                </div>
-              </div>
             </label>
 
             <section className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">

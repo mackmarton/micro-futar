@@ -46,7 +46,6 @@ export interface DepoDTO {
   latitude?: number;
   /** @format double */
   longitude?: number;
-  mainDepo?: boolean;
 }
 
 export interface DepoTransitDTO {
