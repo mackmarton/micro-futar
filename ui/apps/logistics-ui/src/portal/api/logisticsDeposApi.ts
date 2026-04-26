@@ -168,6 +168,36 @@ export const updateDepo = async (depoId: number, depo: DepoDTO): Promise<DepoDTO
   }
 };
 
+export const planShipmentsForDepo = async (depoId: number): Promise<Record<string, unknown>> => {
+  try {
+    const response = await logisticsApi.api.planShipmentsForDepo(depoId, { format: 'json' });
+    return response.data ?? {};
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const planCrossDepoShipmentsForDepo = async (depoId: number): Promise<Record<string, unknown>> => {
+  try {
+    const response = await logisticsApi.api.planCrossDepoShipmentsForDepo(depoId, { format: 'json' });
+    return response.data ?? {};
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
 export const getAllPackageSizes = async (): Promise<PackageSizeDTO[]> => {
   try {
     const response = await logisticsApi.api.getAllPackageSizes({ format: 'json' });
