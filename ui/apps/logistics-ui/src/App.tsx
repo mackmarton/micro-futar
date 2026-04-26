@@ -21,6 +21,12 @@ const LogisticsDepoFormPage = lazy(() =>
 const LogisticsDepoTransitFormPage = lazy(() =>
   import('./portal/LogisticsDepoTransitFormPage').then((module) => ({ default: module.LogisticsDepoTransitFormPage })),
 );
+const LogisticsCouriersPage = lazy(() =>
+  import('./portal/LogisticsCouriersPage').then((module) => ({ default: module.LogisticsCouriersPage })),
+);
+const LogisticsCourierFormPage = lazy(() =>
+  import('./portal/LogisticsCourierFormPage').then((module) => ({ default: module.LogisticsCourierFormPage })),
+);
 
 const RequireLogisticsAccess = () => {
   const { user } = useAuth();
@@ -52,6 +58,9 @@ function App() {
           <Route path="depos/:depoId/transits/new" element={<LogisticsDepoTransitFormPage />} />
           <Route path="depos/:depoId/transits/:depoTransitId/edit" element={<LogisticsDepoTransitFormPage />} />
           <Route path="depos/:depoId" element={<LogisticsDepoDetailsPage />} />
+          <Route path="couriers" element={<LogisticsCouriersPage />} />
+          <Route path="couriers/new" element={<LogisticsCourierFormPage />} />
+          <Route path="couriers/:courierId/edit" element={<LogisticsCourierFormPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
