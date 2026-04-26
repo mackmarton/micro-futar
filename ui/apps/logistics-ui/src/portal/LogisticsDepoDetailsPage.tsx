@@ -1,8 +1,16 @@
 import {useMemo} from 'react';
 import {Link, Navigate, useParams} from 'react-router-dom';
 import {useQuery} from '@tanstack/react-query';
-import {PortalLayout} from '@package/shared-ui';
-import {getDepoByIdWithLookups} from './api/logisticsDeposApi';
+import {DataTable, PortalLayout} from '@package/shared-ui';
+import type {DataTableColumn} from '@package/shared-ui';
+import type {DepoTransitDTO} from '@package/shared-core/api/LogisticsApiClient';
+import {
+    getAllDepos,
+    getAllPackageSizes,
+    getDepoByIdWithLookups,
+    getDepoTransitsByDestinationDepoId,
+    getDepoTransitsByOriginDepoId,
+} from './api/logisticsDeposApi';
 import {logisticsNavigationItems} from './navigation';
 
 const valueOrFallback = (value?: string | number | boolean) => {
@@ -26,6 +34,15 @@ const buildMapEmbedUrl = (latitude: number, longitude: number) => {
     return `https://www.openstreetmap.org/export/embed.html?bbox=${left}%2C${bottom}%2C${right}%2C${top}&layer=mapnik&marker=${latitude}%2C${longitude}`;
 };
 
+const decodeTransportType = (transportType: string) => {
+    if (transportType === 'ROAD') {
+        return 'Földi';
+    } else if (transportType === 'AIR') {
+        return 'Légi';
+    }
+    return transportType;
+}
+
 export const LogisticsDepoDetailsPage = () => {
     const params = useParams();
     const depoId = Number(params.depoId);
@@ -34,6 +51,54 @@ export const LogisticsDepoDetailsPage = () => {
     const {data, isLoading, isError, error, refetch} = useQuery({
         queryKey: ['logistics', 'depo', depoId],
         queryFn: () => getDepoByIdWithLookups(depoId),
+        enabled: hasValidDepoId,
+    });
+
+    const {
+        data: outgoingTransits,
+        isLoading: isOutgoingLoading,
+        isError: isOutgoingError,
+        error: outgoingError,
+        refetch: refetchOutgoing,
+    } = useQuery({
+        queryKey: ['logistics', 'depo', depoId, 'outgoing-transits'],
+        queryFn: () => getDepoTransitsByOriginDepoId(depoId),
+        enabled: hasValidDepoId,
+    });
+
+    const {
+        data: incomingTransits,
+        isLoading: isIncomingLoading,
+        isError: isIncomingError,
+        error: incomingError,
+        refetch: refetchIncoming,
+    } = useQuery({
+        queryKey: ['logistics', 'depo', depoId, 'incoming-transits'],
+        queryFn: () => getDepoTransitsByDestinationDepoId(depoId),
+        enabled: hasValidDepoId,
+    });
+
+    const {
+        data: packageSizes,
+        isLoading: isPackageSizesLoading,
+        isError: isPackageSizesError,
+        error: packageSizesError,
+        refetch: refetchPackageSizes,
+    } = useQuery({
+        queryKey: ['logistics', 'package-sizes'],
+        queryFn: getAllPackageSizes,
+        enabled: hasValidDepoId,
+    });
+
+    const {
+        data: depos,
+        isLoading: isDeposLoading,
+        isError: isDeposError,
+        error: deposError,
+        refetch: refetchDepos,
+    } = useQuery({
+        queryKey: ['logistics', 'depos'],
+        queryFn: getAllDepos,
         enabled: hasValidDepoId,
     });
 
@@ -50,13 +115,121 @@ export const LogisticsDepoDetailsPage = () => {
         return buildMapEmbedUrl(latitude, longitude);
     }, [data]);
 
+    const packageSizeNameById = useMemo(() => {
+        return new Map((packageSizes ?? []).map((packageSize) => [packageSize.id, packageSize.name ?? 'N/A']));
+    }, [packageSizes]);
+
+    const depoNameById = useMemo(() => {
+        const namesById = new Map<number, string>();
+
+        for (const depo of depos ?? []) {
+            if (typeof depo.id === 'number') {
+                namesById.set(depo.id, depo.name ?? 'N/A');
+            }
+        }
+
+        return namesById;
+    }, [depos]);
+
+    const outgoingColumns = useMemo<DataTableColumn<DepoTransitDTO>[]>(() => [
+        {
+            id: 'destinationDepoId',
+            header: 'Cél depo',
+            mobileLabel: 'Cél depo',
+            cell: (transit) => {
+                if (typeof transit.destinationDepoId !== 'number') {
+                    return 'N/A';
+                }
+
+                const destinationDepoId = transit.destinationDepoId;
+                const destinationDepoName = depoNameById.get(destinationDepoId) ?? `#${destinationDepoId}`;
+
+                return (
+                    <Link to={`/portal/depos/${destinationDepoId}`} className="text-blue-600 underline">
+                        {destinationDepoName}
+                    </Link>
+                );
+            },
+        },
+        {
+            id: 'packageSizeId',
+            header: 'Csomagméret',
+            mobileLabel: 'Csomagméret',
+            cell: (transit) => {
+                if (typeof transit.packageSizeId !== 'number') {
+                    return 'N/A';
+                }
+
+                return packageSizeNameById.get(transit.packageSizeId) ?? `#${transit.packageSizeId}`;
+            },
+        },
+        {
+            id: 'transportType',
+            header: 'Szállítás típusa',
+            mobileLabel: 'Szállítás típusa',
+            cell: (transit) => transit.transportType ? decodeTransportType(transit.transportType) : valueOrFallback(transit.transportType),
+        },
+        {
+            id: 'price',
+            header: 'Ár',
+            mobileLabel: 'Ár',
+            cell: (transit) => `${valueOrFallback(transit.price)} Ft`,
+        },
+    ], [depoNameById, packageSizeNameById]);
+
+    const incomingColumns = useMemo<DataTableColumn<DepoTransitDTO>[]>(() => [
+        {
+            id: 'originDepoId',
+            header: 'Forrás depo',
+            mobileLabel: 'Forrás depo',
+            cell: (transit) => {
+                if (typeof transit.originDepoId !== 'number') {
+                    return 'N/A';
+                }
+
+                const originDepoId = transit.originDepoId;
+                const originDepoName = depoNameById.get(originDepoId) ?? `#${originDepoId}`;
+
+                return (
+                    <Link to={`/portal/depos/${originDepoId}`} className="text-blue-600 underline">
+                        {originDepoName}
+                    </Link>
+                );
+            },
+        },
+        {
+            id: 'packageSizeId',
+            header: 'Csomagméret',
+            mobileLabel: 'Csomagméret',
+            cell: (transit) => {
+                if (typeof transit.packageSizeId !== 'number') {
+                    return 'N/A';
+                }
+
+                return packageSizeNameById.get(transit.packageSizeId) ?? `#${transit.packageSizeId}`;
+            },
+        },
+        {
+            id: 'transportType',
+            header: 'Szállítás típusa',
+            mobileLabel: 'Szállítás típusa',
+            cell: (transit) => transit.transportType ? decodeTransportType(transit.transportType) : valueOrFallback(transit.transportType),
+        },
+        {
+            id: 'price',
+            header: 'Ár',
+            mobileLabel: 'Ár',
+            cell: (transit) => `${valueOrFallback(transit.price)} Ft`,
+        },
+    ], [depoNameById, packageSizeNameById]);
+
     if (!hasValidDepoId) {
         return <Navigate to="/portal/depos" replace/>;
     }
 
     return (
         <PortalLayout title="Depo részletek" activeHref="#/portal/depos" navigationItems={logisticsNavigationItems}>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 justify-between">
                 <Link
                     to="/portal/depos"
                     className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary hover:bg-on-primary-container transition-colors"
@@ -110,6 +283,10 @@ export const LogisticsDepoDetailsPage = () => {
                                 <p className="mt-1 font-body text-on-surface">{valueOrFallback(data.id)}</p>
                             </div>
                             <div className="rounded-xl bg-surface-container-lowest p-4">
+                                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Név</p>
+                                <p className="mt-1 font-body text-on-surface">{valueOrFallback(data.name)}</p>
+                            </div>
+                            <div className="rounded-xl bg-surface-container-lowest p-4">
                                 <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Ország</p>
                                 <p className="mt-1 font-body text-on-surface">{valueOrFallback(data.countryName)}</p>
                             </div>
@@ -149,10 +326,100 @@ export const LogisticsDepoDetailsPage = () => {
                             </div>
                         ) : null}
                     </section>
+
+                    <section className="lg:col-span-2">
+                        {isOutgoingLoading || isPackageSizesLoading || isDeposLoading ? (
+                            <section className="rounded-2xl bg-surface-container-low p-8">
+                                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Betöltés</p>
+                                <p className="mt-2 font-body text-on-surface">Kimenő depo tranzitok betöltése...</p>
+                            </section>
+                        ) : null}
+
+                        {isOutgoingError || isPackageSizesError || isDeposError ? (
+                            <section className="rounded-2xl bg-surface-container-low p-8">
+                                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Hiba</p>
+                                <p className="mt-2 font-body text-on-surface">Nem sikerült betölteni a kimenő depo
+                                    tranzitokat.</p>
+                                <p className="mt-1 font-body text-on-surface-variant">
+                                    {(outgoingError as Error)?.message
+                                        ?? (packageSizesError as Error)?.message
+                                        ?? (deposError as Error)?.message
+                                        ?? 'Ismeretlen hiba'}
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        void refetchOutgoing();
+                                        void refetchPackageSizes();
+                                        void refetchDepos();
+                                    }}
+                                    className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary hover:bg-on-primary-container transition-colors"
+                                >
+                                    Ujrapróbálás
+                                </button>
+                            </section>
+                        ) : null}
+
+                        {!isOutgoingLoading && !isPackageSizesLoading && !isDeposLoading && !isOutgoingError && !isPackageSizesError && !isDeposError ? (
+                            <DataTable
+                                data={outgoingTransits ?? []}
+                                rowKey={(transit, index) => String(transit.id ?? `${transit.destinationDepoId ?? 'out'}-${index}`)}
+                                title="Kimenő depo tranzitok"
+                                columns={outgoingColumns}
+                                emptyMessage="Ehhez a depóhoz nem található kimenő tranzit."
+                                mobileCardEyebrow="Kimenő tranzit"
+                                recordCountLabel={(visible, total) => `Megjelenített rekordok: ${visible} / ${total}`}
+                            />
+                        ) : null}
+                    </section>
+
+                    <section className="lg:col-span-2">
+                        {isIncomingLoading || isPackageSizesLoading || isDeposLoading ? (
+                            <section className="rounded-2xl bg-surface-container-low p-8">
+                                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Betöltés</p>
+                                <p className="mt-2 font-body text-on-surface">Bejövő depo tranzitok betöltése...</p>
+                            </section>
+                        ) : null}
+
+                        {isIncomingError || isPackageSizesError || isDeposError ? (
+                            <section className="rounded-2xl bg-surface-container-low p-8">
+                                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Hiba</p>
+                                <p className="mt-2 font-body text-on-surface">Nem sikerült betölteni a bejövő depo
+                                    tranzitokat.</p>
+                                <p className="mt-1 font-body text-on-surface-variant">
+                                    {(incomingError as Error)?.message
+                                        ?? (packageSizesError as Error)?.message
+                                        ?? (deposError as Error)?.message
+                                        ?? 'Ismeretlen hiba'}
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        void refetchIncoming();
+                                        void refetchPackageSizes();
+                                        void refetchDepos();
+                                    }}
+                                    className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary hover:bg-on-primary-container transition-colors"
+                                >
+                                    Ujrapróbálás
+                                </button>
+                            </section>
+                        ) : null}
+
+                        {!isIncomingLoading && !isPackageSizesLoading && !isDeposLoading && !isIncomingError && !isPackageSizesError && !isDeposError ? (
+                            <DataTable
+                                data={incomingTransits ?? []}
+                                rowKey={(transit, index) => String(transit.id ?? `${transit.originDepoId ?? 'in'}-${index}`)}
+                                title="Bejövő depo tranzitok"
+                                columns={incomingColumns}
+                                emptyMessage="Ehhez a depóhoz nem található bejövő tranzit."
+                                mobileCardEyebrow="Bejövő tranzit"
+                                recordCountLabel={(visible, total) => `Megjelenített rekordok: ${visible} / ${total}`}
+                            />
+                        ) : null}
+                    </section>
                 </div>
             ) : null}
         </PortalLayout>
     );
 };
-
-

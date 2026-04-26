@@ -13,6 +13,25 @@ const valueOrFallback = (value?: string | number) =>
 export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
   const columns: DataTableColumn<DepoWithLookups>[] = [
     {
+      id: 'name',
+      header: 'Név',
+      mobileLabel: 'Név',
+      cell:  (depo) => {
+        if (typeof depo.id !== 'number') {
+          return 'N/A';
+        }
+
+        const depoId = depo.id;
+        const depoName = depo.name ?? `#${depoId}`;
+
+        return (
+            <Link to={`/portal/depos/${depoId}`} className="text-blue-600 underline">
+              {depoName}
+            </Link>
+        );
+      }
+    },
+    {
       id: 'country',
       header: 'Ország',
       filterId: 'country',
@@ -37,21 +56,6 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
       header: 'Cím',
       mobileLabel: 'Cím',
       cell: (depo) => valueOrFallback(depo.address),
-    },
-    {
-      id: 'details',
-      header: 'Részletek',
-      cell: (depo) =>
-        typeof depo.id === 'number' ? (
-          <Link
-            to={`/portal/depos/${depo.id}`}
-            className="inline-flex items-center rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-on-primary hover:bg-on-primary-container transition-colors"
-          >
-            Megnyit
-          </Link>
-        ) : (
-          <span className="text-on-surface-variant">N/A</span>
-        ),
     },
     {
       id: 'edit',

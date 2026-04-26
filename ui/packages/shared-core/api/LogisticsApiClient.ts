@@ -1273,6 +1273,40 @@ export class Api<
     /**
      * No description
      *
+     * @tags depo-transit-controller
+     * @name GetDepoTransitsByOriginDepoId
+     * @request GET:/api/logistics/depo-transits/by-origin/{originDepoId}
+     */
+    getDepoTransitsByOriginDepoId: (
+      originDepoId: number,
+      params: RequestParams = {},
+    ) =>
+      this.request<DepoTransitDTO[], any>({
+        path: `/api/logistics/depo-transits/by-origin/${originDepoId}`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags depo-transit-controller
+     * @name GetDepoTransitsByDestinationDepoId
+     * @request GET:/api/logistics/depo-transits/by-destination/{destinationDepoId}
+     */
+    getDepoTransitsByDestinationDepoId: (
+      destinationDepoId: number,
+      params: RequestParams = {},
+    ) =>
+      this.request<DepoTransitDTO[], any>({
+        path: `/api/logistics/depo-transits/by-destination/${destinationDepoId}`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags country-price-controller
      * @name GetCountryPriceById
      * @request GET:/api/logistics/country-prices/{id}

@@ -2,8 +2,10 @@ import { buildApiUrl, resolveApiBaseUrl } from '@package/shared-core';
 import {
   Api,
   type DepoDTO,
+  type DepoTransitDTO,
   type LocationCityDTO,
   type LocationCountryDTO,
+  type PackageSizeDTO,
 } from '@package/shared-core/api/LogisticsApiClient';
 
 export type DepoWithLookups = DepoDTO & {
@@ -155,6 +157,53 @@ export const updateDepo = async (depoId: number, depo: DepoDTO): Promise<DepoDTO
   try {
     const response = await logisticsApi.api.updateDepo(depoId, depo, { format: 'json' });
     return response.data ?? depo;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const getAllPackageSizes = async (): Promise<PackageSizeDTO[]> => {
+  try {
+    const response = await logisticsApi.api.getAllPackageSizes({ format: 'json' });
+    return response.data ?? [];
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const getDepoTransitsByOriginDepoId = async (originDepoId: number): Promise<DepoTransitDTO[]> => {
+  try {
+    const response = await logisticsApi.api.getDepoTransitsByOriginDepoId(originDepoId, { format: 'json' });
+    return response.data ?? [];
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const getDepoTransitsByDestinationDepoId = async (
+  destinationDepoId: number,
+): Promise<DepoTransitDTO[]> => {
+  try {
+    const response = await logisticsApi.api.getDepoTransitsByDestinationDepoId(destinationDepoId, { format: 'json' });
+    return response.data ?? [];
   } catch (error) {
     const status = (error as { status?: number }).status;
 
