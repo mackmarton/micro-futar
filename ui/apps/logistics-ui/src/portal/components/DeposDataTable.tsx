@@ -25,7 +25,7 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
         const depoName = depo.name ?? `#${depoId}`;
 
         return (
-            <Link to={`/portal/depos/${depoId}`} className="text-blue-600 underline">
+            <Link to={`/portal/depos/${depoId}`} className="text-on-primary-container underline hover:text-primary-container">
               {depoName}
             </Link>
         );

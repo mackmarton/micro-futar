@@ -108,7 +108,7 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
                 const destinationDepoName = depoNameById.get(destinationDepoId) ?? `#${destinationDepoId}`;
 
                 return (
-                    <Link to={`/portal/depos/${destinationDepoId}`} className="text-blue-600 underline">
+                    <Link to={`/portal/depos/${destinationDepoId}`} className="text-on-primary-container underline hover:text-primary-container">
                         {destinationDepoName}
                     </Link>
                 );
@@ -169,7 +169,7 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
                 const originDepoName = depoNameById.get(originDepoId) ?? `#${originDepoId}`;
 
                 return (
-                    <Link to={`/portal/depos/${originDepoId}`} className="text-blue-600 underline">
+                    <Link to={`/portal/depos/${originDepoId}`} className="text-on-primary-container underline hover:text-primary-container">
                         {originDepoName}
                     </Link>
                 );
