@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { PortalLayout } from '@package/shared-ui';
@@ -94,8 +94,9 @@ export const LogisticsCourierFormPage = () => {
   const isEditMode = typeof courierId === 'number';
   const hasValidCourierId = !isEditMode || (Number.isInteger(courierId) && (courierId as number) > 0);
   const defaultCourierType = getDefaultCourierType(searchParams.get('type'));
+  const formContextKey = isEditMode ? `edit-${courierId}` : `new-${defaultCourierType}`;
 
-  const [formState, setFormState] = useState<CourierFormState>(() => buildEmptyFormState(defaultCourierType));
+  const [draftFormStates, setDraftFormStates] = useState<Record<string, CourierFormState>>({});
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const deposQuery = useQuery({
@@ -116,17 +117,15 @@ export const LogisticsCourierFormPage = () => {
     enabled: hasValidCourierId && isEditMode,
   });
 
-  useEffect(() => {
-    if (!isEditMode) {
-      setFormState(buildEmptyFormState(defaultCourierType));
+  const initialFormState = useMemo(() => {
+    if (isEditMode) {
+      return courierQuery.data ? toFormState(courierQuery.data) : buildEmptyFormState(defaultCourierType);
     }
-  }, [defaultCourierType, isEditMode]);
 
-  useEffect(() => {
-    if (courierQuery.data) {
-      setFormState(toFormState(courierQuery.data));
-    }
-  }, [courierQuery.data]);
+    return buildEmptyFormState(defaultCourierType);
+  }, [courierQuery.data, defaultCourierType, isEditMode]);
+
+  const formState = draftFormStates[formContextKey] ?? initialFormState;
 
   const isDeliveryCourier = formState.courierType === 'DELIVERY';
 
@@ -170,18 +169,26 @@ export const LogisticsCourierFormPage = () => {
     ?? (courierQuery.error as Error | null);
 
   const handleInputChange = (key: keyof CourierFormState, value: string) => {
-    setFormState((previous) => {
+    setDraftFormStates((previous) => {
+      const current = previous[formContextKey] ?? initialFormState;
+
       if (key === 'courierType' && value === 'CROSS_DEPO') {
         return {
           ...previous,
-          courierType: value,
-          depoId: '',
+          [formContextKey]: {
+            ...current,
+            courierType: value,
+            depoId: '',
+          },
         };
       }
 
       return {
         ...previous,
-        [key]: value,
+        [formContextKey]: {
+          ...current,
+          [key]: value,
+        },
       };
     });
     setValidationError(null);
