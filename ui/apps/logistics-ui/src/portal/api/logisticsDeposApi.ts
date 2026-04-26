@@ -1,11 +1,13 @@
 import { buildApiUrl, resolveApiBaseUrl } from '@package/shared-core';
 import {
   Api,
+  type CourierDTO,
   type DepoDTO,
   type DepoTransitDTO,
   type LocationCityDTO,
   type LocationCountryDTO,
   type PackageSizeDTO,
+  type VehicleDTO,
 } from '@package/shared-core/api/LogisticsApiClient';
 
 export type DepoWithLookups = DepoDTO & {
@@ -73,6 +75,21 @@ const getCityNameById = async (cityId: number): Promise<string | undefined> => {
 const getCountryNameById = async (countryId: number): Promise<string | undefined> => {
   const response = await logisticsApi.api.getCountryById(countryId, { format: 'json' });
   return response.data?.name;
+};
+
+export const getVehicleRegistrationNumberById = async (vehicleId: number): Promise<string | undefined> => {
+  try {
+    const response = await logisticsApi.api.getVehicleById(vehicleId, { format: 'json' });
+    return response.data?.registrationNumber;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
 };
 
 const enrichDepo = async (
@@ -286,6 +303,101 @@ export const getDepoTransitsByDestinationDepoId = async (
 ): Promise<DepoTransitDTO[]> => {
   try {
     const response = await logisticsApi.api.getDepoTransitsByDestinationDepoId(destinationDepoId, { format: 'json' });
+    return response.data ?? [];
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const getCourierByDepoId = async (depoId: number): Promise<CourierDTO[]> => {
+  try {
+    const response = await logisticsApi.api.getCourierByDepoId(depoId, { format: 'json' });
+    return response.data ?? [];
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const getCrossDepoCouriers = async (): Promise<CourierDTO[]> => {
+  try {
+    const response = await logisticsApi.api.getCrossDepoCouriers({ format: 'json' });
+    return response.data ?? [];
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const getCourierById = async (courierId: number): Promise<CourierDTO> => {
+  try {
+    const response = await logisticsApi.api.getCourierById(courierId, { format: 'json' });
+
+    if (!response.data) {
+      throw new Error('Futár nem található.');
+    }
+
+    return response.data;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const createCourier = async (courier: CourierDTO): Promise<CourierDTO> => {
+  try {
+    const response = await logisticsApi.api.createCourier(courier, { format: 'json' });
+    return response.data ?? courier;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const updateCourier = async (courierId: number, courier: CourierDTO): Promise<CourierDTO> => {
+  try {
+    const response = await logisticsApi.api.updateCourier(courierId, courier, { format: 'json' });
+    return response.data ?? courier;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const getAllVehicles = async (): Promise<VehicleDTO[]> => {
+  try {
+    const response = await logisticsApi.api.getAllVehicles({ format: 'json' });
     return response.data ?? [];
   } catch (error) {
     const status = (error as { status?: number }).status;

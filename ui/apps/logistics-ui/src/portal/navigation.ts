@@ -15,5 +15,12 @@ export const logisticsNavigationItems: NonNullable<PortalLayoutProps['navigation
     bottomIcon: 'warehouse',
     onlyLoggedIn: true,
   },
+  {
+    label: 'Futárok',
+    href: '#/portal/couriers',
+    sideIcon: 'delivery_truck_speed',
+    bottomIcon: 'delivery_truck_speed',
+    onlyLoggedIn: true,
+  },
 ];
 
