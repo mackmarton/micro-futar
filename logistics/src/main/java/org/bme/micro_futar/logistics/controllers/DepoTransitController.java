@@ -29,6 +29,18 @@ public class DepoTransitController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("by-origin/{originDepoId}")
+    public ResponseEntity<List<DepoTransitDTO>> getDepoTransitsByOriginDepoId(@PathVariable Long originDepoId) {
+        List<DepoTransitDTO> depoTransits = depoTransitService.getDepoTransitsByOriginDepoId(originDepoId);
+        return ResponseEntity.ok(depoTransits);
+    }
+
+    @GetMapping("by-destination/{destinationDepoId}")
+    public ResponseEntity<List<DepoTransitDTO>> getDepoTransitsByDestinationDepoId(@PathVariable Long destinationDepoId) {
+        List<DepoTransitDTO> depoTransits = depoTransitService.getDepoTransitsByDestinationDepoId(destinationDepoId);
+        return ResponseEntity.ok(depoTransits);
+    }
+
     @PostMapping
     public ResponseEntity<DepoTransitDTO> createDepoTransit(@RequestBody DepoTransitDTO depoTransitDTO) {
         DepoTransitDTO createdDepoTransit = depoTransitService.createDepoTransit(depoTransitDTO);
