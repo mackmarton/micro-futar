@@ -198,6 +198,59 @@ export const getDepoTransitsByOriginDepoId = async (originDepoId: number): Promi
   }
 };
 
+export const getDepoTransitById = async (depoTransitId: number): Promise<DepoTransitDTO> => {
+  try {
+    const response = await logisticsApi.api.getDepoTransitById(depoTransitId, { format: 'json' });
+
+    if (!response.data) {
+      throw new Error('Depó tranzit nem található.');
+    }
+
+    return response.data;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const createDepoTransit = async (depoTransit: DepoTransitDTO): Promise<DepoTransitDTO> => {
+  try {
+    const response = await logisticsApi.api.createDepoTransit(depoTransit, { format: 'json' });
+    return response.data ?? depoTransit;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const updateDepoTransit = async (
+  depoTransitId: number,
+  depoTransit: DepoTransitDTO,
+): Promise<DepoTransitDTO> => {
+  try {
+    const response = await logisticsApi.api.updateDepoTransit(depoTransitId, depoTransit, { format: 'json' });
+    return response.data ?? depoTransit;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
 export const getDepoTransitsByDestinationDepoId = async (
   destinationDepoId: number,
 ): Promise<DepoTransitDTO[]> => {
