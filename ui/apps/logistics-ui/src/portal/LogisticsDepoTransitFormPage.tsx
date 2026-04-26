@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { PortalLayout } from '@package/shared-ui';
@@ -144,7 +144,8 @@ export const LogisticsDepoTransitFormPage = () => {
   const hasFixedOrigin = direction === 'outgoing';
   const hasFixedDestination = direction === 'incoming';
 
-  const [formState, setFormState] = useState<DepoTransitFormState>(() => buildInitialFormState(depoId, direction));
+  const formContextKey = `${isEditMode ? `edit-${depoTransitId}` : 'new'}-${depoId}-${direction}`;
+  const [draftFormStates, setDraftFormStates] = useState<Record<string, DepoTransitFormState>>({});
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const deposQuery = useQuery({
@@ -165,17 +166,9 @@ export const LogisticsDepoTransitFormPage = () => {
     enabled: hasValidDepoId && isEditMode && hasValidDepoTransitId,
   });
 
-  useEffect(() => {
-    if (isEditMode) {
-      return;
-    }
-
-    setFormState(buildInitialFormState(depoId, direction));
-  }, [depoId, direction, isEditMode]);
-
-  useEffect(() => {
-    if (!depoTransitQuery.data) {
-      return;
+  const initialFormState = useMemo<DepoTransitFormState>(() => {
+    if (!isEditMode || !depoTransitQuery.data) {
+      return buildInitialFormState(depoId, direction);
     }
 
     const next = toFormState(depoTransitQuery.data);
@@ -188,8 +181,10 @@ export const LogisticsDepoTransitFormPage = () => {
       next.destinationDepoId = String(depoId);
     }
 
-    setFormState(next);
-  }, [depoId, depoTransitQuery.data, hasFixedDestination, hasFixedOrigin]);
+    return next;
+  }, [depoId, depoTransitQuery.data, direction, hasFixedDestination, hasFixedOrigin, isEditMode]);
+
+  const formState = draftFormStates[formContextKey] ?? initialFormState;
 
   const currentDepoName = useMemo(() => {
     return (
@@ -243,10 +238,17 @@ export const LogisticsDepoTransitFormPage = () => {
     ?? (depoTransitQuery.error as Error | null);
 
   const handleInputChange = <K extends keyof DepoTransitFormState>(key: K, value: DepoTransitFormState[K]) => {
-    setFormState((previous) => ({
-      ...previous,
-      [key]: value,
-    }));
+    setDraftFormStates((previous) => {
+      const current = previous[formContextKey] ?? initialFormState;
+
+      return {
+        ...previous,
+        [formContextKey]: {
+          ...current,
+          [key]: value,
+        },
+      };
+    });
     setValidationError(null);
   };
 
@@ -264,7 +266,10 @@ export const LogisticsDepoTransitFormPage = () => {
       return;
     }
 
-    setFormState(normalizedFormState);
+    setDraftFormStates((previous) => ({
+      ...previous,
+      [formContextKey]: normalizedFormState,
+    }));
     saveMutation.mutate();
   };
 
