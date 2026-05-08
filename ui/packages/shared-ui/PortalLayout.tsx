@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { createContext, useContext, useLayoutEffect, useMemo, useState, type ReactNode } from 'react';
 import { BottomNavBar } from './BottomNavBar';
 import type { BottomNavItem } from './BottomNavBar';
 import { SideNavBar } from './SideNavBar';
@@ -20,6 +20,17 @@ export type PortalLayoutProps = {
   className?: string;
   contentClassName?: string;
   children: ReactNode;
+};
+
+type PortalLayoutState = {
+  title: string;
+  activeHref: string;
+  navigationItems: PortalNavigationItem[];
+  contentClassName?: string;
+};
+
+type PortalLayoutContextValue = {
+  setLayoutState: (nextState: PortalLayoutState) => void;
 };
 
 const defaultNavigationItems: PortalNavigationItem[] = [
@@ -45,6 +56,7 @@ const defaultNavigationItems: PortalNavigationItem[] = [
 ];
 
 const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
+const PortalLayoutContext = createContext<PortalLayoutContextValue | null>(null);
 
 const toSideNavigationItems = (
   navigationItems: PortalNavigationItem[],
@@ -80,21 +92,50 @@ export const PortalLayout = ({
   contentClassName,
   children,
 }: PortalLayoutProps) => {
-  const sideNavigationItems = toSideNavigationItems(navigationItems, activeHref);
-  const bottomNavigationItems = toBottomNavigationItems(navigationItems, activeHref);
+  const parentLayout = useContext(PortalLayoutContext);
+
+  const desiredLayoutState = useMemo<PortalLayoutState>(
+    () => ({
+      title,
+      activeHref,
+      navigationItems,
+      contentClassName,
+    }),
+    [activeHref, contentClassName, navigationItems, title],
+  );
+
+  useLayoutEffect(() => {
+    if (parentLayout) {
+      parentLayout.setLayoutState(desiredLayoutState);
+    }
+  }, [desiredLayoutState, parentLayout]);
+
+  if (parentLayout) {
+    return <>{children}</>;
+  }
+
+  const [layoutState, setLayoutState] = useState<PortalLayoutState>(desiredLayoutState);
+
+  useLayoutEffect(() => {
+    setLayoutState(desiredLayoutState);
+  }, [desiredLayoutState]);
+
+  const sideNavigationItems = toSideNavigationItems(layoutState.navigationItems, layoutState.activeHref);
+  const bottomNavigationItems = toBottomNavigationItems(layoutState.navigationItems, layoutState.activeHref);
 
   return (
-    <div className={cn('bg-surface text-on-surface min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed', className)}>
-      <SideNavBar navigationItems={sideNavigationItems} />
+    <PortalLayoutContext.Provider value={{ setLayoutState }}>
+      <div className={cn('bg-surface text-on-surface min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed', className)}>
+        <SideNavBar navigationItems={sideNavigationItems} />
 
-      <main className="lg:ml-64 min-h-screen flex flex-col pb-24 lg:pb-0">
-        <TopNavBar title={title} />
+        <main className="lg:ml-64 min-h-screen flex flex-col pb-24 lg:pb-0">
+          <TopNavBar title={layoutState.title} />
 
-        <div className={cn('max-w-7xl mx-auto p-6 md:p-10 w-full', contentClassName)}>{children}</div>
-      </main>
+          <div className={cn('max-w-7xl mx-auto p-6 md:p-10 w-full', layoutState.contentClassName)}>{children}</div>
+        </main>
 
-      <BottomNavBar items={bottomNavigationItems} />
-    </div>
+        <BottomNavBar items={bottomNavigationItems} />
+      </div>
+    </PortalLayoutContext.Provider>
   );
 };
-
