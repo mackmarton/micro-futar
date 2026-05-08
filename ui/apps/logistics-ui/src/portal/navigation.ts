@@ -18,8 +18,8 @@ export const logisticsNavigationItems: NonNullable<PortalLayoutProps['navigation
   {
     label: 'Futárok',
     href: '#/portal/couriers',
-    sideIcon: 'delivery_truck_speed',
-    bottomIcon: 'delivery_truck_speed',
+    sideIcon: 'person',
+    bottomIcon: 'person',
     onlyLoggedIn: true,
   },
   {
@@ -39,8 +39,8 @@ export const logisticsNavigationItems: NonNullable<PortalLayoutProps['navigation
   {
     label: 'Járművek',
     href: '#/portal/vehicles',
-    sideIcon: 'airport_shuttle',
-    bottomIcon: 'airport_shuttle',
+    sideIcon: 'delivery_truck_speed',
+    bottomIcon: 'delivery_truck_speed',
     onlyLoggedIn: true,
   },
 ];
