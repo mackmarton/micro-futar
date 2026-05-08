@@ -97,8 +97,8 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
     const outgoingColumns = useMemo<DataTableColumn<DepoTransitDTO>[]>(() => [
         {
             id: 'destinationDepoId',
-            header: 'Cél depo',
-            mobileLabel: 'Cél depo',
+            header: 'Cél depó',
+            mobileLabel: 'Cél depó',
             cell: (transit) => {
                 if (typeof transit.destinationDepoId !== 'number') {
                     return 'N/A';
@@ -268,7 +268,7 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
                     <DataTable
                         data={outgoingTransits ?? []}
                         rowKey={(transit, index) => String(transit.id ?? `${transit.destinationDepoId ?? 'out'}-${index}`)}
-                        title="Kimenő depo tranzitok"
+                        title="Kimenő depó tranzitok"
                         columns={outgoingColumns}
                         emptyMessage="Ehhez a depóhoz nem található kimenő tranzit."
                         mobileCardEyebrow="Kimenő tranzit"
@@ -302,14 +302,14 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
                 {isIncomingLoading || isPackageSizesLoading || isDeposLoading ? (
                     <section className="rounded-2xl bg-surface-container-low p-8">
                         <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Betöltés</p>
-                        <p className="mt-2 font-body text-on-surface">Bejövő depo tranzitok betöltése...</p>
+                        <p className="mt-2 font-body text-on-surface">Bejövő depó tranzitok betöltése...</p>
                     </section>
                 ) : null}
 
                 {isIncomingError || isPackageSizesError || isDeposError ? (
                     <section className="rounded-2xl bg-surface-container-low p-8">
                         <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Hiba</p>
-                        <p className="mt-2 font-body text-on-surface">Nem sikerült betölteni a bejövő depo tranzitokat.</p>
+                        <p className="mt-2 font-body text-on-surface">Nem sikerült betölteni a bejövő depó tranzitokat.</p>
                         <p className="mt-1 font-body text-on-surface-variant">
                             {(incomingError as Error)?.message
                                 ?? (packageSizesError as Error)?.message
@@ -334,7 +334,7 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
                     <DataTable
                         data={incomingTransits ?? []}
                         rowKey={(transit, index) => String(transit.id ?? `${transit.originDepoId ?? 'in'}-${index}`)}
-                        title="Bejövő depo tranzitok"
+                        title="Bejövő depó tranzitok"
                         columns={incomingColumns}
                         emptyMessage="Ehhez a depóhoz nem található bejövő tranzit."
                         mobileCardEyebrow="Bejövő tranzit"
