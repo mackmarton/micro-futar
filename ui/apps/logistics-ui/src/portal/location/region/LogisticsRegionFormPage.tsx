@@ -3,8 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { PortalLayout } from '@package/shared-ui';
 import type { LocationRegionDTO } from '@package/shared-core/api/LogisticsApiClient';
-import { createRegion, getRegionById, updateRegion } from './api/logisticsDeposApi';
-import { logisticsNavigationItems } from './navigation';
+import { createRegion, getRegionById, updateRegion } from '../../api/logisticsDeposApi';
+import { logisticsNavigationItems } from '../../navigation';
 
 type RegionFormState = {
   name: string;

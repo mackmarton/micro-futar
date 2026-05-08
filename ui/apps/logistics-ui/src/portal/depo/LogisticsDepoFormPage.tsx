@@ -9,8 +9,8 @@ import {
   getAllCountries,
   getDepoByIdWithLookups,
   updateDepo,
-} from './api/logisticsDeposApi';
-import { logisticsNavigationItems } from './navigation';
+} from '../api/logisticsDeposApi';
+import { logisticsNavigationItems } from '../navigation';
 import { DepoLocationMapPicker, type MapCoordinate } from './components/DepoLocationMapPicker';
 
 type DepoFormState = {

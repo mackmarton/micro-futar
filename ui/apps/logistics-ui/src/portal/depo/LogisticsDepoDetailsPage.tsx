@@ -6,9 +6,9 @@ import {
     getDepoByIdWithLookups,
     planCrossDepoShipmentsForDepo,
     planShipmentsForDepo,
-} from './api/logisticsDeposApi';
+} from '../api/logisticsDeposApi';
 import {DepoTransitDataTables} from './components/DepoTransitDataTables';
-import {logisticsNavigationItems} from './navigation';
+import {logisticsNavigationItems} from '../navigation';
 
 const valueOrFallback = (value?: string | number | boolean) => {
     if (typeof value === 'boolean') {

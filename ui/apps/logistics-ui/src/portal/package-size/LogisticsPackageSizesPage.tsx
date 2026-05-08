@@ -4,8 +4,8 @@ import { DataTable, PortalLayout } from '@package/shared-ui';
 import type { DataTableColumn } from '@package/shared-ui';
 import type { PackageSizeDTO } from '@package/shared-core/api/LogisticsApiClient';
 import { Link } from 'react-router-dom';
-import { getAllPackageSizes } from './api/logisticsDeposApi';
-import { logisticsNavigationItems } from './navigation';
+import { getAllPackageSizes } from '../api/logisticsDeposApi';
+import { logisticsNavigationItems } from '../navigation';
 
 const valueOrFallback = (value?: number | string) =>
   value === 0 || (typeof value === 'string' && value.length > 0) ? value : 'N/A';

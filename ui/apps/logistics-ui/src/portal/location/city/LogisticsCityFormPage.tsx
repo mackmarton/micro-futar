@@ -9,8 +9,8 @@ import {
   getCityById,
   getCountryById,
   updateCity,
-} from './api/logisticsDeposApi';
-import { logisticsNavigationItems } from './navigation';
+} from '../../api/logisticsDeposApi';
+import { logisticsNavigationItems } from '../../navigation';
 
 type CityFormState = {
   name: string;

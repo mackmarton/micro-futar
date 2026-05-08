@@ -9,7 +9,7 @@ import {
     getAllPackageSizes,
     getDepoTransitsByDestinationDepoId,
     getDepoTransitsByOriginDepoId,
-} from '../api/logisticsDeposApi';
+} from '../../api/logisticsDeposApi';
 
 type DepoTransitDataTablesProps = {
     depoId: number;

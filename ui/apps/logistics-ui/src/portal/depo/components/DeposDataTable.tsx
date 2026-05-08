@@ -1,4 +1,4 @@
-import type { DepoWithLookups } from '../api/logisticsDeposApi';
+import type { DepoWithLookups } from '../../api/logisticsDeposApi';
 import { Link } from 'react-router-dom';
 import { DataTable } from '@package/shared-ui';
 import type { DataTableColumn, DataTableFilter } from '@package/shared-ui';

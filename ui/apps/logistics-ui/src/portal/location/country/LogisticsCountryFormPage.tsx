@@ -8,8 +8,8 @@ import {
   getAllRegions,
   getCountryById,
   updateCountry,
-} from './api/logisticsDeposApi';
-import { logisticsNavigationItems } from './navigation';
+} from '../../api/logisticsDeposApi';
+import { logisticsNavigationItems } from '../../navigation';
 
 type CountryFormState = {
   name: string;
