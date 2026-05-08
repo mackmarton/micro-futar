@@ -39,6 +39,21 @@ export const LogisticsRegionsPage = () => {
             <span className="text-on-surface-variant">N/A</span>
           ),
       },
+      {
+        id: 'edit',
+        header: 'Szerkesztés',
+        cell: (region) =>
+          typeof region.id === 'number' ? (
+            <Link
+              to={`/portal/locations/regions/${region.id}/edit`}
+              className="inline-flex items-center rounded-lg bg-surface-container-lowest px-3 py-1.5 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container"
+            >
+              Szerkeszt
+            </Link>
+          ) : (
+            <span className="text-on-surface-variant">N/A</span>
+          ),
+      },
     ],
     [],
   );
@@ -48,6 +63,14 @@ export const LogisticsRegionsPage = () => {
       <section className="rounded-2xl bg-surface-container-low p-6">
         <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Helyszínek</p>
         <h1 className="mt-2 text-2xl font-headline text-on-surface">Régiók</h1>
+        <div className="mt-4">
+          <Link
+            to="/portal/locations/regions/new"
+            className="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
+          >
+            Új régió létrehozása
+          </Link>
+        </div>
       </section>
 
       {regionsQuery.isLoading ? (
