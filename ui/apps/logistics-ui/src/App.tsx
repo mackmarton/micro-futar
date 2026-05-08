@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import { useAuth } from '@package/shared-ui';
 import { hasLogisticsPortalAccess } from './auth/portalAccess';
+import { LogisticsPortalShell } from './portal/LogisticsPortalShell';
 
 const LogisticsLandingPage = lazy(() =>
   import('./landing/LogisticsLandingPage').then((module) => ({ default: module.LogisticsLandingPage })),
@@ -77,10 +78,17 @@ function App() {
   }
 
   return (
-    <Suspense fallback={null}>
-      <Routes>
-        <Route path="/" element={<LogisticsLandingPage />} />
-        <Route path="/portal" element={<RequireLogisticsAccess />}>
+    <Routes>
+      <Route
+        path="/"
+        element={(
+          <Suspense fallback={null}>
+            <LogisticsLandingPage />
+          </Suspense>
+        )}
+      />
+      <Route path="/portal" element={<RequireLogisticsAccess />}>
+        <Route element={<LogisticsPortalShell />}>
           <Route path="dashboard" element={<LogisticsDashboardPage />} />
           <Route path="depos" element={<LogisticsDeposPage />} />
           <Route path="depos/new" element={<LogisticsDepoFormPage />} />
@@ -108,9 +116,9 @@ function App() {
           <Route path="vehicles/new" element={<LogisticsVehicleFormPage />} />
           <Route path="vehicles/:vehicleId/edit" element={<LogisticsVehicleFormPage />} />
         </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Suspense>
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 
