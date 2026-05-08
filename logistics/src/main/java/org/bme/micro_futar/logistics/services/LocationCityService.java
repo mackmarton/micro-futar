@@ -31,6 +31,12 @@ public class LocationCityService {
                 .map(locationCityMapper::toDTO);
     }
 
+    public List<LocationCityDTO> getAllCitiesByCountryId(Long countryId) {
+        return locationCityRepository.findAllByCountryId(countryId).stream()
+                .map(locationCityMapper::toDTO)
+                .toList();
+    }
+
     @Transactional
     public LocationCityDTO createCity(LocationCityDTO locationCityDTO) {
         LocationCity locationCity = locationCityMapper.toEntity(locationCityDTO);
