@@ -658,3 +658,53 @@ export const getAllVehicles = async (): Promise<VehicleDTO[]> => {
     throw error;
   }
 };
+
+export const getVehicleById = async (vehicleId: number): Promise<VehicleDTO> => {
+  try {
+    const response = await logisticsApi.api.getVehicleById(vehicleId, { format: 'json' });
+
+    if (!response.data) {
+      throw new Error('Jármű nem található.');
+    }
+
+    return response.data;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const createVehicle = async (vehicle: VehicleDTO): Promise<VehicleDTO> => {
+  try {
+    const response = await logisticsApi.api.createVehicle(vehicle, { format: 'json' });
+    return response.data ?? vehicle;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const updateVehicle = async (vehicleId: number, vehicle: VehicleDTO): Promise<VehicleDTO> => {
+  try {
+    const response = await logisticsApi.api.updateVehicle(vehicleId, vehicle, { format: 'json' });
+    return response.data ?? vehicle;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
