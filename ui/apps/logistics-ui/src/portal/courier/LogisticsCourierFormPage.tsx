@@ -9,8 +9,8 @@ import {
   getAllVehicles,
   getCourierById,
   updateCourier,
-} from './api/logisticsDeposApi';
-import { logisticsNavigationItems } from './navigation';
+} from '../api/logisticsDeposApi';
+import { logisticsNavigationItems } from '../navigation';
 
 type CourierFormState = {
   name: string;

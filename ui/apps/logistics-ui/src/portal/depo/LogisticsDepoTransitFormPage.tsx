@@ -9,8 +9,8 @@ import {
   getAllPackageSizes,
   getDepoTransitById,
   updateDepoTransit,
-} from './api/logisticsDeposApi';
-import { logisticsNavigationItems } from './navigation';
+} from '../api/logisticsDeposApi';
+import { logisticsNavigationItems } from '../navigation';
 
 type TransitDirection = 'outgoing' | 'incoming' | 'standalone';
 

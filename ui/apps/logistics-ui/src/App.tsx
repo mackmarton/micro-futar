@@ -8,52 +8,52 @@ const LogisticsLandingPage = lazy(() =>
   import('./landing/LogisticsLandingPage').then((module) => ({ default: module.LogisticsLandingPage })),
 );
 const LogisticsDeposPage = lazy(() =>
-  import('./portal/LogisticsDeposPage').then((module) => ({ default: module.LogisticsDeposPage })),
+  import('./portal/depo/LogisticsDeposPage').then((module) => ({ default: module.LogisticsDeposPage })),
 );
 const LogisticsDepoDetailsPage = lazy(() =>
-  import('./portal/LogisticsDepoDetailsPage').then((module) => ({ default: module.LogisticsDepoDetailsPage })),
+  import('./portal/depo/LogisticsDepoDetailsPage').then((module) => ({ default: module.LogisticsDepoDetailsPage })),
 );
 const LogisticsDepoFormPage = lazy(() =>
-  import('./portal/LogisticsDepoFormPage').then((module) => ({ default: module.LogisticsDepoFormPage })),
+  import('./portal/depo/LogisticsDepoFormPage').then((module) => ({ default: module.LogisticsDepoFormPage })),
 );
 const LogisticsDepoTransitFormPage = lazy(() =>
-  import('./portal/LogisticsDepoTransitFormPage').then((module) => ({ default: module.LogisticsDepoTransitFormPage })),
+  import('./portal/depo/LogisticsDepoTransitFormPage').then((module) => ({ default: module.LogisticsDepoTransitFormPage })),
 );
 const LogisticsCouriersPage = lazy(() =>
-  import('./portal/LogisticsCouriersPage').then((module) => ({ default: module.LogisticsCouriersPage })),
+  import('./portal/courier/LogisticsCouriersPage').then((module) => ({ default: module.LogisticsCouriersPage })),
 );
 const LogisticsCourierFormPage = lazy(() =>
-  import('./portal/LogisticsCourierFormPage').then((module) => ({ default: module.LogisticsCourierFormPage })),
+  import('./portal/courier/LogisticsCourierFormPage').then((module) => ({ default: module.LogisticsCourierFormPage })),
 );
 const LogisticsRegionsPage = lazy(() =>
-  import('./portal/LogisticsRegionsPage').then((module) => ({ default: module.LogisticsRegionsPage })),
+  import('./portal/location/region/LogisticsRegionsPage').then((module) => ({ default: module.LogisticsRegionsPage })),
 );
 const LogisticsCountriesPage = lazy(() =>
-  import('./portal/LogisticsCountriesPage').then((module) => ({ default: module.LogisticsCountriesPage })),
+  import('./portal/location/country/LogisticsCountriesPage').then((module) => ({ default: module.LogisticsCountriesPage })),
 );
 const LogisticsCitiesPage = lazy(() =>
-  import('./portal/LogisticsCitiesPage').then((module) => ({ default: module.LogisticsCitiesPage })),
+  import('./portal/location/city/LogisticsCitiesPage').then((module) => ({ default: module.LogisticsCitiesPage })),
 );
 const LogisticsRegionFormPage = lazy(() =>
-  import('./portal/LogisticsRegionFormPage').then((module) => ({ default: module.LogisticsRegionFormPage })),
+  import('./portal/location/region/LogisticsRegionFormPage').then((module) => ({ default: module.LogisticsRegionFormPage })),
 );
 const LogisticsCountryFormPage = lazy(() =>
-  import('./portal/LogisticsCountryFormPage').then((module) => ({ default: module.LogisticsCountryFormPage })),
+  import('./portal/location/country/LogisticsCountryFormPage').then((module) => ({ default: module.LogisticsCountryFormPage })),
 );
 const LogisticsCityFormPage = lazy(() =>
-  import('./portal/LogisticsCityFormPage').then((module) => ({ default: module.LogisticsCityFormPage })),
+  import('./portal/location/city/LogisticsCityFormPage').then((module) => ({ default: module.LogisticsCityFormPage })),
 );
 const LogisticsPackageSizesPage = lazy(() =>
-  import('./portal/LogisticsPackageSizesPage').then((module) => ({ default: module.LogisticsPackageSizesPage })),
+  import('./portal/package-size/LogisticsPackageSizesPage').then((module) => ({ default: module.LogisticsPackageSizesPage })),
 );
 const LogisticsPackageSizeFormPage = lazy(() =>
-  import('./portal/LogisticsPackageSizeFormPage').then((module) => ({ default: module.LogisticsPackageSizeFormPage })),
+  import('./portal/package-size/LogisticsPackageSizeFormPage').then((module) => ({ default: module.LogisticsPackageSizeFormPage })),
 );
 const LogisticsVehiclesPage = lazy(() =>
-  import('./portal/LogisticsVehiclesPage').then((module) => ({ default: module.LogisticsVehiclesPage })),
+  import('./portal/vehicle/LogisticsVehiclesPage').then((module) => ({ default: module.LogisticsVehiclesPage })),
 );
 const LogisticsVehicleFormPage = lazy(() =>
-  import('./portal/LogisticsVehicleFormPage').then((module) => ({ default: module.LogisticsVehicleFormPage })),
+  import('./portal/vehicle/LogisticsVehicleFormPage').then((module) => ({ default: module.LogisticsVehicleFormPage })),
 );
 
 const RequireLogisticsAccess = () => {

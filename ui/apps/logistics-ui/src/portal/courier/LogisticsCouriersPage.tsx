@@ -9,8 +9,8 @@ import {
     getCourierByDepoId,
     getCrossDepoCouriers,
     getVehicleRegistrationNumberById
-} from './api/logisticsDeposApi';
-import {logisticsNavigationItems} from './navigation';
+} from '../api/logisticsDeposApi';
+import {logisticsNavigationItems} from '../navigation';
 
 const valueOrFallback = (value?: string | number) =>
     value === 0 || (typeof value === 'string' && value.length > 0) ? value : 'N/A';

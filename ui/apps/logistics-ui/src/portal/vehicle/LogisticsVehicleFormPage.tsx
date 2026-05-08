@@ -3,8 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { PortalLayout } from '@package/shared-ui';
 import type { VehicleDTO } from '@package/shared-core/api/LogisticsApiClient';
-import { createVehicle, getVehicleById, updateVehicle } from './api/logisticsDeposApi';
-import { logisticsNavigationItems } from './navigation';
+import { createVehicle, getVehicleById, updateVehicle } from '../api/logisticsDeposApi';
+import { logisticsNavigationItems } from '../navigation';
 
 type VehicleFormState = {
   registrationNumber: string;

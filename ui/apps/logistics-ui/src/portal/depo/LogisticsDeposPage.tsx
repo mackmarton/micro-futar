@@ -1,8 +1,8 @@
 import {useQuery} from '@tanstack/react-query';
 import {PortalLayout} from '@package/shared-ui';
 import {Link} from 'react-router-dom';
-import {getAllDeposWithLookups} from './api/logisticsDeposApi';
-import {logisticsNavigationItems} from './navigation';
+import {getAllDeposWithLookups} from '../api/logisticsDeposApi';
+import {logisticsNavigationItems} from '../navigation';
 import {DeposDataTable} from './components/DeposDataTable';
 
 export const LogisticsDeposPage = () => {
