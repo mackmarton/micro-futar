@@ -36,4 +36,11 @@ export const logisticsNavigationItems: NonNullable<PortalLayoutProps['navigation
     bottomIcon: 'deployed_code',
     onlyLoggedIn: true,
   },
+  {
+    label: 'Járművek',
+    href: '#/portal/vehicles',
+    sideIcon: 'airport_shuttle',
+    bottomIcon: 'airport_shuttle',
+    onlyLoggedIn: true,
+  },
 ];
