@@ -1188,10 +1188,17 @@ export class Api<
      * @name GetAllCountries
      * @request GET:/api/logistics/countries
      */
-    getAllCountries: (params: RequestParams = {}) =>
+    getAllCountries: (
+      query?: {
+        /** @format int64 */
+        regionId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<LocationCountryDTO[], any>({
         path: `/api/logistics/countries`,
         method: "GET",
+        query: query,
         ...params,
       }),
 
@@ -1218,10 +1225,17 @@ export class Api<
      * @name GetAllCities
      * @request GET:/api/logistics/cities
      */
-    getAllCities: (params: RequestParams = {}) =>
+    getAllCities: (
+      query?: {
+        /** @format int64 */
+        countryId?: number;
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<LocationCityDTO[], any>({
         path: `/api/logistics/cities`,
         method: "GET",
+        query: query,
         ...params,
       }),
 

@@ -18,7 +18,11 @@ public class LocationCityController {
     private final LocationCityService locationCityService;
 
     @GetMapping
-    public ResponseEntity<List<LocationCityDTO>> getAllCities() {
+    public ResponseEntity<List<LocationCityDTO>> getAllCities(@RequestParam(required = false) Long countryId) {
+        if (countryId != null) {
+            List<LocationCityDTO> cities = locationCityService.getAllCitiesByCountryId(countryId);
+            return ResponseEntity.ok(cities);
+        }
         List<LocationCityDTO> cities = locationCityService.getAllCities();
         return ResponseEntity.ok(cities);
     }

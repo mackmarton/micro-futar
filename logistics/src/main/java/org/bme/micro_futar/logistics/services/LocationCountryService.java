@@ -31,6 +31,12 @@ public class LocationCountryService {
                 .map(locationCountryMapper::toDTO);
     }
 
+    public List<LocationCountryDTO> getAllCountriesByRegionId(Long regionId) {
+        return locationCountryRepository.findAllByRegionId(regionId).stream()
+                .map(locationCountryMapper::toDTO)
+                .toList();
+    }
+
     @Transactional
     public LocationCountryDTO createCountry(LocationCountryDTO locationCountryDTO) {
         LocationCountry locationCountry = locationCountryMapper.toEntity(locationCountryDTO);
