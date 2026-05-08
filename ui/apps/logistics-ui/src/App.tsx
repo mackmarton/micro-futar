@@ -45,6 +45,12 @@ const LogisticsCountryFormPage = lazy(() =>
 const LogisticsCityFormPage = lazy(() =>
   import('./portal/LogisticsCityFormPage').then((module) => ({ default: module.LogisticsCityFormPage })),
 );
+const LogisticsPackageSizesPage = lazy(() =>
+  import('./portal/LogisticsPackageSizesPage').then((module) => ({ default: module.LogisticsPackageSizesPage })),
+);
+const LogisticsPackageSizeFormPage = lazy(() =>
+  import('./portal/LogisticsPackageSizeFormPage').then((module) => ({ default: module.LogisticsPackageSizeFormPage })),
+);
 
 const RequireLogisticsAccess = () => {
   const { user } = useAuth();
@@ -89,6 +95,9 @@ function App() {
           <Route path="locations/cities" element={<LogisticsCitiesPage />} />
           <Route path="locations/cities/new" element={<LogisticsCityFormPage />} />
           <Route path="locations/cities/:cityId/edit" element={<LogisticsCityFormPage />} />
+          <Route path="package-sizes" element={<LogisticsPackageSizesPage />} />
+          <Route path="package-sizes/new" element={<LogisticsPackageSizeFormPage />} />
+          <Route path="package-sizes/:packageSizeId/edit" element={<LogisticsPackageSizeFormPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

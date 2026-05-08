@@ -29,4 +29,11 @@ export const logisticsNavigationItems: NonNullable<PortalLayoutProps['navigation
     bottomIcon: 'location_city',
     onlyLoggedIn: true,
   },
+  {
+    label: 'Csomagméretek',
+    href: '#/portal/package-sizes',
+    sideIcon: 'deployed_code',
+    bottomIcon: 'deployed_code',
+    onlyLoggedIn: true,
+  },
 ];
