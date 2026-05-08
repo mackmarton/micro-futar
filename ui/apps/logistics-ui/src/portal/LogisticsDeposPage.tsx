@@ -14,7 +14,7 @@ export const LogisticsDeposPage = () => {
     const depos = data ?? [];
 
     return (
-        <PortalLayout title="Depok" activeHref="#/portal/depos" navigationItems={logisticsNavigationItems}>
+        <PortalLayout title="Depók" activeHref="#/portal/depos" navigationItems={logisticsNavigationItems}>
             <section className="rounded-2xl bg-surface-container-low p-6">
                 <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Logisztika</p>
                 <h1 className="mt-2 text-2xl font-headline text-on-surface">Depok</h1>
@@ -23,7 +23,7 @@ export const LogisticsDeposPage = () => {
                         to="/portal/depos/new"
                         className="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
                     >
-                        Új depo létrehozása
+                        Új depó létrehozása
                     </Link>
                 </div>
             </section>

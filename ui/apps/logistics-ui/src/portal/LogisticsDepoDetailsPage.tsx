@@ -68,7 +68,7 @@ export const LogisticsDepoDetailsPage = () => {
     }
 
     return (
-        <PortalLayout title="Depo részletek" activeHref="#/portal/depos" navigationItems={logisticsNavigationItems}>
+        <PortalLayout title="Depó részletek" activeHref="#/portal/depos" navigationItems={logisticsNavigationItems}>
             <div className="flex flex-wrap gap-3 justify-between">
                 <Link
                     to="/portal/depos"
@@ -92,14 +92,14 @@ export const LogisticsDepoDetailsPage = () => {
             {isLoading ? (
                 <section className="mt-6 rounded-2xl bg-surface-container-low p-8">
                     <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Betöltés</p>
-                    <p className="mt-2 font-body text-on-surface">Depo részletek betöltése...</p>
+                    <p className="mt-2 font-body text-on-surface">Depó részletek betöltése...</p>
                 </section>
             ) : null}
 
             {isError ? (
                 <section className="mt-6 rounded-2xl bg-surface-container-low p-8">
                     <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Hiba</p>
-                    <p className="mt-2 font-body text-on-surface">Nem sikerült betölteni a depo részleteket.</p>
+                    <p className="mt-2 font-body text-on-surface">Nem sikerült betölteni a depó részleteket.</p>
                     <p className="mt-1 font-body text-on-surface-variant">{(error as Error)?.message ?? 'Ismeretlen hiba'}</p>
                     <button
                         type="button"
@@ -181,7 +181,7 @@ export const LogisticsDepoDetailsPage = () => {
                         <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Adatok</p>
                         <div className="mt-4 grid gap-3">
                             <div className="rounded-xl bg-surface-container-lowest p-4">
-                                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Depo ID</p>
+                                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Depó ID</p>
                                 <p className="mt-1 font-body text-on-surface">{valueOrFallback(data.id)}</p>
                             </div>
                             <div className="rounded-xl bg-surface-container-lowest p-4">
@@ -220,7 +220,7 @@ export const LogisticsDepoDetailsPage = () => {
                         {mapEmbedUrl ? (
                             <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
                                 <iframe
-                                    title="Depo helyzete terkepen"
+                                    title="Depó helyzete térképen"
                                     src={mapEmbedUrl}
                                     className="h-[320px] w-full rounded-lg"
                                     loading="lazy"

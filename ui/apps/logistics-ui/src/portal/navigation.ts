@@ -2,7 +2,7 @@ import type { PortalLayoutProps } from '@package/shared-ui';
 
 export const logisticsNavigationItems: NonNullable<PortalLayoutProps['navigationItems']> = [
   {
-    label: 'Depok',
+    label: 'Depók',
     href: '#/portal/depos',
     sideIcon: 'warehouse',
     bottomIcon: 'warehouse',
