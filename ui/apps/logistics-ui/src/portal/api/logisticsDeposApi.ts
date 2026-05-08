@@ -73,6 +73,36 @@ export const getRegionById = async (regionId: number): Promise<LocationRegionDTO
   }
 };
 
+export const createRegion = async (region: LocationRegionDTO): Promise<LocationRegionDTO> => {
+  try {
+    const response = await logisticsApi.api.createRegion(region, { format: 'json' });
+    return response.data ?? region;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const updateRegion = async (regionId: number, region: LocationRegionDTO): Promise<LocationRegionDTO> => {
+  try {
+    const response = await logisticsApi.api.updateRegion(regionId, region, { format: 'json' });
+    return response.data ?? region;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
 export const getAllCountries = async (): Promise<LocationCountryDTO[]> => {
   try {
     const response = await logisticsApi.api.getAllCountries(undefined, { format: 'json' });
@@ -108,10 +138,90 @@ export const getCountryById = async (countryId: number): Promise<LocationCountry
   }
 };
 
+export const createCountry = async (country: LocationCountryDTO): Promise<LocationCountryDTO> => {
+  try {
+    const response = await logisticsApi.api.createCountry(country, { format: 'json' });
+    return response.data ?? country;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const updateCountry = async (countryId: number, country: LocationCountryDTO): Promise<LocationCountryDTO> => {
+  try {
+    const response = await logisticsApi.api.updateCountry(countryId, country, { format: 'json' });
+    return response.data ?? country;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
 export const getAllCities = async (): Promise<LocationCityDTO[]> => {
   try {
     const response = await logisticsApi.api.getAllCities(undefined, { format: 'json' });
     return response.data ?? [];
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const getCityById = async (cityId: number): Promise<LocationCityDTO> => {
+  try {
+    const response = await logisticsApi.api.getCityById(cityId, { format: 'json' });
+
+    if (!response.data) {
+      throw new Error('Város nem található.');
+    }
+
+    return response.data;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const createCity = async (city: LocationCityDTO): Promise<LocationCityDTO> => {
+  try {
+    const response = await logisticsApi.api.createCity(city, { format: 'json' });
+    return response.data ?? city;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const updateCity = async (cityId: number, city: LocationCityDTO): Promise<LocationCityDTO> => {
+  try {
+    const response = await logisticsApi.api.updateCity(cityId, city, { format: 'json' });
+    return response.data ?? city;
   } catch (error) {
     const status = (error as { status?: number }).status;
 

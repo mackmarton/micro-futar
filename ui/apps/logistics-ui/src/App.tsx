@@ -36,6 +36,15 @@ const LogisticsCountriesPage = lazy(() =>
 const LogisticsCitiesPage = lazy(() =>
   import('./portal/LogisticsCitiesPage').then((module) => ({ default: module.LogisticsCitiesPage })),
 );
+const LogisticsRegionFormPage = lazy(() =>
+  import('./portal/LogisticsRegionFormPage').then((module) => ({ default: module.LogisticsRegionFormPage })),
+);
+const LogisticsCountryFormPage = lazy(() =>
+  import('./portal/LogisticsCountryFormPage').then((module) => ({ default: module.LogisticsCountryFormPage })),
+);
+const LogisticsCityFormPage = lazy(() =>
+  import('./portal/LogisticsCityFormPage').then((module) => ({ default: module.LogisticsCityFormPage })),
+);
 
 const RequireLogisticsAccess = () => {
   const { user } = useAuth();
@@ -72,8 +81,14 @@ function App() {
           <Route path="couriers/:courierId/edit" element={<LogisticsCourierFormPage />} />
           <Route path="locations" element={<Navigate to="/portal/locations/regions" replace />} />
           <Route path="locations/regions" element={<LogisticsRegionsPage />} />
+          <Route path="locations/regions/new" element={<LogisticsRegionFormPage />} />
+          <Route path="locations/regions/:regionId/edit" element={<LogisticsRegionFormPage />} />
           <Route path="locations/countries" element={<LogisticsCountriesPage />} />
+          <Route path="locations/countries/new" element={<LogisticsCountryFormPage />} />
+          <Route path="locations/countries/:countryId/edit" element={<LogisticsCountryFormPage />} />
           <Route path="locations/cities" element={<LogisticsCitiesPage />} />
+          <Route path="locations/cities/new" element={<LogisticsCityFormPage />} />
+          <Route path="locations/cities/:cityId/edit" element={<LogisticsCityFormPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

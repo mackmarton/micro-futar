@@ -65,8 +65,23 @@ export const LogisticsCountriesPage = () => {
             <span className="text-on-surface-variant">N/A</span>
           ),
       },
+      {
+        id: 'edit',
+        header: 'Szerkesztés',
+        cell: (country) =>
+          typeof country.id === 'number' ? (
+            <Link
+              to={`/portal/locations/countries/${country.id}/edit${regionId !== null ? `?regionId=${regionId}` : ''}`}
+              className="inline-flex items-center rounded-lg bg-surface-container-lowest px-3 py-1.5 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container"
+            >
+              Szerkeszt
+            </Link>
+          ) : (
+            <span className="text-on-surface-variant">N/A</span>
+          ),
+      },
     ],
-    [],
+    [regionId],
   );
 
   return (
@@ -79,16 +94,23 @@ export const LogisticsCountriesPage = () => {
             Kiválasztott régió: <span className="font-semibold text-on-surface">{selectedRegionName}</span>
           </p>
         ) : null}
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Link
+            to="/portal/locations/regions"
+            className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
+          >
+            Vissza a régiókhoz
+          </Link>
+          {regionId !== null ? (
+            <Link
+              to={`/portal/locations/countries/new?regionId=${regionId}`}
+              className="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
+            >
+              Új ország létrehozása
+            </Link>
+          ) : null}
+        </div>
       </section>
-
-      <div className="mt-6">
-        <Link
-          to="/portal/locations/regions"
-          className="inline-flex items-center rounded-lg bg-surface-container-low px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
-        >
-          Vissza a régiókhoz
-        </Link>
-      </div>
 
       {regionId === null ? (
         <section className="mt-6 rounded-2xl bg-surface-container-low p-6">
