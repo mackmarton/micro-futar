@@ -33,7 +33,7 @@ export const LogisticsLandingPage = () => {
               <>
                 {hasPortalAccess ? (
                   <Link
-                    to="/portal/dashboard"
+                    to="/portal/depos"
                     className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 font-semibold text-on-primary hover:bg-on-primary-container transition-colors"
                   >
                     <span className="material-symbols-outlined" aria-hidden="true">
