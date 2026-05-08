@@ -6,6 +6,7 @@ import {
   type DepoTransitDTO,
   type LocationCityDTO,
   type LocationCountryDTO,
+  type LocationRegionDTO,
   type PackageSizeDTO,
   type VehicleDTO,
 } from '@package/shared-core/api/LogisticsApiClient';
@@ -37,10 +38,65 @@ export const getAllDepos = async (): Promise<DepoDTO[]> => {
   }
 };
 
+export const getAllRegions = async (): Promise<LocationRegionDTO[]> => {
+  try {
+    const response = await logisticsApi.api.getAllRegions({ format: 'json' });
+    return response.data ?? [];
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const getRegionById = async (regionId: number): Promise<LocationRegionDTO> => {
+  try {
+    const response = await logisticsApi.api.getRegionById(regionId, { format: 'json' });
+
+    if (!response.data) {
+      throw new Error('Régió nem található.');
+    }
+
+    return response.data;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
 export const getAllCountries = async (): Promise<LocationCountryDTO[]> => {
   try {
-    const response = await logisticsApi.api.getAllCountries({ format: 'json' });
+    const response = await logisticsApi.api.getAllCountries(undefined, { format: 'json' });
     return response.data ?? [];
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const getCountryById = async (countryId: number): Promise<LocationCountryDTO> => {
+  try {
+    const response = await logisticsApi.api.getCountryById(countryId, { format: 'json' });
+
+    if (!response.data) {
+      throw new Error('Ország nem található.');
+    }
+
+    return response.data;
   } catch (error) {
     const status = (error as { status?: number }).status;
 
@@ -54,7 +110,37 @@ export const getAllCountries = async (): Promise<LocationCountryDTO[]> => {
 
 export const getAllCities = async (): Promise<LocationCityDTO[]> => {
   try {
-    const response = await logisticsApi.api.getAllCities({ format: 'json' });
+    const response = await logisticsApi.api.getAllCities(undefined, { format: 'json' });
+    return response.data ?? [];
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const getCountriesByRegionId = async (regionId: number): Promise<LocationCountryDTO[]> => {
+  try {
+    const response = await logisticsApi.api.getAllCountries({ regionId }, { format: 'json' });
+    return response.data ?? [];
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const getCitiesByCountryId = async (countryId: number): Promise<LocationCityDTO[]> => {
+  try {
+    const response = await logisticsApi.api.getAllCities({ countryId }, { format: 'json' });
     return response.data ?? [];
   } catch (error) {
     const status = (error as { status?: number }).status;
@@ -73,8 +159,8 @@ const getCityNameById = async (cityId: number): Promise<string | undefined> => {
 };
 
 const getCountryNameById = async (countryId: number): Promise<string | undefined> => {
-  const response = await logisticsApi.api.getCountryById(countryId, { format: 'json' });
-  return response.data?.name;
+  const country = await getCountryById(countryId);
+  return country.name;
 };
 
 export const getVehicleRegistrationNumberById = async (vehicleId: number): Promise<string | undefined> => {
@@ -409,4 +495,3 @@ export const getAllVehicles = async (): Promise<VehicleDTO[]> => {
     throw error;
   }
 };
-

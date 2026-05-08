@@ -22,5 +22,11 @@ export const logisticsNavigationItems: NonNullable<PortalLayoutProps['navigation
     bottomIcon: 'delivery_truck_speed',
     onlyLoggedIn: true,
   },
+  {
+    label: 'Helyszínek',
+    href: '#/portal/locations/regions',
+    sideIcon: 'location_city',
+    bottomIcon: 'location_city',
+    onlyLoggedIn: true,
+  },
 ];
-
