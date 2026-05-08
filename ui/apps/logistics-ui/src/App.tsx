@@ -7,9 +7,6 @@ import { LogisticsPortalShell } from './portal/LogisticsPortalShell';
 const LogisticsLandingPage = lazy(() =>
   import('./landing/LogisticsLandingPage').then((module) => ({ default: module.LogisticsLandingPage })),
 );
-const LogisticsDashboardPage = lazy(() =>
-  import('./portal/LogisticsDashboardPage').then((module) => ({ default: module.LogisticsDashboardPage })),
-);
 const LogisticsDeposPage = lazy(() =>
   import('./portal/LogisticsDeposPage').then((module) => ({ default: module.LogisticsDeposPage })),
 );
@@ -89,7 +86,6 @@ function App() {
       />
       <Route path="/portal" element={<RequireLogisticsAccess />}>
         <Route element={<LogisticsPortalShell />}>
-          <Route path="dashboard" element={<LogisticsDashboardPage />} />
           <Route path="depos" element={<LogisticsDeposPage />} />
           <Route path="depos/new" element={<LogisticsDepoFormPage />} />
           <Route path="depos/:depoId/edit" element={<LogisticsDepoFormPage />} />
