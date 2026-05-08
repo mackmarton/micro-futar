@@ -426,6 +426,59 @@ export const getAllPackageSizes = async (): Promise<PackageSizeDTO[]> => {
   }
 };
 
+export const getPackageSizeById = async (packageSizeId: number): Promise<PackageSizeDTO> => {
+  try {
+    const response = await logisticsApi.api.getPackageSizeById(packageSizeId, { format: 'json' });
+
+    if (!response.data) {
+      throw new Error('Csomagméret nem található.');
+    }
+
+    return response.data;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const createPackageSize = async (packageSize: PackageSizeDTO): Promise<PackageSizeDTO> => {
+  try {
+    const response = await logisticsApi.api.createPackageSize(packageSize, { format: 'json' });
+    return response.data ?? packageSize;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
+export const updatePackageSize = async (
+  packageSizeId: number,
+  packageSize: PackageSizeDTO,
+): Promise<PackageSizeDTO> => {
+  try {
+    const response = await logisticsApi.api.updatePackageSize(packageSizeId, packageSize, { format: 'json' });
+    return response.data ?? packageSize;
+  } catch (error) {
+    const status = (error as { status?: number }).status;
+
+    if (status === 401) {
+      window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+    }
+
+    throw error;
+  }
+};
+
 export const getDepoTransitsByOriginDepoId = async (originDepoId: number): Promise<DepoTransitDTO[]> => {
   try {
     const response = await logisticsApi.api.getDepoTransitsByOriginDepoId(originDepoId, { format: 'json' });
