@@ -1,35 +1,53 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Suspense, lazy } from 'react';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
+import { useAuth } from '@package/shared-ui';
+import { hasCourierPortalAccess } from './auth/portalAccess';
+import { CourierPortalShell } from './portal/CourierPortalShell';
+
+const CourierLandingPage = lazy(() =>
+  import('./landing/CourierLandingPage').then((module) => ({ default: module.CourierLandingPage })),
+);
+const CourierDashboardPage = lazy(() =>
+  import('./portal/CourierDashboardPage').then((module) => ({ default: module.CourierDashboardPage })),
+);
+
+const RequireCourierAccess = () => {
+  const { user } = useAuth();
+  const isAuthorized = hasCourierPortalAccess(user);
+
+  if (!isAuthorized) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <Outlet />;
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { isLoading } = useAuth();
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <Suspense fallback={null}>
+            <CourierLandingPage />
+          </Suspense>
+        }
+      />
+      <Route path="/portal" element={<RequireCourierAccess />}>
+        <Route element={<CourierPortalShell />}>
+          <Route path="dashboard" element={<CourierDashboardPage />} />
+          <Route index element={<Navigate to="/portal/dashboard" replace />} />
+        </Route>
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
