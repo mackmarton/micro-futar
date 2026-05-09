@@ -35,3 +35,6 @@ kafka:
     shipment-route-topic: ${SHIPMENT_ROUTE_TOPIC}
     courier-topic: ${COURIER_TOPIC}
     vehicle-topic: ${VEHICLE_TOPIC}
+
+url:
+  api-gateway: ${API_GATEWAY_URL}

@@ -13,6 +13,7 @@
     "dev:courier": "npm run dev --workspace=apps/courier-ui",
     "generate-orders-api": "swagger-typescript-api generate -p ../orders/target/openapi.json -o ./packages/shared-core/api -n OrdersApiClient.ts --fetch",
     "generate-logistics-api": "swagger-typescript-api generate -p ../logistics/target/openapi.json -o ./packages/shared-core/api -n LogisticsApiClient.ts --fetch",
+    "generate-courier-api": "swagger-typescript-api generate -p ../courier/target/openapi.json -o ./packages/shared-core/api -n CourierApiClient.ts --fetch",
     "generate-tracking-api": "swagger-typescript-api generate -p ../tracking/target/openapi.json -o ./packages/shared-core/api -n TrackingApiClient.ts --fetch"
   },
   "keywords": [],
