@@ -8,9 +8,13 @@ import org.bme.micro_futar.courier.mappers.ShipmentRouteCourierMapper;
 import org.bme.micro_futar.courier.repositories.ShipmentRouteCourierRepository;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ShipmentRouteCourierService {
 
+    private final CourierService courierService;
     private final ApplicationContext applicationContext;
     private final KafkaProducerService kafkaProducerService;
     private final ShipmentRouteService shipmentRouteService;
@@ -36,21 +41,20 @@ public class ShipmentRouteCourierService {
                 .toList();
     }
 
-
-    public Optional<ShipmentRouteCourierDTO> findByCourierId(Long courierId) {
-        return shipmentRouteCourierRepository.findByCourierId(courierId)
-                .map(shipmentRouteCourierMapper::toDTO);
+    public List<ShipmentRouteCourierDTO> findAllForCourierForCurrentDay(Authentication authentication) {
+        String courierEmail = extractUserEmail(authentication);
+        Long courierId = courierService.findIdByEmail(courierEmail);
+        return shipmentRouteCourierRepository.findAllByCourierIdAndDateAssignedFor(courierId, LocalDate.now()).stream()
+                .map(shipmentRouteCourierMapper::toDTO)
+                .toList();
     }
 
-    public boolean pickUpShipmentForDelivery(long id) {
-        var shipmentRouteCourierOptional = findById(id);
-        if (shipmentRouteCourierOptional.isEmpty()) {
-            return false;
+    public void pickUpAllShipmentsForCurrentDay(Authentication authentication) {
+        List<ShipmentRouteCourierDTO> shipmentRouteCouriers = findAllForCourierForCurrentDay(authentication);
+        for (var assignment : shipmentRouteCouriers) {
+            assignment.setPickedUpForDelivery(true);
+            save(assignment);
         }
-        var shipmentRouteCourier = shipmentRouteCourierOptional.get();
-        shipmentRouteCourier.setPickedUpForDelivery(true);
-        save(shipmentRouteCourier);
-        return true;
     }
 
     public boolean fulfillAssignment(Long id) {
@@ -87,6 +91,28 @@ public class ShipmentRouteCourierService {
         ShipmentRouteCourier shipmentRouteCourier = shipmentRouteCourierMapper.toEntity(shipmentRouteCourierDTO);
         ShipmentRouteCourier savedShipmentRouteCourier = shipmentRouteCourierRepository.save(shipmentRouteCourier);
         return shipmentRouteCourierMapper.toDTO(savedShipmentRouteCourier);
+    }
+
+    private String extractUserEmail(Authentication authentication) {
+        if (authentication == null) {
+            return null;
+        }
+
+        if (authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) {
+            String email = jwtAuthenticationToken.getToken().getClaimAsString("email");
+            if (email != null && !email.isBlank()) {
+                return email;
+            }
+        }
+
+        if (authentication.getPrincipal() instanceof Jwt jwt) {
+            String email = jwt.getClaimAsString("email");
+            if (email != null && !email.isBlank()) {
+                return email;
+            }
+        }
+
+        return null;
     }
 }
 

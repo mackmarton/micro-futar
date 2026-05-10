@@ -12,9 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +42,7 @@ public class ShipmentRouteService {
 
     public void fulfillShipmentRoute(long shipmentRouteId) {
         var shipmentRoute = findById(shipmentRouteId).orElseThrow();
-        shipmentRoute.setFulfillmentTime(Timestamp.from(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
+        shipmentRoute.setFulfillmentTime(ZonedDateTime.now());
         save(shipmentRoute);
         if (shipmentRoute.getDestinationAddress() != null) {
             ShipmentDTO shipmentDTO = shipmentService.findById(shipmentRoute.getShipmentId()).orElseThrow();
