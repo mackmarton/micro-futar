@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @Data
 @Entity
@@ -25,5 +25,5 @@ public class ShipmentRoute {
     private String destinationAddress;
     private Integer routePartNumber;
     @Nullable
-    private Timestamp fulfillmentTime;
+    private ZonedDateTime fulfillmentTime;
 }

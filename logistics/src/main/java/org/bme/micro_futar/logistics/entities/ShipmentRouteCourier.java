@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
+import java.time.ZonedDateTime;
 
 @Data
 @Entity
@@ -18,7 +18,7 @@ public class ShipmentRouteCourier {
     private Long id;
     private Long courierId;
     private Long shipmentRouteId;
-    private Date dateAssignedFor;
+    private ZonedDateTime dateAssignedFor;
     private Boolean pickedUpForDelivery = false;
     private Boolean failed = false;
 }

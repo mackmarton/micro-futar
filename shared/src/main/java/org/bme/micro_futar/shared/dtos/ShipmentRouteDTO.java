@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @Data
 @Builder
@@ -19,5 +20,5 @@ public class ShipmentRouteDTO {
     private String originAddress;
     private String destinationAddress;
     private Integer routePartNumber;
-    private Timestamp fulfillmentTime;
+    private ZonedDateTime fulfillmentTime;
 }
