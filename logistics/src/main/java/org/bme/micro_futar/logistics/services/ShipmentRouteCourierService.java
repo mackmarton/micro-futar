@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -22,11 +22,11 @@ public class ShipmentRouteCourierService {
     private final ShipmentRouteCourierMapper shipmentRouteCourierMapper;
     private final ShipmentRouteCourierRepository shipmentRouteCourierRepository;
 
-    public long countByCourierIdAndDate(Long courierId, Date date) {
+    public long countByCourierIdAndDate(Long courierId, LocalDate date) {
         return shipmentRouteCourierRepository.countByCourierIdAndDate(courierId, date);
     }
 
-    public List<ShipmentRouteCourierDTO> findByCourierIdAndDateAssignedFor(Long courierId, Date date) {
+    public List<ShipmentRouteCourierDTO> findByCourierIdAndDateAssignedFor(Long courierId, LocalDate date) {
         return shipmentRouteCourierRepository.findByCourierIdAndDateAssignedFor(courierId, date).stream()
                 .map(shipmentRouteCourierMapper::toDTO)
                 .toList();

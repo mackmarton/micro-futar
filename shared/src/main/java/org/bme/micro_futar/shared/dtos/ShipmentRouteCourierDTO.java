@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 @Data
@@ -16,7 +17,7 @@ public class ShipmentRouteCourierDTO {
     private Long id;
     private Long courierId;
     private Long shipmentRouteId;
-    private ZonedDateTime dateAssignedFor;
+    private LocalDate dateAssignedFor;
     private Boolean pickedUpForDelivery;
     private Boolean failed;
 }
