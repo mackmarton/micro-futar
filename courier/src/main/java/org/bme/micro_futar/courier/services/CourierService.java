@@ -40,5 +40,10 @@ public class CourierService {
                 .map(courierMapper::toDTO)
                 .toList();
     }
+
+    @Transactional(readOnly = true)
+    public Long findIdByEmail(String email) {
+        return courierRepository.findByEmail(email).orElseThrow().getId();
+    }
 }
 

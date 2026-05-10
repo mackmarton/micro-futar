@@ -42,14 +42,12 @@ public class ShipmentService {
 
     @Transactional(readOnly = true)
     public Optional<ShipmentDTO> findById(Long id) {
-        log.debug("Finding shipment by id: {}", id);
         return shipmentRepository.findById(id)
                 .map(shipmentMapper::toDTO);
     }
 
     @Transactional(readOnly = true)
     public List<ShipmentDTO> findAll() {
-        log.debug("Finding all shipments");
         return shipmentRepository.findAll().stream()
                 .map(shipmentMapper::toDTO)
                 .toList();
