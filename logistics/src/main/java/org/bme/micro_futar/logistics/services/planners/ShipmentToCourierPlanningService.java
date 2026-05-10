@@ -8,7 +8,6 @@ import org.bme.micro_futar.shared.enums.CourierType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -28,7 +27,7 @@ public class ShipmentToCourierPlanningService {
 
     @Transactional
     public Map<String, Object> planShipmentsForDepo(Long depoId) {
-        Date today = Date.valueOf(LocalDate.now());
+        LocalDate today = LocalDate.now();
         List<CourierDTO> deliveryCouriers = courierService.getCouriersByDepoIdAndType(depoId, CourierType.DELIVERY);
 
         if (deliveryCouriers.isEmpty()) {
@@ -69,7 +68,7 @@ public class ShipmentToCourierPlanningService {
     }
 
     public Map<String, Object> planCrossDepoShipmentsForDepo(Long depoId) {
-        Date today = Date.valueOf(LocalDate.now());
+        LocalDate today = LocalDate.now();
         List<CourierDTO> couriers = courierService.getCouriersByDepoIdAndType(depoId, CourierType.CROSS_DEPO);
 
         if (couriers.isEmpty()) {
@@ -102,7 +101,7 @@ public class ShipmentToCourierPlanningService {
         return createResult(assignedCount, crossDepoRoutes.size(), couriers.size(), "Planning completed successfully");
     }
 
-    private CourierCapacity calculateCourierCapacity(CourierDTO courier, Date date) {
+    private CourierCapacity calculateCourierCapacity(CourierDTO courier, LocalDate date) {
         if (courier.getVehicleId() == null) {
             log.warn("Courier {} has no vehicle assigned", courier.getId());
             return null;
@@ -143,7 +142,7 @@ public class ShipmentToCourierPlanningService {
         return capacity;
     }
 
-    private int assignShipmentsToCouriers(List<ShipmentRouteDTO> routes, Map<Long, CourierCapacity> courierCapacities, Date date) {
+    private int assignShipmentsToCouriers(List<ShipmentRouteDTO> routes, Map<Long, CourierCapacity> courierCapacities, LocalDate date) {
         int assignedCount = 0;
 
         if (routes.size() > 1) {

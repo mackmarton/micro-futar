@@ -72,7 +72,7 @@ export interface ShipmentRouteCourierDTO {
   courierId?: number;
   /** @format int64 */
   shipmentRouteId?: number;
-  /** @format date-time */
+  /** @format date */
   dateAssignedFor?: string;
   pickedUpForDelivery?: boolean;
   failed?: boolean;
@@ -384,20 +384,6 @@ export class Api<
      * No description
      *
      * @tags shipment-route-courier-controller
-     * @name PickUpShipmentForDelivery
-     * @request POST:/api/courier/shipment-route-couriers/{id}/pickup
-     */
-    pickUpShipmentForDelivery: (id: number, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/api/courier/shipment-route-couriers/${id}/pickup`,
-        method: "POST",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags shipment-route-courier-controller
      * @name FulfillShipmentRouteAssignment
      * @request POST:/api/courier/shipment-route-couriers/{id}/fulfill
      */
@@ -418,6 +404,20 @@ export class Api<
     failShipmentRouteAssignment: (id: number, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/api/courier/shipment-route-couriers/${id}/fail`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags shipment-route-courier-controller
+     * @name PickUpAllShipmentsForCurrentDay
+     * @request POST:/api/courier/shipment-route-couriers/pickup-all-for-today
+     */
+    pickUpAllShipmentsForCurrentDay: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/courier/shipment-route-couriers/pickup-all-for-today`,
         method: "POST",
         ...params,
       }),
@@ -510,20 +510,13 @@ export class Api<
      * No description
      *
      * @tags shipment-route-courier-controller
-     * @name FindByCourierId
+     * @name FindAllForCourierForCurrentDay
      * @request GET:/api/courier/shipment-route-couriers
      */
-    findByCourierId: (
-      query: {
-        /** @format int64 */
-        courierId: number;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<ShipmentRouteCourierDTO, any>({
+    findAllForCourierForCurrentDay: (params: RequestParams = {}) =>
+      this.request<ShipmentRouteCourierDTO[], any>({
         path: `/api/courier/shipment-route-couriers`,
         method: "GET",
-        query: query,
         ...params,
       }),
 
