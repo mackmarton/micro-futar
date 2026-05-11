@@ -24,8 +24,7 @@ export const CourierLandingPage = () => {
 
           {user && !hasPortalAccess ? (
             <p className="mt-6 rounded-lg border border-error/40 bg-error-container/50 px-4 py-3 text-sm font-medium text-error">
-              Nincs jogosultságod a portál használatához. A belépéshez courier-admin vagy courier-user szerepkör
-              szükséges.
+              Nincs jogosultságod a portál használatához. A belépéshez courier-admin vagy courier-user szerepkör szükséges.
             </p>
           ) : null}
 
@@ -34,7 +33,7 @@ export const CourierLandingPage = () => {
               <>
                 {hasPortalAccess ? (
                   <Link
-                    to="/portal/dashboard"
+                    to="/portal/shipment-pickup"
                     className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 font-semibold text-on-primary hover:bg-on-primary-container transition-colors"
                   >
                     <span className="material-symbols-outlined" aria-hidden="true">

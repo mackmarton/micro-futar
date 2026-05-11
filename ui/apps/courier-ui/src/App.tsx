@@ -8,7 +8,7 @@ const CourierLandingPage = lazy(() =>
   import('./landing/CourierLandingPage').then((module) => ({ default: module.CourierLandingPage })),
 );
 const CourierDashboardPage = lazy(() =>
-  import('./portal/CourierDashboardPage').then((module) => ({ default: module.CourierDashboardPage })),
+  import('./portal/pickup/CourierPickupPage').then((module) => ({ default: module.CourierPickupPage })),
 );
 
 const RequireCourierAccess = () => {
@@ -41,8 +41,8 @@ function App() {
       />
       <Route path="/portal" element={<RequireCourierAccess />}>
         <Route element={<CourierPortalShell />}>
-          <Route path="dashboard" element={<CourierDashboardPage />} />
-          <Route index element={<Navigate to="/portal/dashboard" replace />} />
+          <Route path="shipment-pickup" element={<CourierDashboardPage />} />
+          <Route index element={<Navigate to="/portal/shipment-pickup" replace />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
