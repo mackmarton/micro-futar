@@ -1,29 +1,16 @@
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { DataTable } from '@package/shared-ui';
 import type { DataTableColumn } from '@package/shared-ui';
+import type { ShipmentRouteCourierDTO } from '@package/shared-core/api/CourierApiClient';
+import {
+  fetchManifestShipmentsForAssignments,
+  type ManifestShipment,
+} from '../api/courierPickupApi.ts';
 
-type ManifestShipment = {
-  parcelNumber: string;
-  recipient: string;
-  packageSize: string;
+type ManifestDataTableProps = {
+  assignments: ShipmentRouteCourierDTO[];
 };
-
-const shipments: ManifestShipment[] = [
-  {
-    parcelNumber: 'PK-2841',
-    recipient: 'Northline Medical Labs',
-    packageSize: 'S',
-  },
-  {
-    parcelNumber: 'PK-2842',
-    recipient: 'Central Pharmacy Hub',
-    packageSize: 'XS',
-  },
-  {
-    parcelNumber: 'PK-2843',
-    recipient: 'Riverside Diagnostics',
-    packageSize: 'M',
-  }
-];
 
 const columns: DataTableColumn<ManifestShipment>[] = [
   {
@@ -45,6 +32,12 @@ const columns: DataTableColumn<ManifestShipment>[] = [
     cell: (shipment) => shipment.packageSize,
   },
   {
+    id: 'status',
+    header: 'Státusz',
+    mobileLabel: 'Státusz',
+    cell: (shipment) => shipment.status,
+  },
+  {
     id: 'action',
     header: 'Művelet',
     cell: () => (
@@ -58,14 +51,71 @@ const columns: DataTableColumn<ManifestShipment>[] = [
   },
 ];
 
-export const ManifestDataTable = () => {
+const toErrorMessage = (error: unknown): string => {
+  if (typeof error === 'object' && error !== null && 'error' in error) {
+    const responseError = (error as { error?: { message?: string } }).error?.message;
+    if (responseError) {
+      return responseError;
+    }
+  }
+
+  if (error instanceof Error && error.message.trim().length > 0) {
+    return error.message;
+  }
+
+  return 'Nem sikerult betolteni a szallitasi jegyzeket. Probald ujra.';
+};
+
+export const ManifestDataTable = ({ assignments }: ManifestDataTableProps) => {
+  const queryKeySuffix = useMemo(
+    () =>
+      assignments.map((assignment, index) => ({
+        id: assignment.id ?? index,
+        shipmentRouteId: assignment.shipmentRouteId ?? null,
+        pickedUpForDelivery: Boolean(assignment.pickedUpForDelivery),
+        failed: Boolean(assignment.failed),
+      })),
+    [assignments],
+  );
+
+  const manifestQuery = useQuery({
+    queryKey: ['courier-manifest-shipments', queryKeySuffix],
+    queryFn: ({ signal }) => fetchManifestShipmentsForAssignments(assignments, signal),
+    enabled: assignments.length > 0,
+    retry: 1,
+  });
+
+  const shipments = manifestQuery.data ?? [];
+  const errorMessage = manifestQuery.isError ? toErrorMessage(manifestQuery.error) : null;
+
+  if (errorMessage) {
+    return (
+      <section className="rounded-xl bg-surface-container-low p-6 md:p-7">
+        <p className="font-body text-sm text-red-600">{errorMessage}</p>
+        <button
+          type="button"
+          onClick={() => {
+            void manifestQuery.refetch();
+          }}
+          className="mt-4 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-medium text-on-primary"
+        >
+          Ujratoltes
+        </button>
+      </section>
+    );
+  }
+
   return (
     <DataTable
       data={shipments}
-      rowKey={(shipment) => shipment.parcelNumber}
+      rowKey={(shipment, index) => `${shipment.assignmentId ?? shipment.shipmentRouteId ?? 'row'}-${index}`}
       title="Szállítási jegyzék"
       columns={columns}
-      emptyMessage="Nincs küldemény a megadott feltételek alapján."
+      emptyMessage={
+        assignments.length === 0
+          ? 'Nincs mai depó átvételi hozzárendelés.'
+          : 'Nincs küldemény a megadott feltételek alapján.'
+      }
       mobileCardEyebrow="Küldemény"
       recordCountLabel={(visible, total) => `Látható küldemények: ${visible} / ${total}`}
       renderMobileActions={() => (
