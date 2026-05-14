@@ -23,17 +23,15 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
     const [isLoading, setIsLoading] = useState(true);
 
     const login = useCallback(() => {
-        const currentPath = window.location.pathname + window.location.search;
-        localStorage.setItem('postLoginRedirect', currentPath);
-
-        window.location.href = buildApiUrl('/oauth2/authorization/keycloak');
+        const loginUrl = new URL(buildApiUrl('/oauth2/authorization/keycloak'), window.location.origin);
+        loginUrl.searchParams.set('redirect_uri', window.location.href);
+        window.location.href = loginUrl.toString();
     }, []);
 
     const logout = useCallback(() => {
-        const currentPath = window.location.pathname + window.location.search;
-        localStorage.setItem('postLogoutRedirect', currentPath);
-
-        window.location.href = buildApiUrl('/logout');
+        const logoutUrl = new URL(buildApiUrl('/logout'), window.location.origin);
+        logoutUrl.searchParams.set('redirect_uri', window.location.href);
+        window.location.href = logoutUrl.toString();
     }, []);
 
     const hasRole = useCallback((role: string) => {
@@ -46,23 +44,7 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
             try {
                 const response = await apiClient.get('/api/auth/me');
                 setUser(response.data);
-
-                const postLoginRedirect = localStorage.getItem('postLoginRedirect');
-                if (postLoginRedirect) {
-                    localStorage.removeItem('postLoginRedirect');
-
-                    window.location.replace(postLoginRedirect);
-                } else {
-                    const postLogoutRedirect = localStorage.getItem('postLogoutRedirect');
-                    if (postLogoutRedirect) {
-                        localStorage.removeItem('postLogoutRedirect');
-
-                        window.location.replace(postLogoutRedirect);
-                    }
-                }
             } catch (error) {
-                localStorage.removeItem('postLoginRedirect');
-                localStorage.removeItem('postLogoutRedirect');
                 setUser(null);
             } finally {
                 setIsLoading(false);
