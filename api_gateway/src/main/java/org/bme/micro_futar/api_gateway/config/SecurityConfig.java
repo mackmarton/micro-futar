@@ -6,11 +6,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
-import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
@@ -25,14 +22,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(
-            ServerHttpSecurity http, ReactiveClientRegistrationRepository clientRegistrationRepository) {
-        OidcClientInitiatedServerLogoutSuccessHandler oidcLogoutSuccessHandler =
-                new OidcClientInitiatedServerLogoutSuccessHandler(clientRegistrationRepository);
-        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:5173");
-
-        RedirectServerAuthenticationSuccessHandler loginSuccessHandler =
-                new RedirectServerAuthenticationSuccessHandler("http://localhost:5173");
-
+            ServerHttpSecurity http,
+            SessionRedirectAuthenticationSuccessHandler sessionRedirectAuthenticationSuccessHandler) {
         http
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/api/orders/**", "/api/tracking/**", "/api/auth/me")
@@ -41,11 +32,11 @@ public class SecurityConfig {
                         .authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .authenticationSuccessHandler(loginSuccessHandler)
+                        .authenticationSuccessHandler(sessionRedirectAuthenticationSuccessHandler)
                 )
                 .logout(logout -> logout
                         .requiresLogout(ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/logout"))
-                        .logoutSuccessHandler(oidcLogoutSuccessHandler)
+                        .logoutSuccessHandler(sessionRedirectAuthenticationSuccessHandler)
                 )
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .exceptionHandling(exceptionHandling -> exceptionHandling
