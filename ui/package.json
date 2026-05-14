@@ -8,9 +8,9 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev:client": "npm run dev --workspace=apps/client-ui",
-    "dev:logistics": "npm run dev --workspace=apps/logistics-ui",
-    "dev:courier": "npm run dev --workspace=apps/courier-ui",
+    "dev:client": "npm run dev --workspace=apps/client-ui -- --port 5173",
+    "dev:logistics": "npm run dev --workspace=apps/logistics-ui -- --port 5174",
+    "dev:courier": "npm run dev --workspace=apps/courier-ui -- --port 5175",
     "generate-orders-api": "swagger-typescript-api generate -p ../orders/target/openapi.json -o ./packages/shared-core/api -n OrdersApiClient.ts --fetch",
     "generate-logistics-api": "swagger-typescript-api generate -p ../logistics/target/openapi.json -o ./packages/shared-core/api -n LogisticsApiClient.ts --fetch",
     "generate-courier-api": "swagger-typescript-api generate -p ../courier/target/openapi.json -o ./packages/shared-core/api -n CourierApiClient.ts --fetch",
