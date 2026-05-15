@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { PortalLayout } from '@package/shared-ui';
+import { LocationMapPicker, PortalLayout, type MapCoordinate } from '@package/shared-ui';
 import type { DepoDTO } from '@package/shared-core/api/LogisticsApiClient';
 import {
   createDepo,
@@ -11,7 +11,6 @@ import {
   updateDepo,
 } from '../api/logisticsDeposApi';
 import { logisticsNavigationItems } from '../navigation';
-import { DepoLocationMapPicker, type MapCoordinate } from './components/DepoLocationMapPicker';
 
 type DepoFormState = {
   name: string;
@@ -523,7 +522,7 @@ export const LogisticsDepoFormPage = () => {
               </div>
 
               <div className="mt-4 rounded-xl overflow-hidden">
-                <DepoLocationMapPicker
+                <LocationMapPicker
                   center={mapCenter}
                   markerPosition={mapMarkerPosition}
                   onMarkerChange={handleMapMarkerChange}
@@ -591,4 +590,3 @@ export const LogisticsDepoFormPage = () => {
     </PortalLayout>
   );
 };
-

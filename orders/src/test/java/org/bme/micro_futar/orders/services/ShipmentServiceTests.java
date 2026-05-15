@@ -50,6 +50,8 @@ class ShipmentServiceTests {
                 .senderZip("1234")
                 .senderLocationCityId(1L)
                 .senderAddress("Test Street 1")
+                .senderLatitude(1.234)
+                .senderLongitude(1.234)
                 .recipientName("Jane Smith")
                 .recipientEmail("jane@example.com")
                 .recipientPhone("+43201234567")
@@ -57,6 +59,8 @@ class ShipmentServiceTests {
                 .recipientZip("5678")
                 .recipientLocationCityId(2L)
                 .recipientAddress("Test Avenue 2")
+                .recipientLatitude(1.234)
+                .recipientLongitude(1.234)
                 .packageSizeId(1L)
                 .build();
 
@@ -69,6 +73,8 @@ class ShipmentServiceTests {
         shipmentEntity.setSenderZip("1234");
         shipmentEntity.setSenderLocationCityId(1L);
         shipmentEntity.setSenderAddress("Test Street 1");
+        shipmentEntity.setSenderLatitude(1.234);
+        shipmentEntity.setSenderLongitude(1.234);
         shipmentEntity.setRecipientName("Jane Smith");
         shipmentEntity.setRecipientEmail("jane@example.com");
         shipmentEntity.setRecipientPhone("+43201234567");
@@ -76,6 +82,8 @@ class ShipmentServiceTests {
         shipmentEntity.setRecipientZip("5678");
         shipmentEntity.setRecipientLocationCityId("2");
         shipmentEntity.setRecipientAddress("Test Avenue 2");
+        shipmentEntity.setRecipientLatitude(1.234);
+        shipmentEntity.setRecipientLongitude(1.234);
         shipmentEntity.setPackageSizeId(1L);
         shipmentEntity.setPrice(25.99);
         shipmentEntity.setConfirmed(false);
@@ -104,6 +112,8 @@ class ShipmentServiceTests {
                 .senderZip("1234")
                 .senderLocationCityId(1L)
                 .senderAddress("Test Street 1")
+                .senderLatitude(1.234)
+                .senderLongitude(1.234)
                 .recipientName("Jane Smith")
                 .recipientEmail("jane@example.com")
                 .recipientPhone("+43201234567")
@@ -111,6 +121,8 @@ class ShipmentServiceTests {
                 .recipientZip("5678")
                 .recipientLocationCityId(2L)
                 .recipientAddress("Test Avenue 2")
+                .recipientLatitude(1.234)
+                .recipientLongitude(1.234)
                 .packageSizeId(1L)
                 .price(25.99)
                 .confirmed(false)

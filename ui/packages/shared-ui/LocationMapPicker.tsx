@@ -1,40 +1,31 @@
 import { useEffect, useRef } from 'react';
-import L from 'leaflet';
+import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-
-const markerIconUrl = new URL('leaflet/dist/images/marker-icon.png', import.meta.url).toString();
-const markerIcon2xUrl = new URL('leaflet/dist/images/marker-icon-2x.png', import.meta.url).toString();
-const markerShadowUrl = new URL('leaflet/dist/images/marker-shadow.png', import.meta.url).toString();
-
-const defaultMarkerIcon = L.icon({
-  iconUrl: markerIconUrl,
-  iconRetinaUrl: markerIcon2xUrl,
-  shadowUrl: markerShadowUrl,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
 
 export type MapCoordinate = {
   latitude: number;
   longitude: number;
 };
 
-type DepoLocationMapPickerProps = {
+export type LocationMapPickerProps = {
   center: MapCoordinate;
   markerPosition: MapCoordinate;
   onMarkerChange: (value: MapCoordinate) => void;
 };
 
-export const DepoLocationMapPicker = ({
+export const LocationMapPicker = ({
   center,
   markerPosition,
   onMarkerChange,
-}: DepoLocationMapPickerProps) => {
+}: LocationMapPickerProps) => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
+  const onMarkerChangeRef = useRef(onMarkerChange);
+
+  useEffect(() => {
+    onMarkerChangeRef.current = onMarkerChange;
+  }, [onMarkerChange]);
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) {
@@ -52,13 +43,12 @@ export const DepoLocationMapPicker = ({
     }).addTo(map);
 
     const marker = L.marker([markerPosition.latitude, markerPosition.longitude], {
-      icon: defaultMarkerIcon,
       draggable: true,
     }).addTo(map);
 
     marker.on('dragend', () => {
       const updatedPosition = marker.getLatLng();
-      onMarkerChange({
+      onMarkerChangeRef.current({
         latitude: updatedPosition.lat,
         longitude: updatedPosition.lng,
       });
@@ -66,7 +56,7 @@ export const DepoLocationMapPicker = ({
 
     map.on('click', (event: L.LeafletMouseEvent) => {
       marker.setLatLng(event.latlng);
-      onMarkerChange({
+      onMarkerChangeRef.current({
         latitude: event.latlng.lat,
         longitude: event.latlng.lng,
       });
@@ -76,11 +66,13 @@ export const DepoLocationMapPicker = ({
     markerRef.current = marker;
 
     return () => {
+      marker.off();
+      map.off();
       map.remove();
       mapRef.current = null;
       markerRef.current = null;
     };
-  }, [center.latitude, center.longitude, markerPosition.latitude, markerPosition.longitude, onMarkerChange]);
+  }, []);
 
   useEffect(() => {
     if (!mapRef.current || !markerRef.current) {
@@ -95,4 +87,3 @@ export const DepoLocationMapPicker = ({
 
   return <div ref={mapContainerRef} className="h-[360px] w-full rounded-xl" />;
 };
-
