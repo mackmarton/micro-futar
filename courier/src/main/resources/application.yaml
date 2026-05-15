@@ -18,12 +18,12 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: ${KEYCLOAK_URL}/realms/courier/protocol/openid-connect/certs
+          jwk-set-uri: ${KEYCLOAK_URL}/realms/micro-futar-realm/protocol/openid-connect/certs
           #issuer-uri: ${KEYCLOAK_URL}/realms/courier
 jwt:
   auth:
     converter:
-      resource-id: courier-client
+      resource-id: api-gateway-client
       principal-attribute: preferred_username
 
 kafka:

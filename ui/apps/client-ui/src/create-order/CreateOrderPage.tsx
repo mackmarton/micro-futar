@@ -6,6 +6,8 @@ export const CreateOrderPage = () => {
   const {
     senderAddressCardProps,
     recipientAddressCardProps,
+    senderLocationPickerProps,
+    recipientLocationPickerProps,
     packageDetailsValue,
     packageSizeOptions,
     isPackageSizesLoading,
@@ -32,6 +34,8 @@ export const CreateOrderPage = () => {
       <CreateOrderContent
         senderAddressCardProps={senderAddressCardProps}
         recipientAddressCardProps={recipientAddressCardProps}
+        senderLocationPickerProps={senderLocationPickerProps}
+        recipientLocationPickerProps={recipientLocationPickerProps}
         packageDetailsValue={packageDetailsValue}
         packageSizeOptions={packageSizeOptions}
         isPackageSizesLoading={isPackageSizesLoading}
@@ -55,4 +59,3 @@ export const CreateOrderPage = () => {
     </PortalLayout>
   );
 };
-

@@ -47,6 +47,12 @@ export type CreateShipmentPayload = Required<Pick<
     | 'recipientLocationCityId'
     | 'recipientAddress'
     | 'packageSizeId'
+>> & Partial<Pick<
+    ShipmentDTO,
+    | 'senderLatitude'
+    | 'senderLongitude'
+    | 'recipientLatitude'
+    | 'recipientLongitude'
 >>;
 
 
@@ -195,4 +201,3 @@ export const createShipment = async (payload: CreateShipmentPayload): Promise<Sh
 
     return response.data;
 };
-

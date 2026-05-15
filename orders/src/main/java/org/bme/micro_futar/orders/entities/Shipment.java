@@ -18,6 +18,8 @@ public class Shipment {
     private String senderZip;
     private Long senderLocationCityId;
     private String senderAddress;
+    private Double senderLatitude;
+    private Double senderLongitude;
     private String recipientName;
     private String recipientEmail;
     private String recipientPhone;
@@ -25,6 +27,8 @@ public class Shipment {
     private String recipientZip;
     private String recipientLocationCityId;
     private String recipientAddress;
+    private Double recipientLatitude;
+    private Double recipientLongitude;
     private Long packageSizeId;
     private boolean confirmed;
     //Not filled straight away

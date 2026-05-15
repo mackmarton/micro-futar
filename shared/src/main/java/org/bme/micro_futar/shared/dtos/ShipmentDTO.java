@@ -23,6 +23,10 @@ public class ShipmentDTO {
     @NonNull
     private String senderAddress;
     @NonNull
+    private Double senderLatitude;
+    @NonNull
+    private Double senderLongitude;
+    @NonNull
     private String recipientName;
     @NonNull
     private String recipientEmail;
@@ -36,6 +40,10 @@ public class ShipmentDTO {
     private Long recipientLocationCityId;
     @NonNull
     private String recipientAddress;
+    @NonNull
+    private Double recipientLatitude;
+    @NonNull
+    private Double recipientLongitude;
     @NonNull
     private Long packageSizeId;
     private boolean confirmed;

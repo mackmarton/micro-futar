@@ -22,6 +22,10 @@ export interface ShipmentDTO {
   /** @format int64 */
   senderLocationCityId?: number;
   senderAddress?: string;
+  /** @format double */
+  senderLatitude?: number;
+  /** @format double */
+  senderLongitude?: number;
   recipientName?: string;
   recipientEmail?: string;
   recipientPhone?: string;
@@ -31,6 +35,10 @@ export interface ShipmentDTO {
   /** @format int64 */
   recipientLocationCityId?: number;
   recipientAddress?: string;
+  /** @format double */
+  recipientLatitude?: number;
+  /** @format double */
+  recipientLongitude?: number;
   /** @format int64 */
   packageSizeId?: number;
   confirmed?: boolean;

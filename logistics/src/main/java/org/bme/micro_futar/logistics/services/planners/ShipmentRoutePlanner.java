@@ -23,17 +23,15 @@ public class ShipmentRoutePlanner {
 
     public void planRouteForShipment(ShipmentDTO shipment) {
         DepoDTO originDepo = findClosestDepo(
-                shipment.getSenderLocationCountryId(),
-                shipment.getSenderLocationCityId(),
-                shipment.getSenderZip(),
-                shipment.getSenderAddress()
+                shipment.getSenderLongitude(),
+                shipment.getSenderLatitude(),
+                shipment.getSenderLocationCountryId()
         );
 
         DepoDTO destinationDepo = findClosestDepo(
-                shipment.getRecipientLocationCountryId(),
-                shipment.getRecipientLocationCityId(),
-                shipment.getRecipientZip(),
-                shipment.getRecipientAddress()
+                shipment.getRecipientLongitude(),
+                shipment.getRecipientLatitude(),
+                shipment.getRecipientLocationCountryId()
         );
 
         List<Long> cheapestRoute = findCheapestDepoRoute(
@@ -56,14 +54,8 @@ public class ShipmentRoutePlanner {
         shipmentRouteService.saveAll(shipmentRoutes);
     }
 
-    private DepoDTO findClosestDepo(Long countryId, Long cityId, String zip, String address) {
-        LocationCountryDTO country = locationCountryService.getCountryById(countryId)
-                .orElseThrow(() -> new IllegalArgumentException("Country not found with id: " + countryId));
-        LocationCityDTO city = locationCityService.getCityById(cityId)
-                .orElseThrow(() -> new IllegalArgumentException("City not found with id: " + cityId));
-
-        String fullAddress = buildAddress(country, city, zip, address);
-        double[] coordinates = openRouteServiceFetcher.geocode(fullAddress);
+    private DepoDTO findClosestDepo(double longitude, double latitude, long countryId) {
+        double[] coordinates = new double[]{longitude, latitude};
 
         List<DepoDTO> deposInCountry = depoService.getAllDeposByCountryId(countryId);
         if (deposInCountry.isEmpty()) {

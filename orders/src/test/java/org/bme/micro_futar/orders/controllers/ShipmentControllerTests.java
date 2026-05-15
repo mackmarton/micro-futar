@@ -49,6 +49,8 @@ class ShipmentControllerTests {
                 .senderZip("1234")
                 .senderLocationCityId(1L)
                 .senderAddress("1 Test Street")
+                .senderLatitude(1.234)
+                .senderLongitude(1.234)
                 .recipientName("Test Recipient")
                 .recipientEmail("recipient@test.com")
                 .recipientPhone("987654321")
@@ -56,6 +58,8 @@ class ShipmentControllerTests {
                 .recipientZip("5678")
                 .recipientLocationCityId(2L)
                 .recipientAddress("2 Test Avenue")
+                .recipientLatitude(1.234)
+                .recipientLongitude(1.234)
                 .packageSizeId(3L)
                 .build();
 
@@ -67,6 +71,8 @@ class ShipmentControllerTests {
                 .senderLocationCountryId(1L)
                 .senderZip("1234")
                 .senderLocationCityId(1L)
+                .senderLatitude(1.234)
+                .senderLongitude(1.234)
                 .senderAddress("1 Test Street")
                 .recipientName("Test Recipient")
                 .recipientEmail("recipient@test.com")
@@ -75,6 +81,8 @@ class ShipmentControllerTests {
                 .recipientZip("5678")
                 .recipientLocationCityId(2L)
                 .recipientAddress("2 Test Avenue")
+                .recipientLatitude(1.234)
+                .recipientLongitude(1.234)
                 .packageSizeId(3L)
                 .price(100.0)
                 .build();
@@ -109,6 +117,8 @@ class ShipmentControllerTests {
                 .senderZip("4321")
                 .senderLocationCityId(5L)
                 .senderAddress("10 Main Street")
+                .senderLatitude(1.234)
+                .senderLongitude(1.234)
                 .recipientName("Jane Smith")
                 .recipientEmail("jane@example.com")
                 .recipientPhone("444555666")
@@ -116,6 +126,8 @@ class ShipmentControllerTests {
                 .recipientZip("9876")
                 .recipientLocationCityId(6L)
                 .recipientAddress("20 Park Avenue")
+                .recipientLatitude(1.234)
+                .recipientLongitude(1.234)
                 .packageSizeId(2L)
                 .build();
 
@@ -128,6 +140,8 @@ class ShipmentControllerTests {
                 .senderZip("4321")
                 .senderLocationCityId(5L)
                 .senderAddress("10 Main Street")
+                .senderLatitude(1.234)
+                .senderLongitude(1.234)
                 .recipientName("Jane Smith")
                 .recipientEmail("jane@example.com")
                 .recipientPhone("444555666")
@@ -135,6 +149,8 @@ class ShipmentControllerTests {
                 .recipientZip("9876")
                 .recipientLocationCityId(6L)
                 .recipientAddress("20 Park Avenue")
+                .recipientLatitude(1.234)
+                .recipientLongitude(1.234)
                 .packageSizeId(2L)
                 .price(200.0)
                 .build();

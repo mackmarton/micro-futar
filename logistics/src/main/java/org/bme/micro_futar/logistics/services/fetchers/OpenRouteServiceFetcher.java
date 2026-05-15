@@ -1,12 +1,13 @@
 package org.bme.micro_futar.logistics.services.fetchers;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.*;
 
 @Service
@@ -16,43 +17,6 @@ public class OpenRouteServiceFetcher {
     private String apiKey;
 
     private final RestTemplate restTemplate = new RestTemplate();
-
-    @SuppressWarnings("unchecked")
-    public double[] geocode(String address) {
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromUriString("https://api.openrouteservice.org/geocode/search")
-                .queryParam("api_key", apiKey)
-                .queryParam("text", address);
-        URI uri = builder.build().toUri();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Spring-RestTemplate");
-        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
-        ResponseEntity<Map<String, Object>> res = restTemplate.exchange(
-                uri,
-                HttpMethod.GET,
-                httpEntity,
-                (Class<Map<String, Object>>) (Class<?>) Map.class
-        );
-        Map<String, Object> body = res.getBody();
-        if (body == null) {
-            throw new IllegalStateException("No response body from geocoding service");
-        }
-        List<Map<String, Object>> features = (List<Map<String, Object>>) body.get("features");
-        if (features == null || features.isEmpty()) {
-            throw new IllegalStateException("No features found in geocoding response");
-        }
-        Map<String, Object> feature = features.getFirst();
-        Map<String, Object> geometry = (Map<String, Object>) feature.get("geometry");
-        if (geometry == null) {
-            throw new IllegalStateException("No geometry found in feature");
-        }
-        List<Double> coords = (List<Double>) geometry.get("coordinates");
-        if (coords == null || coords.size() < 2) {
-            throw new IllegalStateException("Invalid coordinates in geometry");
-        }
-        return new double[]{coords.get(0), coords.get(1)}; // [lon, lat]
-    }
 
     @SuppressWarnings("unchecked")
     public int getClosestIndexByDuration(double[] origin, List<double[]> destinations) {
