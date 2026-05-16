@@ -10,6 +10,19 @@ const CourierLandingPage = lazy(() =>
 const CourierDashboardPage = lazy(() =>
   import('./portal/pickup/CourierPickupPage').then((module) => ({ default: module.CourierPickupPage })),
 );
+const CourierDropoffPage = lazy(() =>
+  import('./portal/dropoff/CourierDropoffPage').then((module) => ({ default: module.CourierDropoffPage })),
+);
+const CourierAllocatedPackagesPage = lazy(() =>
+  import('./portal/allocations/CourierAllocatedPackagesPage').then((module) => ({
+    default: module.CourierAllocatedPackagesPage,
+  })),
+);
+const CourierAllocatedPackageDetailsPage = lazy(() =>
+  import('./portal/allocations/CourierAllocatedPackageDetailsPage').then((module) => ({
+    default: module.CourierAllocatedPackageDetailsPage,
+  })),
+);
 
 const RequireCourierAccess = () => {
   const { user } = useAuth();
@@ -41,8 +54,11 @@ function App() {
       />
       <Route path="/portal" element={<RequireCourierAccess />}>
         <Route element={<CourierPortalShell />}>
+          <Route path="allocated-packages" element={<CourierAllocatedPackagesPage />} />
+          <Route path="allocated-packages/:assignmentId" element={<CourierAllocatedPackageDetailsPage />} />
           <Route path="shipment-pickup" element={<CourierDashboardPage />} />
-          <Route index element={<Navigate to="/portal/shipment-pickup" replace />} />
+          <Route path="shipment-dropoff" element={<CourierDropoffPage />} />
+          <Route index element={<Navigate to="/portal/allocated-packages" replace />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

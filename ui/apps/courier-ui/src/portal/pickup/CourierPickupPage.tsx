@@ -1,9 +1,13 @@
+import {useMemo} from "react";
 import {ManifestDataTable} from './components/ManifestDataTable';
 import {PortalLayout} from "@package/shared-ui/PortalLayout.tsx";
 import {courierNavigationItems} from "../navigation.ts";
 import {useMutation} from "@tanstack/react-query";
 import {useCourierPickups} from "./hooks/useCourierPickups.ts";
-import {pickUpAllShipmentsForCurrentDay} from "./api/courierPickupApi.ts";
+import {
+    pickUpAllDeliveryShipmentsForCurrentDay,
+} from "./api/courierPickupApi.ts";
+import {useCourierAllocations} from "../allocations/hooks/useCourierAllocations.ts";
 
 const toPickupAllErrorMessage = (error: unknown): string => {
     if (typeof error === 'object' && error !== null && 'error' in error) {
@@ -20,13 +24,37 @@ const toPickupAllErrorMessage = (error: unknown): string => {
     return 'Nem sikerült az összes csomag felvétele.';
 };
 
+const toAssignmentKey = (assignmentId: number | null | undefined, shipmentRouteId: number | null | undefined): string => {
+    return `${assignmentId ?? 'missing-id'}:${shipmentRouteId ?? 'missing-route'}`;
+};
+
 export const CourierPickupPage = () => {
     const {assignments, isLoading, errorMessage, retry} = useCourierPickups();
-    const waitingShipmentsCount = assignments.filter((assignment) => !assignment.pickedUpForDelivery && !assignment.failed).length;
+    const {allocations, retry: retryAllocations} = useCourierAllocations();
+    const deliveryAssignmentKeys = useMemo(
+        () =>
+            new Set(
+                allocations
+                    .filter((allocation) => allocation.assignmentType === 'Delivery')
+                    .map((allocation) => toAssignmentKey(allocation.assignmentId, allocation.shipmentRouteId)),
+            ),
+        [allocations],
+    );
+    const waitingShipmentsCount = assignments.filter((assignment) => {
+        if (assignment.pickedUpForDelivery || assignment.failed) {
+            return false;
+        }
+
+        return deliveryAssignmentKeys.has(toAssignmentKey(assignment.id, assignment.shipmentRouteId));
+    }).length;
+    const pickupAssignmentsCount = allocations.filter((allocation) => allocation.assignmentType === 'Pickup').length;
+    const deliveryAssignmentsCount = allocations.filter((allocation) => allocation.assignmentType === 'Delivery').length;
+
     const pickupAllMutation = useMutation({
-        mutationFn: pickUpAllShipmentsForCurrentDay,
+        mutationFn: pickUpAllDeliveryShipmentsForCurrentDay,
         onSuccess: () => {
             void retry();
+            void retryAllocations();
         },
     });
     const pickupAllErrorMessage = pickupAllMutation.isError ? toPickupAllErrorMessage(pickupAllMutation.error) : null;
@@ -43,13 +71,21 @@ export const CourierPickupPage = () => {
                             <p className="mt-3 font-body text-on-surface-variant">
                                 {isLoading ? 'Mai lista betöltése folyamatban...' : `${waitingShipmentsCount} csomag vár átvételre a depóban`}
                             </p>
+                            <div className="mt-4 flex flex-wrap items-center gap-2">
+                                <span className="inline-flex rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-on-primary">
+                                    Pickup: {pickupAssignmentsCount}
+                                </span>
+                                <span className="inline-flex rounded-full bg-tertiary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-on-tertiary">
+                                    Delivery: {deliveryAssignmentsCount}
+                                </span>
+                            </div>
                         </div>
 
                         <div
                             className="flex flex-col gap-3 rounded-full bg-surface-container-lowest px-4 py-3 shadow-[0_24px_42px_rgba(11,28,48,0.05)] sm:flex-row sm:items-center sm:justify-between sm:px-5">
                             <div className="px-2">
                                 <p className="mt-1 font-body text-sm text-on-surface">
-                                    {isLoading ? 'Betoltes...' : `${waitingShipmentsCount} csomag észlelve`}
+                                    {isLoading ? 'Betoltes...' : `${waitingShipmentsCount} csomag vár átvételre`}
                                 </p>
                             </div>
                             <button

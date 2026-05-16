@@ -14,16 +14,34 @@ type ManifestDataTableProps = {
 
 const columns: DataTableColumn<ManifestShipment>[] = [
   {
+    id: 'assignmentType',
+    header: 'Típus',
+    mobileLabel: 'Típus',
+    cell: (shipment) => (
+      <span
+        className={
+          shipment.assignmentType === 'Pickup'
+            ? 'inline-flex rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-on-primary'
+            : shipment.assignmentType === 'Delivery'
+              ? 'inline-flex rounded-full bg-tertiary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-on-tertiary'
+              : 'inline-flex rounded-full bg-surface px-3 py-1 text-xs font-semibold uppercase tracking-wide text-on-surface'
+        }
+      >
+        {shipment.assignmentType}
+      </span>
+    ),
+  },
+  {
     id: 'parcelNumber',
     header: 'Csomagszám',
     mobileLabel: 'Csomagszám',
     cell: (shipment) => shipment.parcelNumber,
   },
   {
-    id: 'recipient',
-    header: 'Címzett',
-    mobileLabel: 'Címzett',
-    cell: (shipment) => shipment.recipient,
+    id: 'contact',
+    header: 'Kontakt',
+    mobileLabel: 'Kontakt',
+    cell: (shipment) => shipment.contact,
   },
   {
     id: 'packageSize',
@@ -36,18 +54,6 @@ const columns: DataTableColumn<ManifestShipment>[] = [
     header: 'Státusz',
     mobileLabel: 'Státusz',
     cell: (shipment) => shipment.status,
-  },
-  {
-    id: 'action',
-    header: 'Művelet',
-    cell: () => (
-      <button
-        type="button"
-        className="inline-flex items-center rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-on-primary transition-all duration-200 hover:bg-[linear-gradient(95deg,#000000_0%,#0c9488_100%)]"
-      >
-        Megnyitás
-      </button>
-    ),
   },
 ];
 
@@ -118,14 +124,6 @@ export const ManifestDataTable = ({ assignments }: ManifestDataTableProps) => {
       }
       mobileCardEyebrow="Küldemény"
       recordCountLabel={(visible, total) => `Látható küldemények: ${visible} / ${total}`}
-      renderMobileActions={() => (
-        <button
-          type="button"
-          className="inline-flex items-center rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-on-primary"
-        >
-          Megnyitás
-        </button>
-      )}
     />
   );
 };

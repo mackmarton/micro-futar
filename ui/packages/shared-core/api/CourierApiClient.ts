@@ -420,12 +420,40 @@ export class Api<
      * No description
      *
      * @tags shipment-route-courier-controller
-     * @name PickUpAllShipmentsForCurrentDay
-     * @request POST:/api/courier/shipment-route-couriers/pickup-all-for-today
+     * @name PickUpParcel
+     * @request POST:/api/courier/shipment-route-couriers/pickup/{id}
      */
-    pickUpAllShipmentsForCurrentDay: (params: RequestParams = {}) =>
+    pickUpParcel: (id: number, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/api/courier/shipment-route-couriers/pickup-all-for-today`,
+        path: `/api/courier/shipment-route-couriers/pickup/${id}`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags shipment-route-courier-controller
+     * @name PickUpAllDeliveryShipmentsForCurrentDay
+     * @request POST:/api/courier/shipment-route-couriers/pickup-all-deliveries-for-today
+     */
+    pickUpAllDeliveryShipmentsForCurrentDay: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/courier/shipment-route-couriers/pickup-all-deliveries-for-today`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags shipment-route-courier-controller
+     * @name FulfillAllPickupsForCurrentDay
+     * @request POST:/api/courier/shipment-route-couriers/fulfill-all-pickups-for-tocay
+     */
+    fulfillAllPickupsForCurrentDay: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/courier/shipment-route-couriers/fulfill-all-pickups-for-tocay`,
         method: "POST",
         ...params,
       }),
@@ -538,6 +566,22 @@ export class Api<
     findById3: (id: number, params: RequestParams = {}) =>
       this.request<ShipmentRouteCourierDTO, any>({
         path: `/api/courier/shipment-route-couriers/${id}`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags shipment-route-courier-controller
+     * @name FindAllPickedUpAssignmentsForCourierForCurrentDay
+     * @request GET:/api/courier/shipment-route-couriers/picked-up-assignments
+     */
+    findAllPickedUpAssignmentsForCourierForCurrentDay: (
+      params: RequestParams = {},
+    ) =>
+      this.request<ShipmentRouteCourierDTO[], any>({
+        path: `/api/courier/shipment-route-couriers/picked-up-assignments`,
         method: "GET",
         ...params,
       }),
