@@ -7,6 +7,7 @@ import org.bme.micro_futar.courier.kafka.KafkaProducerService;
 import org.bme.micro_futar.courier.mappers.ShipmentRouteCourierMapper;
 import org.bme.micro_futar.courier.repositories.ShipmentRouteCourierRepository;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
+import org.bme.micro_futar.shared.exceptions.UnauthorizedException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -42,18 +44,48 @@ public class ShipmentRouteCourierService {
     }
 
     public List<ShipmentRouteCourierDTO> findAllForCourierForCurrentDay(Authentication authentication) {
-        String courierEmail = extractUserEmail(authentication);
-        Long courierId = courierService.findIdByEmail(courierEmail);
+        Long courierId = getCourierIdByAuthentication(authentication);
         return shipmentRouteCourierRepository.findAllByCourierIdAndDateAssignedFor(courierId, LocalDate.now()).stream()
                 .map(shipmentRouteCourierMapper::toDTO)
                 .toList();
     }
 
-    public void pickUpAllShipmentsForCurrentDay(Authentication authentication) {
-        List<ShipmentRouteCourierDTO> shipmentRouteCouriers = findAllForCourierForCurrentDay(authentication);
+    public List<ShipmentRouteCourierDTO> findAllDeliveriesForCourierForCurrentDay(Authentication authentication) {
+        Long courierId = getCourierIdByAuthentication(authentication);
+        return shipmentRouteCourierRepository.findAllDeliveriesByCourierIdAndDateAssignedFor(courierId, LocalDate.now()).stream()
+                .map(shipmentRouteCourierMapper::toDTO)
+                .toList();
+    }
+
+    public List<ShipmentRouteCourierDTO> findAllPickedUpAssignmentsForCourierForCurrentDay(Authentication authentication) {
+        Long courierId = getCourierIdByAuthentication(authentication);
+        return shipmentRouteCourierRepository.findAllPickedUpParcelsByCourierIdAndDateAssignedFor(courierId, LocalDate.now()).stream()
+                .map(shipmentRouteCourierMapper::toDTO)
+                .toList();
+    }
+
+    public void pickUpAllDeliveryShipmentsForCurrentDay(Authentication authentication) {
+        List<ShipmentRouteCourierDTO> shipmentRouteCouriers = findAllDeliveriesForCourierForCurrentDay(authentication);
         for (var assignment : shipmentRouteCouriers) {
             assignment.setPickedUpForDelivery(true);
             save(assignment);
+        }
+    }
+
+    public void pickUpParcel(Long id, Authentication authentication) {
+        Long courierId = getCourierIdByAuthentication(authentication);
+        var shipmentRouteCourier = findById(id).orElseThrow();
+        if (!Objects.equals(shipmentRouteCourier.getCourierId(), courierId)) {
+            throw new UnauthorizedException();
+        }
+        shipmentRouteCourier.setPickedUpForDelivery(true);
+        save(shipmentRouteCourier);
+    }
+
+    public void fulfillAllPickupsForCurrentDay(Authentication authentication) {
+        List<ShipmentRouteCourierDTO> shipmentRouteCouriers = findAllPickedUpAssignmentsForCourierForCurrentDay(authentication);
+        for (var assignment : shipmentRouteCouriers) {
+            fulfillAssignment(assignment.getId());
         }
     }
 
@@ -91,6 +123,11 @@ public class ShipmentRouteCourierService {
         ShipmentRouteCourier shipmentRouteCourier = shipmentRouteCourierMapper.toEntity(shipmentRouteCourierDTO);
         ShipmentRouteCourier savedShipmentRouteCourier = shipmentRouteCourierRepository.save(shipmentRouteCourier);
         return shipmentRouteCourierMapper.toDTO(savedShipmentRouteCourier);
+    }
+
+    private Long getCourierIdByAuthentication(Authentication authentication) {
+        String courierEmail = extractUserEmail(authentication);
+        return courierService.findIdByEmail(courierEmail);
     }
 
     private String extractUserEmail(Authentication authentication) {
