@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.courier.services.ShipmentRouteCourierService;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
+import org.bme.micro_futar.shared.exceptions.UnauthorizedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RestController
@@ -31,9 +33,27 @@ public class ShipmentRouteCourierController {
         return ResponseEntity.ok(allForCourier);
     }
 
-    @PostMapping("/pickup-all-for-today")
-    public ResponseEntity<Void> pickUpAllShipmentsForCurrentDay(Authentication authentication) {
-        shipmentRouteCourierService.pickUpAllShipmentsForCurrentDay(authentication);
+    @GetMapping("/picked-up-assignments")
+    public ResponseEntity<List<ShipmentRouteCourierDTO>> findAllPickedUpAssignmentsForCourierForCurrentDay(Authentication authentication) {
+        List<ShipmentRouteCourierDTO> allForCourier = shipmentRouteCourierService.findAllPickedUpAssignmentsForCourierForCurrentDay(authentication);
+        return ResponseEntity.ok(allForCourier);
+    }
+
+    @PostMapping("/pickup-all-deliveries-for-today")
+    public ResponseEntity<Void> pickUpAllDeliveryShipmentsForCurrentDay(Authentication authentication) {
+        shipmentRouteCourierService.pickUpAllDeliveryShipmentsForCurrentDay(authentication);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/pickup/{id}")
+    public ResponseEntity<Void> pickUpParcel(@PathVariable Long id, Authentication authentication) {
+        try {
+            shipmentRouteCourierService.pickUpParcel(id, authentication);
+        } catch (NoSuchElementException _) {
+            return ResponseEntity.notFound().build();
+        } catch (UnauthorizedException _) {
+            return ResponseEntity.status(401).build();
+        }
         return ResponseEntity.ok().build();
     }
 
@@ -42,6 +62,12 @@ public class ShipmentRouteCourierController {
         return shipmentRouteCourierService.fulfillAssignment(id) ?
                 ResponseEntity.ok().build() :
                 ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/fulfill-all-pickups-for-tocay")
+    public ResponseEntity<Void> fulfillAllPickupsForCurrentDay(Authentication authentication) {
+        shipmentRouteCourierService.fulfillAllPickupsForCurrentDay(authentication);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/fail")
