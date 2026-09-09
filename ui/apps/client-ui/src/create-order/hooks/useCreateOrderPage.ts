@@ -579,6 +579,7 @@ export const useCreateOrderPage = () => {
       });
 
       setSubmitSuccessMessage('A rendelést sikeresen rögzítettük.');
+      window.location.hash = '#/portal/dashboard';
     } catch (error) {
       console.error('Failed to create shipment.', error);
       setSubmitErrorMessage('A rendelés mentése nem sikerült. Kérjük próbálja újra.');
