@@ -85,5 +85,5 @@ export const LocationMapPicker = ({
     markerRef.current.setLatLng([markerPosition.latitude, markerPosition.longitude]);
   }, [center.latitude, center.longitude, markerPosition.latitude, markerPosition.longitude]);
 
-  return <div ref={mapContainerRef} className="h-[360px] w-full rounded-xl" />;
+  return <div ref={mapContainerRef} className="relative z-0 h-[360px] w-full rounded-xl" />;
 };

@@ -31,7 +31,7 @@ const toErrorMessage = (error: unknown) => {
     return error.message;
   }
 
-  return 'Nem sikerult betolteni a kuldemenyeket. Probald ujra.';
+  return 'Nem sikerült betölteni a küldeményeket. Próbáld újra.';
 };
 
 export const useUserShipments = (): UseUserShipmentsResult => {
