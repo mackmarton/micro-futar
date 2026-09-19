@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { PortalLayout } from '@package/shared-ui';
 import type { PackageSizeDTO } from '@package/shared-core/api/LogisticsApiClient';
 import {
   createPackageSize,
@@ -9,6 +8,7 @@ import {
   updatePackageSize,
 } from '../api/logisticsDeposApi';
 import { logisticsNavigationItems } from '../navigation';
+import { EntityFormShell } from '../shared/EntityFormShell';
 
 type PackageSizeFormState = {
   name: string;
@@ -114,102 +114,85 @@ export const LogisticsPackageSizeFormPage = () => {
   };
 
   return (
-    <PortalLayout
+    <EntityFormShell
       title={isEditMode ? 'Csomagméret szerkesztés' : 'Csomagméret létrehozás'}
       activeHref="#/portal/package-sizes"
       navigationItems={logisticsNavigationItems}
+      eyebrow="Csomagméret form"
+      heading={isEditMode ? 'Csomagméret szerkesztés' : 'Új csomagméret létrehozás'}
+      backLinks={
+        <Link
+          to="/portal/package-sizes"
+          className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
+        >
+          Vissza a csomagméretekhez
+        </Link>
+      }
+      isLoading={isEditMode && packageSizeQuery.isLoading}
+      loadingMessage="A csomagméret adatainak betöltése folyamatban..."
+      isError={packageSizeQuery.isError}
+      errorMessage="A csomagméret adatainak betöltése sikertelen."
+      errorDetail={(packageSizeQuery.error as Error)?.message}
     >
-      <section className="rounded-3xl bg-surface-container-low p-6 md:p-8">
-        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Csomagméret form</p>
-        <h1 className="mt-2 text-2xl md:text-3xl font-headline text-on-surface">
-          {isEditMode ? 'Csomagméret szerkesztés' : 'Új csomagméret létrehozás'}
-        </h1>
-        <div className="mt-5">
-          <Link
-            to="/portal/package-sizes"
-            className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
+      <section className="mt-6 rounded-3xl bg-surface-container-low p-6 md:p-8">
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
+            <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Név</p>
+            <input
+              type="text"
+              value={formState.name}
+              onChange={(event) => handleInputChange('name', event.target.value)}
+              className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
+              placeholder="Pl.: Közepes doboz"
+            />
+          </label>
+
+          <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
+            <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Max hossz (cm)</p>
+            <input
+              type="number"
+              min="0.01"
+              step="0.01"
+              value={formState.maxLength}
+              onChange={(event) => handleInputChange('maxLength', event.target.value)}
+              className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
+              placeholder="Pl.: 50"
+            />
+          </label>
+        </div>
+
+        {validationError ? (
+          <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
+            <p className="font-body text-on-surface">{validationError}</p>
+          </div>
+        ) : null}
+
+        {saveMutation.isError ? (
+          <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
+            <p className="font-body text-on-surface">
+              {(saveMutation.error as Error)?.message ?? 'A mentés nem sikerült.'}
+            </p>
+          </div>
+        ) : null}
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={saveMutation.isPending}
+            className="inline-flex items-center rounded-lg bg-primary px-5 py-3 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Vissza a csomagméretekhez
-          </Link>
+            {saveMutation.isPending ? 'Mentés...' : isEditMode ? 'Módosítás mentése' : 'Csomagméret létrehozása'}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/portal/package-sizes')}
+            className="inline-flex items-center rounded-lg bg-surface-container-lowest px-5 py-3 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
+          >
+            Mégse
+          </button>
         </div>
       </section>
-
-      {isEditMode && packageSizeQuery.isLoading ? (
-        <section className="mt-6 rounded-2xl bg-surface-container-low p-8">
-          <p className="font-body text-on-surface">A csomagméret adatainak betöltése folyamatban...</p>
-        </section>
-      ) : null}
-
-      {packageSizeQuery.isError ? (
-        <section className="mt-6 rounded-2xl bg-surface-container-low p-8">
-          <p className="font-body text-on-surface">A csomagméret adatainak betöltése sikertelen.</p>
-          <p className="mt-1 font-body text-on-surface-variant">
-            {(packageSizeQuery.error as Error)?.message ?? 'Ismeretlen hiba'}
-          </p>
-        </section>
-      ) : null}
-
-      {(!isEditMode || (!packageSizeQuery.isLoading && !packageSizeQuery.isError)) ? (
-        <section className="mt-6 rounded-3xl bg-surface-container-low p-6 md:p-8">
-          <div className="grid gap-4 md:grid-cols-2">
-            <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Név</p>
-              <input
-                type="text"
-                value={formState.name}
-                onChange={(event) => handleInputChange('name', event.target.value)}
-                className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-                placeholder="Pl.: Közepes doboz"
-              />
-            </label>
-
-            <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Max hossz (cm)</p>
-              <input
-                type="number"
-                min="0.01"
-                step="0.01"
-                value={formState.maxLength}
-                onChange={(event) => handleInputChange('maxLength', event.target.value)}
-                className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-                placeholder="Pl.: 50"
-              />
-            </label>
-          </div>
-
-          {validationError ? (
-            <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
-              <p className="font-body text-on-surface">{validationError}</p>
-            </div>
-          ) : null}
-
-          {saveMutation.isError ? (
-            <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
-              <p className="font-body text-on-surface">
-                {(saveMutation.error as Error)?.message ?? 'A mentés nem sikerült.'}
-              </p>
-            </div>
-          ) : null}
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={saveMutation.isPending}
-              className="inline-flex items-center rounded-lg bg-primary px-5 py-3 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {saveMutation.isPending ? 'Mentés...' : isEditMode ? 'Módosítás mentése' : 'Csomagméret létrehozása'}
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/portal/package-sizes')}
-              className="inline-flex items-center rounded-lg bg-surface-container-lowest px-5 py-3 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
-            >
-              Mégse
-            </button>
-          </div>
-        </section>
-      ) : null}
-    </PortalLayout>
+    </EntityFormShell>
   );
 };

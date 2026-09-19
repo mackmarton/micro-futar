@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { DataTable, PortalLayout } from '@package/shared-ui';
+import { DataTable } from '@package/shared-ui';
 import type { DataTableColumn } from '@package/shared-ui';
 import type { LocationCountryDTO } from '@package/shared-core/api/LogisticsApiClient';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getCountriesByRegionId, getRegionById } from '../../api/logisticsDeposApi';
 import { logisticsNavigationItems } from '../../navigation';
+import { EntityListShell } from '../../shared/EntityListShell';
 
 const valueOrFallback = (value?: number | string) =>
   value === 0 || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
@@ -85,16 +86,21 @@ export const LogisticsCountriesPage = () => {
   );
 
   return (
-    <PortalLayout title="Országok" activeHref="#/portal/locations/regions" navigationItems={logisticsNavigationItems}>
-      <section className="rounded-2xl bg-surface-container-low p-6">
-        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Helyszínek</p>
-        <h1 className="mt-2 text-2xl font-headline text-on-surface">Országok</h1>
-        {regionId !== null ? (
+    <EntityListShell
+      title="Országok"
+      activeHref="#/portal/locations/regions"
+      navigationItems={logisticsNavigationItems}
+      eyebrow="Helyszínek"
+      heading="Országok"
+      contextInfo={
+        regionId !== null ? (
           <p className="mt-2 font-body text-on-surface-variant">
             Kiválasztott régió: <span className="font-semibold text-on-surface">{selectedRegionName}</span>
           </p>
-        ) : null}
-        <div className="mt-4 flex flex-wrap gap-3">
+        ) : null
+      }
+      headerActions={
+        <>
           <Link
             to="/portal/locations/regions"
             className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
@@ -109,51 +115,27 @@ export const LogisticsCountriesPage = () => {
               Új ország létrehozása
             </Link>
           ) : null}
-        </div>
-      </section>
-
-      {regionId === null ? (
-        <section className="mt-6 rounded-2xl bg-surface-container-low p-6">
-          <p className="font-body text-on-surface">Válassz régiót a régió oldalon az országok listázásához.</p>
-        </section>
-      ) : null}
-
-      {regionId !== null && countriesQuery.isLoading ? (
-        <section className="mt-6 rounded-2xl bg-surface-container-low p-6">
-          <p className="font-body text-on-surface">Országok betöltése folyamatban...</p>
-        </section>
-      ) : null}
-
-      {regionId !== null && countriesQuery.isError ? (
-        <section className="mt-6 rounded-2xl bg-surface-container-low p-6">
-          <p className="font-body text-on-surface">Nem sikerült betölteni az országokat.</p>
-          <p className="mt-1 font-body text-on-surface-variant">
-            {(countriesQuery.error as Error)?.message ?? 'Ismeretlen hiba'}
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              void countriesQuery.refetch();
-            }}
-            className="mt-3 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
-          >
-            Ujrapróbálás
-          </button>
-        </section>
-      ) : null}
-
-      {regionId !== null && !countriesQuery.isLoading && !countriesQuery.isError ? (
-        <div className="mt-6">
-          <DataTable
-            data={countriesQuery.data ?? []}
-            rowKey={(country, index) => `country-${country.id ?? country.name ?? index}`}
-            title="Ország lista"
-            columns={columns}
-            emptyMessage="A kiválasztott régióhoz nem tartozik ország."
-            mobileCardEyebrow="Ország"
-          />
-        </div>
-      ) : null}
-    </PortalLayout>
+        </>
+      }
+      readyGuard={regionId !== null}
+      emptyGuardMessage="Válassz régiót a régió oldalon az országok listázásához."
+      isLoading={countriesQuery.isLoading}
+      loadingMessage="Országok betöltése folyamatban..."
+      isError={countriesQuery.isError}
+      errorMessage="Nem sikerült betölteni az országokat."
+      errorDetail={(countriesQuery.error as Error)?.message}
+      onRetry={() => {
+        void countriesQuery.refetch();
+      }}
+    >
+      <DataTable
+        data={countriesQuery.data ?? []}
+        rowKey={(country, index) => `country-${country.id ?? country.name ?? index}`}
+        title="Ország lista"
+        columns={columns}
+        emptyMessage="A kiválasztott régióhoz nem tartozik ország."
+        mobileCardEyebrow="Ország"
+      />
+    </EntityListShell>
   );
 };
