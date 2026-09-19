@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { toErrorMessage } from '@package/shared-core';
 import type { Shipment } from '../components/ShipmentTable.tsx';
 import type { ShipmentStatsObject } from '../components/ShipmentStats.tsx';
 import { fetchShipmentsForUser } from '../api/shipmentsApi.ts';
@@ -19,21 +20,6 @@ const EMPTY_STATS: ShipmentStatsObject = {
   delivered: 0,
 };
 
-const toErrorMessage = (error: unknown) => {
-  if (typeof error === 'object' && error !== null && 'error' in error) {
-    const responseError = (error as { error?: { message?: string } }).error?.message;
-    if (responseError) {
-      return responseError;
-    }
-  }
-
-  if (error instanceof Error && error.message.trim().length > 0) {
-    return error.message;
-  }
-
-  return 'Nem sikerült betölteni a küldeményeket. Próbáld újra.';
-};
-
 export const useUserShipments = (): UseUserShipmentsResult => {
   const shipmentsQuery = useQuery({
     queryKey: queryKeys.userShipments,
@@ -51,7 +37,9 @@ export const useUserShipments = (): UseUserShipmentsResult => {
 
   const stats = useMemo<ShipmentStatsObject>(() => buildShipmentStats(shipments), [shipments]);
 
-  const errorMessage = shipmentsQuery.isError ? toErrorMessage(shipmentsQuery.error) : null;
+  const errorMessage = shipmentsQuery.isError
+    ? toErrorMessage(shipmentsQuery.error, 'Nem sikerült betölteni a küldeményeket. Próbáld újra.')
+    : null;
 
   const retry = useCallback(async () => {
     await shipmentsQuery.refetch();

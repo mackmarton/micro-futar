@@ -1,3 +1,4 @@
+import { cn } from '@package/shared-ui';
 import { HeroSection } from './components/HeroSection.tsx';
 import { LandingNavBar } from './components/LandingNavBar.tsx';
 import { ProcessSection } from './components/ProcessSection.tsx';
@@ -5,8 +6,6 @@ import { ProcessSection } from './components/ProcessSection.tsx';
 export type LandingPageProps = {
   className?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 export const LandingPage = ({ className }: LandingPageProps) => {
   return (

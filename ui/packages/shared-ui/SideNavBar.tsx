@@ -1,5 +1,6 @@
 import type {ReactNode} from 'react';
 import { useAuth } from './AuthContext';
+import { cn } from './cn';
 
 export type NavigationItem = {
     label: string;
@@ -15,8 +16,6 @@ export type SideNavBarProps = {
     brandSubtitle?: string;
     className?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 const renderIcon = (icon?: ReactNode | string) => {
     if (!icon) return null;

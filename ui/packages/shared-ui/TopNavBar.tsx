@@ -1,5 +1,6 @@
 import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { useAuth } from './AuthContext';
+import { cn } from './cn';
 
 export type TopNavLink = {
   label: string;
@@ -14,8 +15,6 @@ export type TopNavBarProps = {
   profileIcon?: ReactNode | string;
   className?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 const renderIcon = (icon: ReactNode | string) => {
   if (typeof icon === 'string') {

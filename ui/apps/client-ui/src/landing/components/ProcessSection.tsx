@@ -1,3 +1,5 @@
+import { cn } from '@package/shared-ui';
+
 type ProcessStep = {
   id: number;
   title: string;
@@ -29,8 +31,6 @@ const steps: ProcessStep[] = [
     isHighlighted: true,
   },
 ];
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 export const ProcessSection = ({ className }: ProcessSectionProps) => {
   return (

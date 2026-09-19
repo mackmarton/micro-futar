@@ -1,3 +1,5 @@
+import { cn } from '@package/shared-ui';
+
 export type OrderSummaryCardProps = {
     minPrice?: number;
     maxPrice?: number;
@@ -8,8 +10,6 @@ export type OrderSummaryCardProps = {
     className?: string;
     onSubmit?: () => void;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 export const OrderSummaryCard = ({
                                      minPrice,

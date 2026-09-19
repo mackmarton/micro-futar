@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { toErrorMessage } from '@package/shared-core';
 import { fetchCourierAllocationsForCurrentDay, type CourierAllocation } from '../api/courierAllocationsApi.ts';
 
 type UseCourierAllocationsResult = {
@@ -7,21 +8,6 @@ type UseCourierAllocationsResult = {
   isLoading: boolean;
   errorMessage: string | null;
   retry: () => Promise<void>;
-};
-
-const toErrorMessage = (error: unknown): string => {
-  if (typeof error === 'object' && error !== null && 'error' in error) {
-    const responseError = (error as { error?: { message?: string } }).error?.message;
-    if (responseError) {
-      return responseError;
-    }
-  }
-
-  if (error instanceof Error && error.message.trim().length > 0) {
-    return error.message;
-  }
-
-  return 'Nem sikerult betolteni a mai kiosztott csomagokat. Probald ujra.';
 };
 
 export const useCourierAllocations = (): UseCourierAllocationsResult => {
@@ -38,7 +24,9 @@ export const useCourierAllocations = (): UseCourierAllocationsResult => {
   return {
     allocations: allocationsQuery.data ?? [],
     isLoading: allocationsQuery.isPending,
-    errorMessage: allocationsQuery.isError ? toErrorMessage(allocationsQuery.error) : null,
+    errorMessage: allocationsQuery.isError
+      ? toErrorMessage(allocationsQuery.error, 'Nem sikerült betölteni a mai kiosztott csomagokat. Próbáld újra.')
+      : null,
     retry,
   };
 };

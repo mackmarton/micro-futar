@@ -1,11 +1,10 @@
 import { useState, type FormEvent } from 'react';
+import { cn } from '@package/shared-ui';
 
 export type HeroSectionProps = {
   className?: string;
   imageSrc?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 const DEFAULT_IMAGE_SRC =
   'https://lh3.googleusercontent.com/aida-public/AB6AXuB2YsZ2Xlw_8ME8eviYMFyG77zf6V8kYNaHqoJcduUD6-kb0p3trS2-KHvo5I7U6Un2aGlsOrNETv3hyeX1IXDRI57QLbYubJ0DbaqEz5LcQ_csKKAHa3V47cuahEfkTjH70iMoad989MBjwn_9mJbPnTiFra3rxISevfF0TRYr1rMx1ubZoIbQZgIK9Z3nKrgmEjpUpLutF-p3Otr8zyY4FMj4sM2vHIkDJm6vM1mxM2AG49q_wOBpFTn_aZfbot-Scv3tk3SWEBM';

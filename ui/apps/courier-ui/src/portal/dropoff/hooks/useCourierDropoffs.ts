@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { toErrorMessage } from '@package/shared-core';
 import type { ShipmentRouteCourierDTO } from '@package/shared-core/api/CourierApiClient';
 import {
   countPendingDropoffsForAssignments,
@@ -12,21 +13,6 @@ type UseCourierDropoffsResult = {
   isLoading: boolean;
   errorMessage: string | null;
   retry: () => Promise<void>;
-};
-
-const toErrorMessage = (error: unknown): string => {
-  if (typeof error === 'object' && error !== null && 'error' in error) {
-    const responseError = (error as { error?: { message?: string } }).error?.message;
-    if (responseError) {
-      return responseError;
-    }
-  }
-
-  if (error instanceof Error && error.message.trim().length > 0) {
-    return error.message;
-  }
-
-  return 'Nem sikerult betolteni a mai leadasi listat. Probald ujra.';
 };
 
 export const useCourierDropoffs = (): UseCourierDropoffsResult => {
@@ -66,10 +52,11 @@ export const useCourierDropoffs = (): UseCourierDropoffsResult => {
       : (dropoffCountQuery.data
           ?? assignments.filter((assignment) => !assignment.failed && assignment.pickedUpForDelivery).length);
   const isLoading = dropoffsQuery.isPending || (assignments.length > 0 && dropoffCountQuery.isPending);
+  const dropoffErrorFallback = 'Nem sikerült betölteni a mai leadási listát. Próbáld újra.';
   const errorMessage = dropoffsQuery.isError
-    ? toErrorMessage(dropoffsQuery.error)
+    ? toErrorMessage(dropoffsQuery.error, dropoffErrorFallback)
     : dropoffCountQuery.isError
-      ? toErrorMessage(dropoffCountQuery.error)
+      ? toErrorMessage(dropoffCountQuery.error, dropoffErrorFallback)
       : null;
 
   return {

@@ -4,6 +4,7 @@ import type { BottomNavItem } from './BottomNavBar';
 import { SideNavBar } from './SideNavBar';
 import type { NavigationItem } from './SideNavBar';
 import { TopNavBar } from './TopNavBar';
+import { cn } from './cn';
 
 type PortalNavigationItem = {
   label: string;
@@ -55,7 +56,6 @@ const defaultNavigationItems: PortalNavigationItem[] = [
   },
 ];
 
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 const PortalLayoutContext = createContext<PortalLayoutContextValue | null>(null);
 
 const toSideNavigationItems = (

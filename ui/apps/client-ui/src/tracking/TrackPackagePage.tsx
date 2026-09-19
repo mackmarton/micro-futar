@@ -3,13 +3,11 @@ import {TrackingDetailsSection} from './components';
 import {useTracking} from './hooks/useTracking.ts';
 import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { PortalLayout } from '@package/shared-ui';
+import { PortalLayout, cn } from '@package/shared-ui';
 
 export type TrackPackagePageProps = {
     className?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 export const TrackPackagePage = ({className}: TrackPackagePageProps) => {
     const [searchParams] = useSearchParams();

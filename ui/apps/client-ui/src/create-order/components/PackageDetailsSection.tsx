@@ -1,4 +1,4 @@
-import { FormSection } from '@package/shared-ui';
+import { FormSection, cn } from '@package/shared-ui';
 import type { PackageSizeOption } from '../api/ordersApi.ts';
 
 export type PackageSizeId = number;
@@ -20,8 +20,6 @@ export type PackageDetailsSectionProps = {
   onDescriptionChange?: (description: string) => void;
   className?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 const labelClassName = 'text-xs font-bold uppercase tracking-widest text-on-surface-variant block';
 

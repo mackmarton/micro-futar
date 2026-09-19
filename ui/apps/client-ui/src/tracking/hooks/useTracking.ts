@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toErrorMessage } from '@package/shared-core';
 import { fetchTrackingByParcelNumber } from '../api/trackingApi.ts';
 import { mapTrackingDtoToDetails, type TrackingDetailsViewModel } from '../mappers/trackingMapper.ts';
 import { queryKeys } from '../../shared/queryKeys.ts';
@@ -11,21 +12,6 @@ type UseTrackingResult = {
   details: TrackingDetailsViewModel | null;
   search: (trackingNumber: string) => Promise<void>;
   retry: () => Promise<void>;
-};
-
-const toErrorMessage = (error: unknown) => {
-  if (typeof error === 'object' && error !== null && 'error' in error) {
-    const responseError = (error as { error?: { message?: string } }).error?.message;
-    if (responseError) {
-      return responseError;
-    }
-  }
-
-  if (error instanceof Error && error.message.trim().length > 0) {
-    return error.message;
-  }
-
-  return 'Nem sikerült betölteni a követési adatokat. Próbáld újra.';
 };
 
 export const useTracking = (): UseTrackingResult => {
@@ -84,7 +70,7 @@ export const useTracking = (): UseTrackingResult => {
   const errorMessage = trackingSearchMutation.isError
     ? trackingSearchMutation.error instanceof Error && trackingSearchMutation.error.message === 'NO_TRACKING_RESULT'
       ? 'Nincs találat erre a csomagszámra. Ellenőrizd és próbáld újra.'
-      : toErrorMessage(trackingSearchMutation.error)
+      : toErrorMessage(trackingSearchMutation.error, 'Nem sikerült betölteni a követési adatokat. Próbáld újra.')
     : null;
 
   return {

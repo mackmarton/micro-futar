@@ -1,4 +1,5 @@
 import type { InputHTMLAttributes } from 'react';
+import { cn } from '../cn';
 
 export type PrecisionInputProps = {
   label: string;
@@ -6,8 +7,6 @@ export type PrecisionInputProps = {
   className?: string;
   wrapperClassName?: string;
 } & Pick<InputHTMLAttributes<HTMLInputElement>, 'placeholder' | 'type' | 'name' | 'id' | 'onChange' | 'onBlur' | 'disabled' | 'required' | 'autoComplete'>;
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 export const PrecisionInput = ({
   label,

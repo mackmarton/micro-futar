@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { DataTable } from '@package/shared-ui';
 import type { DataTableColumn } from '@package/shared-ui';
+import { toErrorMessage } from '@package/shared-core';
 import type { ShipmentRouteCourierDTO } from '@package/shared-core/api/CourierApiClient';
 import {
   fetchManifestShipmentsForAssignments,
@@ -57,21 +58,6 @@ const columns: DataTableColumn<ManifestShipment>[] = [
   },
 ];
 
-const toErrorMessage = (error: unknown): string => {
-  if (typeof error === 'object' && error !== null && 'error' in error) {
-    const responseError = (error as { error?: { message?: string } }).error?.message;
-    if (responseError) {
-      return responseError;
-    }
-  }
-
-  if (error instanceof Error && error.message.trim().length > 0) {
-    return error.message;
-  }
-
-  return 'Nem sikerult betolteni a szallitasi jegyzeket. Probald ujra.';
-};
-
 export const ManifestDataTable = ({ assignments }: ManifestDataTableProps) => {
   const queryKeySuffix = useMemo(
     () =>
@@ -92,7 +78,9 @@ export const ManifestDataTable = ({ assignments }: ManifestDataTableProps) => {
   });
 
   const shipments = manifestQuery.data ?? [];
-  const errorMessage = manifestQuery.isError ? toErrorMessage(manifestQuery.error) : null;
+  const errorMessage = manifestQuery.isError
+    ? toErrorMessage(manifestQuery.error, 'Nem sikerült betölteni a szállítási jegyzéket. Próbáld újra.')
+    : null;
 
   if (errorMessage) {
     return (
