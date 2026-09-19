@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { cn } from '../cn';
 
 export type FormSectionProps = {
   icon: string;
@@ -6,8 +7,6 @@ export type FormSectionProps = {
   children: ReactNode;
   className?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 export const FormSection = ({ icon, title, children, className }: FormSectionProps) => {
   return (

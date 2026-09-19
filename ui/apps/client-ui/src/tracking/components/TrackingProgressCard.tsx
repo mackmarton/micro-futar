@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { cn } from '@package/shared-ui';
 
 export type TrackingProgressStep = {
   label: string;
@@ -15,8 +16,6 @@ export type TrackingProgressCardProps = {
   steps?: TrackingProgressStep[];
   className?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 const renderIcon = (icon: ReactNode | string) => {
   if (typeof icon === 'string') {

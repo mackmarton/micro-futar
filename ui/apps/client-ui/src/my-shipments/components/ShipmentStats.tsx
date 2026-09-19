@@ -1,3 +1,5 @@
+import { cn } from '@package/shared-ui';
+
 type StatStatus = 'inProgress' | 'delivered';
 
 export type ShipmentStatItem = {
@@ -15,8 +17,6 @@ export type ShipmentStatsProps = {
   stats: ShipmentStatItem[] | ShipmentStatsObject;
   className?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 const STAT_META: Record<StatStatus, { label: string; borderClass: string }> = {
   inProgress: {

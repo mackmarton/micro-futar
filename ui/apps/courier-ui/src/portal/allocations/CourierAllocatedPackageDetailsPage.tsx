@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { PortalLayout } from '@package/shared-ui';
+import { toErrorMessage } from '@package/shared-core';
 import { courierNavigationItems } from '../navigation.ts';
 import {
   failShipmentRouteAssignment,
@@ -11,21 +12,6 @@ import {
 import { CourierAllocationsMap } from './components/CourierAllocationsMap.tsx';
 import { CourierAllocatedPackageDetailsSection } from './components/CourierAllocatedPackageDetailsSection.tsx';
 import { useCourierAllocations } from './hooks/useCourierAllocations.ts';
-
-const toErrorMessage = (error: unknown): string => {
-  if (typeof error === 'object' && error !== null && 'error' in error) {
-    const responseError = (error as { error?: { message?: string } }).error?.message;
-    if (responseError) {
-      return responseError;
-    }
-  }
-
-  if (error instanceof Error && error.message.trim().length > 0) {
-    return error.message;
-  }
-
-  return 'A művelet végrehajtása sikertelen volt.';
-};
 
 export const CourierAllocatedPackageDetailsPage = () => {
   const { assignmentId } = useParams<{ assignmentId: string }>();
@@ -60,13 +46,14 @@ export const CourierAllocatedPackageDetailsPage = () => {
     },
   });
 
+  const actionErrorFallback = 'A művelet végrehajtása sikertelen volt.';
   const actionErrorMessage =
     pickUpMutation.isError
-      ? toErrorMessage(pickUpMutation.error)
+      ? toErrorMessage(pickUpMutation.error, actionErrorFallback)
       : fulfillMutation.isError
-        ? toErrorMessage(fulfillMutation.error)
+        ? toErrorMessage(fulfillMutation.error, actionErrorFallback)
         : failMutation.isError
-          ? toErrorMessage(failMutation.error)
+          ? toErrorMessage(failMutation.error, actionErrorFallback)
           : null;
 
   const isActionPending = pickUpMutation.isPending || fulfillMutation.isPending || failMutation.isPending;

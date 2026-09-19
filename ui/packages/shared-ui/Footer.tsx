@@ -1,3 +1,5 @@
+import { cn } from './cn';
+
 export type FooterProps = {
   logoSrc?: string;
   logoAlt?: string;
@@ -6,8 +8,6 @@ export type FooterProps = {
   className?: string;
 };
 
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 export const Footer = ({
   logoSrc = "/micro-futar-logo.svg",

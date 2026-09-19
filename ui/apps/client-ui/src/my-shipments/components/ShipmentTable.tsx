@@ -1,3 +1,5 @@
+import { cn } from '@package/shared-ui';
+
 export type ShipmentStatus = 'inProgress' | 'delivered' | 'failed';
 
 export type Shipment = {
@@ -23,8 +25,6 @@ export type ShipmentTableProps = {
   isNextDisabled?: boolean;
   className?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 const STATUS_META: Record<
   ShipmentStatus,

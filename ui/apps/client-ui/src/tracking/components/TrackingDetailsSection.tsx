@@ -1,3 +1,4 @@
+import { cn } from '@package/shared-ui';
 import { ShippingInfoCard } from './ShippingInfoCard.tsx';
 import { TrackingProgressCard } from './TrackingProgressCard.tsx';
 import type { TrackingProgressStep } from './TrackingProgressCard.tsx';
@@ -14,8 +15,6 @@ export type TrackingDetailsSectionProps = {
   shippingSecurityNotice?: string;
   className?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 export const TrackingDetailsSection = ({
   trackingNumber = 'MF-7281-902',

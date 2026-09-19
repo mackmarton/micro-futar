@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { ManifestDataTable } from './components/ManifestDataTable';
 import { PortalLayout } from '@package/shared-ui';
+import { toErrorMessage } from '@package/shared-core';
 import { courierNavigationItems } from '../navigation.ts';
 import { useMutation } from '@tanstack/react-query';
 import { useCourierPickups } from './hooks/useCourierPickups.ts';
@@ -8,21 +9,6 @@ import {
     pickUpAllDeliveryShipmentsForCurrentDay,
 } from './api/courierPickupApi.ts';
 import { useCourierAllocations } from '../allocations/hooks/useCourierAllocations.ts';
-
-const toPickupAllErrorMessage = (error: unknown): string => {
-    if (typeof error === 'object' && error !== null && 'error' in error) {
-        const responseError = (error as { error?: { message?: string } }).error?.message;
-        if (responseError) {
-            return responseError;
-        }
-    }
-
-    if (error instanceof Error && error.message.trim().length > 0) {
-        return error.message;
-    }
-
-    return 'Nem sikerült az összes csomag felvétele.';
-};
 
 const toAssignmentKey = (assignmentId: number | null | undefined, shipmentRouteId: number | null | undefined): string => {
     return `${assignmentId ?? 'missing-id'}:${shipmentRouteId ?? 'missing-route'}`;
@@ -57,7 +43,9 @@ export const CourierPickupPage = () => {
             void retryAllocations();
         },
     });
-    const pickupAllErrorMessage = pickupAllMutation.isError ? toPickupAllErrorMessage(pickupAllMutation.error) : null;
+    const pickupAllErrorMessage = pickupAllMutation.isError
+        ? toErrorMessage(pickupAllMutation.error, 'Nem sikerült az összes csomag felvétele.')
+        : null;
 
     return (
         <PortalLayout title="Csomag felvétel" activeHref="#/portal/shipment-pickup" navigationItems={courierNavigationItems}>

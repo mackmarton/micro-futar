@@ -1,4 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { cn } from '@package/shared-ui';
 
 export type TrackingHeroProps = {
   title?: string;
@@ -10,8 +11,6 @@ export type TrackingHeroProps = {
   onSearch?: (trackingCode: string) => void;
   className?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 export const TrackingHero = ({
   title = 'Nyomonkövetés',

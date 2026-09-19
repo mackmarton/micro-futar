@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useAuth } from './AuthContext';
+import { cn } from './cn';
 
 export type BottomNavItem = {
   label: string;
@@ -13,8 +14,6 @@ export type BottomNavBarProps = {
   items?: BottomNavItem[];
   className?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 const renderIcon = (icon: ReactNode | string) => {
   if (typeof icon === 'string') {

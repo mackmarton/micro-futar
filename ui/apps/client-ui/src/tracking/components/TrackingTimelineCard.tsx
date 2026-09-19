@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { cn } from '@package/shared-ui';
 
 export type TrackingTimelineStatus = 'completed' | 'previous';
 
@@ -15,8 +16,6 @@ export type TrackingTimelineCardProps = {
   events?: TrackingTimelineEvent[];
   className?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 const renderIcon = (icon: ReactNode | string) => {
   if (typeof icon === 'string') {

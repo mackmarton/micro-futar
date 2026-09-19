@@ -1,3 +1,5 @@
+import { cn } from '@package/shared-ui';
+
 export type ShippingInfoCardProps = {
   title?: string;
   addressTitle?: string;
@@ -10,8 +12,6 @@ export type ShippingInfoCardProps = {
   securityNotice?: string;
   className?: string;
 };
-
-const cn = (...classes: Array<string | false | undefined>) => classes.filter(Boolean).join(' ');
 
 const iconBoxClassName =
   'bg-teal-50 w-10 h-10 rounded-lg flex items-center justify-center text-teal-600 shrink-0';
