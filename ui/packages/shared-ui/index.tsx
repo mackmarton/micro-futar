@@ -1,6 +1,5 @@
 export {AuthProvider, useAuth} from "./AuthContext";
 export type {User} from "./AuthContext";
-export { Navbar } from './Navbar';
 export { SideNavBar } from './SideNavBar';
 export type { NavigationItem, SideNavBarProps } from './SideNavBar';
 export { TopNavBar } from './TopNavBar';

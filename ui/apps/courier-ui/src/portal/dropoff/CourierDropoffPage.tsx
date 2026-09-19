@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { PortalLayout } from '@package/shared-ui/PortalLayout.tsx';
+import { PortalLayout } from '@package/shared-ui';
 import { courierNavigationItems } from '../navigation.ts';
 import { ManifestDataTable } from '../pickup/components/ManifestDataTable.tsx';
 import { fulfillAllPickupsForCurrentDay } from './api/courierDropoffApi.ts';

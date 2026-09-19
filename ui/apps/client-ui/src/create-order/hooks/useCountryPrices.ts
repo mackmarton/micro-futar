@@ -34,7 +34,7 @@ export const useCountryPrices = (
     countryPrices: isEnabled ? (countryPricesQuery.data ?? []) : [],
     isLoading: isEnabled ? countryPricesQuery.isPending : false,
     errorMessage: isEnabled && countryPricesQuery.isError
-      ? 'Az adott orszagparhoz tartozo arak jelenleg nem erhetoek el.'
+      ? 'Az adott országpárhoz tartozó árak jelenleg nem érhetőek el.'
       : null,
     retry,
   };

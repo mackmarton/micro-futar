@@ -34,7 +34,7 @@ export const TrackPackagePage = ({className}: TrackPackagePageProps) => {
 
                     {hasSearchStarted && isLoading && (
                         <section className="bg-surface-container-lowest rounded-xl p-6 shadow-sm text-center text-on-surface-variant">
-                            Kovetesi adatok betoltese folyamatban...
+                            Követési adatok betöltése folyamatban...
                         </section>
                     )}
 

@@ -1,13 +1,13 @@
-import {useMemo} from "react";
-import {ManifestDataTable} from './components/ManifestDataTable';
-import {PortalLayout} from "@package/shared-ui/PortalLayout.tsx";
-import {courierNavigationItems} from "../navigation.ts";
-import {useMutation} from "@tanstack/react-query";
-import {useCourierPickups} from "./hooks/useCourierPickups.ts";
+import { useMemo } from 'react';
+import { ManifestDataTable } from './components/ManifestDataTable';
+import { PortalLayout } from '@package/shared-ui';
+import { courierNavigationItems } from '../navigation.ts';
+import { useMutation } from '@tanstack/react-query';
+import { useCourierPickups } from './hooks/useCourierPickups.ts';
 import {
     pickUpAllDeliveryShipmentsForCurrentDay,
-} from "./api/courierPickupApi.ts";
-import {useCourierAllocations} from "../allocations/hooks/useCourierAllocations.ts";
+} from './api/courierPickupApi.ts';
+import { useCourierAllocations } from '../allocations/hooks/useCourierAllocations.ts';
 
 const toPickupAllErrorMessage = (error: unknown): string => {
     if (typeof error === 'object' && error !== null && 'error' in error) {

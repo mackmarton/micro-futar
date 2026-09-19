@@ -7,7 +7,7 @@ import type { PageProps } from "keycloakify/login/pages/PageProps";
 import type { KcContext } from "../KcContext";
 import type { I18n } from "../i18n";
 import icon from "../../assets/micro-futar-logo.svg";
-import { PrecisionInput } from "@package/shared-ui/forms/PrecisionInput";
+import { PrecisionInput } from "@package/shared-ui";
 
 type RegisterProps = PageProps<Extract<KcContext, { pageId: "register.ftl" }>, I18n> & {
     UserProfileFormFields: LazyOrNot<(props: UserProfileFormFieldsProps) => JSX.Element>;

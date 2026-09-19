@@ -104,21 +104,19 @@ export const PortalLayout = ({
     [activeHref, contentClassName, navigationItems, title],
   );
 
+  const [layoutState, setLayoutState] = useState<PortalLayoutState>(desiredLayoutState);
+
   useLayoutEffect(() => {
     if (parentLayout) {
       parentLayout.setLayoutState(desiredLayoutState);
+    } else {
+      setLayoutState(desiredLayoutState);
     }
   }, [desiredLayoutState, parentLayout]);
 
   if (parentLayout) {
     return <>{children}</>;
   }
-
-  const [layoutState, setLayoutState] = useState<PortalLayoutState>(desiredLayoutState);
-
-  useLayoutEffect(() => {
-    setLayoutState(desiredLayoutState);
-  }, [desiredLayoutState]);
 
   const sideNavigationItems = toSideNavigationItems(layoutState.navigationItems, layoutState.activeHref);
   const bottomNavigationItems = toBottomNavigationItems(layoutState.navigationItems, layoutState.activeHref);

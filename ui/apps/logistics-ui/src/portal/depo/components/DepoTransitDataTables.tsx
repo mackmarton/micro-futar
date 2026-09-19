@@ -20,7 +20,7 @@ const valueOrFallback = (value?: string | number | boolean) => {
         return value ? 'Igen' : 'Nem';
     }
 
-    return value ?? value === 0 ? value : 'N/A';
+    return value === 0 || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
 };
 
 const decodeTransportType = (transportType: string) => {
