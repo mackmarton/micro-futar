@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { DataTable, PortalLayout } from '@package/shared-ui';
+import { DataTable } from '@package/shared-ui';
 import type { DataTableColumn } from '@package/shared-ui';
 import type { LocationCityDTO } from '@package/shared-core/api/LogisticsApiClient';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getCitiesByCountryId, getCountryById } from '../../api/logisticsDeposApi';
 import { logisticsNavigationItems } from '../../navigation';
+import { EntityListShell } from '../../shared/EntityListShell';
 
 const valueOrFallback = (value?: number | string) =>
   value === 0 || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
@@ -80,16 +81,21 @@ export const LogisticsCitiesPage = () => {
   );
 
   return (
-    <PortalLayout title="Városok" activeHref="#/portal/locations/regions" navigationItems={logisticsNavigationItems}>
-      <section className="rounded-2xl bg-surface-container-low p-6">
-        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Helyszínek</p>
-        <h1 className="mt-2 text-2xl font-headline text-on-surface">Városok</h1>
-        {countryId !== null ? (
+    <EntityListShell
+      title="Városok"
+      activeHref="#/portal/locations/regions"
+      navigationItems={logisticsNavigationItems}
+      eyebrow="Helyszínek"
+      heading="Városok"
+      contextInfo={
+        countryId !== null ? (
           <p className="mt-2 font-body text-on-surface-variant">
             Kiválasztott ország: <span className="font-semibold text-on-surface">{selectedCountryName}</span>
           </p>
-        ) : null}
-        <div className="mt-4 flex flex-wrap gap-3">
+        ) : null
+      }
+      headerActions={
+        <>
           <Link
             to={countriesPageHref}
             className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
@@ -104,51 +110,27 @@ export const LogisticsCitiesPage = () => {
               Új város létrehozása
             </Link>
           ) : null}
-        </div>
-      </section>
-
-      {countryId === null ? (
-        <section className="mt-6 rounded-2xl bg-surface-container-low p-6">
-          <p className="font-body text-on-surface">Válassz országot az országok oldalon a városok listázásához.</p>
-        </section>
-      ) : null}
-
-      {countryId !== null && citiesQuery.isLoading ? (
-        <section className="mt-6 rounded-2xl bg-surface-container-low p-6">
-          <p className="font-body text-on-surface">Városok betöltése folyamatban...</p>
-        </section>
-      ) : null}
-
-      {countryId !== null && citiesQuery.isError ? (
-        <section className="mt-6 rounded-2xl bg-surface-container-low p-6">
-          <p className="font-body text-on-surface">Nem sikerült betölteni a városokat.</p>
-          <p className="mt-1 font-body text-on-surface-variant">
-            {(citiesQuery.error as Error)?.message ?? 'Ismeretlen hiba'}
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              void citiesQuery.refetch();
-            }}
-            className="mt-3 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
-          >
-            Ujrapróbálás
-          </button>
-        </section>
-      ) : null}
-
-      {countryId !== null && !citiesQuery.isLoading && !citiesQuery.isError ? (
-        <div className="mt-6">
-          <DataTable
-            data={citiesQuery.data ?? []}
-            rowKey={(city, index) => `city-${city.id ?? city.name ?? index}`}
-            title="Város lista"
-            columns={columns}
-            emptyMessage="A kiválasztott országhoz nem tartozik város."
-            mobileCardEyebrow="Város"
-          />
-        </div>
-      ) : null}
-    </PortalLayout>
+        </>
+      }
+      readyGuard={countryId !== null}
+      emptyGuardMessage="Válassz országot az országok oldalon a városok listázásához."
+      isLoading={citiesQuery.isLoading}
+      loadingMessage="Városok betöltése folyamatban..."
+      isError={citiesQuery.isError}
+      errorMessage="Nem sikerült betölteni a városokat."
+      errorDetail={(citiesQuery.error as Error)?.message}
+      onRetry={() => {
+        void citiesQuery.refetch();
+      }}
+    >
+      <DataTable
+        data={citiesQuery.data ?? []}
+        rowKey={(city, index) => `city-${city.id ?? city.name ?? index}`}
+        title="Város lista"
+        columns={columns}
+        emptyMessage="A kiválasztott országhoz nem tartozik város."
+        mobileCardEyebrow="Város"
+      />
+    </EntityListShell>
   );
 };

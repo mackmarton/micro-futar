@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { PortalLayout } from '@package/shared-ui';
 import type { LocationCityDTO } from '@package/shared-core/api/LogisticsApiClient';
 import {
   createCity,
@@ -11,6 +10,7 @@ import {
   updateCity,
 } from '../../api/logisticsDeposApi';
 import { logisticsNavigationItems } from '../../navigation';
+import { EntityFormShell } from '../../shared/EntityFormShell';
 
 type CityFormState = {
   name: string;
@@ -143,17 +143,14 @@ export const LogisticsCityFormPage = () => {
     typeof regionId === 'number' ? `/portal/locations/countries?regionId=${regionId}` : '/portal/locations/countries';
 
   return (
-    <PortalLayout
+    <EntityFormShell
       title={isEditMode ? 'Város szerkesztés' : 'Város létrehozás'}
       activeHref="#/portal/locations/regions"
       navigationItems={logisticsNavigationItems}
-    >
-      <section className="rounded-3xl bg-surface-container-low p-6 md:p-8">
-        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Helyszín form</p>
-        <h1 className="mt-2 text-2xl md:text-3xl font-headline text-on-surface">
-          {isEditMode ? 'Város szerkesztés' : 'Új város létrehozás'}
-        </h1>
-        <div className="mt-5 flex flex-wrap gap-3">
+      eyebrow="Helyszín form"
+      heading={isEditMode ? 'Város szerkesztés' : 'Új város létrehozás'}
+      backLinks={
+        <>
           <Link
             to={citiesPageHref}
             className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
@@ -166,90 +163,76 @@ export const LogisticsCityFormPage = () => {
           >
             Vissza az országokhoz
           </Link>
+        </>
+      }
+      isLoading={countriesQuery.isLoading || (isEditMode && cityQuery.isLoading)}
+      loadingMessage="A város form betöltése folyamatban..."
+      isError={countriesQuery.isError || cityQuery.isError}
+      errorMessage="A város form megnyitása sikertelen."
+      errorDetail={(countriesQuery.error as Error | null)?.message ?? (cityQuery.error as Error | null)?.message}
+    >
+      <section className="mt-6 rounded-3xl bg-surface-container-low p-6 md:p-8">
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
+            <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Város név</p>
+            <input
+              type="text"
+              value={formState.name}
+              onChange={(event) => handleInputChange('name', event.target.value)}
+              className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
+              placeholder="Pl.: Budapest"
+            />
+          </label>
+
+          <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
+            <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Ország</p>
+            <select
+              value={formState.countryId}
+              onChange={(event) => handleInputChange('countryId', event.target.value)}
+              className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
+            >
+              <option value="">Válassz országot</option>
+              {(countriesQuery.data ?? []).map((country) => (
+                <option key={country.id ?? country.name} value={country.id ?? ''}>
+                  {country.name ?? 'N/A'}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        {validationError ? (
+          <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
+            <p className="font-body text-on-surface">{validationError}</p>
+          </div>
+        ) : null}
+
+        {saveMutation.isError ? (
+          <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
+            <p className="font-body text-on-surface">
+              {(saveMutation.error as Error)?.message ?? 'A mentés nem sikerült.'}
+            </p>
+          </div>
+        ) : null}
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={saveMutation.isPending}
+            className="inline-flex items-center rounded-lg bg-primary px-5 py-3 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {saveMutation.isPending ? 'Mentés...' : isEditMode ? 'Módosítás mentése' : 'Város létrehozása'}
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate(citiesPageHref)}
+            className="inline-flex items-center rounded-lg bg-surface-container-lowest px-5 py-3 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
+          >
+            Mégse
+          </button>
         </div>
       </section>
-
-      {(countriesQuery.isLoading || (isEditMode && cityQuery.isLoading)) ? (
-        <section className="mt-6 rounded-2xl bg-surface-container-low p-8">
-          <p className="font-body text-on-surface">A város form betöltése folyamatban...</p>
-        </section>
-      ) : null}
-
-      {(countriesQuery.isError || cityQuery.isError) ? (
-        <section className="mt-6 rounded-2xl bg-surface-container-low p-8">
-          <p className="font-body text-on-surface">A város form megnyitása sikertelen.</p>
-          <p className="mt-1 font-body text-on-surface-variant">
-            {(countriesQuery.error as Error | null)?.message
-              ?? (cityQuery.error as Error | null)?.message
-              ?? 'Ismeretlen hiba'}
-          </p>
-        </section>
-      ) : null}
-
-      {!countriesQuery.isLoading && !countriesQuery.isError && (!isEditMode || (!cityQuery.isLoading && !cityQuery.isError)) ? (
-        <section className="mt-6 rounded-3xl bg-surface-container-low p-6 md:p-8">
-          <div className="grid gap-4 md:grid-cols-2">
-            <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Város név</p>
-              <input
-                type="text"
-                value={formState.name}
-                onChange={(event) => handleInputChange('name', event.target.value)}
-                className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-                placeholder="Pl.: Budapest"
-              />
-            </label>
-
-            <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Ország</p>
-              <select
-                value={formState.countryId}
-                onChange={(event) => handleInputChange('countryId', event.target.value)}
-                className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-              >
-                <option value="">Válassz országot</option>
-                {(countriesQuery.data ?? []).map((country) => (
-                  <option key={country.id ?? country.name} value={country.id ?? ''}>
-                    {country.name ?? 'N/A'}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          {validationError ? (
-            <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
-              <p className="font-body text-on-surface">{validationError}</p>
-            </div>
-          ) : null}
-
-          {saveMutation.isError ? (
-            <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
-              <p className="font-body text-on-surface">
-                {(saveMutation.error as Error)?.message ?? 'A mentés nem sikerült.'}
-              </p>
-            </div>
-          ) : null}
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={saveMutation.isPending}
-              className="inline-flex items-center rounded-lg bg-primary px-5 py-3 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {saveMutation.isPending ? 'Mentés...' : isEditMode ? 'Módosítás mentése' : 'Város létrehozása'}
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate(citiesPageHref)}
-              className="inline-flex items-center rounded-lg bg-surface-container-lowest px-5 py-3 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
-            >
-              Mégse
-            </button>
-          </div>
-        </section>
-      ) : null}
-    </PortalLayout>
+    </EntityFormShell>
   );
 };
