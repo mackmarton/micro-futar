@@ -329,7 +329,7 @@ export const DataTable = <T,>({
                     onClick={(event) => toggleFilterMenu(filter.id, event.currentTarget)}
                     className={`w-full rounded-lg px-3 py-2 text-left font-body text-sm transition-colors ${selectedFilters[filter.id] ? 'bg-primary text-on-primary' : 'bg-surface text-on-surface'}`}
                   >
-                    {filter.label} szuro
+                    {filter.label} szűrő
                   </button>
                 </div>
               ))}
@@ -390,7 +390,7 @@ export const DataTable = <T,>({
                           type="button"
                           onClick={(event) => toggleFilterMenu(filter.id, event.currentTarget)}
                           className={`absolute right-5 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-lg transition-colors ${selectedFilters[filter.id] ? 'bg-primary text-on-primary' : 'bg-surface text-on-surface hover:bg-surface-container'}`}
-                          aria-label={`${filter.label} szuro menu`}
+                          aria-label={`${filter.label} szűrő menü`}
                         >
                           <span className="material-symbols-outlined block text-[18px] leading-none" aria-hidden="true">
                             filter_list
@@ -433,21 +433,21 @@ export const DataTable = <T,>({
               className="fixed z-[1200] w-56 rounded-xl bg-surface p-3 shadow-sm"
               style={{ top: filterMenuPosition.top, left: filterMenuPosition.left }}
             >
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{openFilter.label} szuro</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{openFilter.label} szűrő</p>
               <input
                 type="text"
                 value={searchQueries[openFilter.id] ?? ''}
                 onChange={(event) =>
                   setSearchQueries((previous) => ({ ...previous, [openFilter.id]: event.target.value }))
                 }
-                placeholder={`Kereses ${openFilter.label.toLocaleLowerCase()} alapjan`}
+                placeholder={`Keresés ${openFilter.label.toLocaleLowerCase()} alapján`}
                 disabled={isOpenFilterBlockedByDependency}
                 className="mt-2 w-full rounded-lg bg-surface-container-lowest px-3 py-2 font-body text-on-surface placeholder:text-on-surface-variant"
               />
               <div className="mt-2 max-h-44 overflow-y-auto rounded-lg bg-surface-container-lowest p-1">
                 {isOpenFilterBlockedByDependency ? (
                   <p className="px-2 py-2 font-body text-on-surface-variant">
-                    {openFilter.dependsOnText ?? 'Elobb valaszd ki a kapcsolodo szurot.'}
+                    {openFilter.dependsOnText ?? 'Előbb válaszd ki a kapcsolódó szűrőt.'}
                   </p>
                 ) : (
                   <>
@@ -469,7 +469,7 @@ export const DataTable = <T,>({
                       </button>
                     ))}
                     {(filteredOptionsByFilter[openFilter.id] ?? []).length === 0 ? (
-                      <p className="px-2 py-2 font-body text-on-surface-variant">Nincs talalat</p>
+                      <p className="px-2 py-2 font-body text-on-surface-variant">Nincs találat</p>
                     ) : null}
                   </>
                 )}

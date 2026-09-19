@@ -15,7 +15,7 @@ const valueOrFallback = (value?: string | number | boolean) => {
         return value ? 'Igen' : 'Nem';
     }
 
-    return value ?? value === 0 ? value : 'N/A';
+    return value === 0 || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
 };
 
 const isValidCoordinate = (value?: number): value is number =>
@@ -211,7 +211,7 @@ export const LogisticsDepoDetailsPage = () => {
                         <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Térkép</p>
                         {mapEmbedUrl ? null : (
                             <div className="rounded-xl bg-surface-container-lowest p-4">
-                                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Terkep</p>
+                                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Térkép</p>
                                 <p className="mt-1 font-body text-on-surface-variant">Nincs elegendő koordináta a
                                     megjelenítéshez.</p>
                             </div>

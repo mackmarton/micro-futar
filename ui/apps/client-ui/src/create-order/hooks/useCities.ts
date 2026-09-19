@@ -30,7 +30,7 @@ export const useCities = (countryId: string): UseCitiesResult => {
   return {
     cityOptions: isEnabled ? (citiesQuery.data ?? []) : [],
     isLoading: isEnabled ? citiesQuery.isPending : false,
-    errorMessage: isEnabled && citiesQuery.isError ? 'A varosok listaja jelenleg nem erheto el.' : null,
+    errorMessage: isEnabled && citiesQuery.isError ? 'A városok listája jelenleg nem érhető el.' : null,
     retry,
   };
 };

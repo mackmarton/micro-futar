@@ -25,7 +25,7 @@ export const usePackageSizes = (): UsePackageSizesResult => {
   return {
     packageSizeOptions: packageSizesQuery.data ?? [],
     isLoading: packageSizesQuery.isPending,
-    errorMessage: packageSizesQuery.isError ? 'A csomagmeretek listaja jelenleg nem erheto el.' : null,
+    errorMessage: packageSizesQuery.isError ? 'A csomagméretek listája jelenleg nem érhető el.' : null,
     retry,
   };
 };
