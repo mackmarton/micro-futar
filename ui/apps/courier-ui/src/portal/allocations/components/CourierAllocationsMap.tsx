@@ -31,6 +31,7 @@ export const CourierAllocationsMap = ({ allocations }: CourierAllocationsMapProp
   const mapRef = useRef<L.Map | null>(null);
   const markerLayerRef = useRef<L.LayerGroup | null>(null);
   const [currentPosition, setCurrentPosition] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [locationErrorMessage, setLocationErrorMessage] = useState<string | null>(null);
 
   const points = useMemo(
     () =>
@@ -80,9 +81,14 @@ export const CourierAllocationsMap = ({ allocations }: CourierAllocationsMapProp
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         });
+        setLocationErrorMessage(null);
       },
-      () => {
-        // No-op: user may deny location permission.
+      (positionError) => {
+        setLocationErrorMessage(
+          positionError.code === positionError.PERMISSION_DENIED
+            ? 'A helymeghatározás nincs engedélyezve, a jelenlegi pozíció nem jelenik meg a térképen.'
+            : 'A jelenlegi pozíció jelenleg nem érhető el.',
+        );
       },
       {
         enableHighAccuracy: true,
@@ -144,6 +150,7 @@ export const CourierAllocationsMap = ({ allocations }: CourierAllocationsMapProp
   return (
     <section className="rounded-3xl border border-outline-variant bg-surface-container-lowest p-4 shadow-sm md:p-5">
       <h2 className="text-xl font-headline font-bold text-on-surface">Térkép nézet</h2>
+      {locationErrorMessage ? <p className="mt-1 text-sm text-red-600">{locationErrorMessage}</p> : null}
       <div ref={mapContainerRef} className="relative z-0 mt-4 h-[460px] w-full rounded-2xl" />
     </section>
   );
