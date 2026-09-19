@@ -1,8 +1,8 @@
 import { Suspense, lazy } from 'react';
-import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
-import { useAuth } from '@package/shared-ui';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { PortalShell, RequireAccess, useAuth } from '@package/shared-ui';
 import { hasLogisticsPortalAccess } from './auth/portalAccess';
-import { LogisticsPortalShell } from './portal/LogisticsPortalShell';
+import { logisticsNavigationItems } from './portal/navigation';
 
 const LogisticsLandingPage = lazy(() =>
   import('./landing/LogisticsLandingPage').then((module) => ({ default: module.LogisticsLandingPage })),
@@ -56,17 +56,6 @@ const LogisticsVehicleFormPage = lazy(() =>
   import('./portal/vehicle/LogisticsVehicleFormPage').then((module) => ({ default: module.LogisticsVehicleFormPage })),
 );
 
-const RequireLogisticsAccess = () => {
-  const { user } = useAuth();
-  const isAuthorized = hasLogisticsPortalAccess(user);
-
-  if (!isAuthorized) {
-    return <Navigate to="/" replace />;
-  }
-
-  return <Outlet />;
-};
-
 function App() {
   const { isLoading } = useAuth();
 
@@ -84,8 +73,8 @@ function App() {
           </Suspense>
         )}
       />
-      <Route path="/portal" element={<RequireLogisticsAccess />}>
-        <Route element={<LogisticsPortalShell />}>
+      <Route path="/portal" element={<RequireAccess hasAccess={hasLogisticsPortalAccess} />}>
+        <Route element={<PortalShell title="Logisztika" navigationItems={logisticsNavigationItems} />}>
           <Route path="depos" element={<LogisticsDeposPage />} />
           <Route path="depos/new" element={<LogisticsDepoFormPage />} />
           <Route path="depos/:depoId/edit" element={<LogisticsDepoFormPage />} />

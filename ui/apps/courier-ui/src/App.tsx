@@ -1,8 +1,8 @@
 import { Suspense, lazy } from 'react';
-import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
-import { useAuth } from '@package/shared-ui';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { PortalShell, RequireAccess, useAuth } from '@package/shared-ui';
 import { hasCourierPortalAccess } from './auth/portalAccess';
-import { CourierPortalShell } from './portal/CourierPortalShell';
+import { courierNavigationItems } from './portal/navigation';
 
 const CourierLandingPage = lazy(() =>
   import('./landing/CourierLandingPage').then((module) => ({ default: module.CourierLandingPage })),
@@ -24,17 +24,6 @@ const CourierAllocatedPackageDetailsPage = lazy(() =>
   })),
 );
 
-const RequireCourierAccess = () => {
-  const { user } = useAuth();
-  const isAuthorized = hasCourierPortalAccess(user);
-
-  if (!isAuthorized) {
-    return <Navigate to="/" replace />;
-  }
-
-  return <Outlet />;
-};
-
 function App() {
   const { isLoading } = useAuth();
 
@@ -52,8 +41,8 @@ function App() {
           </Suspense>
         }
       />
-      <Route path="/portal" element={<RequireCourierAccess />}>
-        <Route element={<CourierPortalShell />}>
+      <Route path="/portal" element={<RequireAccess hasAccess={hasCourierPortalAccess} />}>
+        <Route element={<PortalShell title="Futár" navigationItems={courierNavigationItems} />}>
           <Route path="allocated-packages" element={<CourierAllocatedPackagesPage />} />
           <Route path="allocated-packages/:assignmentId" element={<CourierAllocatedPackageDetailsPage />} />
           <Route path="shipment-pickup" element={<CourierDashboardPage />} />
