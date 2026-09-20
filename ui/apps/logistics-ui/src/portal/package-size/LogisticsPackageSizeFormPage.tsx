@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { FormSection, PrecisionInput } from '@package/shared-ui';
 import type { PackageSizeDTO } from '@package/shared-core/api/LogisticsApiClient';
 import {
   createPackageSize,
@@ -134,31 +135,24 @@ export const LogisticsPackageSizeFormPage = () => {
       errorMessage="A csomagméret adatainak betöltése sikertelen."
       errorDetail={(packageSizeQuery.error as Error)?.message}
     >
-      <section className="mt-6 rounded-3xl bg-surface-container-low p-6 md:p-8">
+      <FormSection icon="deployed_code" title="Csomagméret adatai" className="mt-6">
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
-            <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Név</p>
-            <input
-              type="text"
-              value={formState.name}
-              onChange={(event) => handleInputChange('name', event.target.value)}
-              className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-              placeholder="Pl.: Közepes doboz"
-            />
-          </label>
+          <PrecisionInput
+            label="Név"
+            value={formState.name}
+            onChange={(event) => handleInputChange('name', event.target.value)}
+            placeholder="Pl.: Közepes doboz"
+            required
+          />
 
-          <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
-            <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Max hossz (cm)</p>
-            <input
-              type="number"
-              min="0.01"
-              step="0.01"
-              value={formState.maxLength}
-              onChange={(event) => handleInputChange('maxLength', event.target.value)}
-              className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-              placeholder="Pl.: 50"
-            />
-          </label>
+          <PrecisionInput
+            label="Max hossz (cm)"
+            type="number"
+            value={formState.maxLength}
+            onChange={(event) => handleInputChange('maxLength', event.target.value)}
+            placeholder="Pl.: 50"
+            required
+          />
         </div>
 
         {validationError ? (
@@ -192,7 +186,7 @@ export const LogisticsPackageSizeFormPage = () => {
             Mégse
           </button>
         </div>
-      </section>
+      </FormSection>
     </EntityFormShell>
   );
 };
