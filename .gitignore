@@ -64,3 +64,4 @@ application-local.yml
 ui/design/
 
 graphify-out/
+.claude/
