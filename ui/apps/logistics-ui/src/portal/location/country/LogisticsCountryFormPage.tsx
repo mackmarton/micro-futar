@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { FormSection, PrecisionInput } from '@package/shared-ui';
 import type { LocationCountryDTO } from '@package/shared-core/api/LogisticsApiClient';
 import {
   createCountry,
@@ -152,25 +153,25 @@ export const LogisticsCountryFormPage = () => {
       errorMessage="Az ország form megnyitása sikertelen."
       errorDetail={(regionsQuery.error as Error | null)?.message ?? (countryQuery.error as Error | null)?.message}
     >
-      <section className="mt-6 rounded-3xl bg-surface-container-low p-6 md:p-8">
+      <FormSection icon="location_city" title="Ország adatai" className="mt-6">
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
-            <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Ország név</p>
-            <input
-              type="text"
-              value={formState.name}
-              onChange={(event) => handleInputChange('name', event.target.value)}
-              className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-              placeholder="Pl.: Magyarország"
-            />
-          </label>
+          <PrecisionInput
+            label="Ország név"
+            value={formState.name}
+            onChange={(event) => handleInputChange('name', event.target.value)}
+            placeholder="Pl.: Magyarország"
+            required
+          />
 
-          <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
-            <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Régió</p>
+          <label className="block">
+            <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3 block">
+              Régió
+              <span className="ml-1 text-red-600" aria-hidden="true">*</span>
+            </span>
             <select
               value={formState.regionId}
               onChange={(event) => handleInputChange('regionId', event.target.value)}
-              className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
+              className="w-full bg-surface-container-lowest border-none rounded-lg p-4 focus:ring-0 border-b-2 border-transparent focus:border-surface-tint transition-all"
             >
               <option value="">Válassz régiót</option>
               {(regionsQuery.data ?? []).map((region) => (
@@ -213,7 +214,7 @@ export const LogisticsCountryFormPage = () => {
             Mégse
           </button>
         </div>
-      </section>
+      </FormSection>
     </EntityFormShell>
   );
 };

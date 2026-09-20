@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { FormSection, PrecisionInput } from '@package/shared-ui';
 import type { LocationRegionDTO } from '@package/shared-core/api/LogisticsApiClient';
 import { createRegion, getRegionById, updateRegion } from '../../api/logisticsDeposApi';
 import { logisticsNavigationItems } from '../../navigation';
@@ -117,17 +118,14 @@ export const LogisticsRegionFormPage = () => {
       errorMessage="A régió adatainak betöltése sikertelen."
       errorDetail={(regionQuery.error as Error)?.message}
     >
-      <section className="mt-6 rounded-3xl bg-surface-container-low p-6 md:p-8">
-        <label className="block rounded-2xl bg-surface-container-lowest p-4">
-          <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Régió név</p>
-          <input
-            type="text"
-            value={formState.name}
-            onChange={(event) => handleInputChange(event.target.value)}
-            className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-            placeholder="Pl.: Nyugat-Európa"
-          />
-        </label>
+      <FormSection icon="location_city" title="Régió adatai" className="mt-6">
+        <PrecisionInput
+          label="Régió név"
+          value={formState.name}
+          onChange={(event) => handleInputChange(event.target.value)}
+          placeholder="Pl.: Nyugat-Európa"
+          required
+        />
 
         {validationError ? (
           <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
@@ -160,7 +158,7 @@ export const LogisticsRegionFormPage = () => {
             Mégse
           </button>
         </div>
-      </section>
+      </FormSection>
     </EntityFormShell>
   );
 };

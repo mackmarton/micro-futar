@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { FormSection, PrecisionInput } from '@package/shared-ui';
 import type { VehicleDTO } from '@package/shared-core/api/LogisticsApiClient';
 import { createVehicle, getVehicleById, updateVehicle } from '../api/logisticsDeposApi';
 import { logisticsNavigationItems } from '../navigation';
@@ -130,31 +131,24 @@ export const LogisticsVehicleFormPage = () => {
       errorMessage="A jármű adatainak betöltése sikertelen."
       errorDetail={(vehicleQuery.error as Error)?.message}
     >
-      <section className="mt-6 rounded-3xl bg-surface-container-low p-6 md:p-8">
+      <FormSection icon="delivery_truck_speed" title="Jármű adatai" className="mt-6">
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
-            <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Rendszám</p>
-            <input
-              type="text"
-              value={formState.registrationNumber}
-              onChange={(event) => handleInputChange('registrationNumber', event.target.value)}
-              className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-              placeholder="Pl.: ABC-123"
-            />
-          </label>
+          <PrecisionInput
+            label="Rendszám"
+            value={formState.registrationNumber}
+            onChange={(event) => handleInputChange('registrationNumber', event.target.value)}
+            placeholder="Pl.: ABC-123"
+            required
+          />
 
-          <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
-            <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Max térfogat (cm³)</p>
-            <input
-              type="number"
-              min="0.01"
-              step="0.01"
-              value={formState.maximumPackableVolume}
-              onChange={(event) => handleInputChange('maximumPackableVolume', event.target.value)}
-              className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-              placeholder="Pl.: 120000"
-            />
-          </label>
+          <PrecisionInput
+            label="Max térfogat (cm³)"
+            type="number"
+            value={formState.maximumPackableVolume}
+            onChange={(event) => handleInputChange('maximumPackableVolume', event.target.value)}
+            placeholder="Pl.: 120000"
+            required
+          />
         </div>
 
         {validationError ? (
@@ -188,7 +182,7 @@ export const LogisticsVehicleFormPage = () => {
             Mégse
           </button>
         </div>
-      </section>
+      </FormSection>
     </EntityFormShell>
   );
 };
