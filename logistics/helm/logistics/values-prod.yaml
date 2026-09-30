@@ -1,30 +1,17 @@
 replicaCount: 3
 
 image:
-  repository: logistics
+  repository: ghcr.io/mackmarton/logistics
   pullPolicy: Always
   tag: "latest"
+
+imagePullSecrets:
+  - name: github-auth
 
 service:
   type: ClusterIP
   port: 8080
   targetPort: 8080
-
-ingress:
-  enabled: true
-  className: "nginx"
-  annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  hosts:
-    - host: logistics.yourdomain.com
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    - secretName: logistics-tls
-      hosts:
-        - logistics.yourdomain.com
 
 resources:
   limits:
@@ -56,8 +43,12 @@ config:
   kafka:
     bootstrapServers: kafka-prod-0:9092,kafka-prod-1:9092,kafka-prod-2:9092
   keycloak:
-    url: https://auth.yourdomain.com
+    url: https://auth.micro-futar.hu
     issuer_uri: http://localhost:8090/auth/realms/logistics
+  api:
+    openRouteService:
+      keySecretName: open-route-service-secret-prod
+      keySecretKey: KEY
 
 podSecurityContext:
   runAsNonRoot: true
