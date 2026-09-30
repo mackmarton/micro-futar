@@ -13,22 +13,6 @@ service:
   port: 8080
   targetPort: 8080
 
-ingress:
-  enabled: true
-  className: "nginx"
-  annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  hosts:
-    - host: orders.yourdomain.com
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    - secretName: orders-tls
-      hosts:
-        - orders.yourdomain.com
-
 resources:
   limits:
     cpu: 2000m
@@ -59,7 +43,7 @@ config:
   kafka:
     bootstrapServers: kafka-prod-0:9092,kafka-prod-1:9092,kafka-prod-2:9092
   keycloak:
-    url: https://auth.yourdomain.com
+    url: https://auth.micro-futar.hu
 
 podSecurityContext:
   runAsNonRoot: true

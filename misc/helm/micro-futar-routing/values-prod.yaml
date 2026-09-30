@@ -2,9 +2,9 @@ entryPoint: websecure
 
 tls:
   enabled: true
-  # Ha üres, a Traefik alapértelmezett/ACME tanúsítványát használja.
-  # cert-manager bevezetésekor itt egy Secret nevét adjuk majd meg.
-  secretName: ""
+  # A cert-manager Certificate objektumok (misc/cert-manager/certificate-*.yaml)
+  # ebbe a nevű Secretbe írják a kiadott tanúsítványt, mindkét namespace-ben.
+  secretName: micro-futar-tls
 
 routes:
   - name: client-ui
