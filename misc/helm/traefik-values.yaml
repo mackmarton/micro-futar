@@ -1,16 +1,22 @@
 providers:
   kubernetesCRD:
     enabled: true
+  # Kell a cert-manager HTTP-01 challenge-jéhez: az ACME validáció idejére
+  # cert-manager egy sima Ingress objektumot hoz létre (nem IngressRoute
+  # CRD-t), ezt csak így látja meg a Traefik.
+  kubernetesIngress:
+    enabled: true
 
 ports:
   web:
-    nodePort: 30080
     expose:
       default: true
   websecure:
-    nodePort: 30443
     expose:
       default: true
 
+# A k3s beépített ServiceLB-je LoadBalancer type mellett közvetlenül a node
+# 80/443-as portjára köt be, ez a publikus Hetzner VPS-en kell (NodePort
+# 30080/30443 egy otthoni/port-forwardolt clusterre való volt).
 service:
-  type: NodePort
+  type: LoadBalancer

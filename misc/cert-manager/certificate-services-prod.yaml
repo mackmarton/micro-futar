@@ -1,0 +1,14 @@
+# A keycloak IngressRoute a micro-futar-services-prod namespace-ben van,
+# a TLS secretnek is itt kell élnie.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: micro-futar-tls
+  namespace: micro-futar-services-prod
+spec:
+  secretName: micro-futar-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - auth.micro-futar.hu
