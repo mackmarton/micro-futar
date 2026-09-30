@@ -1,0 +1,23 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/mackmarton/client-ui
+  pullPolicy: Always
+  tag: "latest"
+
+imagePullSecrets:
+  - name: github-auth
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+autoscaling:
+  enabled: false
+
+# A dev környezet nincs publikusan kitéve, csak `kubectl port-forward`-on
+# keresztül érhető el (lásd misc/port-fw.sh). A Traefik dev port-forwardja
+# a 8070-es helyi porton fut, ezen keresztül éri el a böngésző a gateway-t.
+config:
+  viteApiBaseUrl: http://localhost:8070
