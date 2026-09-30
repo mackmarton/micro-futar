@@ -1,0 +1,18 @@
+# A client-ui, logistics-ui, courier-ui és api-gateway IngressRoute-jai ebben
+# a namespace-ben vannak (lásd misc/helm/micro-futar-routing/values-prod.yaml),
+# a TLS secretnek is itt kell élnie.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: micro-futar-tls
+  namespace: micro-futar-apps-prod
+spec:
+  secretName: micro-futar-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - micro-futar.hu
+    - admin.micro-futar.hu
+    - futar.micro-futar.hu
+    - api.micro-futar.hu
