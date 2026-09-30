@@ -1,0 +1,46 @@
+replicaCount: 1
+
+image:
+  repository: api-gateway
+  pullPolicy: Never
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 8085
+  targetPort: 8085
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+autoscaling:
+  enabled: false
+
+config:
+  serverPort: 8085
+  springProfile: local
+  keycloak:
+    url: http://localhost:8090
+  redis:
+    host: redis.micro-futar-services
+    port: 6379
+    passwordSecretName: redis-auth-secret
+    passwordSecretKey: REDIS_PASSWORD
+  cookie:
+    domain: ""
+    secure: false
+  defaultRedirectUrl: http://localhost:5173/
+  corsAllowedOrigins: http://localhost:5173,http://localhost:5174,http://localhost:5175
+  oauth:
+    clientSecretName: api-gateway-client-secret
+    clientSecretKey: CLIENT_SECRET
+  services:
+    order: http://orders.micro-futar-services:8081
+    tracking: http://tracking.micro-futar-services:8081
+    logistics: http://logistics.micro-futar-services:8081
+    courier: http://courier.micro-futar-services:8081
