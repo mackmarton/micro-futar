@@ -51,3 +51,47 @@ spec:
           commonUpdateSettings:
             updateStrategy: "newest-build"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
+    - namePattern: "api-gateway"
+      images:
+        - alias: "api-gateway"
+          imageName: "ghcr.io/mackmarton/api-gateway"
+          manifestTargets:
+            helm:
+              name: "ghcr.io/mackmarton/api-gateway"
+              tag: "image.tag"
+          commonUpdateSettings:
+            updateStrategy: "newest-build"
+            pullSecret: "pullsecret:argocd/ghcr-login-secret"
+    - namePattern: "client-ui"
+      images:
+        - alias: "client-ui"
+          imageName: "ghcr.io/mackmarton/client-ui"
+          manifestTargets:
+            helm:
+              name: "ghcr.io/mackmarton/client-ui"
+              tag: "image.tag"
+          commonUpdateSettings:
+            updateStrategy: "newest-build"
+            pullSecret: "pullsecret:argocd/ghcr-login-secret"
+    - namePattern: "logistics-ui"
+      images:
+        - alias: "logistics-ui"
+          imageName: "ghcr.io/mackmarton/logistics-ui"
+          manifestTargets:
+            helm:
+              name: "ghcr.io/mackmarton/logistics-ui"
+              tag: "image.tag"
+          commonUpdateSettings:
+            updateStrategy: "newest-build"
+            pullSecret: "pullsecret:argocd/ghcr-login-secret"
+    - namePattern: "courier-ui"
+      images:
+        - alias: "courier-ui"
+          imageName: "ghcr.io/mackmarton/courier-ui"
+          manifestTargets:
+            helm:
+              name: "ghcr.io/mackmarton/courier-ui"
+              tag: "image.tag"
+          commonUpdateSettings:
+            updateStrategy: "newest-build"
+            pullSecret: "pullsecret:argocd/ghcr-login-secret"
