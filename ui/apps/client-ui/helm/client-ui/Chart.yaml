@@ -1,0 +1,6 @@
+apiVersion: v2
+name: client-ui
+description: A Helm chart for the client-ui (sender/recipient) frontend
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

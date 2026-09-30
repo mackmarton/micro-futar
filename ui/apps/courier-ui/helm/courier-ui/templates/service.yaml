@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "courier-ui.fullname" . }}
+  labels:
+    {{- include "courier-ui.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.targetPort }}
+    protocol: TCP
+    name: http
+  selector:
+    {{- include "courier-ui.selectorLabels" . | nindent 4 }}

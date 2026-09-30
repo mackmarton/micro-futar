@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "logistics-ui.fullname" . }}-config
+  labels:
+    {{- include "logistics-ui.labels" . | nindent 4 }}
+data:
+  VITE_API_BASE_URL: {{ .Values.config.viteApiBaseUrl | quote }}
