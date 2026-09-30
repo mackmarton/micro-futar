@@ -1,17 +1,29 @@
 server:
   port: ${SERVER_PORT}
+  reactive:
+    session:
+      cookie:
+        domain: ${COOKIE_DOMAIN}
+        same-site: lax
+        secure: ${COOKIE_SECURE}
 
 spring:
   application:
     name: api-gateway
   profiles:
     active: ${SPRING_PROFILE}
+  session:
+    store-type: redis
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
   security:
     oauth2:
       client:
         provider:
           keycloak:
-            issuer-uri: http://localhost:8090/realms/micro-futar-realm
+            issuer-uri: ${KEYCLOAK_URL}/realms/micro-futar-realm
         registration:
           keycloak:
             provider: keycloak
@@ -50,3 +62,8 @@ spring:
                 - Path=/api/courier/**
               filters:
                 - RewritePath=/api/courier/(?<segment>.*), /api/$\{segment}
+
+app:
+  default-redirect-url: ${DEFAULT_REDIRECT_URL}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS}

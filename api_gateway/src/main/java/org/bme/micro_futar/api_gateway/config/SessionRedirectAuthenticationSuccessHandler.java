@@ -1,5 +1,6 @@
 package org.bme.micro_futar.api_gateway.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.WebFilterExchange;
@@ -15,7 +16,12 @@ public class SessionRedirectAuthenticationSuccessHandler
         implements ServerAuthenticationSuccessHandler, ServerLogoutSuccessHandler {
 
     public static final String REDIRECT_URL = "REDIRECT_URL";
-    private static final String DEFAULT_REDIRECT_URL = "http://localhost:5173/";
+    private final String defaultRedirectUrl;
+
+    public SessionRedirectAuthenticationSuccessHandler(
+            @Value("${app.default-redirect-url}") String defaultRedirectUrl) {
+        this.defaultRedirectUrl = defaultRedirectUrl;
+    }
 
     @Override
     public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
@@ -32,7 +38,7 @@ public class SessionRedirectAuthenticationSuccessHandler
             Object redirectUrlAttribute = session.getAttributes().remove(REDIRECT_URL);
             String redirectUrl = redirectUrlAttribute != null
                     ? redirectUrlAttribute.toString()
-                    : DEFAULT_REDIRECT_URL;
+                    : defaultRedirectUrl;
 
             webFilterExchange.getExchange().getResponse().setStatusCode(HttpStatus.FOUND);
             webFilterExchange.getExchange().getResponse().getHeaders().setLocation(URI.create(redirectUrl));
