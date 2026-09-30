@@ -1,18 +1,32 @@
 entryPoint: web
 
-apps:
-  - name: orders
-    port: 8081
+tls:
+  enabled: false
+  secretName: ""
+
+routes:
+  - name: client-ui
+    host: localhost
+    service: client-ui
+    port: 80
     namespace: micro-futar-apps
-  - name: courier
-    port: 8081
+  - name: logistics-ui
+    host: admin.localhost
+    service: logistics-ui
+    port: 80
     namespace: micro-futar-apps
-  - name: logistics
-    port: 8081
+  - name: courier-ui
+    host: futar.localhost
+    service: courier-ui
+    port: 80
     namespace: micro-futar-apps
-  - name: tracking
-    port: 8081
+  - name: api-gateway
+    host: api.localhost
+    service: api-gateway
+    port: 8080
     namespace: micro-futar-apps
   - name: keycloak
-    port: 8080
+    host: auth.localhost
+    service: keycloak
+    port: 80
     namespace: micro-futar-services

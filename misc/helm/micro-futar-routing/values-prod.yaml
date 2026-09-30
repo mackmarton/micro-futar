@@ -1,15 +1,34 @@
-entryPoint: web
+entryPoint: websecure
 
-apps:
-  - name: orders
+tls:
+  enabled: true
+  # Ha üres, a Traefik alapértelmezett/ACME tanúsítványát használja.
+  # cert-manager bevezetésekor itt egy Secret nevét adjuk majd meg.
+  secretName: ""
+
+routes:
+  - name: client-ui
+    host: micro-futar.hu
+    service: client-ui
+    port: 80
+    namespace: micro-futar-apps-prod
+  - name: logistics-ui
+    host: admin.micro-futar.hu
+    service: logistics-ui
+    port: 80
+    namespace: micro-futar-apps-prod
+  - name: courier-ui
+    host: futar.micro-futar.hu
+    service: courier-ui
+    port: 80
+    namespace: micro-futar-apps-prod
+  - name: api-gateway
+    host: api.micro-futar.hu
+    service: api-gateway
     port: 8080
     namespace: micro-futar-apps-prod
-  - name: courier
-    port: 8080
-    namespace: micro-futar-apps-prod
-  - name: logistics
-    port: 8080
-    namespace: micro-futar-apps-prod
-  - name: tracking
-    port: 8080
-    namespace: micro-futar-apps-prod
+  - name: keycloak
+    host: auth.micro-futar.hu
+    service: keycloak
+    port: 80
+    namespace: micro-futar-services-prod
