@@ -1,0 +1,62 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/mackmarton/api-gateway
+  pullPolicy: Always
+  tag: "latest"
+
+imagePullSecrets:
+  - name: github-auth
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8080"
+  prometheus.io/path: "/actuator/prometheus"
+
+config:
+  serverPort: 8080
+  springProfile: prod
+  keycloak:
+    url: https://auth.micro-futar.hu
+  redis:
+    host: redis-prod
+    port: 6379
+    passwordSecretName: redis-auth-secret
+    passwordSecretKey: REDIS_PASSWORD
+  cookie:
+    domain: "micro-futar.hu"
+    secure: true
+  defaultRedirectUrl: https://micro-futar.hu/
+  corsAllowedOrigins: https://micro-futar.hu,https://admin.micro-futar.hu,https://futar.micro-futar.hu
+  oauth:
+    clientSecretName: api-gateway-client-secret-prod
+    clientSecretKey: CLIENT_SECRET
+  services:
+    order: http://orders.micro-futar-apps-prod:8080
+    tracking: http://tracking.micro-futar-apps-prod:8080
+    logistics: http://logistics.micro-futar-apps-prod:8080
+    courier: http://courier.micro-futar-apps-prod:8080
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000

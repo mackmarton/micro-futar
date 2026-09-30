@@ -1,0 +1,45 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/mackmarton/api-gateway
+  pullPolicy: Always
+  tag: "latest"
+
+imagePullSecrets:
+  - name: github-auth
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+autoscaling:
+  enabled: false
+
+config:
+  serverPort: 8080
+  springProfile: dev
+  keycloak:
+    url: http://keycloak.micro-futar-services-dev:80/auth
+  redis:
+    host: redis.micro-futar-services-dev
+    port: 6379
+    passwordSecretName: redis-auth-secret
+    passwordSecretKey: REDIS_PASSWORD
+  # A dev környezet nincs publikusan kitéve (nincs ingress rá), csak
+  # `kubectl port-forward`-on keresztül érhető el localhostról (lásd misc/port-fw.sh).
+  # Ezért nincs TLS és nincs saját domain: a cookie a port-forwardolt hostra
+  # (localhost) áll be, üres domain mellett.
+  cookie:
+    domain: ""
+    secure: false
+  defaultRedirectUrl: http://localhost:8070/
+  corsAllowedOrigins: http://localhost:8070,http://localhost:5173,http://localhost:5174,http://localhost:5175
+  oauth:
+    clientSecretName: api-gateway-client-secret-dev
+    clientSecretKey: CLIENT_SECRET
+  services:
+    order: http://orders.micro-futar-apps-dev:8080
+    tracking: http://tracking.micro-futar-apps-dev:8080
+    logistics: http://logistics.micro-futar-apps-dev:8080
+    courier: http://courier.micro-futar-apps-dev:8080
