@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, develop ]
+    paths:
+      - 'ui/apps/courier-ui/**'
+      - 'ui/packages/**'
+      - '.github/workflows/ci-courier-ui.yml'
+  pull_request:
+    branches: [ main, master, develop ]
+    paths:
+      - 'ui/apps/courier-ui/**'
+      - 'ui/packages/**'
+      - '.github/workflows/ci-courier-ui.yml'
+
+jobs:
+  build:
+    name: Lint and build courier-ui
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ui
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: npm
+        cache-dependency-path: ui/package-lock.json
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Lint courier-ui
+      run: npm run lint --workspace=apps/courier-ui
+
+    - name: Build courier-ui
+      run: npm run build --workspace=apps/courier-ui
+
+  build-and-push-image:
+    name: Build and push courier-ui project image
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ui
+          file: ./ui/apps/courier-ui/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/courier-ui:${{ github.sha }}
