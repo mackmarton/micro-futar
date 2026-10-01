@@ -52,3 +52,17 @@ spec:
               key: {{ .Values.config.api.openRouteService.keySecretKey }}
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: {{ .Values.config.serverPort }}
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          failureThreshold: 6
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: {{ .Values.config.serverPort }}
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          failureThreshold: 3
