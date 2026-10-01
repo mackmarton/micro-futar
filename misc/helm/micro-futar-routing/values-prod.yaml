@@ -13,7 +13,7 @@ ipAllowlists:
   - name: argocd-ip-allowlist
     namespace: argocd
     sourceRange:
-      - "31.46.247.24/32"
+      - "31.46.245.226/32"
 
 routes:
   - name: client-ui
