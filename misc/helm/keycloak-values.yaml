@@ -24,4 +24,4 @@ externalDatabase:
   existingSecret: "keycloak-secrets"
   existingSecretPasswordKey: "DBPASSWORD"
 
-proxy: edge
+proxyHeaders: xforwarded
