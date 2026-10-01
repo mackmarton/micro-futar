@@ -1,0 +1,62 @@
+# helm repo add argo https://argoproj.github.io/argo-helm
+# helm repo update
+# kubectl create namespace argocd
+# helm install argocd argo/argo-cd -n argocd -f misc/helm/argocd-values.yaml
+#
+# Az argocd-server-t nem tesszük ki publikusan (nincs rá Traefik route), a
+# misc/port-fw.sh-ban lévő `kubectl port-forward svc/argocd-server 8081:443`
+# mintát követve érjük el — ezért elég a server.insecure (plain HTTP a
+# porton belül, a port-forward/SSH tunnel már úgyis titkosít).
+#
+# Dex (külső SSO), Notifications és ApplicationSet controller kikapcsolva:
+# nincs rá szükség (kézzel vesszük fel az Application objektumokat, nincs
+# Slack/webhook értesítés), és egy 16 GB-os node-on számít a pár száz MB.
+
+dex:
+  enabled: false
+
+notifications:
+  enabled: false
+
+applicationSet:
+  enabled: false
+
+configs:
+  params:
+    server.insecure: true
+
+controller:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+server:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+repoServer:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+redis:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi

@@ -1,0 +1,43 @@
+# helm repo add hashicorp https://helm.releases.hashicorp.com
+# Argo CD Application: repo https://helm.releases.hashicorp.com, chart "vault"
+#
+# Egyetlen node, integrált raft storage (nincs külön Consul/etcd), perzisztens
+# volume-mal. Telepítés után EGYSZER kell inicializálni (`vault operator init`),
+# majd minden pod-restart után unsealelni (`vault operator unseal`) — ez nincs
+# automatizálva (nincs KMS auto-unseal ezen a setupon).
+#
+# Az injector (Vault Agent sidecar-injektálás) kikapcsolva: External Secrets
+# Operatorral dolgozunk, nem a Vault Agent annotation-alapú injektálásával.
+
+injector:
+  enabled: false
+
+server:
+  standalone:
+    enabled: true
+    config: |
+      ui = true
+      listener "tcp" {
+        tls_disable = 1
+        address = "0.0.0.0:8200"
+        cluster_address = "0.0.0.0:8201"
+      }
+      storage "raft" {
+        path = "/vault/data"
+      }
+
+  dataStorage:
+    enabled: true
+    size: 2Gi
+    storageClass: "local-path"
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+ui:
+  enabled: true
