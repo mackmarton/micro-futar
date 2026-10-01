@@ -43,14 +43,17 @@ server:
       cpu: 200m
       memory: 256Mi
 
+# A repo-server a Helm chartokat (helm pull + template) futtatja memóriában —
+# egy nagyobb third-party chart (pl. Bitnami postgresql) feldolgozása közben
+# az 512Mi limit OOMKilled-et okozott, ezért 1Gi-re emeltük.
 repoServer:
   resources:
     requests:
-      cpu: 50m
-      memory: 128Mi
+      cpu: 100m
+      memory: 256Mi
     limits:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 1000m
+      memory: 1Gi
 
 redis:
   resources:
