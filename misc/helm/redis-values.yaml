@@ -5,7 +5,7 @@ global:
 image:
   repository: bitnamilegacy/redis
   registry: docker.io
-  tag: 7.4-debian-12
+  tag: 8.0.3-debian-12-r3
   digest: ""
 
 # Csak az api_gateway session-tárolójaként használjuk: nem kell HA/cluster,
