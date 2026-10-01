@@ -7,14 +7,6 @@ tls:
   # namespace-ben (apps-prod, services-prod, argocd).
   secretName: micro-futar-tls
 
-# Csak a saját IP-ről engedjük az Argo CD-t (admin login = teljes cluster
-# irányítás, ezt nem tesszük ki korlátlanul az internetnek).
-ipAllowlists:
-  - name: argocd-ip-allowlist
-    namespace: argocd
-    sourceRange:
-      - "31.46.245.226/32"
-
 routes:
   - name: client-ui
     host: micro-futar.hu
@@ -46,5 +38,3 @@ routes:
     service: argocd-server
     port: 80
     namespace: argocd
-    middlewares:
-      - argocd-ip-allowlist
