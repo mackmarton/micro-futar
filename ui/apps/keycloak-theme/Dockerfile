@@ -1,6 +1,7 @@
 # Stage 1: build the Keycloakify provider jar
 # Build context is the `ui/` directory (npm workspaces root), not the repo root.
 FROM node:22-alpine AS builder
+RUN apk add --no-cache openjdk17-jdk maven
 WORKDIR /build
 COPY . .
 RUN npm ci
