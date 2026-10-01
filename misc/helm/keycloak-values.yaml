@@ -2,11 +2,16 @@ global:
   security:
     allowInsecureImages: true
 
+# A saját image-ünk a bitnamilegacy/keycloak:26.3.3-debian-12-r0 alapján, beégetve a
+# Keycloakify-jal buildelt egyedi login/account témát (ui/apps/keycloak-theme).
+# Lásd: ui/apps/keycloak-theme/Dockerfile, .github/workflows/ci-keycloak-theme.yml
 image:
-  repository: bitnamilegacy/keycloak
-  registry: docker.io
-  tag: 26.3.3-debian-12-r0
+  repository: mackmarton/keycloak
+  registry: ghcr.io
+  tag: latest
   digest: ""
+  pullSecrets:
+    - github-auth
 
 auth:
   adminUser: admin
