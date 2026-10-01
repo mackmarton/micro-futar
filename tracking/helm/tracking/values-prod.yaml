@@ -36,12 +36,12 @@ config:
   serverPort: 8081
   springProfile: prod
   datasource:
-    url: jdbc:postgresql://postgres-prod:5432/tracking_db
+    url: jdbc:postgresql://postgres-postgresql:5432/tracking_db
     username: tracking_db
     passwordSecretName: tracking-db-secret
     passwordSecretKey: password
   kafka:
-    bootstrapServers: kafka-prod-0:9092,kafka-prod-1:9092,kafka-prod-2:9092
+    bootstrapServers: kafka:9092
   keycloak:
     url: https://auth.micro-futar.hu
 
