@@ -29,8 +29,3 @@ autoscaling:
 
 config:
   viteApiBaseUrl: https://api.micro-futar.hu
-
-podSecurityContext:
-  runAsNonRoot: true
-  runAsUser: 101
-  fsGroup: 101
