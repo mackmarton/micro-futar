@@ -3,8 +3,17 @@ entryPoint: websecure
 tls:
   enabled: true
   # A cert-manager Certificate objektumok (misc/cert-manager/certificate-*.yaml)
-  # ebbe a nevű Secretbe írják a kiadott tanúsítványt, mindkét namespace-ben.
+  # ebbe a nevű Secretbe írják a kiadott tanúsítványt, minden érintett
+  # namespace-ben (apps-prod, services-prod, argocd).
   secretName: micro-futar-tls
+
+# Csak a saját IP-ről engedjük az Argo CD-t (admin login = teljes cluster
+# irányítás, ezt nem tesszük ki korlátlanul az internetnek).
+ipAllowlists:
+  - name: argocd-ip-allowlist
+    namespace: argocd
+    sourceRange:
+      - "31.46.247.24/32"
 
 routes:
   - name: client-ui
@@ -32,3 +41,10 @@ routes:
     service: keycloak
     port: 80
     namespace: micro-futar-services-prod
+  - name: argocd
+    host: argo.micro-futar.hu
+    service: argocd-server
+    port: 80
+    namespace: argocd
+    middlewares:
+      - argocd-ip-allowlist
