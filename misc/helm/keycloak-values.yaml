@@ -25,4 +25,3 @@ externalDatabase:
   existingSecretPasswordKey: "DBPASSWORD"
 
 proxy: edge
-httpRelativePath: /auth/
