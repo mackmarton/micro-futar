@@ -38,7 +38,7 @@ config:
   datasource:
     url: jdbc:postgresql://postgres-postgresql:5432/tracking_db
     username: tracking_db
-    passwordSecretName: tracking-db-secret
+    passwordSecretName: tracking-db-secret-prod
     passwordSecretKey: password
   kafka:
     bootstrapServers: kafka:9092

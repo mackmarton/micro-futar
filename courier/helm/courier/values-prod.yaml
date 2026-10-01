@@ -38,7 +38,7 @@ config:
   datasource:
     url: jdbc:postgresql://postgres-postgresql:5432/courier_db
     username: courier_db
-    passwordSecretName: courier-db-secret
+    passwordSecretName: courier-db-secret-prod
     passwordSecretKey: password
   kafka:
     bootstrapServers: kafka:9092
