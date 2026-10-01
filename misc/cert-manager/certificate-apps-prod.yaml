@@ -13,6 +13,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - micro-futar.hu
-    - admin.micro-futar.hu
-    - futar.micro-futar.hu
+    - logistics.micro-futar.hu
+    - courier.micro-futar.hu
     - api.micro-futar.hu

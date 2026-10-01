@@ -22,12 +22,12 @@ routes:
     port: 80
     namespace: micro-futar-apps-prod
   - name: logistics-ui
-    host: admin.micro-futar.hu
+    host: logistics.micro-futar.hu
     service: logistics-ui
     port: 80
     namespace: micro-futar-apps-prod
   - name: courier-ui
-    host: futar.micro-futar.hu
+    host: courier.micro-futar.hu
     service: courier-ui
     port: 80
     namespace: micro-futar-apps-prod

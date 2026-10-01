@@ -46,7 +46,7 @@ config:
     domain: "micro-futar.hu"
     secure: true
   defaultRedirectUrl: https://micro-futar.hu/
-  corsAllowedOrigins: https://micro-futar.hu,https://admin.micro-futar.hu,https://futar.micro-futar.hu
+  corsAllowedOrigins: https://micro-futar.hu,https://logistics.micro-futar.hu,https://courier.micro-futar.hu
   oauth:
     clientSecretName: api-gateway-client-secret-prod
     clientSecretKey: CLIENT_SECRET
