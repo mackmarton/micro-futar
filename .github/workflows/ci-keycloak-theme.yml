@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, develop ]
+    paths:
+      - 'ui/apps/keycloak-theme/**'
+      - 'ui/packages/**'
+      - '.github/workflows/ci-keycloak-theme.yml'
+  pull_request:
+    branches: [ main, master, develop ]
+    paths:
+      - 'ui/apps/keycloak-theme/**'
+      - 'ui/packages/**'
+      - '.github/workflows/ci-keycloak-theme.yml'
+
+jobs:
+  build:
+    name: Lint and build keycloak-theme
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ui
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: npm
+        cache-dependency-path: ui/package-lock.json
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build keycloak theme
+      run: npm run build-keycloak-theme --workspace=apps/keycloak-theme
+
+  build-and-push-image:
+    name: Build and push keycloak project image
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ui
+          file: ./ui/apps/keycloak-theme/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/keycloak:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/keycloak:latest
