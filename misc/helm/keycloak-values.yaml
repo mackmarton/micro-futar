@@ -17,7 +17,7 @@ postgresql:
   enabled: false
 
 externalDatabase:
-  host: "postgres-db-postgresql"
+  host: "postgres-postgresql"
   port: 5432
   user: "keycloak_db"
   database: "keycloak_db"
