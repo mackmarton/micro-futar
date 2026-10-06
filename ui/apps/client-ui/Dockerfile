@@ -6,9 +6,9 @@ COPY . .
 RUN npm ci
 RUN npm run build --workspace=apps/client-ui
 
-# Stage 2: serve the static build with nginx
+# Stage 2: serve the static Next.js export (`output: 'export'`) with nginx
 FROM nginx:1.27-alpine
-COPY --from=builder /build/apps/client-ui/dist /usr/share/nginx/html
+COPY --from=builder /build/apps/client-ui/out /usr/share/nginx/html
 COPY apps/client-ui/nginx.conf /etc/nginx/conf.d/default.conf
 COPY apps/client-ui/docker-entrypoint.d/20-write-app-env.sh /docker-entrypoint.d/20-write-app-env.sh
 RUN chmod +x /docker-entrypoint.d/20-write-app-env.sh

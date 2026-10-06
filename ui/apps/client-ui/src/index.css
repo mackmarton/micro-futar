@@ -16,15 +16,11 @@
     min-width: 320px;
   }
 
-  #root {
-    @apply min-h-screen;
-  }
-
   h1,
   h2,
   h3,
   .font-headline {
-    font-family: 'Manrope', sans-serif;
+    font-family: var(--font-manrope), 'Manrope', sans-serif;
   }
 }
 

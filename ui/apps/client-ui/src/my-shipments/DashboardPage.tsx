@@ -1,3 +1,6 @@
+'use client';
+
+import Link from 'next/link';
 import { PortalLayout } from '@package/shared-ui';
 import {ShipmentStats} from './components/ShipmentStats.tsx';
 import {ShipmentTable} from "./components/ShipmentTable.tsx";
@@ -7,7 +10,7 @@ export const DashboardPage = () => {
     const {shipments, stats, isLoading, errorMessage, retry} = useUserShipments();
 
     return (
-        <PortalLayout title="Saját csomagjaim" activeHref="#/portal/dashboard" contentClassName="flex-grow">
+        <PortalLayout title="Saját csomagjaim" activeHref="/portal/dashboard" contentClassName="flex-grow">
                     <ShipmentStats stats={stats}/>
 
                     <div className="flex justify-between items-end mb-8 gap-6">
@@ -18,15 +21,15 @@ export const DashboardPage = () => {
                             </p>
                         </div>
 
-                        <a
-                            href="#/portal/create-order"
+                        <Link
+                            href="/portal/create-order"
                             className="hidden md:flex bg-primary text-on-primary px-6 py-3 rounded-lg font-bold items-center gap-2 hover:bg-on-primary-container transition-all"
                         >
               <span className="material-symbols-outlined" aria-hidden="true">
                 local_shipping
               </span>
                             Új csomag feladása
-                        </a>
+                        </Link>
                     </div>
 
                     {isLoading ? (

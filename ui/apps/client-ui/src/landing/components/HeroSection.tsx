@@ -1,4 +1,8 @@
+'use client';
+
 import { useState, type FormEvent } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { cn } from '@package/shared-ui';
 
 export type HeroSectionProps = {
@@ -9,6 +13,7 @@ export type HeroSectionProps = {
 const DEFAULT_IMAGE_SRC = '/storage.webp';
 
 export const HeroSection = ({ className, imageSrc = DEFAULT_IMAGE_SRC }: HeroSectionProps) => {
+  const router = useRouter();
   const [trackingNumber, setTrackingNumber] = useState('');
 
   const navigateToTracking = (value: string) => {
@@ -16,11 +21,11 @@ export const HeroSection = ({ className, imageSrc = DEFAULT_IMAGE_SRC }: HeroSec
 
     if (trimmedValue) {
       const query = new URLSearchParams({ trackingNumber: trimmedValue }).toString();
-      window.location.hash = `/portal/tracking?${query}`;
+      router.push(`/portal/tracking?${query}`);
       return;
     }
 
-    window.location.hash = '/portal/tracking';
+    router.push('/portal/tracking');
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -72,9 +77,13 @@ export const HeroSection = ({ className, imageSrc = DEFAULT_IMAGE_SRC }: HeroSec
         </div>
 
         <div className="relative lg:h-[600px] rounded-3xl overflow-hidden shadow-2xl">
-          <img
+          <Image
             src={imageSrc}
             alt="Modern logisztikai raktár automatizált polcrendszerrel"
+            width={512}
+            height={512}
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            priority
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent" />

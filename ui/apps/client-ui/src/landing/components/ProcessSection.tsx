@@ -1,4 +1,4 @@
-import { cn } from '@package/shared-ui';
+import { cn } from '@package/shared-ui/cn';
 
 type ProcessStep = {
   id: number;
