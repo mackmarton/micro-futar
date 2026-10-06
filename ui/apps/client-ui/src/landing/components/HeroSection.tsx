@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useState, type CSSProperties, type FormEvent } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { cn } from '@package/shared-ui';
@@ -11,6 +11,14 @@ export type HeroSectionProps = {
 };
 
 const DEFAULT_IMAGE_SRC = '/storage.webp';
+
+const HEADLINE_LINES = [
+  { text: 'Gyorsaság.' },
+  { text: 'Biztonság.' },
+  { text: 'Precizitás.', className: 'text-on-primary-container' },
+];
+const HEADLINE_FIRST_DELAY_MS = 100;
+const HEADLINE_STAGGER_MS = 140;
 
 export const HeroSection = ({ className, imageSrc = DEFAULT_IMAGE_SRC }: HeroSectionProps) => {
   const router = useRouter();
@@ -42,9 +50,16 @@ export const HeroSection = ({ className, imageSrc = DEFAULT_IMAGE_SRC }: HeroSec
           </span>
 
           <h1 className="font-headline text-6xl md:text-7xl font-extrabold text-on-surface leading-[1.1] mb-8 tracking-tight">
-            Gyorsaság. <br />
-            Biztonság. <br />
-            <span className="text-on-primary-container">Precizitás.</span>
+            {HEADLINE_LINES.map((line, index) => (
+              <span key={line.text} className="hero-line">
+                <span
+                  className={cn('hero-line-inner', line.className)}
+                  style={{ '--reveal-delay': `${HEADLINE_FIRST_DELAY_MS + index * HEADLINE_STAGGER_MS}ms` } as CSSProperties}
+                >
+                  {line.text}
+                </span>{' '}
+              </span>
+            ))}
           </h1>
 
           <form
