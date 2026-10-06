@@ -13,7 +13,7 @@ import {
 import {logisticsNavigationItems} from '../navigation';
 
 const valueOrFallback = (value?: string | number) =>
-    value === 0 || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
+    typeof value === 'number' || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
 
 const decodeQualifiedFor = (qualifiedFor?: CourierDTO['qualifiedFor']) => {
     if (qualifiedFor === 'ROAD') {
