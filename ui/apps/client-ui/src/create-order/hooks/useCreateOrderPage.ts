@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth, type MapCoordinate } from '@package/shared-ui';
 import { type AddressCardField, type AddressCardValue } from '../components/AddressCard.tsx';
 import { type PackageDetailsValue, type PackageSizeId } from '../components/PackageDetailsSection.tsx';
@@ -116,6 +117,7 @@ export const useCreateOrderPage = () => {
     recipient: '',
   });
 
+  const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
   const { countryOptions, isLoading: isCountryLoading, errorMessage: countriesErrorMessage, retry } = useCountries();
   const {
@@ -579,7 +581,7 @@ export const useCreateOrderPage = () => {
       });
 
       setSubmitSuccessMessage('A rendelést sikeresen rögzítettük.');
-      window.location.hash = '#/portal/dashboard';
+      router.push('/portal/dashboard');
     } catch (error) {
       console.error('Failed to create shipment.', error);
       setSubmitErrorMessage('A rendelés mentése nem sikerült. Kérjük próbálja újra.');

@@ -1,33 +1,48 @@
+'use client';
+
 import {TrackingHero} from './components';
 import {TrackingDetailsSection} from './components';
 import {useTracking} from './hooks/useTracking.ts';
-import { useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Suspense, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { PortalLayout, cn } from '@package/shared-ui';
 
 export type TrackPackagePageProps = {
     className?: string;
 };
 
-export const TrackPackagePage = ({className}: TrackPackagePageProps) => {
-    const [searchParams] = useSearchParams();
-    const {hasSearchStarted, isLoading, errorMessage, details, search, retry} = useTracking();
-    const initialTrackingNumber = useMemo(() => searchParams.get('trackingNumber')?.trim() ?? '', [searchParams]);
+/**
+ * Az URL-ben érkező `trackingNumber` alapján elindítja a keresést. Külön komponensben van,
+ * mert a `useSearchParams` miatt statikus exportnál ez a rész csak a böngészőben renderelhető;
+ * így a `<Suspense>` határ csak ezt fogja körbe, az oldal többi része előre renderelődik.
+ */
+const InitialTrackingSearch = ({onSearch}: { onSearch: (trackingNumber: string) => Promise<void> }) => {
+    const searchParams = useSearchParams();
+    const initialTrackingNumber = searchParams.get('trackingNumber')?.trim() ?? '';
 
     useEffect(() => {
         if (!initialTrackingNumber) {
             return;
         }
 
-        void search(initialTrackingNumber);
-    }, [initialTrackingNumber, search]);
+        void onSearch(initialTrackingNumber);
+    }, [initialTrackingNumber, onSearch]);
+
+    return null;
+};
+
+export const TrackPackagePage = ({className}: TrackPackagePageProps) => {
+    const {hasSearchStarted, isLoading, errorMessage, details, search, retry} = useTracking();
 
     const handleSearch = (trackingCode: string) => {
         void search(trackingCode);
     };
 
     return (
-        <PortalLayout title="Nyomonkövetés" activeHref="#/portal/tracking" contentClassName={cn('px-6 py-8 md:p-12', className)}>
+        <PortalLayout title="Nyomonkövetés" activeHref="/portal/tracking" contentClassName={cn('px-6 py-8 md:p-12', className)}>
+                    <Suspense fallback={null}>
+                        <InitialTrackingSearch onSearch={search}/>
+                    </Suspense>
                     <TrackingHero onSearch={handleSearch}/>
 
                     {hasSearchStarted && isLoading && (

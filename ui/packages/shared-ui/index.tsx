@@ -21,5 +21,4 @@ export { FormSection, PrecisionInput } from './forms';
 export type { FormSectionProps, PrecisionInputProps } from './forms';
 export { DataTable } from './DataTable';
 export type { DataTableColumn, DataTableFilter } from './DataTable';
-export { LocationMapPicker } from './LocationMapPicker';
 export type { LocationMapPickerProps, MapCoordinate } from './LocationMapPicker';

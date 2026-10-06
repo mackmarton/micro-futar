@@ -23,7 +23,9 @@ the API gateway and asynchronously via Kafka, and authenticate through Keycloak 
   it as `org.bme.micro_futar:shared:1.0.0`, so it must be `mvn install`ed locally before the other
   modules will build.
 - `ui/` — npm workspaces monorepo (`apps/*`, `packages/*`):
-  - `apps/client-ui` — sender/recipient app (create shipment, track, dashboard).
+  - `apps/client-ui` — sender/recipient app (create shipment, track, dashboard). Next.js App
+    Router with `output: 'export'` (static HTML prerendered for SEO, served by nginx from `out/`);
+    the other apps are Vite SPAs with `HashRouter`.
   - `apps/logistics-ui` — admin/dispatcher app (uses Leaflet for maps).
   - `apps/courier-ui` — courier PWA.
   - `apps/keycloak-theme` — Keycloakify custom theme for the Keycloak login/account UI, built
@@ -31,7 +33,8 @@ the API gateway and asynchronously via Kafka, and authenticate through Keycloak 
   - `packages/shared-core` — shared API clients (generated from each service's OpenAPI spec) and
     other framework-agnostic logic, consumed as `@package/shared-core`.
   - `packages/shared-ui` — shared React components (forms, map widgets), consumed as
-    `@package/shared-ui`.
+    `@package/shared-ui`. `LocationMapPicker` is not in the barrel (leaflet needs `window` at
+    import time); import it from `@package/shared-ui/LocationMapPicker`.
 - `misc/` — Helm values for shared infra (Kafka, Postgres, Traefik, Keycloak), the
   `micro-futar-routing` Helm chart, External Secrets Operator config, and image-updater config.
 - Each backend service also has its own `helm/` chart (with `values-local/dev/prod.yaml`) and
@@ -106,7 +109,7 @@ Per-app (run inside `ui/apps/<app>/`, or via `npm run <script> --workspace=apps/
 
 ```bash
 npm run lint
-npm run build                     # tsc -b && vite build
+npm run build                     # Vite apps: tsc -b && vite build; client-ui: next build -> out/
 ```
 
 `keycloak-theme` is built separately (`npm run build-keycloak-theme` inside

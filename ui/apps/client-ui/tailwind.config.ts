@@ -5,7 +5,6 @@ import containerQueries from '@tailwindcss/container-queries';
 const config: Config = {
   darkMode: 'class',
   content: [
-    './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
     '../../packages/shared-ui/**/*.{js,ts,jsx,tsx}',
   ],
@@ -61,9 +60,9 @@ const config: Config = {
         'on-tertiary': '#ffffff',
       },
       fontFamily: {
-        headline: ['Manrope', 'sans-serif'],
-        body: ['Inter', 'sans-serif'],
-        label: ['Inter', 'sans-serif'],
+        headline: ['var(--font-manrope)', 'Manrope', 'sans-serif'],
+        body: ['var(--font-inter)', 'Inter', 'sans-serif'],
+        label: ['var(--font-inter)', 'Inter', 'sans-serif'],
       },
       borderRadius: {
         DEFAULT: '0.25rem',

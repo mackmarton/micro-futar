@@ -37,20 +37,20 @@ type PortalLayoutContextValue = {
 const defaultNavigationItems: PortalNavigationItem[] = [
   {
     label: 'Saját csomagjaim',
-    href: '#/portal/dashboard',
+    href: '/portal/dashboard',
     sideIcon: 'package_2',
     bottomIcon: 'home',
     onlyLoggedIn: true,
   },
   {
     label: 'Csomag feladása',
-    href: '#/portal/create-order',
+    href: '/portal/create-order',
     sideIcon: 'add_circle',
     bottomIcon: 'add_box',
   },
   {
     label: 'Nyomonkövetés',
-    href: '#/portal/tracking',
+    href: '/portal/tracking',
     sideIcon: 'local_shipping',
     bottomIcon: 'local_shipping',
   },

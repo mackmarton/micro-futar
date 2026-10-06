@@ -1,8 +1,17 @@
-import { LocationMapPicker, PortalLayout } from '@package/shared-ui';
+'use client';
+
+import dynamic from 'next/dynamic';
+import { PortalLayout } from '@package/shared-ui';
 import { AddressCard } from './components/AddressCard.tsx';
 import { OrderSummaryCard } from './components/OrderSummaryCard.tsx';
 import { PackageDetailsSection } from './components/PackageDetailsSection.tsx';
 import { useCreateOrderPage } from './hooks/useCreateOrderPage.ts';
+
+// A leaflet betöltéskor hozzányúl a `window`-hoz, ezért a térkép csak a böngészőben töltődik be.
+const LocationMapPicker = dynamic(
+  () => import('@package/shared-ui/LocationMapPicker').then((module) => module.LocationMapPicker),
+  { ssr: false },
+);
 
 const formatCoordinate = (value: number) => value.toFixed(6);
 
@@ -34,7 +43,7 @@ export const CreateOrderPage = () => {
   } = useCreateOrderPage();
 
   return (
-    <PortalLayout title="Csomag feladása" activeHref="#/portal/create-order">
+    <PortalLayout title="Csomag feladása" activeHref="/portal/create-order">
       <>
         <div className="mb-12">
           <h2 className="text-4xl font-extrabold tracking-tight text-on-surface mb-2">Csomag feladása</h2>

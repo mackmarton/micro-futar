@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { LocationMapPicker, PortalLayout, type MapCoordinate } from '@package/shared-ui';
+import { PortalLayout, type MapCoordinate } from '@package/shared-ui';
+import { LocationMapPicker } from '@package/shared-ui/LocationMapPicker';
 import type { DepoDTO } from '@package/shared-core/api/LogisticsApiClient';
 import {
   createDepo,
