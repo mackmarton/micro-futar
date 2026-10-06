@@ -10,96 +10,88 @@ spec:
     - namePattern: "courier"
       images:
         - alias: "courier"
-          imageName: "ghcr.io/mackmarton/courier"
+          imageName: "ghcr.io/mackmarton/courier:latest"
           manifestTargets:
             helm:
               name: "ghcr.io/mackmarton/courier"
               tag: "image.tag"
           commonUpdateSettings:
             updateStrategy: "digest"
-            allowTags: "regexp:^latest$"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "logistics"
       images:
         - alias: "logistics"
-          imageName: "ghcr.io/mackmarton/logistics"
+          imageName: "ghcr.io/mackmarton/logistics:latest"
           manifestTargets:
             helm:
               name: "ghcr.io/mackmarton/logistics"
               tag: "image.tag"
           commonUpdateSettings:
             updateStrategy: "digest"
-            allowTags: "regexp:^latest$"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "orders"
       images:
         - alias: "orders"
-          imageName: "ghcr.io/mackmarton/orders"
+          imageName: "ghcr.io/mackmarton/orders:latest"
           manifestTargets:
             helm:
               name: "ghcr.io/mackmarton/orders"
               tag: "image.tag"
           commonUpdateSettings:
             updateStrategy: "digest"
-            allowTags: "regexp:^latest$"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "tracking"
       images:
         - alias: "tracking"
-          imageName: "ghcr.io/mackmarton/tracking"
+          imageName: "ghcr.io/mackmarton/tracking:latest"
           manifestTargets:
             helm:
               name: "ghcr.io/mackmarton/tracking"
               tag: "image.tag"
           commonUpdateSettings:
             updateStrategy: "digest"
-            allowTags: "regexp:^latest$"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "api-gateway"
       images:
         - alias: "api-gateway"
-          imageName: "ghcr.io/mackmarton/api-gateway"
+          imageName: "ghcr.io/mackmarton/api-gateway:latest"
           manifestTargets:
             helm:
               name: "ghcr.io/mackmarton/api-gateway"
               tag: "image.tag"
           commonUpdateSettings:
             updateStrategy: "digest"
-            allowTags: "regexp:^latest$"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "client-ui"
       images:
         - alias: "client-ui"
-          imageName: "ghcr.io/mackmarton/client-ui"
+          imageName: "ghcr.io/mackmarton/client-ui:latest"
           manifestTargets:
             helm:
               name: "ghcr.io/mackmarton/client-ui"
               tag: "image.tag"
           commonUpdateSettings:
             updateStrategy: "digest"
-            allowTags: "regexp:^latest$"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "logistics-ui"
       images:
         - alias: "logistics-ui"
-          imageName: "ghcr.io/mackmarton/logistics-ui"
+          imageName: "ghcr.io/mackmarton/logistics-ui:latest"
           manifestTargets:
             helm:
               name: "ghcr.io/mackmarton/logistics-ui"
               tag: "image.tag"
           commonUpdateSettings:
             updateStrategy: "digest"
-            allowTags: "regexp:^latest$"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "courier-ui"
       images:
         - alias: "courier-ui"
-          imageName: "ghcr.io/mackmarton/courier-ui"
+          imageName: "ghcr.io/mackmarton/courier-ui:latest"
           manifestTargets:
             helm:
               name: "ghcr.io/mackmarton/courier-ui"
               tag: "image.tag"
           commonUpdateSettings:
             updateStrategy: "digest"
-            allowTags: "regexp:^latest$"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
