@@ -16,7 +16,7 @@ spec:
               name: "ghcr.io/mackmarton/courier"
               tag: "image.tag"
           commonUpdateSettings:
-            updateStrategy: "newest-build"
+            updateStrategy: "digest"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "logistics"
       images:
@@ -27,7 +27,7 @@ spec:
               name: "ghcr.io/mackmarton/logistics"
               tag: "image.tag"
           commonUpdateSettings:
-            updateStrategy: "newest-build"
+            updateStrategy: "digest"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "orders"
       images:
@@ -38,7 +38,7 @@ spec:
               name: "ghcr.io/mackmarton/orders"
               tag: "image.tag"
           commonUpdateSettings:
-            updateStrategy: "newest-build"
+            updateStrategy: "digest"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "tracking"
       images:
@@ -49,7 +49,7 @@ spec:
               name: "ghcr.io/mackmarton/tracking"
               tag: "image.tag"
           commonUpdateSettings:
-            updateStrategy: "newest-build"
+            updateStrategy: "digest"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "api-gateway"
       images:
@@ -60,7 +60,7 @@ spec:
               name: "ghcr.io/mackmarton/api-gateway"
               tag: "image.tag"
           commonUpdateSettings:
-            updateStrategy: "newest-build"
+            updateStrategy: "digest"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "client-ui"
       images:
@@ -71,7 +71,7 @@ spec:
               name: "ghcr.io/mackmarton/client-ui"
               tag: "image.tag"
           commonUpdateSettings:
-            updateStrategy: "newest-build"
+            updateStrategy: "digest"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "logistics-ui"
       images:
@@ -82,7 +82,7 @@ spec:
               name: "ghcr.io/mackmarton/logistics-ui"
               tag: "image.tag"
           commonUpdateSettings:
-            updateStrategy: "newest-build"
+            updateStrategy: "digest"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "courier-ui"
       images:
@@ -93,5 +93,5 @@ spec:
               name: "ghcr.io/mackmarton/courier-ui"
               tag: "image.tag"
           commonUpdateSettings:
-            updateStrategy: "newest-build"
+            updateStrategy: "digest"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
