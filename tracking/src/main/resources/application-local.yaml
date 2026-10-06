@@ -10,6 +10,8 @@ spring:
     properties:
       mail.smtp.auth: ${MAIL_SMTP_AUTH:false}
       mail.smtp.ssl.enable: ${MAIL_SSL_ENABLED:false}
+      mail.smtp.starttls.enable: ${MAIL_STARTTLS_ENABLED:false}
+      mail.smtp.starttls.required: ${MAIL_STARTTLS_ENABLED:false}
 kafka:
   topics:
     shipment-topic: shipments
