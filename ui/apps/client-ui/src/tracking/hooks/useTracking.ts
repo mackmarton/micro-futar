@@ -42,6 +42,10 @@ export const useTracking = (): UseTrackingResult => {
     },
   });
 
+  const { mutateAsync } = trackingSearchMutation;
+
+  // A `mutateAsync` stabil, a teljes mutation-objektum renderenként új, így csak ez szerepelhet a függőségben,
+  // különben a `search` minden renderelésnél újraképződik, és a `useEffect`-ből hívott keresés végtelen ciklust indít.
   const search = useCallback(async (trackingNumber: string) => {
     const normalizedTrackingNumber = trackingNumber.trim();
 
@@ -53,11 +57,11 @@ export const useTracking = (): UseTrackingResult => {
     setLastTrackingNumber(normalizedTrackingNumber);
 
     try {
-      await trackingSearchMutation.mutateAsync(normalizedTrackingNumber);
+      await mutateAsync(normalizedTrackingNumber);
     } catch {
       // Mutation state already exposes the error message.
     }
-  }, [trackingSearchMutation]);
+  }, [mutateAsync]);
 
   const retry = useCallback(async () => {
     if (!lastTrackingNumber) {
