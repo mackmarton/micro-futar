@@ -17,6 +17,7 @@ data:
   MAIL_FROM: {{ .Values.config.mail.from | quote }}
   MAIL_SMTP_AUTH: {{ .Values.config.mail.smtpAuth | quote }}
   MAIL_SSL_ENABLED: {{ .Values.config.mail.sslEnabled | quote }}
+  MAIL_STARTTLS_ENABLED: {{ .Values.config.mail.starttlsEnabled | quote }}
   TRACKING_PAGE_URL: {{ .Values.config.notification.trackingPageUrl | quote }}
   LOCATION_COUNTRY_TOPIC: {{ .Values.kafka.topics.location_country_topic | quote }}
   LOCATION_CITY_TOPIC: {{ .Values.kafka.topics.location_city_topic | quote }}

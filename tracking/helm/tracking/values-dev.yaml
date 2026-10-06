@@ -30,11 +30,12 @@ config:
     url: http://keycloak-dev:8080
   mail:
     host: smtp.rackhost.hu
-    port: 465
+    port: 587
     username: noreply@micro-futar.hu
     from: noreply@micro-futar.hu
     smtpAuth: true
-    sslEnabled: true
+    sslEnabled: false
+    starttlsEnabled: true
     passwordSecretName: smtp-secret-dev
     passwordSecretKey: PASSWORD
   notification:

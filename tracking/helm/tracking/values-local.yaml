@@ -35,11 +35,12 @@ config:
     url: http://localhost:8090
   mail:
     host: smtp.rackhost.hu
-    port: 465
+    port: 587
     username: noreply@micro-futar.hu
     from: noreply@micro-futar.hu
     smtpAuth: true
-    sslEnabled: true
+    sslEnabled: false
+    starttlsEnabled: true
     passwordSecretName: smtp-secret
     passwordSecretKey: password
   notification:
