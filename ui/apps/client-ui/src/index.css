@@ -33,3 +33,101 @@
   background: linear-gradient(135deg, #000000 0%, #0c9488 100%);
 }
 
+
+/*
+ * Görgetésre induló belépő animációk (RevealOnScroll). A rejtett kezdőállapot csak
+ * `data-reveal="pending"` alatt él, és átmenet is csak `visible`-re váltáskor van, így az
+ * elrejtés azonnali, a megjelenés animált. Késleltetés: `--reveal-delay`.
+ */
+[data-reveal='pending'] .reveal-fade-up {
+  opacity: 0;
+  transform: translateY(1.5rem);
+}
+
+[data-reveal='pending'] .reveal-pop {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+[data-reveal='pending'] .reveal-line {
+  transform: scaleX(0);
+}
+
+[data-reveal='visible'] .reveal-fade-up {
+  transition:
+    opacity 600ms ease-out var(--reveal-delay, 0ms),
+    transform 600ms cubic-bezier(0.2, 0.8, 0.2, 1) var(--reveal-delay, 0ms);
+}
+
+[data-reveal='visible'] .reveal-pop {
+  transition:
+    opacity 300ms ease-out var(--reveal-delay, 0ms),
+    transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1) var(--reveal-delay, 0ms);
+}
+
+.reveal-line {
+  transform-origin: left center;
+}
+
+[data-reveal='visible'] .reveal-line {
+  transition: transform var(--reveal-duration, 1500ms) linear var(--reveal-delay, 0ms);
+}
+
+/* A pulzáló kör pszeudo-elem, mert a Tailwind ring/shadow is box-shadow, azt nem írhatjuk felül. */
+.reveal-pulse {
+  position: relative;
+}
+
+[data-reveal='visible'] .reveal-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  border: 2px solid #0c9488;
+  opacity: 0;
+  pointer-events: none;
+  animation: reveal-pulse 1200ms ease-out calc(var(--reveal-delay, 0ms) + 500ms) 2;
+}
+
+@keyframes reveal-pulse {
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+/*
+ * Hero főcím: soronként alulról becsúszó szöveg. Tisztán CSS, így már a statikus HTML első
+ * kirajzolásától fut, nem vár a hidratálásra. A `.hero-line` maszkként vágja le a sor alatti
+ * részt; az alsó padding/negatív margin azért kell, hogy a „g”, „y” szárát ne vágja le.
+ */
+.hero-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.hero-line-inner {
+  display: inline-block;
+  animation: hero-line-in 800ms cubic-bezier(0.2, 0.8, 0.2, 1) var(--reveal-delay, 0ms) both;
+}
+
+@keyframes hero-line-in {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-line-inner {
+    animation: none;
+  }
+}
