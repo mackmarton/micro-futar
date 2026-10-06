@@ -15,7 +15,7 @@ const valueOrFallback = (value?: string | number | boolean) => {
         return value ? 'Igen' : 'Nem';
     }
 
-    return value === 0 || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
+    return typeof value === 'number' || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
 };
 
 const isValidCoordinate = (value?: number): value is number =>

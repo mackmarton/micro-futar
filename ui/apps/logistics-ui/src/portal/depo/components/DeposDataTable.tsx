@@ -8,7 +8,7 @@ type DeposDataTableProps = {
 };
 
 const valueOrFallback = (value?: string | number) =>
-  value === 0 || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
+  typeof value === 'number' || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
 
 export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
   const columns: DataTableColumn<DepoWithLookups>[] = [

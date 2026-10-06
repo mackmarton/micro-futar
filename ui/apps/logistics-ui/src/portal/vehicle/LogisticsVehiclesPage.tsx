@@ -9,7 +9,7 @@ import { logisticsNavigationItems } from '../navigation';
 import { EntityListShell } from '../shared/EntityListShell';
 
 const valueOrFallback = (value?: number | string) =>
-  value === 0 || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
+  typeof value === 'number' || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
 
 const formatNumberWithSpaces = (value: number) => {
   const [integerPart, fractionPart] = value.toString().split('.');
