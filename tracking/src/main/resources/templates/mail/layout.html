@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="hu" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${subject}">Micro-futár</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f3f4f6;font-family:Arial,Helvetica,sans-serif;color:#1f2937;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f3f4f6;padding:24px 12px;">
+    <tr>
+        <td align="center">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+                   style="max-width:560px;background-color:#ffffff;border-radius:12px;overflow:hidden;">
+                <tr>
+                    <td style="background-color:#1e3a8a;padding:20px 32px;color:#ffffff;font-size:20px;font-weight:bold;">
+                        Micro-futár
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:32px;font-size:15px;line-height:1.6;">
+                        <h1 style="margin:0 0 20px;font-size:22px;color:#111827;" th:text="${heading}">Címsor</h1>
+                        <p style="margin:0 0 16px;">Kedves <span th:text="${name}">Név</span>!</p>
+                        <div th:replace="${content}"></div>
+                        <p style="margin:24px 0 8px;">Csomagszám:
+                            <strong style="font-family:Consolas,Menlo,monospace;" th:text="${parcelNumber}">csomagszám</strong>
+                        </p>
+                        <table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0 0;">
+                            <tr>
+                                <td style="background-color:#1e3a8a;border-radius:8px;">
+                                    <a th:href="${trackingUrl}" href="#"
+                                       style="display:inline-block;padding:12px 24px;color:#ffffff;text-decoration:none;font-weight:bold;">
+                                        Csomag nyomon követése
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:20px 32px;background-color:#f9fafb;font-size:12px;color:#6b7280;">
+                        Ez egy automatikus értesítés, kérjük, ne válaszoljon rá.
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

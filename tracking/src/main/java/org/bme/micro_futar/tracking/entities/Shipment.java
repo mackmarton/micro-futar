@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Data
 @Entity
@@ -30,6 +31,8 @@ public class Shipment {
     private Double recipientLatitude;
     private Double recipientLongitude;
     private Long packageSizeId;
+    @ColumnDefault("false")
+    private boolean delivered;
     private boolean confirmed;
     //Not filled straight away
     private String parcelNumber;

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="hu" xmlns:th="http://www.thymeleaf.org" th:replace="~{mail/layout :: layout(~{::content})}">
+<body>
+<th:block th:fragment="content">
+    <p style="margin:0 0 16px;">
+        Futárunk felvette csomagját, és hamarosan kiszállítja a következő címre:
+        <strong th:text="${recipientAddress}">cím</strong>
+    </p>
+    <p style="margin:0 0 16px;">
+        Feladó: <span th:text="${senderName}">feladó</span>
+    </p>
+    <p style="margin:0 0 16px;">
+        Kérjük, gondoskodjon róla, hogy a csomagot valaki át tudja venni.
+    </p>
+</th:block>
+</body>
+</html>

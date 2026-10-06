@@ -54,6 +54,7 @@ kafka:
   topics:
     package_size_topic: package-sizes
     shipment_topic: shipments
+    shipment_notification_topic: shipment-notifications
     shipment_route_courier_topic: shipment-route-couriers
     depo_topic: depos
     shipment_route_topic: shipment-routes

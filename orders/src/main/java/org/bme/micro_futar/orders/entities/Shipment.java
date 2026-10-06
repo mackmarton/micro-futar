@@ -3,6 +3,7 @@ package org.bme.micro_futar.orders.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Data
@@ -31,6 +32,8 @@ public class Shipment {
     private Double recipientLongitude;
     private Long packageSizeId;
     private boolean confirmed;
+    @ColumnDefault("false")
+    private boolean delivered;
     //Not filled straight away
     private String parcelNumber;
     private Double price;

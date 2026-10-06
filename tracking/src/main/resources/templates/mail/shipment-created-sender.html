@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="hu" xmlns:th="http://www.thymeleaf.org" th:replace="~{mail/layout :: layout(~{::content})}">
+<body>
+<th:block th:fragment="content">
+    <p style="margin:0 0 16px;">
+        Köszönjük, hogy a Micro-futárt választotta! Csomagfeladását rögzítettük, futárunk hamarosan felveszi
+        a csomagot.
+    </p>
+    <p style="margin:0 0 16px;">
+        A címzettet (<span th:text="${recipientName}">címzett</span>) is értesítettük a feladásról.
+        A csomag útját az alábbi gombra kattintva bármikor nyomon követheti.
+    </p>
+</th:block>
+</body>
+</html>

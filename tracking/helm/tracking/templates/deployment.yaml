@@ -45,6 +45,11 @@ spec:
             secretKeyRef:
               name: {{ .Values.config.datasource.passwordSecretName | default (printf "%s-db-secret" (include "tracking.fullname" .)) }}
               key: {{ .Values.config.datasource.passwordSecretKey }}
+        - name: MAIL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.config.mail.passwordSecretName }}
+              key: {{ .Values.config.mail.passwordSecretKey }}
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
         readinessProbe:

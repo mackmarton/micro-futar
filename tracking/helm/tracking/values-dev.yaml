@@ -28,11 +28,23 @@ config:
     bootstrapServers: kafka-futar.micro-futar-services-dev:9092
   keycloak:
     url: http://keycloak-dev:8080
+  mail:
+    host: smtp.rackhost.hu
+    port: 465
+    username: noreply@micro-futar.hu
+    from: noreply@micro-futar.hu
+    smtpAuth: true
+    sslEnabled: true
+    passwordSecretName: smtp-secret-dev
+    passwordSecretKey: PASSWORD
+  notification:
+    trackingPageUrl: http://localhost:8070/portal/tracking
 
 kafka:
   topics:
     location_country_topic: location-countries
     location_city_topic: location-cities
     shipment_topic: shipments
+    shipment_notification_topic: shipment-notifications
     depo_topic: depos
     shipment_route_topic: shipment-routes

@@ -11,8 +11,16 @@ data:
   SERVER_PORT: {{ .Values.config.serverPort | quote }}
   SPRING_PROFILE: {{ .Values.config.springProfile | quote }}
   KEYCLOAK_URL: {{ .Values.config.keycloak.url | quote }}
+  MAIL_HOST: {{ .Values.config.mail.host | quote }}
+  MAIL_PORT: {{ .Values.config.mail.port | quote }}
+  MAIL_USERNAME: {{ .Values.config.mail.username | quote }}
+  MAIL_FROM: {{ .Values.config.mail.from | quote }}
+  MAIL_SMTP_AUTH: {{ .Values.config.mail.smtpAuth | quote }}
+  MAIL_SSL_ENABLED: {{ .Values.config.mail.sslEnabled | quote }}
+  TRACKING_PAGE_URL: {{ .Values.config.notification.trackingPageUrl | quote }}
   LOCATION_COUNTRY_TOPIC: {{ .Values.kafka.topics.location_country_topic | quote }}
   LOCATION_CITY_TOPIC: {{ .Values.kafka.topics.location_city_topic | quote }}
   SHIPMENT_TOPIC: {{ .Values.kafka.topics.shipment_topic | quote }}
+  SHIPMENT_NOTIFICATION_TOPIC: {{ .Values.kafka.topics.shipment_notification_topic | quote }}
   DEPO_TOPIC: {{ .Values.kafka.topics.depo_topic | quote }}
   SHIPMENT_ROUTE_TOPIC: {{ .Values.kafka.topics.shipment_route_topic | quote }}
