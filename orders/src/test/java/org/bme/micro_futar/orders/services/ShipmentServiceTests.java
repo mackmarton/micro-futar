@@ -1,11 +1,13 @@
 package org.bme.micro_futar.orders.services;
 
 import org.bme.micro_futar.orders.entities.Shipment;
+import org.bme.micro_futar.orders.kafka.ShipmentNotificationProducer;
 import org.bme.micro_futar.orders.kafka.ShipmentProducer;
 import org.bme.micro_futar.orders.mappers.ShipmentMapper;
 import org.bme.micro_futar.orders.repositories.ShipmentRepository;
 import org.bme.micro_futar.shared.dtos.CountryPriceDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentDTO;
+import org.bme.micro_futar.shared.enums.NotificationType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,6 +35,9 @@ class ShipmentServiceTests {
 
     @Mock
     private ShipmentProducer shipmentProducer;
+
+    @Mock
+    private ShipmentNotificationProducer shipmentNotificationProducer;
 
     @InjectMocks
     private ShipmentService shipmentService;
@@ -140,6 +146,9 @@ class ShipmentServiceTests {
         verify(shipmentRepository).save(any(Shipment.class));
         verify(shipmentMapper).toDTO(shipmentEntity);
         verify(shipmentProducer).sendShipmentToTopic(any(ShipmentDTO.class));
+        verify(shipmentNotificationProducer).sendNotificationToTopic(argThat(event ->
+                event.getType() == NotificationType.SHIPMENT_CREATED
+                        && event.getDedupKey().equals("SHIPMENT_CREATED:shipment:" + event.getShipmentId())));
     }
 
 }

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="hu" xmlns:th="http://www.thymeleaf.org" th:replace="~{mail/layout :: layout(~{::content})}">
+<body>
+<th:block th:fragment="content">
+    <p style="margin:0 0 16px;">
+        Csomagját sikeresen kézbesítettük a következő címre: <strong th:text="${recipientAddress}">cím</strong>
+    </p>
+    <p style="margin:0 0 16px;">
+        Feladó: <span th:text="${senderName}">feladó</span>
+    </p>
+    <p style="margin:0 0 16px;">
+        Köszönjük, hogy a Micro-futárt választotta!
+    </p>
+</th:block>
+</body>
+</html>

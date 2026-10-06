@@ -58,10 +58,15 @@ public class ShipmentRouteCourierController {
     }
 
     @PostMapping("/{id}/fulfill")
-    public ResponseEntity<Void> fulfillShipmentRouteAssignment(@PathVariable Long id) {
-        return shipmentRouteCourierService.fulfillAssignment(id) ?
-                ResponseEntity.ok().build() :
-                ResponseEntity.notFound().build();
+    public ResponseEntity<Void> fulfillShipmentRouteAssignment(@PathVariable Long id, Authentication authentication) {
+        try {
+            shipmentRouteCourierService.fulfillAssignment(id, authentication);
+        } catch (NoSuchElementException _) {
+            return ResponseEntity.notFound().build();
+        } catch (UnauthorizedException _) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/fulfill-all-pickups-for-tocay")
@@ -71,10 +76,15 @@ public class ShipmentRouteCourierController {
     }
 
     @PostMapping("/{id}/fail")
-    public ResponseEntity<Void> failShipmentRouteAssignment(@PathVariable Long id) {
-        return shipmentRouteCourierService.failAssignment(id) ?
-                ResponseEntity.ok().build() :
-                ResponseEntity.notFound().build();
+    public ResponseEntity<Void> failShipmentRouteAssignment(@PathVariable Long id, Authentication authentication) {
+        try {
+            shipmentRouteCourierService.failAssignment(id, authentication);
+        } catch (NoSuchElementException _) {
+            return ResponseEntity.notFound().build();
+        } catch (UnauthorizedException _) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok().build();
     }
 }
 

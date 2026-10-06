@@ -1,10 +1,13 @@
 package org.bme.micro_futar.orders.services;
 
 import lombok.RequiredArgsConstructor;
+import org.bme.micro_futar.orders.kafka.ShipmentNotificationProducer;
 import org.bme.micro_futar.orders.kafka.ShipmentProducer;
 import org.bme.micro_futar.orders.mappers.ShipmentMapper;
 import org.bme.micro_futar.orders.repositories.ShipmentRepository;
 import org.bme.micro_futar.shared.dtos.ShipmentDTO;
+import org.bme.micro_futar.shared.dtos.ShipmentNotificationEventDTO;
+import org.bme.micro_futar.shared.enums.NotificationType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +22,7 @@ public class ShipmentService {
     private final CountryPriceService countryPriceService;
     private final ShipmentMapper shipmentMapper;
     private final ShipmentProducer shipmentProducer;
+    private final ShipmentNotificationProducer shipmentNotificationProducer;
 
     @Transactional
     public ShipmentDTO newShipment(ShipmentDTO shipmentDTO) {
@@ -28,6 +32,8 @@ public class ShipmentService {
         var savedEntity = shipmentRepository.save(shipmentEntity);
         ShipmentDTO savedShipmentDTO = shipmentMapper.toDTO(savedEntity);
         shipmentProducer.sendShipmentToTopic(savedShipmentDTO);
+        shipmentNotificationProducer.sendNotificationToTopic(
+                ShipmentNotificationEventDTO.forShipment(NotificationType.SHIPMENT_CREATED, savedShipmentDTO));
         return savedShipmentDTO;
     }
 

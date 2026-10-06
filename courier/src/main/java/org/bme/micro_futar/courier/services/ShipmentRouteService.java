@@ -22,6 +22,7 @@ import java.util.Optional;
 public class ShipmentRouteService {
 
     private final ShipmentService shipmentService;
+    private final ShipmentNotificationService shipmentNotificationService;
     private final ApplicationContext applicationContext;
     private final ShipmentRouteMapper shipmentRouteMapper;
     private final KafkaProducerService kafkaProducerService;
@@ -48,6 +49,7 @@ public class ShipmentRouteService {
             ShipmentDTO shipmentDTO = shipmentService.findById(shipmentRoute.getShipmentId()).orElseThrow();
             shipmentDTO.setDelivered(true);
             shipmentService.save(shipmentDTO);
+            shipmentNotificationService.notifyDelivered(shipmentRoute);
         }
     }
 

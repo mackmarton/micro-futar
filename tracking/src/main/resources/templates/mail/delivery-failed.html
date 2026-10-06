@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="hu" xmlns:th="http://www.thymeleaf.org" th:replace="~{mail/layout :: layout(~{::content})}">
+<body>
+<th:block th:fragment="content">
+    <p style="margin:0 0 16px;">
+        Futárunk megpróbálta kézbesíteni csomagját a következő címre, de ez sajnos nem sikerült:
+        <strong th:text="${recipientAddress}">cím</strong>
+    </p>
+    <p style="margin:0 0 16px;">
+        Feladó: <span th:text="${senderName}">feladó</span>
+    </p>
+    <p style="margin:0 0 16px;">
+        A csomag aktuális állapotáról és a további teendőkről a nyomkövetési oldalon tájékozódhat.
+    </p>
+</th:block>
+</body>
+</html>

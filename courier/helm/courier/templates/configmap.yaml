@@ -13,6 +13,7 @@ data:
   KEYCLOAK_URL: {{ .Values.config.keycloak.url | quote }}
   PACKAGE_SIZE_TOPIC: {{ .Values.kafka.topics.package_size_topic | quote }}
   SHIPMENT_TOPIC: {{ .Values.kafka.topics.shipment_topic | quote }}
+  SHIPMENT_NOTIFICATION_TOPIC: {{ .Values.kafka.topics.shipment_notification_topic | quote }}
   SHIPMENT_ROUTE_COURIER_TOPIC: {{ .Values.kafka.topics.shipment_route_courier_topic | quote }}
   DEPO_TOPIC: {{ .Values.kafka.topics.depo_topic | quote }}
   SHIPMENT_ROUTE_TOPIC: {{ .Values.kafka.topics.shipment_route_topic | quote }}

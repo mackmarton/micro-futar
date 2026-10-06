@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="hu" xmlns:th="http://www.thymeleaf.org" th:replace="~{mail/layout :: layout(~{::content})}">
+<body>
+<th:block th:fragment="content">
+    <p style="margin:0 0 16px;">
+        <strong th:text="${senderName}">feladó</strong> csomagot adott fel Önnek a Micro-futárral.
+    </p>
+    <p style="margin:0 0 16px;">
+        Kézbesítési cím: <strong th:text="${recipientAddress}">cím</strong>
+    </p>
+    <p style="margin:0 0 16px;">
+        Amikor futárunk kiszállításra felveszi a csomagot, újabb értesítést küldünk.
+    </p>
+</th:block>
+</body>
+</html>

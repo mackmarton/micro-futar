@@ -29,6 +29,7 @@ public class ShipmentRouteCourierService {
     private final ApplicationContext applicationContext;
     private final KafkaProducerService kafkaProducerService;
     private final ShipmentRouteService shipmentRouteService;
+    private final ShipmentNotificationService shipmentNotificationService;
     private final ShipmentRouteCourierMapper shipmentRouteCourierMapper;
     private final ShipmentRouteCourierRepository shipmentRouteCourierRepository;
 
@@ -67,47 +68,39 @@ public class ShipmentRouteCourierService {
     public void pickUpAllDeliveryShipmentsForCurrentDay(Authentication authentication) {
         List<ShipmentRouteCourierDTO> shipmentRouteCouriers = findAllDeliveriesForCourierForCurrentDay(authentication);
         for (var assignment : shipmentRouteCouriers) {
-            assignment.setPickedUpForDelivery(true);
-            save(assignment);
+            markPickedUp(assignment);
         }
     }
 
     public void pickUpParcel(Long id, Authentication authentication) {
-        Long courierId = getCourierIdByAuthentication(authentication);
-        var shipmentRouteCourier = findById(id).orElseThrow();
-        if (!Objects.equals(shipmentRouteCourier.getCourierId(), courierId)) {
-            throw new UnauthorizedException();
-        }
+        markPickedUp(findOwnAssignment(id, authentication));
+    }
+
+    private void markPickedUp(ShipmentRouteCourierDTO shipmentRouteCourier) {
         shipmentRouteCourier.setPickedUpForDelivery(true);
         save(shipmentRouteCourier);
+        shipmentRouteService.findById(shipmentRouteCourier.getShipmentRouteId())
+                .ifPresent(route -> shipmentNotificationService.notifyOutForDelivery(route, shipmentRouteCourier.getId()));
     }
 
     public void fulfillAllPickupsForCurrentDay(Authentication authentication) {
         List<ShipmentRouteCourierDTO> shipmentRouteCouriers = findAllPickedUpAssignmentsForCourierForCurrentDay(authentication);
         for (var assignment : shipmentRouteCouriers) {
-            fulfillAssignment(assignment.getId());
+            shipmentRouteService.fulfillShipmentRoute(assignment.getShipmentRouteId());
         }
     }
 
-    public boolean fulfillAssignment(Long id) {
-        var shipmentRouteCourierOptional = findById(id);
-        if (shipmentRouteCourierOptional.isEmpty()) {
-            return false;
-        }
-        var shipmentRouteCourier = shipmentRouteCourierOptional.get();
+    public void fulfillAssignment(Long id, Authentication authentication) {
+        var shipmentRouteCourier = findOwnAssignment(id, authentication);
         shipmentRouteService.fulfillShipmentRoute(shipmentRouteCourier.getShipmentRouteId());
-        return true;
     }
 
-    public boolean failAssignment(Long id) {
-        var shipmentRouteCourierOptional = findById(id);
-        if (shipmentRouteCourierOptional.isEmpty()) {
-            return false;
-        }
-        var shipmentRouteCourier = shipmentRouteCourierOptional.get();
+    public void failAssignment(Long id, Authentication authentication) {
+        var shipmentRouteCourier = findOwnAssignment(id, authentication);
         shipmentRouteCourier.setFailed(true);
         save(shipmentRouteCourier);
-        return true;
+        shipmentRouteService.findById(shipmentRouteCourier.getShipmentRouteId())
+                .ifPresent(route -> shipmentNotificationService.notifyDeliveryFailed(route, shipmentRouteCourier.getId()));
     }
 
     public ShipmentRouteCourierDTO save(ShipmentRouteCourierDTO shipmentRouteCourierDTO) {
@@ -123,6 +116,15 @@ public class ShipmentRouteCourierService {
         ShipmentRouteCourier shipmentRouteCourier = shipmentRouteCourierMapper.toEntity(shipmentRouteCourierDTO);
         ShipmentRouteCourier savedShipmentRouteCourier = shipmentRouteCourierRepository.save(shipmentRouteCourier);
         return shipmentRouteCourierMapper.toDTO(savedShipmentRouteCourier);
+    }
+
+    private ShipmentRouteCourierDTO findOwnAssignment(Long id, Authentication authentication) {
+        Long courierId = getCourierIdByAuthentication(authentication);
+        var shipmentRouteCourier = findById(id).orElseThrow();
+        if (!Objects.equals(shipmentRouteCourier.getCourierId(), courierId)) {
+            throw new UnauthorizedException();
+        }
+        return shipmentRouteCourier;
     }
 
     private Long getCourierIdByAuthentication(Authentication authentication) {

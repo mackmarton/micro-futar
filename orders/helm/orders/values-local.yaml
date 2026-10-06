@@ -42,3 +42,4 @@ kafka:
     country_price_topic: country-prices
     package_size_topic: package-sizes
     shipment_topic: shipments
+    shipment_notification_topic: shipment-notifications
