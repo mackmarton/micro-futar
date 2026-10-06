@@ -1,6 +1,24 @@
 import { useEffect, useRef } from 'react';
 import * as L from 'leaflet';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import 'leaflet/dist/leaflet.css';
+
+// Vite resolves image imports to a URL string, Next.js to a StaticImageData object.
+const assetUrl = (asset: string | { src: string }) => (typeof asset === 'string' ? asset : asset.src);
+
+// Leaflet's default icon path detection breaks once bundlers hash the image file names.
+const defaultMarkerIcon = L.icon({
+  iconRetinaUrl: assetUrl(markerIcon2x),
+  iconUrl: assetUrl(markerIcon),
+  shadowUrl: assetUrl(markerShadow),
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41],
+});
 
 export type MapCoordinate = {
   latitude: number;
@@ -44,6 +62,7 @@ export const LocationMapPicker = ({
 
     const marker = L.marker([markerPosition.latitude, markerPosition.longitude], {
       draggable: true,
+      icon: defaultMarkerIcon,
     }).addTo(map);
 
     marker.on('dragend', () => {
