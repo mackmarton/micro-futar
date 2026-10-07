@@ -12,4 +12,5 @@ public class LocationCountryDTO {
     private Long regionId;
     @NonNull
     private String name;
+    private String currencyCode;
 }

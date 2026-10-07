@@ -43,3 +43,4 @@ kafka:
     package_size_topic: package-sizes
     shipment_topic: shipments
     shipment_notification_topic: shipment-notifications
+    currency_topic: currencies

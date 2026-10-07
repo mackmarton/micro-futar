@@ -50,6 +50,9 @@ public class KafkaProducerService {
     @Value("${kafka.topics.vehicle-topic}")
     private String vehicleTopic;
 
+    @Value("${kafka.topics.currency-topic}")
+    private String currencyTopic;
+
     public void sendLocationRegion(LocationRegionDTO locationRegionDTO) {
         log.info("Sending location region message to topic {}: {}", locationRegionTopic, locationRegionDTO);
         try {
@@ -267,6 +270,26 @@ public class KafkaProducerService {
         } catch (Exception e) {
             log.error("Error sending vehicle message to Kafka", e);
             throw new KafkaException("Failed to send vehicle message", e);
+        }
+    }
+
+    public void sendCurrency(CurrencyDTO currencyDTO) {
+        log.info("Sending currency message to topic {}: {}", currencyTopic, currencyDTO);
+        try {
+            String message = objectMapper.writeValueAsString(currencyDTO);
+            kafkaTemplate.send(currencyTopic, currencyDTO.getId().toString(), message)
+                    .whenComplete((_, ex) -> {
+                        if (ex == null) {
+                            log.info("Successfully sent currency with ID: {} to topic: {}",
+                                    currencyDTO.getId(), currencyTopic);
+                        } else {
+                            log.error("Failed to send currency with ID: {} to topic: {}",
+                                    currencyDTO.getId(), currencyTopic, ex);
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("Error sending currency message to Kafka", e);
+            throw new KafkaException("Failed to send currency message", e);
         }
     }
 }

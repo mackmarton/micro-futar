@@ -313,5 +313,27 @@ public class KafkaBulkSenderController {
             ));
         }
     }
+
+    /**
+     * Send Currency entities to Kafka.
+     */
+    @PostMapping("/send-currencies")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, String>> sendCurrencies() {
+        log.info("Received request to send Currency entities to Kafka");
+        try {
+            kafkaBulkSenderService.sendCurrencies();
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "message", "Currency entities sent to Kafka successfully"
+            ));
+        } catch (Exception e) {
+            log.error("Error sending Currency entities to Kafka", e);
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "status", "error",
+                    "message", "Failed to send Currency entities to Kafka: " + e.getMessage()
+            ));
+        }
+    }
 }
 

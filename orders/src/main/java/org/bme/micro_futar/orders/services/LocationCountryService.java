@@ -41,6 +41,7 @@ public class LocationCountryService {
                 // Update existing entity fields
                 locationCountry.setRegionId(locationCountryDTO.getRegionId());
                 locationCountry.setName(locationCountryDTO.getName());
+                locationCountry.setCurrencyCode(locationCountryDTO.getCurrencyCode());
             } else {
                 locationCountry = locationCountryMapper.toEntity(locationCountryDTO);
             }

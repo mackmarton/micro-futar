@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Data
 @Entity
@@ -17,5 +18,7 @@ public class LocationCountry {
     private Long id;
     private Long regionId;
     private String name;
+    @ColumnDefault("'HUF'")
+    private String currencyCode;
 
 }
