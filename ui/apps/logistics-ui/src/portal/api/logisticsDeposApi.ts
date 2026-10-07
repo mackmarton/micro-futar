@@ -2,6 +2,7 @@ import { resolveApiBaseUrl, withAuthRedirect } from '@package/shared-core';
 import {
   Api,
   type CourierDTO,
+  type CurrencyDTO,
   type DepoDTO,
   type DepoTransitDTO,
   type LocationCityDTO,
@@ -347,4 +348,38 @@ export const updateVehicle = async (vehicleId: number, vehicle: VehicleDTO): Pro
   withAuthRedirect(async () => {
     const response = await logisticsApi.api.updateVehicle(vehicleId, vehicle, { format: 'json' });
     return response.data ?? vehicle;
+  });
+
+export const getAllCurrencies = async (): Promise<CurrencyDTO[]> =>
+  withAuthRedirect(async () => {
+    const response = await logisticsApi.api.getAllCurrencies({ format: 'json' });
+    return response.data ?? [];
+  });
+
+export const getCurrencyById = async (currencyId: number): Promise<CurrencyDTO> =>
+  withAuthRedirect(async () => {
+    const response = await logisticsApi.api.getCurrencyById(currencyId, { format: 'json' });
+
+    if (!response.data) {
+      throw new Error('Pénznem nem található.');
+    }
+
+    return response.data;
+  });
+
+export const createCurrency = async (currency: CurrencyDTO): Promise<CurrencyDTO> =>
+  withAuthRedirect(async () => {
+    const response = await logisticsApi.api.createCurrency(currency, { format: 'json' });
+    return response.data ?? currency;
+  });
+
+export const updateCurrency = async (currencyId: number, currency: CurrencyDTO): Promise<CurrencyDTO> =>
+  withAuthRedirect(async () => {
+    const response = await logisticsApi.api.updateCurrency(currencyId, currency, { format: 'json' });
+    return response.data ?? currency;
+  });
+
+export const deleteCurrency = async (currencyId: number): Promise<void> =>
+  withAuthRedirect(async () => {
+    await logisticsApi.api.deleteCurrency(currencyId, { format: 'json' });
   });

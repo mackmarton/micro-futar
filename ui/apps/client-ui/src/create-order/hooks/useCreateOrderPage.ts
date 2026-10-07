@@ -7,7 +7,10 @@ import { createShipment } from '../api/ordersApi.ts';
 import { useCities } from './useCities.ts';
 import { useCountries } from './useCountries.ts';
 import { useCountryPrices } from './useCountryPrices.ts';
+import { useCurrencies } from './useCurrencies.ts';
 import { usePackageSizes } from './usePackageSizes.ts';
+
+const DEFAULT_CURRENCY_SYMBOL = 'Ft';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -144,6 +147,7 @@ export const useCreateOrderPage = () => {
     errorMessage: countryPricesErrorMessage,
     retry: retryCountryPrices,
   } = useCountryPrices(addressCards.sender.country, addressCards.recipient.country);
+  const { currencyOptions } = useCurrencies();
 
   const isRouteSelected = Boolean(addressCards.sender.country && addressCards.recipient.country);
 
@@ -334,6 +338,17 @@ export const useCreateOrderPage = () => {
     () => countryOptions.find((option) => option.value === addressCards.sender.country)?.label ?? '',
     [addressCards.sender.country, countryOptions],
   );
+  const selectedSenderCurrencySymbol = useMemo(() => {
+    const senderCurrencyCode = countryOptions.find(
+      (option) => option.value === addressCards.sender.country,
+    )?.currencyCode;
+
+    if (!senderCurrencyCode) {
+      return DEFAULT_CURRENCY_SYMBOL;
+    }
+
+    return currencyOptions.find((currency) => currency.code === senderCurrencyCode)?.symbol ?? senderCurrencyCode;
+  }, [addressCards.sender.country, countryOptions, currencyOptions]);
   const selectedRecipientCountryName = useMemo(
     () => countryOptions.find((option) => option.value === addressCards.recipient.country)?.label ?? '',
     [addressCards.recipient.country, countryOptions],
@@ -593,6 +608,7 @@ export const useCreateOrderPage = () => {
   const orderSummaryCardProps = {
     minPrice: selectedCountryPrice?.minPrice,
     maxPrice: selectedCountryPrice?.maxPrice,
+    currencySymbol: selectedSenderCurrencySymbol,
     isSubmitDisabled: isSubmitDisabled || isSubmitting,
     isSubmitting,
     submitErrorMessage,

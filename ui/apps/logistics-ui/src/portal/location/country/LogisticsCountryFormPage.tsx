@@ -5,6 +5,7 @@ import { FormSection, PrecisionInput } from '@package/shared-ui';
 import type { LocationCountryDTO } from '@package/shared-core/api/LogisticsApiClient';
 import {
   createCountry,
+  getAllCurrencies,
   getAllRegions,
   getCountryById,
   updateCountry,
@@ -15,6 +16,7 @@ import { EntityFormShell } from '../../shared/EntityFormShell';
 type CountryFormState = {
   name: string;
   regionId: string;
+  currencyCode: string;
 };
 
 const parseSelectedId = (value: string | null) => {
@@ -25,6 +27,7 @@ const parseSelectedId = (value: string | null) => {
 const toFormState = (country: LocationCountryDTO): CountryFormState => ({
   name: country.name ?? '',
   regionId: typeof country.regionId === 'number' ? String(country.regionId) : '',
+  currencyCode: country.currencyCode ?? '',
 });
 
 const validateForm = (formState: CountryFormState): string | null => {
@@ -42,6 +45,7 @@ const validateForm = (formState: CountryFormState): string | null => {
 const buildPayload = (formState: CountryFormState): LocationCountryDTO => ({
   name: formState.name.trim(),
   regionId: Number(formState.regionId),
+  currencyCode: formState.currencyCode || undefined,
 });
 
 export const LogisticsCountryFormPage = () => {
@@ -65,6 +69,12 @@ export const LogisticsCountryFormPage = () => {
     enabled: hasValidCountryId,
   });
 
+  const currenciesQuery = useQuery({
+    queryKey: ['logistics', 'currencies'],
+    queryFn: getAllCurrencies,
+    enabled: hasValidCountryId,
+  });
+
   const countryQuery = useQuery({
     queryKey: ['logistics', 'locations', 'country', countryId],
     queryFn: () => getCountryById(countryId as number),
@@ -73,10 +83,12 @@ export const LogisticsCountryFormPage = () => {
 
   const initialFormState = useMemo<CountryFormState>(() => {
     if (isEditMode) {
-      return countryQuery.data ? toFormState(countryQuery.data) : { name: '', regionId: '' };
+      return countryQuery.data
+        ? toFormState(countryQuery.data)
+        : { name: '', regionId: '', currencyCode: '' };
     }
 
-    return { name: '', regionId: fallbackRegionId };
+    return { name: '', regionId: fallbackRegionId, currencyCode: '' };
   }, [countryQuery.data, fallbackRegionId, isEditMode]);
 
   const formState = draftFormState ?? initialFormState;
@@ -147,11 +159,15 @@ export const LogisticsCountryFormPage = () => {
           Vissza az országokhoz
         </Link>
       }
-      isLoading={regionsQuery.isLoading || (isEditMode && countryQuery.isLoading)}
+      isLoading={regionsQuery.isLoading || currenciesQuery.isLoading || (isEditMode && countryQuery.isLoading)}
       loadingMessage="Az ország form betöltése folyamatban..."
-      isError={regionsQuery.isError || countryQuery.isError}
+      isError={regionsQuery.isError || currenciesQuery.isError || countryQuery.isError}
       errorMessage="Az ország form megnyitása sikertelen."
-      errorDetail={(regionsQuery.error as Error | null)?.message ?? (countryQuery.error as Error | null)?.message}
+      errorDetail={
+        (regionsQuery.error as Error | null)?.message ??
+        (currenciesQuery.error as Error | null)?.message ??
+        (countryQuery.error as Error | null)?.message
+      }
     >
       <FormSection icon="location_city" title="Ország adatai" className="mt-6">
         <div className="grid gap-4 md:grid-cols-2">
@@ -177,6 +193,24 @@ export const LogisticsCountryFormPage = () => {
               {(regionsQuery.data ?? []).map((region) => (
                 <option key={region.id ?? region.name} value={region.id ?? ''}>
                   {region.name ?? 'N/A'}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="block">
+            <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3 block">
+              Pénznem
+            </span>
+            <select
+              value={formState.currencyCode}
+              onChange={(event) => handleInputChange('currencyCode', event.target.value)}
+              className="w-full bg-surface-container-lowest border-none rounded-lg p-4 focus:ring-0 border-b-2 border-transparent focus:border-surface-tint transition-all"
+            >
+              <option value="">Alapértelmezett (HUF)</option>
+              {(currenciesQuery.data ?? []).map((currency) => (
+                <option key={currency.id ?? currency.code} value={currency.code ?? ''}>
+                  {currency.name ?? 'N/A'} ({currency.code ?? 'N/A'})
                 </option>
               ))}
             </select>

@@ -46,6 +46,7 @@ export interface ShipmentDTO {
   parcelNumber?: string;
   /** @format double */
   price?: number;
+  currencyCode?: string;
 }
 
 export interface LocationRegionDTO {
@@ -60,6 +61,14 @@ export interface PackageSizeDTO {
   name?: string;
   /** @format double */
   maxLength?: number;
+}
+
+export interface CurrencyDTO {
+  /** @format int64 */
+  id?: number;
+  code?: string;
+  name?: string;
+  symbol?: string;
 }
 
 export interface CountryPriceDTO {
@@ -83,6 +92,7 @@ export interface LocationCountryDTO {
   /** @format int64 */
   regionId?: number;
   name?: string;
+  currencyCode?: string;
 }
 
 export interface LocationCityDTO {
@@ -439,6 +449,34 @@ export class Api<
     getPackageSizeById: (id: number, params: RequestParams = {}) =>
       this.request<PackageSizeDTO, any>({
         path: `/api/orders/package-sizes/${id}`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags currency-controller
+     * @name GetAllCurrencies
+     * @request GET:/api/orders/currencies
+     */
+    getAllCurrencies: (params: RequestParams = {}) =>
+      this.request<CurrencyDTO[], any>({
+        path: `/api/orders/currencies`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags currency-controller
+     * @name GetCurrencyById
+     * @request GET:/api/orders/currencies/{id}
+     */
+    getCurrencyById: (id: number, params: RequestParams = {}) =>
+      this.request<CurrencyDTO, any>({
+        path: `/api/orders/currencies/${id}`,
         method: "GET",
         ...params,
       }),

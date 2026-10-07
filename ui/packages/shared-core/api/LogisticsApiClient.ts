@@ -62,6 +62,14 @@ export interface DepoTransitDTO {
   price?: number;
 }
 
+export interface CurrencyDTO {
+  /** @format int64 */
+  id?: number;
+  code?: string;
+  name?: string;
+  symbol?: string;
+}
+
 export interface CourierDTO {
   /** @format int64 */
   id?: number;
@@ -82,6 +90,7 @@ export interface LocationCountryDTO {
   /** @format int64 */
   regionId?: number;
   name?: string;
+  currencyCode?: string;
 }
 
 export interface LocationCityDTO {
@@ -623,6 +632,54 @@ export class Api<
     /**
      * No description
      *
+     * @tags currency-controller
+     * @name GetCurrencyById
+     * @request GET:/api/logistics/currencies/{id}
+     */
+    getCurrencyById: (id: number, params: RequestParams = {}) =>
+      this.request<CurrencyDTO, any>({
+        path: `/api/logistics/currencies/${id}`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags currency-controller
+     * @name UpdateCurrency
+     * @request PUT:/api/logistics/currencies/{id}
+     */
+    updateCurrency: (
+      id: number,
+      data: CurrencyDTO,
+      params: RequestParams = {},
+    ) =>
+      this.request<CurrencyDTO, any>({
+        path: `/api/logistics/currencies/${id}`,
+        method: "PUT",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags currency-controller
+     * @name DeleteCurrency
+     * @request DELETE:/api/logistics/currencies/{id}
+     */
+    deleteCurrency: (id: number, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/logistics/currencies/${id}`,
+        method: "DELETE",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags courier-controller
      * @name GetCourierById
      * @request GET:/api/logistics/couriers/{id}
@@ -1025,6 +1082,20 @@ export class Api<
      * No description
      *
      * @tags kafka-bulk-sender-controller
+     * @name SendCurrencies
+     * @request POST:/api/logistics/kafka/bulk/send-currencies
+     */
+    sendCurrencies: (params: RequestParams = {}) =>
+      this.request<Record<string, string>, any>({
+        path: `/api/logistics/kafka/bulk/send-currencies`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags kafka-bulk-sender-controller
      * @name SendCouriers
      * @request POST:/api/logistics/kafka/bulk/send-couriers
      */
@@ -1117,6 +1188,36 @@ export class Api<
     createDepoTransit: (data: DepoTransitDTO, params: RequestParams = {}) =>
       this.request<DepoTransitDTO, any>({
         path: `/api/logistics/depo-transits`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags currency-controller
+     * @name GetAllCurrencies
+     * @request GET:/api/logistics/currencies
+     */
+    getAllCurrencies: (params: RequestParams = {}) =>
+      this.request<CurrencyDTO[], any>({
+        path: `/api/logistics/currencies`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags currency-controller
+     * @name CreateCurrency
+     * @request POST:/api/logistics/currencies
+     */
+    createCurrency: (data: CurrencyDTO, params: RequestParams = {}) =>
+      this.request<CurrencyDTO, any>({
+        path: `/api/logistics/currencies`,
         method: "POST",
         body: data,
         type: ContentType.Json,

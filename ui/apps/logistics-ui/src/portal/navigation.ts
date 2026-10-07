@@ -36,4 +36,11 @@ export const logisticsNavigationItems: NonNullable<PortalLayoutProps['navigation
     bottomIcon: 'delivery_truck_speed',
     onlyLoggedIn: true,
   },
+  {
+    label: 'Pénznemek',
+    href: '#/portal/currencies',
+    sideIcon: 'payments',
+    bottomIcon: 'payments',
+    onlyLoggedIn: true,
+  },
 ];

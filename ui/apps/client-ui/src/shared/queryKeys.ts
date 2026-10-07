@@ -1,5 +1,6 @@
 export const queryKeys = {
   countries: ['countries'] as const,
+  currencies: ['currencies'] as const,
   cities: (countryId: string) => ['cities', countryId] as const,
   packageSizes: ['packageSizes'] as const,
   countryPrices: (originCountryId: string, destinationCountryId: string) =>

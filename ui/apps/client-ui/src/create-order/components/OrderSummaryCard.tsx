@@ -3,6 +3,7 @@ import { cn } from '@package/shared-ui';
 export type OrderSummaryCardProps = {
     minPrice?: number;
     maxPrice?: number;
+    currencySymbol?: string;
     isSubmitDisabled?: boolean;
     isSubmitting?: boolean;
     submitErrorMessage?: string | null;
@@ -14,6 +15,7 @@ export type OrderSummaryCardProps = {
 export const OrderSummaryCard = ({
                                      minPrice,
                                      maxPrice,
+                                     currencySymbol = 'Ft',
                                      isSubmitDisabled,
                                      isSubmitting,
                                      submitErrorMessage,
@@ -30,11 +32,11 @@ export const OrderSummaryCard = ({
                 <div className="space-y-4 mb-8">
                     <div key="min-price" className="flex justify-between items-center text-sm">
                         <span className="text-on-surface-variant">Minimum ár</span>
-                        <span className="font-bold text-on-surface">{minPrice ?? "-"} Ft</span>
+                        <span className="font-bold text-on-surface">{minPrice ?? "-"} {currencySymbol}</span>
                     </div>
                     <div key="max-price" className="flex justify-between items-center text-sm">
                         <span className="text-on-surface-variant">Maximum ár</span>
-                        <span className="font-bold text-on-surface">{maxPrice ?? "-"} Ft</span>
+                        <span className="font-bold text-on-surface">{maxPrice ?? "-"} {currencySymbol}</span>
                     </div>
 
                     <div
@@ -42,7 +44,7 @@ export const OrderSummaryCard = ({
                         <span className="text-on-surface-variant text-sm mb-1">Aktuális végösszeg</span>
                     </div>
                     <span
-                        className="text-3xl font-black text-on-surface">{minPrice === undefined ? "- Ft" : minPrice === maxPrice ? minPrice + " Ft" : minPrice + " Ft - " + maxPrice + " Ft"}</span>
+                        className="text-3xl font-black text-on-surface">{minPrice === undefined ? `- ${currencySymbol}` : minPrice === maxPrice ? `${minPrice} ${currencySymbol}` : `${minPrice} ${currencySymbol} - ${maxPrice} ${currencySymbol}`}</span>
                 </div>
 
                 <button

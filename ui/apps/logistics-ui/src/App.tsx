@@ -55,6 +55,12 @@ const LogisticsVehiclesPage = lazy(() =>
 const LogisticsVehicleFormPage = lazy(() =>
   import('./portal/vehicle/LogisticsVehicleFormPage').then((module) => ({ default: module.LogisticsVehicleFormPage })),
 );
+const LogisticsCurrenciesPage = lazy(() =>
+  import('./portal/currency/LogisticsCurrenciesPage').then((module) => ({ default: module.LogisticsCurrenciesPage })),
+);
+const LogisticsCurrencyFormPage = lazy(() =>
+  import('./portal/currency/LogisticsCurrencyFormPage').then((module) => ({ default: module.LogisticsCurrencyFormPage })),
+);
 
 function App() {
   const { isLoading } = useAuth();
@@ -100,6 +106,9 @@ function App() {
           <Route path="vehicles" element={<LogisticsVehiclesPage />} />
           <Route path="vehicles/new" element={<LogisticsVehicleFormPage />} />
           <Route path="vehicles/:vehicleId/edit" element={<LogisticsVehicleFormPage />} />
+          <Route path="currencies" element={<LogisticsCurrenciesPage />} />
+          <Route path="currencies/new" element={<LogisticsCurrencyFormPage />} />
+          <Route path="currencies/:currencyId/edit" element={<LogisticsCurrencyFormPage />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
