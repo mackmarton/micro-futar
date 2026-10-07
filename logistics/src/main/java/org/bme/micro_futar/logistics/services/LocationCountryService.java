@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.logistics.entities.LocationCountry;
 import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.LocationCountryMapper;
+import org.bme.micro_futar.logistics.repositories.CurrencyRepository;
 import org.bme.micro_futar.logistics.repositories.LocationCountryRepository;
 import org.bme.micro_futar.shared.dtos.LocationCountryDTO;
 import org.springframework.stereotype.Service;
@@ -16,9 +17,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LocationCountryService {
 
+    private static final String DEFAULT_CURRENCY_CODE = "HUF";
+
     private final LocationCountryRepository locationCountryRepository;
     private final LocationCountryMapper locationCountryMapper;
     private final KafkaProducerService kafkaProducerService;
+    private final CurrencyRepository currencyRepository;
 
     public List<LocationCountryDTO> getAllCountries() {
         return locationCountryRepository.findAll().stream()
@@ -39,6 +43,7 @@ public class LocationCountryService {
 
     @Transactional
     public LocationCountryDTO createCountry(LocationCountryDTO locationCountryDTO) {
+        locationCountryDTO.setCurrencyCode(resolveCurrencyCode(locationCountryDTO.getCurrencyCode()));
         LocationCountry locationCountry = locationCountryMapper.toEntity(locationCountryDTO);
         LocationCountry savedCountry = locationCountryRepository.save(locationCountry);
         LocationCountryDTO result = locationCountryMapper.toDTO(savedCountry);
@@ -51,6 +56,7 @@ public class LocationCountryService {
         if (locationCountryDTO.getId() != null && !locationCountryDTO.getId().equals(id)) {
             throw new IllegalArgumentException("Path ID does not match DTO ID");
         }
+        locationCountryDTO.setCurrencyCode(resolveCurrencyCode(locationCountryDTO.getCurrencyCode()));
 
         return locationCountryRepository.findById(id)
                 .map(existingCountry -> {
@@ -69,5 +75,15 @@ public class LocationCountryService {
             return true;
         }
         return false;
+    }
+
+    private String resolveCurrencyCode(String currencyCode) {
+        if (currencyCode == null || currencyCode.isBlank()) {
+            return DEFAULT_CURRENCY_CODE;
+        }
+        if (!currencyRepository.existsByCode(currencyCode)) {
+            throw new IllegalArgumentException("Unknown currency code: " + currencyCode);
+        }
+        return currencyCode;
     }
 }

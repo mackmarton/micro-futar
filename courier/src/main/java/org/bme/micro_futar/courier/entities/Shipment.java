@@ -37,4 +37,6 @@ public class Shipment {
     //Not filled straight away
     private String parcelNumber;
     private Double price;
+    @ColumnDefault("'HUF'")
+    private String currencyCode;
 }

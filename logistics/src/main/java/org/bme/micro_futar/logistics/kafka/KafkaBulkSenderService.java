@@ -29,6 +29,7 @@ public class KafkaBulkSenderService {
     private final ShipmentRepository shipmentRepository;
     private final ShipmentRouteRepository shipmentRouteRepository;
     private final ShipmentRouteCourierRepository shipmentRouteCourierRepository;
+    private final CurrencyRepository currencyRepository;
 
     // Mappers
     private final LocationRegionMapper locationRegionMapper;
@@ -42,6 +43,7 @@ public class KafkaBulkSenderService {
     private final ShipmentMapper shipmentMapper;
     private final ShipmentRouteMapper shipmentRouteMapper;
     private final ShipmentRouteCourierMapper shipmentRouteCourierMapper;
+    private final CurrencyMapper currencyMapper;
 
     public void sendAllEntitiesToKafka() {
         log.info("Starting bulk send of all entities to Kafka");
@@ -56,6 +58,7 @@ public class KafkaBulkSenderService {
         sendVehicles();
         sendShipmentRoutes();
         sendShipmentRouteCouriers();
+        sendCurrencies();
 
         log.info("Completed bulk send of all entities to Kafka");
     }
@@ -225,6 +228,21 @@ public class KafkaBulkSenderService {
         log.info("Sent {} ShipmentRouteCourier entities to Kafka", entities.size());
     }
 
+    public void sendCurrencies() {
+        log.info("Sending all Currency entities to Kafka");
+        var entities = currencyRepository.findAll();
+        entities.stream()
+                .map(currencyMapper::toDTO)
+                .forEach(dto -> {
+                    try {
+                        kafkaProducerService.sendCurrency(dto);
+                    } catch (Exception e) {
+                        log.error("Failed to send Currency with ID: {}", dto.getId(), e);
+                    }
+                });
+        log.info("Sent {} Currency entities to Kafka", entities.size());
+    }
+
     public void sendEntitiesByType(String entityType) {
         log.info("Sending entities of type: {}", entityType);
 
@@ -239,6 +257,7 @@ public class KafkaBulkSenderService {
             case "vehicle" -> sendVehicles();
             case "shipmentroute" -> sendShipmentRoutes();
             case "shipmentroutecourier" -> sendShipmentRouteCouriers();
+            case "currency" -> sendCurrencies();
             default -> {
                 log.warn("Unknown entity type: {}", entityType);
                 throw new IllegalArgumentException("Unknown entity type: " + entityType);

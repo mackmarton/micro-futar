@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.orders.kafka.ShipmentNotificationProducer;
 import org.bme.micro_futar.orders.kafka.ShipmentProducer;
 import org.bme.micro_futar.orders.mappers.ShipmentMapper;
+import org.bme.micro_futar.orders.repositories.CurrencyRepository;
 import org.bme.micro_futar.orders.repositories.ShipmentRepository;
 import org.bme.micro_futar.shared.dtos.ShipmentDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentNotificationEventDTO;
@@ -18,14 +19,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ShipmentService {
 
+    private static final String DEFAULT_CURRENCY_CODE = "HUF";
+
     private final ShipmentRepository shipmentRepository;
     private final CountryPriceService countryPriceService;
     private final ShipmentMapper shipmentMapper;
     private final ShipmentProducer shipmentProducer;
     private final ShipmentNotificationProducer shipmentNotificationProducer;
+    private final CurrencyRepository currencyRepository;
 
     @Transactional
     public ShipmentDTO newShipment(ShipmentDTO shipmentDTO) {
+        shipmentDTO.setCurrencyCode(resolveCurrencyCode(shipmentDTO.getCurrencyCode()));
         shipmentDTO.setConfirmed(true);
         shipmentDTO.setParcelNumber(UUID.randomUUID().toString());
         var shipmentEntity = shipmentMapper.toEntity(shipmentDTO);
@@ -42,5 +47,15 @@ public class ShipmentService {
         return shipmentRepository.findBySenderEmail(senderEmail).stream()
                 .map(shipmentMapper::toDTO)
                 .toList();
+    }
+
+    private String resolveCurrencyCode(String currencyCode) {
+        if (currencyCode == null || currencyCode.isBlank()) {
+            return DEFAULT_CURRENCY_CODE;
+        }
+        if (!currencyRepository.existsByCode(currencyCode)) {
+            throw new IllegalArgumentException("Unknown currency code: " + currencyCode);
+        }
+        return currencyCode;
     }
 }

@@ -6,11 +6,11 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocationCountryDTO {
+public class CurrencyDTO {
     private Long id;
     @NonNull
-    private Long regionId;
+    private String code;
     @NonNull
     private String name;
-    private String currencyCode;
+    private String symbol;
 }

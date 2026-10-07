@@ -68,3 +68,4 @@ kafka:
     shipment_route_topic: shipment-routes
     courier_topic: couriers
     vehicle_topic: vehicles
+    currency_topic: currencies

@@ -51,4 +51,5 @@ public class ShipmentDTO {
     //Not filled straight away
     private String parcelNumber;
     private Double price;
+    private String currencyCode;
 }
