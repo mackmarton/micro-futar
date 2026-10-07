@@ -3,11 +3,18 @@ import type {LocationCityDTO} from '@package/shared-core/api/OrdersApiClient';
 import type {PackageSizeDTO} from '@package/shared-core/api/OrdersApiClient';
 import type {CountryPriceDTO} from '@package/shared-core/api/OrdersApiClient';
 import type {ShipmentDTO} from '@package/shared-core/api/OrdersApiClient';
+import type {CurrencyDTO} from '@package/shared-core/api/OrdersApiClient';
 import { resolveApiBaseUrl } from '@package/shared-core';
 
 export type CountryOption = {
     value: string;
     label: string;
+    currencyCode?: string;
+};
+
+export type CurrencyOption = {
+    code: string;
+    symbol: string;
 };
 
 export type CityOption = {
@@ -65,7 +72,7 @@ const ordersApiClient = new Api({
 
 const isValidCountry = (
     country: LocationCountryDTO,
-): country is Required<Pick<LocationCountryDTO, 'id' | 'name'>> => {
+): country is LocationCountryDTO & Required<Pick<LocationCountryDTO, 'id' | 'name'>> => {
     return typeof country.id === 'number' && typeof country.name === 'string' && country.name.trim().length > 0;
 };
 
@@ -88,6 +95,17 @@ const isValidPackageSize = (
         typeof packageSize.name === 'string' &&
         typeof packageSize.maxLength === 'number' &&
         packageSize.name.trim().length > 0
+    );
+};
+
+const isValidCurrency = (
+    currency: CurrencyDTO,
+): currency is Required<Pick<CurrencyDTO, 'code' | 'symbol'>> => {
+    return (
+        typeof currency.code === 'string' &&
+        currency.code.trim().length > 0 &&
+        typeof currency.symbol === 'string' &&
+        currency.symbol.trim().length > 0
     );
 };
 
@@ -115,8 +133,23 @@ export const fetchCountryOptions = async (signal?: AbortSignal): Promise<Country
         .map((country) => ({
             value: String(country.id),
             label: country.name,
+            currencyCode: country.currencyCode,
         }))
         .sort((left, right) => left.label.localeCompare(right.label, 'hu'));
+};
+
+export const fetchCurrencyOptions = async (signal?: AbortSignal): Promise<CurrencyOption[]> => {
+    const response = await ordersApiClient.api.getAllCurrencies({
+        signal,
+        format: 'json',
+    });
+
+    return (response.data ?? [])
+        .filter(isValidCurrency)
+        .map((currency) => ({
+            code: currency.code,
+            symbol: currency.symbol,
+        }));
 };
 
 export const fetchCityOptionsByCountryId = async (

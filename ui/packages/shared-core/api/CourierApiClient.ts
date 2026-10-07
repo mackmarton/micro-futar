@@ -54,6 +54,7 @@ export interface ShipmentDTO {
   parcelNumber?: string;
   /** @format double */
   price?: number;
+  currencyCode?: string;
 }
 
 export interface ShipmentRouteDTO {
