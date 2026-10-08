@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FormSection, PrecisionInput } from '@package/shared-ui';
 import type { LocationRegionDTO } from '@package/shared-core/api/LogisticsApiClient';
 import { createRegion, getRegionById, updateRegion } from '../../api/logisticsDeposApi';
-import { logisticsNavigationItems } from '../../navigation';
+import { useLogisticsNavigationItems } from '../../navigation';
 import { EntityFormShell } from '../../shared/EntityFormShell';
+import { LanguageSwitcher } from '../../../i18n/LanguageSwitcher';
 
 type RegionFormState = {
   name: string;
@@ -15,9 +17,9 @@ const toFormState = (region: LocationRegionDTO): RegionFormState => ({
   name: region.name ?? '',
 });
 
-const validateForm = (formState: RegionFormState): string | null => {
+const validateForm = (formState: RegionFormState, t: (key: string) => string): string | null => {
   if (!formState.name.trim()) {
-    return 'A régió neve kötelező.';
+    return t('region.form.nameRequired');
   }
 
   return null;
@@ -28,6 +30,9 @@ const buildPayload = (formState: RegionFormState): LocationRegionDTO => ({
 });
 
 export const LogisticsRegionFormPage = () => {
+  const { t } = useTranslation('location');
+  const { t: tCommon } = useTranslation('common');
+  const navigationItems = useLogisticsNavigationItems();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const params = useParams();
@@ -87,7 +92,7 @@ export const LogisticsRegionFormPage = () => {
   };
 
   const handleSubmit = () => {
-    const errorMessage = validateForm(formState);
+    const errorMessage = validateForm(formState, t);
     setValidationError(errorMessage);
 
     if (errorMessage) {
@@ -99,31 +104,32 @@ export const LogisticsRegionFormPage = () => {
 
   return (
     <EntityFormShell
-      title={isEditMode ? 'Régió szerkesztés' : 'Régió létrehozás'}
+      title={isEditMode ? t('region.form.titleEdit') : t('region.form.titleCreate')}
       activeHref="#/portal/locations/regions"
-      navigationItems={logisticsNavigationItems}
-      eyebrow="Helyszín form"
-      heading={isEditMode ? 'Régió szerkesztés' : 'Új régió létrehozás'}
+      navigationItems={navigationItems}
+      topBarRightSlot={<LanguageSwitcher />}
+      eyebrow={t('region.form.eyebrow')}
+      heading={isEditMode ? t('region.form.headingEdit') : t('region.form.headingCreate')}
       backLinks={
         <Link
           to="/portal/locations/regions"
           className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
         >
-          Vissza a régiókhoz
+          {t('region.form.backToList')}
         </Link>
       }
       isLoading={isEditMode && regionQuery.isLoading}
-      loadingMessage="A régió adatainak betöltése folyamatban..."
+      loadingMessage={t('region.form.loading')}
       isError={regionQuery.isError}
-      errorMessage="A régió adatainak betöltése sikertelen."
+      errorMessage={t('region.form.errorHeading')}
       errorDetail={(regionQuery.error as Error)?.message}
     >
-      <FormSection icon="location_city" title="Régió adatai" className="mt-6">
+      <FormSection icon="location_city" title={t('region.form.sectionTitle')} className="mt-6">
         <PrecisionInput
-          label="Régió név"
+          label={t('region.form.nameLabel')}
           value={formState.name}
           onChange={(event) => handleInputChange(event.target.value)}
-          placeholder="Pl.: Nyugat-Európa"
+          placeholder={t('region.form.namePlaceholder')}
           required
         />
 
@@ -136,7 +142,7 @@ export const LogisticsRegionFormPage = () => {
         {saveMutation.isError ? (
           <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
             <p className="font-body text-on-surface">
-              {(saveMutation.error as Error)?.message ?? 'A mentés nem sikerült.'}
+              {(saveMutation.error as Error)?.message ?? t('region.form.saveFailed')}
             </p>
           </div>
         ) : null}
@@ -148,14 +154,14 @@ export const LogisticsRegionFormPage = () => {
             disabled={saveMutation.isPending}
             className="inline-flex items-center rounded-lg bg-primary px-5 py-3 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {saveMutation.isPending ? 'Mentés...' : isEditMode ? 'Módosítás mentése' : 'Régió létrehozása'}
+            {saveMutation.isPending ? tCommon('buttons.saving') : isEditMode ? t('region.form.submitEdit') : t('region.form.submitCreate')}
           </button>
           <button
             type="button"
             onClick={() => navigate('/portal/locations/regions')}
             className="inline-flex items-center rounded-lg bg-surface-container-lowest px-5 py-3 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
           >
-            Mégse
+            {tCommon('buttons.cancel')}
           </button>
         </div>
       </FormSection>

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { PortalLayout } from '@package/shared-ui';
 import type { DepoTransitDTO } from '@package/shared-core/api/LogisticsApiClient';
 import {
@@ -10,7 +11,8 @@ import {
   getDepoTransitById,
   updateDepoTransit,
 } from '../api/logisticsDeposApi';
-import { logisticsNavigationItems } from '../navigation';
+import { useLogisticsNavigationItems } from '../navigation';
+import { LanguageSwitcher } from '../../i18n/LanguageSwitcher';
 
 type TransitDirection = 'outgoing' | 'incoming' | 'standalone';
 
@@ -80,56 +82,60 @@ const validateForm = (
   formState: DepoTransitFormState,
   depoId: number,
   direction: TransitDirection,
+  t: (key: string) => string,
 ): string | null => {
   if (!formState.originDepoId) {
-    return 'A forrás depó kiválasztása kötelező.';
+    return t('transitForm.validation.originRequired');
   }
 
   if (!formState.destinationDepoId) {
-    return 'A cél depó kiválasztása kötelező.';
+    return t('transitForm.validation.destinationRequired');
   }
 
   if (formState.originDepoId === formState.destinationDepoId) {
-    return 'A forrás és cél depó nem lehet azonos.';
+    return t('transitForm.validation.sameOriginDestination');
   }
 
   if (!formState.packageSizeId) {
-    return 'A csomagméret kiválasztása kötelező.';
+    return t('transitForm.validation.packageSizeRequired');
   }
 
   if (!formState.price.trim()) {
-    return 'Az ár megadása kötelező.';
+    return t('transitForm.validation.priceRequired');
   }
 
   const parsedPrice = Number(formState.price);
   if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
-    return 'Az ár csak nem negatív szám lehet.';
+    return t('transitForm.validation.priceNonNegative');
   }
 
   if (direction === 'outgoing' && Number(formState.originDepoId) !== depoId) {
-    return 'Kimenő tranzitnál a forrás depónak a megnyitott depóval kell egyeznie.';
+    return t('transitForm.validation.outgoingOriginMismatch');
   }
 
   if (direction === 'incoming' && Number(formState.destinationDepoId) !== depoId) {
-    return 'Bejövő tranzitnál a cél depónak a megnyitott depóval kell egyeznie.';
+    return t('transitForm.validation.incomingDestinationMismatch');
   }
 
   return null;
 };
 
-const getDirectionLabel = (direction: TransitDirection) => {
+const getDirectionLabel = (direction: TransitDirection, t: (key: string) => string) => {
   if (direction === 'outgoing') {
-    return 'Kimenő tranzit';
+    return t('transitForm.direction.outgoing');
   }
 
   if (direction === 'incoming') {
-    return 'Bejövő tranzit';
+    return t('transitForm.direction.incoming');
   }
 
-  return 'Depó tranzit';
+  return t('transitForm.direction.standalone');
 };
 
 export const LogisticsDepoTransitFormPage = () => {
+  const { t } = useTranslation('depo');
+  const { t: tCommon } = useTranslation('common');
+  const navigationItems = useLogisticsNavigationItems();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const params = useParams();
@@ -259,7 +265,7 @@ export const LogisticsDepoTransitFormPage = () => {
       ...(hasFixedDestination ? { destinationDepoId: String(depoId) } : {}),
     };
 
-    const errorMessage = validateForm(normalizedFormState, depoId, direction);
+    const errorMessage = validateForm(normalizedFormState, depoId, direction, t);
     setValidationError(errorMessage);
 
     if (errorMessage) {
@@ -275,17 +281,18 @@ export const LogisticsDepoTransitFormPage = () => {
 
   return (
     <PortalLayout
-      title={isEditMode ? 'Depó tranzit szerkesztés' : 'Depó tranzit létrehozás'}
+      title={isEditMode ? t('transitForm.titleEdit') : t('transitForm.titleCreate')}
       activeHref="#/portal/depos"
-      navigationItems={logisticsNavigationItems}
+      navigationItems={navigationItems}
+      topBarRightSlot={<LanguageSwitcher />}
     >
       <section className="rounded-3xl bg-surface-container-low p-6 md:p-8">
-        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Depó tranzit form</p>
+        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('transitForm.eyebrow')}</p>
         <h1 className="mt-2 text-2xl md:text-3xl font-headline text-on-surface">
-          {isEditMode ? 'Depó tranzit szerkesztés' : 'Új depó tranzit létrehozás'}
+          {isEditMode ? t('transitForm.headingEdit') : t('transitForm.headingCreate')}
         </h1>
         <p className="mt-3 font-body text-on-surface-variant">
-          {getDirectionLabel(direction)} • Kontextus depó: {currentDepoName}
+          {t('transitForm.contextLine', { direction: getDirectionLabel(direction, t), depoName: currentDepoName })}
         </p>
 
         <div className="mt-5 flex flex-wrap gap-3">
@@ -293,23 +300,23 @@ export const LogisticsDepoTransitFormPage = () => {
             to={`/portal/depos/${depoId}`}
             className="inline-flex items-center gap-2 rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
           >
-            Vissza a depó részleteihez
+            {t('transitForm.backToDetails')}
           </Link>
         </div>
       </section>
 
       {isPageLoading ? (
         <section className="mt-6 rounded-2xl bg-surface-container-low p-8">
-          <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Betöltés</p>
-          <p className="mt-2 font-body text-on-surface">A depó tranzit form betöltése folyamatban...</p>
+          <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{tCommon('eyebrow.loading')}</p>
+          <p className="mt-2 font-body text-on-surface">{t('transitForm.loading')}</p>
         </section>
       ) : null}
 
       {isPageError ? (
         <section className="mt-6 rounded-2xl bg-surface-container-low p-8">
-          <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Hiba</p>
-          <p className="mt-2 font-body text-on-surface">A depó tranzit form megnyitása sikertelen.</p>
-          <p className="mt-1 font-body text-on-surface-variant">{pageError?.message ?? 'Ismeretlen hiba.'}</p>
+          <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{tCommon('eyebrow.error')}</p>
+          <p className="mt-2 font-body text-on-surface">{t('transitForm.errorHeading')}</p>
+          <p className="mt-1 font-body text-on-surface-variant">{pageError?.message ?? tCommon('status.unknownError')}</p>
         </section>
       ) : null}
 
@@ -317,63 +324,66 @@ export const LogisticsDepoTransitFormPage = () => {
         <section className="mt-6 rounded-3xl bg-surface-container-low p-6 md:p-8">
           <div className="grid gap-4 md:grid-cols-2">
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Forrás depó</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('transitForm.fields.originDepo')}</p>
               <select
                 value={formState.originDepoId}
                 onChange={(event) => handleInputChange('originDepoId', event.target.value)}
                 disabled={hasFixedOrigin}
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface disabled:cursor-not-allowed disabled:opacity-70"
               >
-                <option value="">Válassz forrás depót</option>
+                <option value="">{t('transitForm.fields.originDepoPlaceholder')}</option>
                 {(deposQuery.data ?? []).map((depo) => (
                   <option key={depo.id ?? depo.name} value={depo.id ?? ''}>
-                    {depo.name ?? 'N/A'}
+                    {/* depo.name backend-ről érkező szabad szöveg, nem fordítjuk. */}
+                    {depo.name ?? tCommon('status.notAvailable')}
                   </option>
                 ))}
               </select>
               {hasFixedOrigin ? (
-                <p className="mt-2 font-body text-on-surface-variant">Kimenő tranzitnál a forrás depó rögzített.</p>
+                <p className="mt-2 font-body text-on-surface-variant">{t('transitForm.fields.fixedOriginHint')}</p>
               ) : null}
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Cél depó</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('transitForm.fields.destinationDepo')}</p>
               <select
                 value={formState.destinationDepoId}
                 onChange={(event) => handleInputChange('destinationDepoId', event.target.value)}
                 disabled={hasFixedDestination}
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface disabled:cursor-not-allowed disabled:opacity-70"
               >
-                <option value="">Válassz cél depót</option>
+                <option value="">{t('transitForm.fields.destinationDepoPlaceholder')}</option>
                 {(deposQuery.data ?? []).map((depo) => (
                   <option key={depo.id ?? depo.name} value={depo.id ?? ''}>
-                    {depo.name ?? 'N/A'}
+                    {/* depo.name backend-ről érkező szabad szöveg, nem fordítjuk. */}
+                    {depo.name ?? tCommon('status.notAvailable')}
                   </option>
                 ))}
               </select>
               {hasFixedDestination ? (
-                <p className="mt-2 font-body text-on-surface-variant">Bejövő tranzitnál a cél depó rögzített.</p>
+                <p className="mt-2 font-body text-on-surface-variant">{t('transitForm.fields.fixedDestinationHint')}</p>
               ) : null}
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Csomagméret</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('transitForm.fields.packageSize')}</p>
               <select
                 value={formState.packageSizeId}
                 onChange={(event) => handleInputChange('packageSizeId', event.target.value)}
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
               >
-                <option value="">Válassz csomagméretet</option>
+                <option value="">{t('transitForm.fields.packageSizePlaceholder')}</option>
                 {(packageSizesQuery.data ?? []).map((packageSize) => (
                   <option key={packageSize.id ?? packageSize.name} value={packageSize.id ?? ''}>
-                    {packageSize.name ?? 'N/A'}
+                    {/* packageSize.name backend-ről érkező szabad szöveg, nem fordítjuk. */}
+                    {packageSize.name ?? tCommon('status.notAvailable')}
                   </option>
                 ))}
               </select>
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Szállítás típusa</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('transitForm.fields.transportType')}</p>
               <select
                 value={formState.transportType}
                 onChange={(event) =>
@@ -381,13 +391,13 @@ export const LogisticsDepoTransitFormPage = () => {
                 }
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
               >
-                <option value="ROAD">Földi</option>
-                <option value="AIR">Légi</option>
+                <option value="ROAD">{t('transportType.road')}</option>
+                <option value="AIR">{t('transportType.air')}</option>
               </select>
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Ár (Ft)</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('transitForm.fields.price')}</p>
               <input
                 type="number"
                 min="0"
@@ -395,7 +405,7 @@ export const LogisticsDepoTransitFormPage = () => {
                 value={formState.price}
                 onChange={(event) => handleInputChange('price', event.target.value)}
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-                placeholder="Pl.: 1990"
+                placeholder={t('transitForm.fields.pricePlaceholder')}
               />
             </label>
           </div>
@@ -409,7 +419,7 @@ export const LogisticsDepoTransitFormPage = () => {
           {saveMutation.isError ? (
             <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
               <p className="font-body text-on-surface">
-                {(saveMutation.error as Error)?.message ?? 'A mentés nem sikerült.'}
+                {(saveMutation.error as Error)?.message ?? t('transitForm.saveFailed')}
               </p>
             </div>
           ) : null}
@@ -421,14 +431,14 @@ export const LogisticsDepoTransitFormPage = () => {
               disabled={saveMutation.isPending}
               className="inline-flex items-center rounded-lg bg-primary px-5 py-3 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {saveMutation.isPending ? 'Mentés...' : isEditMode ? 'Módosítás mentése' : 'Depó tranzit létrehozása'}
+              {saveMutation.isPending ? tCommon('buttons.saving') : isEditMode ? t('transitForm.submitEdit') : t('transitForm.submitCreate')}
             </button>
             <button
               type="button"
               onClick={() => navigate(`/portal/depos/${depoId}`)}
               className="inline-flex items-center rounded-lg bg-surface-container-lowest px-5 py-3 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
             >
-              Mégse
+              {tCommon('buttons.cancel')}
             </button>
           </div>
         </section>

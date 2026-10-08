@@ -1,0 +1,40 @@
+{
+  "list": {
+    "title": "Pénznemek",
+    "eyebrow": "Logisztika",
+    "heading": "Pénznemek",
+    "addNew": "Új pénznem létrehozása",
+    "loading": "A pénznemek betöltése folyamatban...",
+    "errorHeading": "Nem sikerült betölteni a pénznemeket.",
+    "columns": {
+      "code": "Kód",
+      "name": "Név",
+      "symbol": "Jel"
+    },
+    "tableTitle": "Pénznem lista",
+    "empty": "Nincs elérhető pénznem rekord.",
+    "mobileEyebrow": "Pénznem"
+  },
+  "form": {
+    "eyebrow": "Pénznem form",
+    "titleEdit": "Pénznem szerkesztés",
+    "titleCreate": "Pénznem létrehozás",
+    "headingEdit": "Pénznem szerkesztés",
+    "headingCreate": "Új pénznem létrehozás",
+    "backToList": "Vissza a pénznemekhez",
+    "loading": "A pénznem adatainak betöltése folyamatban...",
+    "errorHeading": "A pénznem adatainak betöltése sikertelen.",
+    "sectionTitle": "Pénznem adatai",
+    "codeLabel": "Kód",
+    "codePlaceholder": "Pl.: HUF",
+    "nameLabel": "Név",
+    "namePlaceholder": "Pl.: Magyar forint",
+    "symbolLabel": "Jel",
+    "symbolPlaceholder": "Pl.: Ft",
+    "codeRequired": "A pénznem kódja kötelező.",
+    "nameRequired": "A pénznem neve kötelező.",
+    "saveFailed": "A mentés nem sikerült.",
+    "submitCreate": "Pénznem létrehozása",
+    "submitEdit": "Módosítás mentése"
+  }
+}

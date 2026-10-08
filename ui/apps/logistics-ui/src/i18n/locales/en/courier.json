@@ -1,0 +1,89 @@
+{
+  "qualifiedFor": {
+    "road": "Road",
+    "air": "Air"
+  },
+  "courierType": {
+    "crossDepo": "Cross-depot",
+    "delivery": "Delivery"
+  },
+  "list": {
+    "sectionEyebrow": "Section",
+    "heading": "Couriers",
+    "description": "Select a depot first to list its couriers. Cross-depot couriers are shown in a separate list.",
+    "depoCouriers": {
+      "eyebrow": "Depot couriers",
+      "heading": "Couriers belonging to a depot",
+      "addNew": "Create new depot courier",
+      "depoSelectLabel": "Depot selection",
+      "depoSelectPlaceholder": "Select a depot",
+      "loadingDepos": "Loading depots...",
+      "errorLoadingDepos": "Failed to load the depot list.",
+      "noDeposAvailable": "No depot is available, so the depot courier list cannot be loaded either.",
+      "selectDepoPrompt": "Select a depot to list its couriers.",
+      "loading": "Loading depot couriers...",
+      "errorHeading": "Failed to load the couriers of the selected depot.",
+      "errorLoadingVehicles": "Failed to load the vehicle data.",
+      "tableTitle": "Depot couriers",
+      "tableTitleWithDepo": "Depot couriers - {{depoName}}",
+      "empty": "No courier record found for this depot.",
+      "mobileEyebrow": "Depot courier"
+    },
+    "crossDepoCouriers": {
+      "eyebrow": "Cross-depot couriers",
+      "heading": "Cross-depot couriers",
+      "addNew": "Create new cross-depot courier",
+      "loading": "Loading cross-depot couriers...",
+      "errorHeading": "Failed to load the cross-depot couriers.",
+      "errorLoadingVehicles": "Failed to load the vehicle data.",
+      "tableTitle": "Cross-depot couriers",
+      "empty": "No cross-depot courier record found.",
+      "mobileEyebrow": "Cross-depot courier"
+    },
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "telephone": "Phone",
+      "vehicle": "Vehicle",
+      "qualifiedFor": "Qualification",
+      "courierType": "Type"
+    }
+  },
+  "form": {
+    "eyebrow": "Courier form",
+    "titleEdit": "Edit courier",
+    "titleCreate": "Create courier",
+    "headingEdit": "Edit courier",
+    "headingCreate": "Create new courier",
+    "backToList": "Back to the couriers page",
+    "loading": "Loading courier form...",
+    "errorHeading": "Failed to open the courier form.",
+    "fields": {
+      "name": "Name",
+      "namePlaceholder": "e.g.: John Smith",
+      "email": "Email",
+      "emailPlaceholder": "e.g.: john.smith@example.com",
+      "telephone": "Phone number",
+      "telephonePlaceholder": "e.g.: +36 30 123 4567",
+      "vehicle": "Vehicle",
+      "vehiclePlaceholder": "Select a vehicle",
+      "qualifiedFor": "Qualification",
+      "courierType": "Courier type",
+      "courierTypeDeliveryOption": "Depot (delivery)",
+      "courierTypeCrossDepoOption": "Cross-depot",
+      "depo": "Depot",
+      "depoPlaceholder": "Select a depot",
+      "depoDisabledHint": "The depot field is not usable for a cross-depot courier."
+    },
+    "validation": {
+      "nameRequired": "Name is required.",
+      "emailRequired": "Email is required.",
+      "telephoneRequired": "Phone number is required.",
+      "vehicleRequired": "Selecting a vehicle is required.",
+      "depoRequired": "Selecting a depot is required for the delivery type."
+    },
+    "saveFailed": "Save failed.",
+    "submitCreate": "Create courier",
+    "submitEdit": "Save changes"
+  }
+}

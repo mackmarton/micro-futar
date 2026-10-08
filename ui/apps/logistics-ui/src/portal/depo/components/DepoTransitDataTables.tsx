@@ -1,6 +1,7 @@
-import {useMemo} from 'react';
+import {useCallback, useMemo} from 'react';
 import {Link} from 'react-router-dom';
 import {useQuery} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {DataTable} from '@package/shared-ui';
 import type {DataTableColumn} from '@package/shared-ui';
 import type {DepoTransitDTO} from '@package/shared-core/api/LogisticsApiClient';
@@ -15,25 +16,29 @@ type DepoTransitDataTablesProps = {
     depoId: number;
 };
 
-const valueOrFallback = (value?: string | number | boolean) => {
-    if (typeof value === 'boolean') {
-        return value ? 'Igen' : 'Nem';
-    }
-
-    return typeof value === 'number' || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
-};
-
-const decodeTransportType = (transportType: string) => {
-    if (transportType === 'ROAD') {
-        return 'Földi';
-    } else if (transportType === 'AIR') {
-        return 'Légi';
-    }
-
-    return transportType;
-};
-
 export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
+    const {t} = useTranslation('depo');
+    const {t: tCommon} = useTranslation('common');
+    const notAvailable = tCommon('status.notAvailable');
+
+    const valueOrFallback = useCallback((value?: string | number | boolean) => {
+        if (typeof value === 'boolean') {
+            return value ? tCommon('status.yes') : tCommon('status.no');
+        }
+
+        return typeof value === 'number' || (typeof value === 'string' && value.length > 0) ? value : notAvailable;
+    }, [tCommon, notAvailable]);
+
+    const decodeTransportType = useCallback((transportType: string) => {
+        if (transportType === 'ROAD') {
+            return t('transportType.road');
+        } else if (transportType === 'AIR') {
+            return t('transportType.air');
+        }
+
+        return transportType;
+    }, [t]);
+
     const {
         data: outgoingTransits,
         isLoading: isOutgoingLoading,
@@ -79,29 +84,31 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
     });
 
     const packageSizeNameById = useMemo(() => {
-        return new Map((packageSizes ?? []).map((packageSize) => [packageSize.id, packageSize.name ?? 'N/A']));
-    }, [packageSizes]);
+        // packageSize.name backend-ről érkező szabad szöveg, nem fordítjuk.
+        return new Map((packageSizes ?? []).map((packageSize) => [packageSize.id, packageSize.name ?? notAvailable]));
+    }, [packageSizes, notAvailable]);
 
     const depoNameById = useMemo(() => {
         const namesById = new Map<number, string>();
 
         for (const depo of depos ?? []) {
             if (typeof depo.id === 'number') {
-                namesById.set(depo.id, depo.name ?? 'N/A');
+                // depo.name backend-ről érkező szabad szöveg, nem fordítjuk.
+                namesById.set(depo.id, depo.name ?? notAvailable);
             }
         }
 
         return namesById;
-    }, [depos]);
+    }, [depos, notAvailable]);
 
     const outgoingColumns = useMemo<DataTableColumn<DepoTransitDTO>[]>(() => [
         {
             id: 'destinationDepoId',
-            header: 'Cél depó',
-            mobileLabel: 'Cél depó',
+            header: t('transitTable.columns.destinationDepo'),
+            mobileLabel: t('transitTable.columns.destinationDepo'),
             cell: (transit) => {
                 if (typeof transit.destinationDepoId !== 'number') {
-                    return 'N/A';
+                    return notAvailable;
                 }
 
                 const destinationDepoId = transit.destinationDepoId;
@@ -116,11 +123,11 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
         },
         {
             id: 'packageSizeId',
-            header: 'Csomagméret',
-            mobileLabel: 'Csomagméret',
+            header: t('transitTable.columns.packageSize'),
+            mobileLabel: t('transitTable.columns.packageSize'),
             cell: (transit) => {
                 if (typeof transit.packageSizeId !== 'number') {
-                    return 'N/A';
+                    return notAvailable;
                 }
 
                 return packageSizeNameById.get(transit.packageSizeId) ?? `#${transit.packageSizeId}`;
@@ -128,41 +135,41 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
         },
         {
             id: 'transportType',
-            header: 'Szállítás típusa',
-            mobileLabel: 'Szállítás típusa',
+            header: t('transitTable.columns.transportType'),
+            mobileLabel: t('transitTable.columns.transportType'),
             cell: (transit) => transit.transportType ? decodeTransportType(transit.transportType) : valueOrFallback(transit.transportType),
         },
         {
             id: 'price',
-            header: 'Ár',
-            mobileLabel: 'Ár',
+            header: t('transitTable.columns.price'),
+            mobileLabel: t('transitTable.columns.price'),
             cell: (transit) => `${valueOrFallback(transit.price)} Ft`,
         },
         {
             id: 'edit',
-            header: 'Szerkesztés',
+            header: tCommon('table.editHeader'),
             cell: (transit) =>
                 typeof transit.id === 'number' ? (
                     <Link
                         to={`/portal/depos/${depoId}/transits/${transit.id}/edit?direction=outgoing`}
                         className="inline-flex items-center rounded-lg bg-surface-container-lowest px-3 py-1.5 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container"
                     >
-                        Szerkeszt
+                        {tCommon('buttons.edit')}
                     </Link>
                 ) : (
-                    <span className="text-on-surface-variant">N/A</span>
+                    <span className="text-on-surface-variant">{notAvailable}</span>
                 ),
         },
-    ], [depoId, depoNameById, packageSizeNameById]);
+    ], [depoId, depoNameById, packageSizeNameById, t, tCommon, notAvailable, valueOrFallback, decodeTransportType]);
 
     const incomingColumns = useMemo<DataTableColumn<DepoTransitDTO>[]>(() => [
         {
             id: 'originDepoId',
-            header: 'Forrás depo',
-            mobileLabel: 'Forrás depo',
+            header: t('transitTable.columns.originDepo'),
+            mobileLabel: t('transitTable.columns.originDepo'),
             cell: (transit) => {
                 if (typeof transit.originDepoId !== 'number') {
-                    return 'N/A';
+                    return notAvailable;
                 }
 
                 const originDepoId = transit.originDepoId;
@@ -177,11 +184,11 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
         },
         {
             id: 'packageSizeId',
-            header: 'Csomagméret',
-            mobileLabel: 'Csomagméret',
+            header: t('transitTable.columns.packageSize'),
+            mobileLabel: t('transitTable.columns.packageSize'),
             cell: (transit) => {
                 if (typeof transit.packageSizeId !== 'number') {
-                    return 'N/A';
+                    return notAvailable;
                 }
 
                 return packageSizeNameById.get(transit.packageSizeId) ?? `#${transit.packageSizeId}`;
@@ -189,38 +196,38 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
         },
         {
             id: 'transportType',
-            header: 'Szállítás típusa',
-            mobileLabel: 'Szállítás típusa',
+            header: t('transitTable.columns.transportType'),
+            mobileLabel: t('transitTable.columns.transportType'),
             cell: (transit) => transit.transportType ? decodeTransportType(transit.transportType) : valueOrFallback(transit.transportType),
         },
         {
             id: 'price',
-            header: 'Ár',
-            mobileLabel: 'Ár',
+            header: t('transitTable.columns.price'),
+            mobileLabel: t('transitTable.columns.price'),
             cell: (transit) => `${valueOrFallback(transit.price)} Ft`,
         },
         {
             id: 'edit',
-            header: 'Szerkesztés',
+            header: tCommon('table.editHeader'),
             cell: (transit) =>
                 typeof transit.id === 'number' ? (
                     <Link
                         to={`/portal/depos/${depoId}/transits/${transit.id}/edit?direction=incoming`}
                         className="inline-flex items-center rounded-lg bg-surface-container-lowest px-3 py-1.5 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container"
                     >
-                        Szerkeszt
+                        {tCommon('buttons.edit')}
                     </Link>
                 ) : (
-                    <span className="text-on-surface-variant">N/A</span>
+                    <span className="text-on-surface-variant">{notAvailable}</span>
                 ),
         },
-    ], [depoId, depoNameById, packageSizeNameById]);
+    ], [depoId, depoNameById, packageSizeNameById, t, tCommon, notAvailable, valueOrFallback, decodeTransportType]);
 
     return (
         <>
             <section className="rounded-2xl bg-surface-container-low p-6 lg:col-span-2">
-                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Szekció</p>
-                <h2 className="mt-2 text-2xl font-headline text-on-surface">Tranzitok</h2>
+                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('transitTable.sectionEyebrow')}</p>
+                <h2 className="mt-2 text-2xl font-headline text-on-surface">{t('transitTable.heading')}</h2>
             </section>
 
             <section className="lg:col-span-2">
@@ -229,26 +236,26 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
                         to={`/portal/depos/${depoId}/transits/new?direction=outgoing`}
                         className="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
                     >
-                        Kimenő tranzit hozzáadása
+                        {t('transitTable.addOutgoing')}
                     </Link>
                 </div>
 
                 {isOutgoingLoading || isPackageSizesLoading || isDeposLoading ? (
                     <section className="rounded-2xl bg-surface-container-low p-8">
-                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Betöltés</p>
-                        <p className="mt-2 font-body text-on-surface">Kimenő depo tranzitok betöltése...</p>
+                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{tCommon('eyebrow.loading')}</p>
+                        <p className="mt-2 font-body text-on-surface">{t('transitTable.outgoingLoading')}</p>
                     </section>
                 ) : null}
 
                 {isOutgoingError || isPackageSizesError || isDeposError ? (
                     <section className="rounded-2xl bg-surface-container-low p-8">
-                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Hiba</p>
-                        <p className="mt-2 font-body text-on-surface">Nem sikerült betölteni a kimenő depo tranzitokat.</p>
+                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{tCommon('eyebrow.error')}</p>
+                        <p className="mt-2 font-body text-on-surface">{t('transitTable.outgoingErrorHeading')}</p>
                         <p className="mt-1 font-body text-on-surface-variant">
                             {(outgoingError as Error)?.message
                                 ?? (packageSizesError as Error)?.message
                                 ?? (deposError as Error)?.message
-                                ?? 'Ismeretlen hiba'}
+                                ?? tCommon('status.unknownError')}
                         </p>
                         <button
                             type="button"
@@ -259,7 +266,7 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
                             }}
                             className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary hover:bg-on-primary-container transition-colors"
                         >
-                            Ujrapróbálás
+                            {tCommon('buttons.retry')}
                         </button>
                     </section>
                 ) : null}
@@ -268,21 +275,21 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
                     <DataTable
                         data={outgoingTransits ?? []}
                         rowKey={(transit, index) => String(transit.id ?? `${transit.destinationDepoId ?? 'out'}-${index}`)}
-                        title="Kimenő depó tranzitok"
+                        title={t('transitTable.outgoingTable.title')}
                         columns={outgoingColumns}
-                        emptyMessage="Ehhez a depóhoz nem található kimenő tranzit."
-                        mobileCardEyebrow="Kimenő tranzit"
-                        recordCountLabel={(visible, total) => `Megjelenített rekordok: ${visible} / ${total}`}
+                        emptyMessage={t('transitTable.outgoingTable.empty')}
+                        mobileCardEyebrow={t('transitTable.outgoingTable.mobileEyebrow')}
+                        recordCountLabel={(visible, total) => tCommon('table.recordCount', { visible, total })}
                         renderMobileActions={(transit) =>
                             typeof transit.id === 'number' ? (
                                 <Link
                                     to={`/portal/depos/${depoId}/transits/${transit.id}/edit?direction=outgoing`}
                                     className="inline-flex items-center rounded-lg bg-surface px-3 py-1.5 text-sm font-semibold text-on-surface"
                                 >
-                                    Szerkeszt
+                                    {tCommon('buttons.edit')}
                                 </Link>
                             ) : (
-                                <span className="text-on-surface-variant">N/A</span>
+                                <span className="text-on-surface-variant">{notAvailable}</span>
                             )
                         }
                     />
@@ -295,26 +302,26 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
                         to={`/portal/depos/${depoId}/transits/new?direction=incoming`}
                         className="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
                     >
-                        Bejövő tranzit hozzáadása
+                        {t('transitTable.addIncoming')}
                     </Link>
                 </div>
 
                 {isIncomingLoading || isPackageSizesLoading || isDeposLoading ? (
                     <section className="rounded-2xl bg-surface-container-low p-8">
-                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Betöltés</p>
-                        <p className="mt-2 font-body text-on-surface">Bejövő depó tranzitok betöltése...</p>
+                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{tCommon('eyebrow.loading')}</p>
+                        <p className="mt-2 font-body text-on-surface">{t('transitTable.incomingLoading')}</p>
                     </section>
                 ) : null}
 
                 {isIncomingError || isPackageSizesError || isDeposError ? (
                     <section className="rounded-2xl bg-surface-container-low p-8">
-                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Hiba</p>
-                        <p className="mt-2 font-body text-on-surface">Nem sikerült betölteni a bejövő depó tranzitokat.</p>
+                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{tCommon('eyebrow.error')}</p>
+                        <p className="mt-2 font-body text-on-surface">{t('transitTable.incomingErrorHeading')}</p>
                         <p className="mt-1 font-body text-on-surface-variant">
                             {(incomingError as Error)?.message
                                 ?? (packageSizesError as Error)?.message
                                 ?? (deposError as Error)?.message
-                                ?? 'Ismeretlen hiba'}
+                                ?? tCommon('status.unknownError')}
                         </p>
                         <button
                             type="button"
@@ -325,7 +332,7 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
                             }}
                             className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary hover:bg-on-primary-container transition-colors"
                         >
-                            Ujrapróbálás
+                            {tCommon('buttons.retry')}
                         </button>
                     </section>
                 ) : null}
@@ -334,21 +341,21 @@ export const DepoTransitDataTables = ({depoId}: DepoTransitDataTablesProps) => {
                     <DataTable
                         data={incomingTransits ?? []}
                         rowKey={(transit, index) => String(transit.id ?? `${transit.originDepoId ?? 'in'}-${index}`)}
-                        title="Bejövő depó tranzitok"
+                        title={t('transitTable.incomingTable.title')}
                         columns={incomingColumns}
-                        emptyMessage="Ehhez a depóhoz nem található bejövő tranzit."
-                        mobileCardEyebrow="Bejövő tranzit"
-                        recordCountLabel={(visible, total) => `Megjelenített rekordok: ${visible} / ${total}`}
+                        emptyMessage={t('transitTable.incomingTable.empty')}
+                        mobileCardEyebrow={t('transitTable.incomingTable.mobileEyebrow')}
+                        recordCountLabel={(visible, total) => tCommon('table.recordCount', { visible, total })}
                         renderMobileActions={(transit) =>
                             typeof transit.id === 'number' ? (
                                 <Link
                                     to={`/portal/depos/${depoId}/transits/${transit.id}/edit?direction=incoming`}
                                     className="inline-flex items-center rounded-lg bg-surface px-3 py-1.5 text-sm font-semibold text-on-surface"
                                 >
-                                    Szerkeszt
+                                    {tCommon('buttons.edit')}
                                 </Link>
                             ) : (
-                                <span className="text-on-surface-variant">N/A</span>
+                                <span className="text-on-surface-variant">{notAvailable}</span>
                             )
                         }
                     />

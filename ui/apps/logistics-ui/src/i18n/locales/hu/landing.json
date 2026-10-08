@@ -1,0 +1,5 @@
+{
+  "title": "Logisztikai portál",
+  "description": "Üdvözlünk a micro-futar alkalmazás logisztikai portálján.",
+  "accessDeniedMessage": "Nincs jogosultságod a portál használatához. A belépéshez logistics-admin vagy logistics-user szerepkör szükséges."
+}

@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FormSection, PrecisionInput } from '@package/shared-ui';
 import type { VehicleDTO } from '@package/shared-core/api/LogisticsApiClient';
 import { createVehicle, getVehicleById, updateVehicle } from '../api/logisticsDeposApi';
-import { logisticsNavigationItems } from '../navigation';
+import { useLogisticsNavigationItems } from '../navigation';
 import { EntityFormShell } from '../shared/EntityFormShell';
+import { LanguageSwitcher } from '../../i18n/LanguageSwitcher';
 
 type VehicleFormState = {
   registrationNumber: string;
@@ -22,13 +24,13 @@ const parsePositiveNumber = (value: string): number | null => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 };
 
-const validateForm = (formState: VehicleFormState): string | null => {
+const validateForm = (formState: VehicleFormState, t: (key: string) => string): string | null => {
   if (!formState.registrationNumber.trim()) {
-    return 'A rendszám megadása kötelező.';
+    return t('form.registrationNumberRequired');
   }
 
   if (parsePositiveNumber(formState.maximumPackableVolume) === null) {
-    return 'A maximális térfogat legyen pozitív szám.';
+    return t('form.maximumPackableVolumeInvalid');
   }
 
   return null;
@@ -40,6 +42,9 @@ const buildPayload = (formState: VehicleFormState): VehicleDTO => ({
 });
 
 export const LogisticsVehicleFormPage = () => {
+  const { t } = useTranslation('vehicle');
+  const { t: tCommon } = useTranslation('common');
+  const navigationItems = useLogisticsNavigationItems();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const params = useParams();
@@ -100,7 +105,7 @@ export const LogisticsVehicleFormPage = () => {
   };
 
   const handleSubmit = () => {
-    const errorMessage = validateForm(formState);
+    const errorMessage = validateForm(formState, t);
     setValidationError(errorMessage);
 
     if (errorMessage) {
@@ -112,41 +117,42 @@ export const LogisticsVehicleFormPage = () => {
 
   return (
     <EntityFormShell
-      title={isEditMode ? 'Jármű szerkesztés' : 'Jármű létrehozás'}
+      title={isEditMode ? t('form.titleEdit') : t('form.titleCreate')}
       activeHref="#/portal/vehicles"
-      navigationItems={logisticsNavigationItems}
-      eyebrow="Jármű form"
-      heading={isEditMode ? 'Jármű szerkesztés' : 'Új jármű létrehozás'}
+      navigationItems={navigationItems}
+      topBarRightSlot={<LanguageSwitcher />}
+      eyebrow={t('form.eyebrow')}
+      heading={isEditMode ? t('form.headingEdit') : t('form.headingCreate')}
       backLinks={
         <Link
           to="/portal/vehicles"
           className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
         >
-          Vissza a járművekhez
+          {t('form.backToList')}
         </Link>
       }
       isLoading={isEditMode && vehicleQuery.isLoading}
-      loadingMessage="A jármű adatainak betöltése folyamatban..."
+      loadingMessage={t('form.loading')}
       isError={vehicleQuery.isError}
-      errorMessage="A jármű adatainak betöltése sikertelen."
+      errorMessage={t('form.errorHeading')}
       errorDetail={(vehicleQuery.error as Error)?.message}
     >
-      <FormSection icon="delivery_truck_speed" title="Jármű adatai" className="mt-6">
+      <FormSection icon="delivery_truck_speed" title={t('form.sectionTitle')} className="mt-6">
         <div className="grid gap-4 md:grid-cols-2">
           <PrecisionInput
-            label="Rendszám"
+            label={t('form.registrationNumberLabel')}
             value={formState.registrationNumber}
             onChange={(event) => handleInputChange('registrationNumber', event.target.value)}
-            placeholder="Pl.: ABC-123"
+            placeholder={t('form.registrationNumberPlaceholder')}
             required
           />
 
           <PrecisionInput
-            label="Max térfogat (cm³)"
+            label={t('form.maximumPackableVolumeLabel')}
             type="number"
             value={formState.maximumPackableVolume}
             onChange={(event) => handleInputChange('maximumPackableVolume', event.target.value)}
-            placeholder="Pl.: 120000"
+            placeholder={t('form.maximumPackableVolumePlaceholder')}
             required
           />
         </div>
@@ -160,7 +166,7 @@ export const LogisticsVehicleFormPage = () => {
         {saveMutation.isError ? (
           <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
             <p className="font-body text-on-surface">
-              {(saveMutation.error as Error)?.message ?? 'A mentés nem sikerült.'}
+              {(saveMutation.error as Error)?.message ?? t('form.saveFailed')}
             </p>
           </div>
         ) : null}
@@ -172,14 +178,14 @@ export const LogisticsVehicleFormPage = () => {
             disabled={saveMutation.isPending}
             className="inline-flex items-center rounded-lg bg-primary px-5 py-3 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {saveMutation.isPending ? 'Mentés...' : isEditMode ? 'Módosítás mentése' : 'Jármű létrehozása'}
+            {saveMutation.isPending ? tCommon('buttons.saving') : isEditMode ? t('form.submitEdit') : t('form.submitCreate')}
           </button>
           <button
             type="button"
             onClick={() => navigate('/portal/vehicles')}
             className="inline-flex items-center rounded-lg bg-surface-container-lowest px-5 py-3 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
           >
-            Mégse
+            {tCommon('buttons.cancel')}
           </button>
         </div>
       </FormSection>

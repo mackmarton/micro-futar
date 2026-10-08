@@ -1,0 +1,37 @@
+{
+  "list": {
+    "title": "Vehicles",
+    "eyebrow": "Logistics",
+    "heading": "Vehicles",
+    "addNew": "Create new vehicle",
+    "loading": "Loading vehicles...",
+    "errorHeading": "Failed to load vehicles.",
+    "columns": {
+      "registrationNumber": "Registration number",
+      "maximumPackableVolume": "Max volume"
+    },
+    "tableTitle": "Vehicle list",
+    "empty": "No vehicle record available.",
+    "mobileEyebrow": "Vehicle"
+  },
+  "form": {
+    "eyebrow": "Vehicle form",
+    "titleEdit": "Edit vehicle",
+    "titleCreate": "Create vehicle",
+    "headingEdit": "Edit vehicle",
+    "headingCreate": "Create new vehicle",
+    "backToList": "Back to vehicles",
+    "loading": "Loading the vehicle data...",
+    "errorHeading": "Failed to load the vehicle data.",
+    "sectionTitle": "Vehicle data",
+    "registrationNumberLabel": "Registration number",
+    "registrationNumberPlaceholder": "e.g.: ABC-123",
+    "maximumPackableVolumeLabel": "Max volume (cm³)",
+    "maximumPackableVolumePlaceholder": "e.g.: 120000",
+    "registrationNumberRequired": "Registration number is required.",
+    "maximumPackableVolumeInvalid": "Max volume must be a positive number.",
+    "saveFailed": "Save failed.",
+    "submitCreate": "Create vehicle",
+    "submitEdit": "Save changes"
+  }
+}

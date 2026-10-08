@@ -1,0 +1,37 @@
+{
+  "list": {
+    "title": "Járművek",
+    "eyebrow": "Logisztika",
+    "heading": "Járművek",
+    "addNew": "Új jármű létrehozása",
+    "loading": "A járművek betöltése folyamatban...",
+    "errorHeading": "Nem sikerült betölteni a járműveket.",
+    "columns": {
+      "registrationNumber": "Rendszám",
+      "maximumPackableVolume": "Max térfogat"
+    },
+    "tableTitle": "Jármű lista",
+    "empty": "Nincs elérhető jármű rekord.",
+    "mobileEyebrow": "Jármű"
+  },
+  "form": {
+    "eyebrow": "Jármű form",
+    "titleEdit": "Jármű szerkesztés",
+    "titleCreate": "Jármű létrehozás",
+    "headingEdit": "Jármű szerkesztés",
+    "headingCreate": "Új jármű létrehozás",
+    "backToList": "Vissza a járművekhez",
+    "loading": "A jármű adatainak betöltése folyamatban...",
+    "errorHeading": "A jármű adatainak betöltése sikertelen.",
+    "sectionTitle": "Jármű adatai",
+    "registrationNumberLabel": "Rendszám",
+    "registrationNumberPlaceholder": "Pl.: ABC-123",
+    "maximumPackableVolumeLabel": "Max térfogat (cm³)",
+    "maximumPackableVolumePlaceholder": "Pl.: 120000",
+    "registrationNumberRequired": "A rendszám megadása kötelező.",
+    "maximumPackableVolumeInvalid": "A maximális térfogat legyen pozitív szám.",
+    "saveFailed": "A mentés nem sikerült.",
+    "submitCreate": "Jármű létrehozása",
+    "submitEdit": "Módosítás mentése"
+  }
+}

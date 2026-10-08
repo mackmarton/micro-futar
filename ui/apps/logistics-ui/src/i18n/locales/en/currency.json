@@ -1,0 +1,40 @@
+{
+  "list": {
+    "title": "Currencies",
+    "eyebrow": "Logistics",
+    "heading": "Currencies",
+    "addNew": "Create new currency",
+    "loading": "Loading currencies...",
+    "errorHeading": "Failed to load currencies.",
+    "columns": {
+      "code": "Code",
+      "name": "Name",
+      "symbol": "Symbol"
+    },
+    "tableTitle": "Currency list",
+    "empty": "No currency record available.",
+    "mobileEyebrow": "Currency"
+  },
+  "form": {
+    "eyebrow": "Currency form",
+    "titleEdit": "Edit currency",
+    "titleCreate": "Create currency",
+    "headingEdit": "Edit currency",
+    "headingCreate": "Create new currency",
+    "backToList": "Back to currencies",
+    "loading": "Loading the currency data...",
+    "errorHeading": "Failed to load the currency data.",
+    "sectionTitle": "Currency data",
+    "codeLabel": "Code",
+    "codePlaceholder": "e.g.: HUF",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g.: Hungarian forint",
+    "symbolLabel": "Symbol",
+    "symbolPlaceholder": "e.g.: Ft",
+    "codeRequired": "Currency code is required.",
+    "nameRequired": "Currency name is required.",
+    "saveFailed": "Save failed.",
+    "submitCreate": "Create currency",
+    "submitEdit": "Save changes"
+  }
+}

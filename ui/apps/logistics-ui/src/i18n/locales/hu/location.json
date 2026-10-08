@@ -1,0 +1,121 @@
+{
+  "region": {
+    "list": {
+      "title": "Régiók",
+      "eyebrow": "Helyszínek",
+      "heading": "Régiók",
+      "addNew": "Új régió létrehozása",
+      "loading": "Régiók betöltése folyamatban...",
+      "errorHeading": "Nem sikerült betölteni a régiókat.",
+      "columns": {
+        "name": "Régió",
+        "next": "Tovább",
+        "goToCountries": "Országok"
+      },
+      "tableTitle": "Régió lista",
+      "empty": "Nincs elérhető régió.",
+      "mobileEyebrow": "Régió"
+    },
+    "form": {
+      "eyebrow": "Helyszín form",
+      "titleEdit": "Régió szerkesztés",
+      "titleCreate": "Régió létrehozás",
+      "headingEdit": "Régió szerkesztés",
+      "headingCreate": "Új régió létrehozás",
+      "backToList": "Vissza a régiókhoz",
+      "loading": "A régió adatainak betöltése folyamatban...",
+      "errorHeading": "A régió adatainak betöltése sikertelen.",
+      "sectionTitle": "Régió adatai",
+      "nameLabel": "Régió név",
+      "namePlaceholder": "Pl.: Nyugat-Európa",
+      "nameRequired": "A régió neve kötelező.",
+      "saveFailed": "A mentés nem sikerült.",
+      "submitCreate": "Régió létrehozása",
+      "submitEdit": "Módosítás mentése"
+    }
+  },
+  "country": {
+    "list": {
+      "title": "Országok",
+      "eyebrow": "Helyszínek",
+      "heading": "Országok",
+      "selectedRegion": "Kiválasztott régió: {{regionName}}",
+      "backToRegions": "Vissza a régiókhoz",
+      "addNew": "Új ország létrehozása",
+      "emptyGuard": "Válassz régiót a régió oldalon az országok listázásához.",
+      "loading": "Országok betöltése folyamatban...",
+      "errorHeading": "Nem sikerült betölteni az országokat.",
+      "columns": {
+        "name": "Ország",
+        "next": "Tovább",
+        "goToCities": "Városok"
+      },
+      "tableTitle": "Ország lista",
+      "empty": "A kiválasztott régióhoz nem tartozik ország.",
+      "mobileEyebrow": "Ország"
+    },
+    "form": {
+      "eyebrow": "Helyszín form",
+      "titleEdit": "Ország szerkesztés",
+      "titleCreate": "Ország létrehozás",
+      "headingEdit": "Ország szerkesztés",
+      "headingCreate": "Új ország létrehozás",
+      "backToList": "Vissza az országokhoz",
+      "loading": "Az ország form betöltése folyamatban...",
+      "errorHeading": "Az ország form megnyitása sikertelen.",
+      "sectionTitle": "Ország adatai",
+      "nameLabel": "Ország név",
+      "namePlaceholder": "Pl.: Magyarország",
+      "regionLabel": "Régió",
+      "regionPlaceholder": "Válassz régiót",
+      "currencyLabel": "Pénznem",
+      "currencyDefaultOption": "Alapértelmezett (HUF)",
+      "nameRequired": "Az ország neve kötelező.",
+      "regionRequired": "A régió kiválasztása kötelező.",
+      "saveFailed": "A mentés nem sikerült.",
+      "submitCreate": "Ország létrehozása",
+      "submitEdit": "Módosítás mentése"
+    }
+  },
+  "city": {
+    "list": {
+      "title": "Városok",
+      "eyebrow": "Helyszínek",
+      "heading": "Városok",
+      "selectedCountry": "Kiválasztott ország: {{countryName}}",
+      "backToCountries": "Vissza az országokhoz",
+      "addNew": "Új város létrehozása",
+      "emptyGuard": "Válassz országot az országok oldalon a városok listázásához.",
+      "loading": "Városok betöltése folyamatban...",
+      "errorHeading": "Nem sikerült betölteni a városokat.",
+      "columns": {
+        "id": "ID",
+        "name": "Város"
+      },
+      "tableTitle": "Város lista",
+      "empty": "A kiválasztott országhoz nem tartozik város.",
+      "mobileEyebrow": "Város"
+    },
+    "form": {
+      "eyebrow": "Helyszín form",
+      "titleEdit": "Város szerkesztés",
+      "titleCreate": "Város létrehozás",
+      "headingEdit": "Város szerkesztés",
+      "headingCreate": "Új város létrehozás",
+      "backToList": "Vissza a városokhoz",
+      "backToCountries": "Vissza az országokhoz",
+      "loading": "A város form betöltése folyamatban...",
+      "errorHeading": "A város form megnyitása sikertelen.",
+      "sectionTitle": "Város adatai",
+      "nameLabel": "Város név",
+      "namePlaceholder": "Pl.: Budapest",
+      "countryLabel": "Ország",
+      "countryPlaceholder": "Válassz országot",
+      "nameRequired": "A város neve kötelező.",
+      "countryRequired": "Az ország kiválasztása kötelező.",
+      "saveFailed": "A mentés nem sikerült.",
+      "submitCreate": "Város létrehozása",
+      "submitEdit": "Módosítás mentése"
+    }
+  }
+}

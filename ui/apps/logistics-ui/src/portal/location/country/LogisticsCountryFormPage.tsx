@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FormSection, PrecisionInput } from '@package/shared-ui';
 import type { LocationCountryDTO } from '@package/shared-core/api/LogisticsApiClient';
 import {
@@ -10,8 +11,9 @@ import {
   getCountryById,
   updateCountry,
 } from '../../api/logisticsDeposApi';
-import { logisticsNavigationItems } from '../../navigation';
+import { useLogisticsNavigationItems } from '../../navigation';
 import { EntityFormShell } from '../../shared/EntityFormShell';
+import { LanguageSwitcher } from '../../../i18n/LanguageSwitcher';
 
 type CountryFormState = {
   name: string;
@@ -30,13 +32,13 @@ const toFormState = (country: LocationCountryDTO): CountryFormState => ({
   currencyCode: country.currencyCode ?? '',
 });
 
-const validateForm = (formState: CountryFormState): string | null => {
+const validateForm = (formState: CountryFormState, t: (key: string) => string): string | null => {
   if (!formState.name.trim()) {
-    return 'Az ország neve kötelező.';
+    return t('country.form.nameRequired');
   }
 
   if (!formState.regionId) {
-    return 'A régió kiválasztása kötelező.';
+    return t('country.form.regionRequired');
   }
 
   return null;
@@ -49,6 +51,9 @@ const buildPayload = (formState: CountryFormState): LocationCountryDTO => ({
 });
 
 export const LogisticsCountryFormPage = () => {
+  const { t } = useTranslation('location');
+  const { t: tCommon } = useTranslation('common');
+  const navigationItems = useLogisticsNavigationItems();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const params = useParams();
@@ -130,7 +135,7 @@ export const LogisticsCountryFormPage = () => {
   };
 
   const handleSubmit = () => {
-    const errorMessage = validateForm(formState);
+    const errorMessage = validateForm(formState, t);
     setValidationError(errorMessage);
 
     if (errorMessage) {
@@ -146,42 +151,43 @@ export const LogisticsCountryFormPage = () => {
 
   return (
     <EntityFormShell
-      title={isEditMode ? 'Ország szerkesztés' : 'Ország létrehozás'}
+      title={isEditMode ? t('country.form.titleEdit') : t('country.form.titleCreate')}
       activeHref="#/portal/locations/regions"
-      navigationItems={logisticsNavigationItems}
-      eyebrow="Helyszín form"
-      heading={isEditMode ? 'Ország szerkesztés' : 'Új ország létrehozás'}
+      navigationItems={navigationItems}
+      topBarRightSlot={<LanguageSwitcher />}
+      eyebrow={t('country.form.eyebrow')}
+      heading={isEditMode ? t('country.form.headingEdit') : t('country.form.headingCreate')}
       backLinks={
         <Link
           to={countriesPageHref}
           className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
         >
-          Vissza az országokhoz
+          {t('country.form.backToList')}
         </Link>
       }
       isLoading={regionsQuery.isLoading || currenciesQuery.isLoading || (isEditMode && countryQuery.isLoading)}
-      loadingMessage="Az ország form betöltése folyamatban..."
+      loadingMessage={t('country.form.loading')}
       isError={regionsQuery.isError || currenciesQuery.isError || countryQuery.isError}
-      errorMessage="Az ország form megnyitása sikertelen."
+      errorMessage={t('country.form.errorHeading')}
       errorDetail={
         (regionsQuery.error as Error | null)?.message ??
         (currenciesQuery.error as Error | null)?.message ??
         (countryQuery.error as Error | null)?.message
       }
     >
-      <FormSection icon="location_city" title="Ország adatai" className="mt-6">
+      <FormSection icon="location_city" title={t('country.form.sectionTitle')} className="mt-6">
         <div className="grid gap-4 md:grid-cols-2">
           <PrecisionInput
-            label="Ország név"
+            label={t('country.form.nameLabel')}
             value={formState.name}
             onChange={(event) => handleInputChange('name', event.target.value)}
-            placeholder="Pl.: Magyarország"
+            placeholder={t('country.form.namePlaceholder')}
             required
           />
 
           <label className="block">
             <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3 block">
-              Régió
+              {t('country.form.regionLabel')}
               <span className="ml-1 text-red-600" aria-hidden="true">*</span>
             </span>
             <select
@@ -189,10 +195,11 @@ export const LogisticsCountryFormPage = () => {
               onChange={(event) => handleInputChange('regionId', event.target.value)}
               className="w-full bg-surface-container-lowest border-none rounded-lg p-4 focus:ring-0 border-b-2 border-transparent focus:border-surface-tint transition-all"
             >
-              <option value="">Válassz régiót</option>
+              <option value="">{t('country.form.regionPlaceholder')}</option>
               {(regionsQuery.data ?? []).map((region) => (
                 <option key={region.id ?? region.name} value={region.id ?? ''}>
-                  {region.name ?? 'N/A'}
+                  {/* region.name backend-ről érkező szabad szöveg, nem fordítjuk. */}
+                  {region.name ?? tCommon('status.notAvailable')}
                 </option>
               ))}
             </select>
@@ -200,17 +207,18 @@ export const LogisticsCountryFormPage = () => {
 
           <label className="block">
             <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3 block">
-              Pénznem
+              {t('country.form.currencyLabel')}
             </span>
             <select
               value={formState.currencyCode}
               onChange={(event) => handleInputChange('currencyCode', event.target.value)}
               className="w-full bg-surface-container-lowest border-none rounded-lg p-4 focus:ring-0 border-b-2 border-transparent focus:border-surface-tint transition-all"
             >
-              <option value="">Alapértelmezett (HUF)</option>
+              <option value="">{t('country.form.currencyDefaultOption')}</option>
               {(currenciesQuery.data ?? []).map((currency) => (
                 <option key={currency.id ?? currency.code} value={currency.code ?? ''}>
-                  {currency.name ?? 'N/A'} ({currency.code ?? 'N/A'})
+                  {/* currency.name/code backend-ről érkező adat, nem fordítjuk. */}
+                  {currency.name ?? tCommon('status.notAvailable')} ({currency.code ?? tCommon('status.notAvailable')})
                 </option>
               ))}
             </select>
@@ -226,7 +234,7 @@ export const LogisticsCountryFormPage = () => {
         {saveMutation.isError ? (
           <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
             <p className="font-body text-on-surface">
-              {(saveMutation.error as Error)?.message ?? 'A mentés nem sikerült.'}
+              {(saveMutation.error as Error)?.message ?? t('country.form.saveFailed')}
             </p>
           </div>
         ) : null}
@@ -238,14 +246,14 @@ export const LogisticsCountryFormPage = () => {
             disabled={saveMutation.isPending}
             className="inline-flex items-center rounded-lg bg-primary px-5 py-3 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {saveMutation.isPending ? 'Mentés...' : isEditMode ? 'Módosítás mentése' : 'Ország létrehozása'}
+            {saveMutation.isPending ? tCommon('buttons.saving') : isEditMode ? t('country.form.submitEdit') : t('country.form.submitCreate')}
           </button>
           <button
             type="button"
             onClick={() => navigate(countriesPageHref)}
             className="inline-flex items-center rounded-lg bg-surface-container-lowest px-5 py-3 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
           >
-            Mégse
+            {tCommon('buttons.cancel')}
           </button>
         </div>
       </FormSection>

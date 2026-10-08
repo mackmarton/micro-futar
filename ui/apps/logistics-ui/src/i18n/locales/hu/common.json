@@ -1,0 +1,46 @@
+{
+  "brand": {
+    "name": "micro-futar",
+    "subtitle": "Logisztikai Portál"
+  },
+  "portal": {
+    "title": "Logisztika"
+  },
+  "nav": {
+    "depos": "Depók",
+    "couriers": "Futárok",
+    "locations": "Helyszínek",
+    "packageSizes": "Csomagméretek",
+    "vehicles": "Járművek",
+    "currencies": "Pénznemek"
+  },
+  "buttons": {
+    "save": "Mentés",
+    "saving": "Mentés...",
+    "cancel": "Mégse",
+    "retry": "Újrapróbálás",
+    "edit": "Szerkeszt",
+    "open": "Megnyit"
+  },
+  "eyebrow": {
+    "loading": "Betöltés",
+    "error": "Hiba",
+    "emptyState": "Üres állapot",
+    "section": "Szekció"
+  },
+  "status": {
+    "unknownError": "Ismeretlen hiba",
+    "notAvailable": "N/A",
+    "loadingEllipsis": "Betöltés...",
+    "yes": "Igen",
+    "no": "Nem"
+  },
+  "table": {
+    "editHeader": "Szerkesztés",
+    "recordCount": "Megjelenített rekordok: {{visible}} / {{total}}"
+  },
+  "languageSwitcher": {
+    "label": "Nyelv",
+    "ariaLabel": "Nyelv kiválasztása"
+  }
+}

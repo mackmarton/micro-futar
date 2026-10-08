@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { PortalLayout } from '@package/shared-ui';
 import type { CourierDTO } from '@package/shared-core/api/LogisticsApiClient';
 import {
@@ -10,7 +11,8 @@ import {
   getCourierById,
   updateCourier,
 } from '../api/logisticsDeposApi';
-import { logisticsNavigationItems } from '../navigation';
+import { useLogisticsNavigationItems } from '../navigation';
+import { LanguageSwitcher } from '../../i18n/LanguageSwitcher';
 
 type CourierFormState = {
   name: string;
@@ -50,25 +52,25 @@ const toFormState = (courier: CourierDTO): CourierFormState => ({
   depoId: typeof courier.depoId === 'number' ? String(courier.depoId) : '',
 });
 
-const validateForm = (formState: CourierFormState): string | null => {
+const validateForm = (formState: CourierFormState, t: (key: string) => string): string | null => {
   if (!formState.name.trim()) {
-    return 'A név megadása kötelező.';
+    return t('form.validation.nameRequired');
   }
 
   if (!formState.email.trim()) {
-    return 'Az email megadása kötelező.';
+    return t('form.validation.emailRequired');
   }
 
   if (!formState.telephone.trim()) {
-    return 'A telefonszám megadása kötelező.';
+    return t('form.validation.telephoneRequired');
   }
 
   if (!formState.vehicleId) {
-    return 'A jármű kiválasztása kötelező.';
+    return t('form.validation.vehicleRequired');
   }
 
   if (formState.courierType === 'DELIVERY' && !formState.depoId) {
-    return 'Delivery típusnál a depó kiválasztása kötelező.';
+    return t('form.validation.depoRequired');
   }
 
   return null;
@@ -85,6 +87,9 @@ const buildPayload = (formState: CourierFormState): CourierDTO => ({
 });
 
 export const LogisticsCourierFormPage = () => {
+  const { t } = useTranslation('courier');
+  const { t: tCommon } = useTranslation('common');
+  const navigationItems = useLogisticsNavigationItems();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const params = useParams();
@@ -195,7 +200,7 @@ export const LogisticsCourierFormPage = () => {
   };
 
   const handleSubmit = () => {
-    const errorMessage = validateForm(formState);
+    const errorMessage = validateForm(formState, t);
     setValidationError(errorMessage);
 
     if (errorMessage) {
@@ -207,14 +212,15 @@ export const LogisticsCourierFormPage = () => {
 
   return (
     <PortalLayout
-      title={isEditMode ? 'Futár szerkesztés' : 'Futár létrehozás'}
+      title={isEditMode ? t('form.titleEdit') : t('form.titleCreate')}
       activeHref="#/portal/couriers"
-      navigationItems={logisticsNavigationItems}
+      navigationItems={navigationItems}
+      topBarRightSlot={<LanguageSwitcher />}
     >
       <section className="rounded-3xl bg-surface-container-low p-6 md:p-8">
-        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Futár form</p>
+        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.eyebrow')}</p>
         <h1 className="mt-2 text-2xl md:text-3xl font-headline text-on-surface">
-          {isEditMode ? 'Futár szerkesztés' : 'Új futár létrehozás'}
+          {isEditMode ? t('form.headingEdit') : t('form.headingCreate')}
         </h1>
 
         <div className="mt-5 flex flex-wrap gap-3">
@@ -222,23 +228,23 @@ export const LogisticsCourierFormPage = () => {
             to="/portal/couriers"
             className="inline-flex items-center gap-2 rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
           >
-            Vissza a futárok oldalára
+            {t('form.backToList')}
           </Link>
         </div>
       </section>
 
       {isPageLoading ? (
         <section className="mt-6 rounded-2xl bg-surface-container-low p-8">
-          <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Betöltés</p>
-          <p className="mt-2 font-body text-on-surface">A futár form betöltése folyamatban...</p>
+          <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{tCommon('eyebrow.loading')}</p>
+          <p className="mt-2 font-body text-on-surface">{t('form.loading')}</p>
         </section>
       ) : null}
 
       {isPageError ? (
         <section className="mt-6 rounded-2xl bg-surface-container-low p-8">
-          <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Hiba</p>
-          <p className="mt-2 font-body text-on-surface">A futár form megnyitása sikertelen.</p>
-          <p className="mt-1 font-body text-on-surface-variant">{pageError?.message ?? 'Ismeretlen hiba.'}</p>
+          <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{tCommon('eyebrow.error')}</p>
+          <p className="mt-2 font-body text-on-surface">{t('form.errorHeading')}</p>
+          <p className="mt-1 font-body text-on-surface-variant">{pageError?.message ?? tCommon('status.unknownError')}</p>
         </section>
       ) : null}
 
@@ -246,56 +252,57 @@ export const LogisticsCourierFormPage = () => {
         <section className="mt-6 rounded-3xl bg-surface-container-low p-6 md:p-8">
           <div className="grid gap-4 md:grid-cols-2">
             <label className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Név</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.fields.name')}</p>
               <input
                 type="text"
                 value={formState.name}
                 onChange={(event) => handleInputChange('name', event.target.value)}
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-                placeholder="Pl.: Kovács Béla"
+                placeholder={t('form.fields.namePlaceholder')}
               />
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Email</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.fields.email')}</p>
               <input
                 type="email"
                 value={formState.email}
                 onChange={(event) => handleInputChange('email', event.target.value)}
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-                placeholder="Pl.: bela.kovacs@example.com"
+                placeholder={t('form.fields.emailPlaceholder')}
               />
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Telefonszám</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.fields.telephone')}</p>
               <input
                 type="text"
                 value={formState.telephone}
                 onChange={(event) => handleInputChange('telephone', event.target.value)}
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-                placeholder="Pl.: +36 30 123 4567"
+                placeholder={t('form.fields.telephonePlaceholder')}
               />
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Jármű</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.fields.vehicle')}</p>
               <select
                 value={formState.vehicleId}
                 onChange={(event) => handleInputChange('vehicleId', event.target.value)}
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
               >
-                <option value="">Válassz járművet</option>
+                <option value="">{t('form.fields.vehiclePlaceholder')}</option>
                 {(vehiclesQuery.data ?? []).map((vehicle) => (
                   <option key={vehicle.id ?? vehicle.registrationNumber} value={vehicle.id ?? ''}>
-                    {vehicle.registrationNumber ?? (typeof vehicle.id === 'number' ? `#${vehicle.id}` : 'N/A')}
+                    {/* vehicle.registrationNumber backend-ről érkező szabad szöveg, nem fordítjuk. */}
+                    {vehicle.registrationNumber ?? (typeof vehicle.id === 'number' ? `#${vehicle.id}` : tCommon('status.notAvailable'))}
                   </option>
                 ))}
               </select>
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Képzettség</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.fields.qualifiedFor')}</p>
               <select
                 value={formState.qualifiedFor}
                 onChange={(event) =>
@@ -303,13 +310,13 @@ export const LogisticsCourierFormPage = () => {
                 }
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
               >
-                <option value="ROAD">Földi</option>
-                <option value="AIR">Légi</option>
+                <option value="ROAD">{t('qualifiedFor.road')}</option>
+                <option value="AIR">{t('qualifiedFor.air')}</option>
               </select>
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Futár típus</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.fields.courierType')}</p>
               <select
                 value={formState.courierType}
                 onChange={(event) =>
@@ -317,29 +324,30 @@ export const LogisticsCourierFormPage = () => {
                 }
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
               >
-                <option value="DELIVERY">Depó (delivery)</option>
-                <option value="CROSS_DEPO">Cross-depó</option>
+                <option value="DELIVERY">{t('form.fields.courierTypeDeliveryOption')}</option>
+                <option value="CROSS_DEPO">{t('form.fields.courierTypeCrossDepoOption')}</option>
               </select>
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Depó</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.fields.depo')}</p>
               <select
                 value={formState.depoId}
                 onChange={(event) => handleInputChange('depoId', event.target.value)}
                 disabled={!isDeliveryCourier}
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface disabled:cursor-not-allowed disabled:opacity-70"
               >
-                <option value="">Válassz depót</option>
+                <option value="">{t('form.fields.depoPlaceholder')}</option>
                 {(deposQuery.data ?? []).map((depo) => (
                   <option key={depo.id ?? depo.name} value={depo.id ?? ''}>
-                    {depo.name ?? 'N/A'}
+                    {/* depo.name backend-ről érkező szabad szöveg, nem fordítjuk. */}
+                    {depo.name ?? tCommon('status.notAvailable')}
                   </option>
                 ))}
               </select>
               {!isDeliveryCourier ? (
                 <p className="mt-2 font-body text-on-surface-variant">
-                  Cross-depó futárnál a depó mező nem használható.
+                  {t('form.fields.depoDisabledHint')}
                 </p>
               ) : null}
             </label>
@@ -354,7 +362,7 @@ export const LogisticsCourierFormPage = () => {
           {saveMutation.isError ? (
             <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
               <p className="font-body text-on-surface">
-                {(saveMutation.error as Error)?.message ?? 'A mentés nem sikerült.'}
+                {(saveMutation.error as Error)?.message ?? t('form.saveFailed')}
               </p>
             </div>
           ) : null}
@@ -366,14 +374,14 @@ export const LogisticsCourierFormPage = () => {
               disabled={saveMutation.isPending}
               className="inline-flex items-center rounded-lg bg-primary px-5 py-3 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {saveMutation.isPending ? 'Mentés...' : isEditMode ? 'Módosítás mentése' : 'Futár létrehozása'}
+              {saveMutation.isPending ? tCommon('buttons.saving') : isEditMode ? t('form.submitEdit') : t('form.submitCreate')}
             </button>
             <button
               type="button"
               onClick={() => navigate('/portal/couriers')}
               className="inline-flex items-center rounded-lg bg-surface-container-lowest px-5 py-3 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
             >
-              Mégse
+              {tCommon('buttons.cancel')}
             </button>
           </div>
         </section>

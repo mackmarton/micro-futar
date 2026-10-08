@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { PortalLayout, type MapCoordinate } from '@package/shared-ui';
 import { LocationMapPicker } from '@package/shared-ui/LocationMapPicker';
 import type { DepoDTO } from '@package/shared-core/api/LogisticsApiClient';
@@ -11,7 +12,8 @@ import {
   getDepoByIdWithLookups,
   updateDepo,
 } from '../api/logisticsDeposApi';
-import { logisticsNavigationItems } from '../navigation';
+import { useLogisticsNavigationItems } from '../navigation';
+import { LanguageSwitcher } from '../../i18n/LanguageSwitcher';
 
 type DepoFormState = {
   name: string;
@@ -68,32 +70,32 @@ const buildPayload = (formState: DepoFormState): DepoDTO => ({
   longitude: parseOptionalNumber(formState.longitude),
 });
 
-const validateForm = (formState: DepoFormState): string | null => {
+const validateForm = (formState: DepoFormState, t: (key: string) => string): string | null => {
   if (!formState.name) {
-    return 'A név megadása kötelező.';
+    return t('form.validation.nameRequired');
   }
 
   if (!formState.locationCountryId) {
-    return 'Az ország kiválasztása kötelező.';
+    return t('form.validation.countryRequired');
   }
 
   if (!formState.locationCityId) {
-    return 'A város kiválasztása kötelező.';
+    return t('form.validation.cityRequired');
   }
 
   if (!formState.zip.trim()) {
-    return 'Az irányítószám megadása kötelező.';
+    return t('form.validation.zipRequired');
   }
 
   if (!formState.address.trim()) {
-    return 'A cím megadása kötelező.';
+    return t('form.validation.addressRequired');
   }
 
   const latitude = parseOptionalNumber(formState.latitude);
   const longitude = parseOptionalNumber(formState.longitude);
 
   if (latitude === undefined || longitude === undefined) {
-    return 'A térképen jelöld ki a depó koordinátáit és erősítsd meg a pint.';
+    return t('form.validation.pinRequired');
   }
 
   return null;
@@ -104,7 +106,11 @@ type GeocodeResult = {
   longitude: number;
 };
 
-const geocodeAddress = async (query: string, signal?: AbortSignal): Promise<GeocodeResult | null> => {
+const geocodeAddress = async (
+  query: string,
+  geocodeFailedMessage: string,
+  signal?: AbortSignal,
+): Promise<GeocodeResult | null> => {
   const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`;
   const response = await fetch(url, {
     signal,
@@ -114,7 +120,7 @@ const geocodeAddress = async (query: string, signal?: AbortSignal): Promise<Geoc
   });
 
   if (!response.ok) {
-    throw new Error('A cím geokódolása sikertelen.');
+    throw new Error(geocodeFailedMessage);
   }
 
   const data = (await response.json()) as Array<{ lat?: string; lon?: string }>;
@@ -137,6 +143,9 @@ const geocodeAddress = async (query: string, signal?: AbortSignal): Promise<Geoc
 const formatCoordinate = (value: number) => value.toFixed(6);
 
 export const LogisticsDepoFormPage = () => {
+  const { t } = useTranslation('depo');
+  const { t: tCommon } = useTranslation('common');
+  const navigationItems = useLogisticsNavigationItems();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const params = useParams();
@@ -254,10 +263,10 @@ export const LogisticsDepoFormPage = () => {
       setGeocodeError(null);
 
       try {
-        const result = await geocodeAddress(query, signal);
+        const result = await geocodeAddress(query, t('form.validation.geocodeFailed'), signal);
 
         if (!result) {
-          setGeocodeError('Nem találtunk pontos találatot a megadott címhez.');
+          setGeocodeError(t('form.validation.geocodeNoResult'));
           return;
         }
 
@@ -269,12 +278,12 @@ export const LogisticsDepoFormPage = () => {
           return;
         }
 
-        setGeocodeError((error as Error).message ?? 'A cím geokódolása sikertelen.');
+        setGeocodeError((error as Error).message ?? t('form.validation.geocodeFailed'));
       } finally {
         setIsGeocoding(false);
       }
     },
-    [],
+    [t],
   );
 
   useEffect(() => {
@@ -346,11 +355,11 @@ export const LogisticsDepoFormPage = () => {
 
   const handleSubmit = () => {
     if (!isPinConfirmed) {
-      setValidationError('A térképen pozicionált pint előbb erősítsd meg.');
+      setValidationError(t('form.validation.pinNotConfirmed'));
       return;
     }
 
-    const errorMessage = validateForm(formState);
+    const errorMessage = validateForm(formState, t);
     setValidationError(errorMessage);
 
     if (errorMessage) {
@@ -362,17 +371,18 @@ export const LogisticsDepoFormPage = () => {
 
   return (
     <PortalLayout
-      title={isEditMode ? 'Depó szerkesztés' : 'Depó létrehozás'}
+      title={isEditMode ? t('form.titleEdit') : t('form.titleCreate')}
       activeHref="#/portal/depos"
-      navigationItems={logisticsNavigationItems}
+      navigationItems={navigationItems}
+      topBarRightSlot={<LanguageSwitcher />}
     >
       <section className="rounded-3xl bg-surface-container-low p-6 md:p-8">
-        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Depo form</p>
+        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.eyebrow')}</p>
         <h1 className="mt-2 text-2xl md:text-3xl font-headline text-on-surface">
-          {isEditMode ? 'Depó szerkesztés' : 'Új depó létrehozás'}
+          {isEditMode ? t('form.headingEdit') : t('form.headingCreate')}
         </h1>
         <p className="mt-3 font-body text-on-surface-variant">
-          A kötelező mezők: név, ország, város, irányítószám és cím.
+          {t('form.requiredFieldsNote')}
         </p>
 
         <div className="mt-5 flex flex-wrap gap-3">
@@ -380,23 +390,23 @@ export const LogisticsDepoFormPage = () => {
             to="/portal/depos"
             className="inline-flex items-center gap-2 rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
           >
-            Vissza a depók listájához
+            {t('form.backToList')}
           </Link>
         </div>
       </section>
 
       {isPageLoading ? (
         <section className="mt-6 rounded-2xl bg-surface-container-low p-8">
-          <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Betöltés</p>
-          <p className="mt-2 font-body text-on-surface">A form adatok betöltése folyamatban...</p>
+          <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{tCommon('eyebrow.loading')}</p>
+          <p className="mt-2 font-body text-on-surface">{t('form.loading')}</p>
         </section>
       ) : null}
 
       {isPageError ? (
         <section className="mt-6 rounded-2xl bg-surface-container-low p-8">
-          <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Hiba</p>
-          <p className="mt-2 font-body text-on-surface">A form megnyitása sikertelen.</p>
-          <p className="mt-1 font-body text-on-surface-variant">{pageError?.message ?? 'Ismeretlen hiba.'}</p>
+          <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{tCommon('eyebrow.error')}</p>
+          <p className="mt-2 font-body text-on-surface">{t('form.errorHeading')}</p>
+          <p className="mt-1 font-body text-on-surface-variant">{pageError?.message ?? tCommon('status.unknownError')}</p>
         </section>
       ) : null}
 
@@ -404,18 +414,18 @@ export const LogisticsDepoFormPage = () => {
         <section className="mt-6 rounded-3xl bg-surface-container-low p-6 md:p-8">
           <div className="grid gap-4 md:grid-cols-2">
             <label className="rounded-2xl bg-surface-container-lowest p-4 col-span-2">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Név</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.fields.name')}</p>
               <input
                   type="text"
                   value={formState.name}
                   onChange={(event) => handleInputChange('name', event.target.value)}
                   className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-                  placeholder="Pl.: Budapest"
+                  placeholder={t('form.fields.namePlaceholder')}
               />
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Ország</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.fields.country')}</p>
               <select
                 value={formState.locationCountryId}
                 onChange={(event) => {
@@ -428,88 +438,90 @@ export const LogisticsDepoFormPage = () => {
                 }}
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
               >
-                <option value="">Válassz országot</option>
+                <option value="">{t('form.fields.countryPlaceholder')}</option>
                 {(countriesQuery.data ?? []).map((country) => (
                   <option key={country.id ?? country.name} value={country.id ?? ''}>
-                    {country.name ?? 'N/A'}
+                    {/* country.name backend-ről érkező szabad szöveg, nem fordítjuk. */}
+                    {country.name ?? tCommon('status.notAvailable')}
                   </option>
                 ))}
               </select>
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Város</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.fields.city')}</p>
               <select
                 value={formState.locationCityId}
                 onChange={(event) => handleInputChange('locationCityId', event.target.value)}
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
               >
-                <option value="">Válassz várost</option>
+                <option value="">{t('form.fields.cityPlaceholder')}</option>
                 {filteredCities.map((city) => (
                   <option key={city.id ?? city.name} value={city.id ?? ''}>
-                    {city.name ?? 'N/A'}
+                    {/* city.name backend-ről érkező szabad szöveg, nem fordítjuk. */}
+                    {city.name ?? tCommon('status.notAvailable')}
                   </option>
                 ))}
               </select>
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Irányítószám</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.fields.zip')}</p>
               <input
                 type="text"
                 value={formState.zip}
                 onChange={(event) => handleInputChange('zip', event.target.value)}
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-                placeholder="Pl.: 2045"
+                placeholder={t('form.fields.zipPlaceholder')}
               />
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Cím</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.fields.address')}</p>
               <input
                 type="text"
                 value={formState.address}
                 onChange={(event) => handleInputChange('address', event.target.value)}
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-                placeholder="Pl.: Fő utca 1."
+                placeholder={t('form.fields.addressPlaceholder')}
               />
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Latitude</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.fields.latitude')}</p>
               <input
                 type="text"
                 value={formState.latitude}
                 readOnly
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-                placeholder="Térképről kerül kitöltésre"
+                placeholder={t('form.fields.coordinatePlaceholder')}
               />
             </label>
 
             <label className="rounded-2xl bg-surface-container-lowest p-4">
-              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Longitude</p>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.fields.longitude')}</p>
               <input
                 type="text"
                 value={formState.longitude}
                 readOnly
                 className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
-                placeholder="Térképről kerül kitöltésre"
+                placeholder={t('form.fields.coordinatePlaceholder')}
               />
             </label>
 
             <section className="rounded-2xl bg-surface-container-lowest p-4 md:col-span-2">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Térképes pozíció</p>
+                  <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.map.eyebrow')}</p>
                   <p className="mt-1 font-body text-on-surface-variant">
-                    A térkép a beírt címre pozicionál. Húzd a pint vagy kattints a térképen, majd erősítsd meg.
+                    {t('form.map.description')}
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => {
                     if (!geocodeQuery) {
-                      setGeocodeError('Adj meg címet, várost és országot az automatikus pozicionáláshoz.');
+                      setGeocodeError(t('form.validation.geocodeMissingFields'));
                       return;
                     }
 
@@ -518,7 +530,7 @@ export const LogisticsDepoFormPage = () => {
                   }}
                   className="inline-flex items-center rounded-lg bg-surface px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
                 >
-                  Cím alapján újrapozicionálás
+                  {t('form.map.repositionButton')}
                 </button>
               </div>
 
@@ -536,21 +548,24 @@ export const LogisticsDepoFormPage = () => {
                   onClick={() => updateCoordinatesFromMap(mapMarkerPosition)}
                   className="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
                 >
-                  Pin megerősítése
+                  {t('form.map.confirmPinButton')}
                 </button>
                 <p className="font-body text-on-surface-variant">
-                  Jelölt pont: {formatCoordinate(mapMarkerPosition.latitude)}, {formatCoordinate(mapMarkerPosition.longitude)}
+                  {t('form.map.markedPoint', {
+                    latitude: formatCoordinate(mapMarkerPosition.latitude),
+                    longitude: formatCoordinate(mapMarkerPosition.longitude),
+                  })}
                 </p>
               </div>
 
               {isGeocoding ? (
-                <p className="mt-3 font-body text-on-surface-variant">Automatikus címkeresés folyamatban...</p>
+                <p className="mt-3 font-body text-on-surface-variant">{t('form.map.geocoding')}</p>
               ) : null}
 
               {geocodeError ? <p className="mt-3 font-body text-on-surface-variant">{geocodeError}</p> : null}
 
               {!isPinConfirmed ? (
-                <p className="mt-3 font-body text-on-surface-variant">A mentéshez erősítsd meg a térképen beállított pint.</p>
+                <p className="mt-3 font-body text-on-surface-variant">{t('form.map.confirmPinHint')}</p>
               ) : null}
             </section>
           </div>
@@ -564,7 +579,7 @@ export const LogisticsDepoFormPage = () => {
           {saveMutation.isError ? (
             <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
               <p className="font-body text-on-surface">
-                {(saveMutation.error as Error)?.message ?? 'A mentés nem sikerült.'}
+                {(saveMutation.error as Error)?.message ?? t('form.saveFailed')}
               </p>
             </div>
           ) : null}
@@ -576,14 +591,14 @@ export const LogisticsDepoFormPage = () => {
               disabled={saveMutation.isPending}
               className="inline-flex items-center rounded-lg bg-primary px-5 py-3 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {saveMutation.isPending ? 'Mentés...' : isEditMode ? 'Módosítás mentése' : 'Depó létrehozása'}
+              {saveMutation.isPending ? tCommon('buttons.saving') : isEditMode ? t('form.submitEdit') : t('form.submitCreate')}
             </button>
             <button
               type="button"
               onClick={() => navigate('/portal/depos')}
               className="inline-flex items-center rounded-lg bg-surface-container-lowest px-5 py-3 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
             >
-              Mégse
+              {tCommon('buttons.cancel')}
             </button>
           </div>
         </section>
