@@ -16,12 +16,14 @@ export interface VehicleDTO {
   registrationNumber?: string;
   /** @format double */
   maximumPackableVolume?: number;
+  deleted?: boolean;
 }
 
 export interface LocationRegionDTO {
   /** @format int64 */
   id?: number;
   name?: string;
+  deleted?: boolean;
 }
 
 export interface PackageSizeDTO {
@@ -30,6 +32,7 @@ export interface PackageSizeDTO {
   name?: string;
   /** @format double */
   maxLength?: number;
+  deleted?: boolean;
 }
 
 export interface DepoDTO {
@@ -46,6 +49,7 @@ export interface DepoDTO {
   latitude?: number;
   /** @format double */
   longitude?: number;
+  deleted?: boolean;
 }
 
 export interface DepoTransitDTO {
@@ -68,6 +72,7 @@ export interface CurrencyDTO {
   code?: string;
   name?: string;
   symbol?: string;
+  deleted?: boolean;
 }
 
 export interface CourierDTO {
@@ -82,6 +87,7 @@ export interface CourierDTO {
   courierType?: "CROSS_DEPO" | "DELIVERY";
   /** @format int64 */
   depoId?: number;
+  deleted?: boolean;
 }
 
 export interface LocationCountryDTO {
@@ -91,6 +97,7 @@ export interface LocationCountryDTO {
   regionId?: number;
   name?: string;
   currencyCode?: string;
+  deleted?: boolean;
 }
 
 export interface LocationCityDTO {
@@ -99,6 +106,7 @@ export interface LocationCityDTO {
   /** @format int64 */
   countryId?: number;
   name?: string;
+  deleted?: boolean;
 }
 
 export interface ShipmentRouteDTO {
@@ -131,6 +139,7 @@ export interface CountryPriceDTO {
   minPrice?: number;
   /** @format double */
   maxPrice?: number;
+  deleted?: boolean;
 }
 
 export type QueryParamsType = Record<string | number, any>;

@@ -16,5 +16,6 @@ public class CourierDTO {
     private TransportType qualifiedFor;
     private CourierType courierType;
     private Long depoId;
+    private boolean deleted;
 }
 

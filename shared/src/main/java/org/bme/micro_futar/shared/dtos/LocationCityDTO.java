@@ -12,4 +12,5 @@ public class LocationCityDTO {
     private Long countryId;
     @NonNull
     private String name;
+    private boolean deleted;
 }

@@ -34,6 +34,7 @@ public class VehicleService {
     @Transactional
     public VehicleDTO createVehicle(VehicleDTO vehicleDTO) {
         Vehicle vehicle = vehicleMapper.toEntity(vehicleDTO);
+        vehicle.setDeleted(false);
         Vehicle savedVehicle = vehicleRepository.save(vehicle);
         VehicleDTO resultDTO = vehicleMapper.toDTO(savedVehicle);
         kafkaProducerService.sendVehicle(resultDTO);
@@ -50,6 +51,7 @@ public class VehicleService {
                 .map(_ -> {
                     Vehicle updatedVehicle = vehicleMapper.toEntity(vehicleDTO);
                     updatedVehicle.setId(id);
+                    updatedVehicle.setDeleted(false);
                     Vehicle savedVehicle = vehicleRepository.save(updatedVehicle);
                     VehicleDTO resultDTO = vehicleMapper.toDTO(savedVehicle);
                     kafkaProducerService.sendVehicle(resultDTO);
@@ -59,10 +61,15 @@ public class VehicleService {
 
     @Transactional
     public boolean deleteVehicle(Long id) {
-        if (vehicleRepository.existsById(id)) {
-            vehicleRepository.deleteById(id);
-            return true;
-        }
-        return false;
+        return vehicleRepository.findById(id)
+                .map(vehicle -> {
+                    VehicleDTO deletedVehicle = vehicleMapper.toDTO(vehicle);
+                    // Soft delete via @SQLDelete
+                    vehicleRepository.delete(vehicle);
+                    deletedVehicle.setDeleted(true);
+                    kafkaProducerService.sendVehicle(deletedVehicle);
+                    return true;
+                })
+                .orElse(false);
     }
 }

@@ -57,6 +57,7 @@ public class CountryPriceService {
                 countryPrice.setPackageSizeId(countryPriceDTO.getPackageSizeId());
                 countryPrice.setMinPrice(countryPriceDTO.getMinPrice());
                 countryPrice.setMaxPrice(countryPriceDTO.getMaxPrice());
+                countryPrice.setDeleted(countryPriceDTO.isDeleted());
             } else {
                 countryPrice = countryPriceMapper.toEntity(countryPriceDTO);
             }

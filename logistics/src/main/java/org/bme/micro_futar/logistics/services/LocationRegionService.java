@@ -34,6 +34,7 @@ public class LocationRegionService {
     @Transactional
     public LocationRegionDTO createRegion(LocationRegionDTO locationRegionDTO) {
         LocationRegion locationRegion = locationRegionMapper.toEntity(locationRegionDTO);
+        locationRegion.setDeleted(false);
         LocationRegion savedRegion = locationRegionRepository.save(locationRegion);
         LocationRegionDTO result = locationRegionMapper.toDTO(savedRegion);
         kafkaProducerService.sendLocationRegion(result);
@@ -50,6 +51,7 @@ public class LocationRegionService {
                 .map(existingRegion -> {
                     LocationRegion updatedRegion = locationRegionMapper.toEntity(locationRegionDTO);
                     updatedRegion.setId(id);
+                    updatedRegion.setDeleted(false);
                     LocationRegion savedRegion = locationRegionRepository.save(updatedRegion);
                     LocationRegionDTO result = locationRegionMapper.toDTO(savedRegion);
                     kafkaProducerService.sendLocationRegion(result);
@@ -59,10 +61,15 @@ public class LocationRegionService {
 
     @Transactional
     public boolean deleteRegion(Long id) {
-        if (locationRegionRepository.existsById(id)) {
-            locationRegionRepository.deleteById(id);
-            return true;
-        }
-        return false;
+        return locationRegionRepository.findById(id)
+                .map(locationRegion -> {
+                    LocationRegionDTO deletedLocationRegion = locationRegionMapper.toDTO(locationRegion);
+                    // Soft delete via @SQLDelete
+                    locationRegionRepository.delete(locationRegion);
+                    deletedLocationRegion.setDeleted(true);
+                    kafkaProducerService.sendLocationRegion(deletedLocationRegion);
+                    return true;
+                })
+                .orElse(false);
     }
 }

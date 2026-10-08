@@ -16,6 +16,7 @@ export interface VehicleDTO {
   registrationNumber?: string;
   /** @format double */
   maximumPackableVolume?: number;
+  deleted?: boolean;
 }
 
 export interface ShipmentDTO {
@@ -93,6 +94,7 @@ export interface PackageSizeDTO {
   name?: string;
   /** @format double */
   maxLength?: number;
+  deleted?: boolean;
 }
 
 export interface DepoDTO {
@@ -109,6 +111,7 @@ export interface DepoDTO {
   latitude?: number;
   /** @format double */
   longitude?: number;
+  deleted?: boolean;
 }
 
 export interface CourierDTO {
@@ -123,6 +126,7 @@ export interface CourierDTO {
   courierType?: "CROSS_DEPO" | "DELIVERY";
   /** @format int64 */
   depoId?: number;
+  deleted?: boolean;
 }
 
 export type QueryParamsType = Record<string | number, any>;

@@ -18,4 +18,5 @@ public class CountryPriceDTO {
     private Double minPrice;
     @NonNull
     private Double maxPrice;
+    private boolean deleted;
 }

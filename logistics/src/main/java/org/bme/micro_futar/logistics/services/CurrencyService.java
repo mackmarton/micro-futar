@@ -38,6 +38,12 @@ public class CurrencyService {
         }
 
         Currency currency = currencyMapper.toEntity(currencyDTO);
+        currency.setDeleted(false);
+        // code is unique: reuse a soft-deleted currency with the same code instead of inserting a duplicate
+        currencyRepository.findIdByCodeIncludingDeleted(currencyDTO.getCode()).ifPresent(deletedId -> {
+            currencyRepository.restoreById(deletedId);
+            currency.setId(deletedId);
+        });
         Currency savedCurrency = currencyRepository.save(currency);
         CurrencyDTO result = currencyMapper.toDTO(savedCurrency);
         kafkaProducerService.sendCurrency(result);
@@ -52,14 +58,15 @@ public class CurrencyService {
 
         return currencyRepository.findById(id)
                 .map(existingCurrency -> {
-                    currencyRepository.findByCode(currencyDTO.getCode())
-                            .filter(other -> !other.getId().equals(id))
+                    currencyRepository.findIdByCodeIncludingDeleted(currencyDTO.getCode())
+                            .filter(otherId -> !otherId.equals(id))
                             .ifPresent(other -> {
                                 throw new IllegalArgumentException("Currency code already exists: " + currencyDTO.getCode());
                             });
 
                     Currency updatedCurrency = currencyMapper.toEntity(currencyDTO);
                     updatedCurrency.setId(id);
+                    updatedCurrency.setDeleted(false);
                     Currency savedCurrency = currencyRepository.save(updatedCurrency);
                     CurrencyDTO result = currencyMapper.toDTO(savedCurrency);
                     kafkaProducerService.sendCurrency(result);
@@ -69,10 +76,15 @@ public class CurrencyService {
 
     @Transactional
     public boolean deleteCurrency(Long id) {
-        if (currencyRepository.existsById(id)) {
-            currencyRepository.deleteById(id);
-            return true;
-        }
-        return false;
+        return currencyRepository.findById(id)
+                .map(currency -> {
+                    CurrencyDTO deletedCurrency = currencyMapper.toDTO(currency);
+                    // Soft delete via @SQLDelete
+                    currencyRepository.delete(currency);
+                    deletedCurrency.setDeleted(true);
+                    kafkaProducerService.sendCurrency(deletedCurrency);
+                    return true;
+                })
+                .orElse(false);
     }
 }

@@ -9,5 +9,6 @@ public class VehicleDTO {
     private Long id;
     private String registrationNumber;
     private Double maximumPackableVolume;
+    private boolean deleted;
 }
 

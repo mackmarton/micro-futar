@@ -40,6 +40,7 @@ public class LocationRegionService {
                 locationRegion = existing.get();
                 // Update existing entity fields
                 locationRegion.setName(locationRegionDTO.getName());
+                locationRegion.setDeleted(locationRegionDTO.isDeleted());
             } else {
                 locationRegion = locationRegionMapper.toEntity(locationRegionDTO);
             }

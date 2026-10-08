@@ -45,6 +45,7 @@ public class LocationCountryService {
     public LocationCountryDTO createCountry(LocationCountryDTO locationCountryDTO) {
         locationCountryDTO.setCurrencyCode(resolveCurrencyCode(locationCountryDTO.getCurrencyCode()));
         LocationCountry locationCountry = locationCountryMapper.toEntity(locationCountryDTO);
+        locationCountry.setDeleted(false);
         LocationCountry savedCountry = locationCountryRepository.save(locationCountry);
         LocationCountryDTO result = locationCountryMapper.toDTO(savedCountry);
         kafkaProducerService.sendLocationCountry(result);
@@ -62,6 +63,7 @@ public class LocationCountryService {
                 .map(existingCountry -> {
                     LocationCountry updatedCountry = locationCountryMapper.toEntity(locationCountryDTO);
                     updatedCountry.setId(id);
+                    updatedCountry.setDeleted(false);
                     LocationCountry savedCountry = locationCountryRepository.save(updatedCountry);
                     LocationCountryDTO result = locationCountryMapper.toDTO(savedCountry);
                     kafkaProducerService.sendLocationCountry(result);
@@ -71,11 +73,16 @@ public class LocationCountryService {
 
     @Transactional
     public boolean deleteCountry(Long id) {
-        if (locationCountryRepository.existsById(id)) {
-            locationCountryRepository.deleteById(id);
-            return true;
-        }
-        return false;
+        return locationCountryRepository.findById(id)
+                .map(locationCountry -> {
+                    LocationCountryDTO deletedLocationCountry = locationCountryMapper.toDTO(locationCountry);
+                    // Soft delete via @SQLDelete
+                    locationCountryRepository.delete(locationCountry);
+                    deletedLocationCountry.setDeleted(true);
+                    kafkaProducerService.sendLocationCountry(deletedLocationCountry);
+                    return true;
+                })
+                .orElse(false);
     }
 
     private String resolveCurrencyCode(String currencyCode) {

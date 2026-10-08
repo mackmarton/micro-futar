@@ -40,6 +40,7 @@ public class CurrencyService {
                 currency.setCode(currencyDTO.getCode());
                 currency.setName(currencyDTO.getName());
                 currency.setSymbol(currencyDTO.getSymbol());
+                currency.setDeleted(currencyDTO.isDeleted());
             } else {
                 currency = currencyMapper.toEntity(currencyDTO);
             }
