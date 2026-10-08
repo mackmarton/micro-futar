@@ -61,6 +61,12 @@ export const LogisticsCountriesPage = () => {
         cell: (country) => valueOrFallback(country.name),
       },
       {
+        id: 'currency',
+        header: t('country.list.columns.currency'),
+        mobileLabel: t('country.list.columns.currency'),
+        cell: (country) => valueOrFallback(country.currencyCode),
+      },
+      {
         id: 'next',
         header: t('country.list.columns.next'),
         cell: (country) =>
