@@ -1,5 +1,8 @@
 {
   "title": "Courier portal",
   "description": "Welcome to the courier portal of the micro-futar application.",
-  "accessDeniedMessage": "You don't have permission to use the portal. Access requires the courier-admin or courier-user role."
+  "accessDeniedMessage": "You don't have permission to use the portal. Access requires the courier-admin or courier-user role.",
+  "openPortalLabel": "Open portal",
+  "logoutLabel": "Log out",
+  "loginLabel": "Log in"
 }

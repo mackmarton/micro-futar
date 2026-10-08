@@ -37,7 +37,13 @@ export const EntityFormShell = ({
   const { t } = useTranslation('common');
 
   return (
-    <PortalLayout title={title} activeHref={activeHref} navigationItems={navigationItems} topBarRightSlot={topBarRightSlot}>
+    <PortalLayout
+      title={title}
+      activeHref={activeHref}
+      navigationItems={navigationItems}
+      topBarRightSlot={topBarRightSlot}
+      brandSubtitle={t('brand.subtitle')}
+    >
       <section className="rounded-3xl bg-surface-container-low p-6 md:p-8">
         <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{eyebrow}</p>
         <h1 className="mt-2 text-2xl md:text-3xl font-headline text-on-surface">{heading}</h1>

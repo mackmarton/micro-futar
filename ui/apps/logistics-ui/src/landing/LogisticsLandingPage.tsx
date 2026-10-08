@@ -17,6 +17,9 @@ export const LogisticsLandingPage = () => {
         portalHref="/portal/depos"
         hasAccess={hasLogisticsPortalAccess}
         accessDeniedMessage={t('accessDeniedMessage')}
+        openPortalLabel={t('openPortalLabel')}
+        logoutLabel={t('logoutLabel')}
+        loginLabel={t('loginLabel')}
       />
     </div>
   );

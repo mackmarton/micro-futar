@@ -8,6 +8,9 @@ export type PortalLandingPageProps = {
   portalHref: string;
   hasAccess: (user: User | null) => boolean;
   accessDeniedMessage: string;
+  openPortalLabel?: string;
+  logoutLabel?: string;
+  loginLabel?: string;
 };
 
 export const PortalLandingPage = ({
@@ -16,6 +19,9 @@ export const PortalLandingPage = ({
   portalHref,
   hasAccess,
   accessDeniedMessage,
+  openPortalLabel = 'Portál megnyitása',
+  logoutLabel = 'Kijelentkezés',
+  loginLabel = 'Bejelentkezés',
 }: PortalLandingPageProps) => {
   const { user, login, logout } = useAuth();
   const hasPortalAccess = hasAccess(user);
@@ -53,7 +59,7 @@ export const PortalLandingPage = ({
                     <span className="material-symbols-outlined" aria-hidden="true">
                       dashboard
                     </span>
-                    Portál megnyitása
+                    {openPortalLabel}
                   </Link>
                 ) : null}
                 <button
@@ -64,7 +70,7 @@ export const PortalLandingPage = ({
                   <span className="material-symbols-outlined" aria-hidden="true">
                     logout
                   </span>
-                  Kijelentkezés
+                  {logoutLabel}
                 </button>
               </>
             ) : (
@@ -76,7 +82,7 @@ export const PortalLandingPage = ({
                 <span className="material-symbols-outlined" aria-hidden="true">
                   login
                 </span>
-                Bejelentkezés
+                {loginLabel}
               </button>
             )}
           </div>

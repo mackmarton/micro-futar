@@ -25,6 +25,7 @@ export const LogisticsDeposPage = () => {
             activeHref="#/portal/depos"
             navigationItems={navigationItems}
             topBarRightSlot={<LanguageSwitcher />}
+            brandSubtitle={tCommon('brand.subtitle')}
         >
             <section className="rounded-2xl bg-surface-container-low p-6">
                 <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('list.eyebrow')}</p>

@@ -1,6 +1,7 @@
 {
   "brand": {
-    "title": "Courier"
+    "title": "Courier",
+    "subtitle": "Courier Portal"
   },
   "nav": {
     "pickup": "Package pickup",

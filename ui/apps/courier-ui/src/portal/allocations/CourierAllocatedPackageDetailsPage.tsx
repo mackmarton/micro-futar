@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { PortalLayout } from '@package/shared-ui';
 import { toErrorMessage } from '@package/shared-core';
 import { useCourierNavigationItems } from '../navigation.ts';
+import { LanguageSwitcher } from '../../i18n/LanguageSwitcher.tsx';
 import {
   failShipmentRouteAssignment,
   fulfillShipmentRouteAssignment,
@@ -73,7 +74,13 @@ export const CourierAllocatedPackageDetailsPage = () => {
   const canFail = Boolean(selectedAllocation && !selectedAllocation.failed);
 
   return (
-    <PortalLayout title={t('allocations:details.title')} activeHref="#/portal/allocated-packages" navigationItems={courierNavigationItems}>
+    <PortalLayout
+      title={t('allocations:details.title')}
+      activeHref="#/portal/allocated-packages"
+      navigationItems={courierNavigationItems}
+      topBarRightSlot={<LanguageSwitcher />}
+      brandSubtitle={t('common:brand.subtitle')}
+    >
       <div className="space-y-6 md:space-y-8">
         <section className="rounded-xl bg-surface-container-low p-6 md:p-8">
           <div className="flex flex-wrap items-center justify-between gap-3">

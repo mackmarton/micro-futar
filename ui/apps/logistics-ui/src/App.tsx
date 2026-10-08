@@ -90,6 +90,7 @@ function App() {
               title={t('portal.title')}
               navigationItems={navigationItems}
               topBarRightSlot={<LanguageSwitcher />}
+              brandSubtitle={t('brand.subtitle')}
             />
           )}
         >
