@@ -42,6 +42,7 @@ public class LocationCountryService {
                 locationCountry.setRegionId(locationCountryDTO.getRegionId());
                 locationCountry.setName(locationCountryDTO.getName());
                 locationCountry.setCurrencyCode(locationCountryDTO.getCurrencyCode());
+                locationCountry.setDeleted(locationCountryDTO.isDeleted());
             } else {
                 locationCountry = locationCountryMapper.toEntity(locationCountryDTO);
             }

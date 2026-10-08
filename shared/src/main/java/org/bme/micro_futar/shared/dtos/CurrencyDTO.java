@@ -13,4 +13,5 @@ public class CurrencyDTO {
     @NonNull
     private String name;
     private String symbol;
+    private boolean deleted;
 }

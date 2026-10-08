@@ -12,4 +12,5 @@ public class PackageSizeDTO {
     private String name;
     @NonNull
     private Double maxLength;
+    private boolean deleted;
 }

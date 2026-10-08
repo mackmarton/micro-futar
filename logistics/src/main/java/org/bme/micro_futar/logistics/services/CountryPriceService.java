@@ -83,7 +83,13 @@ public class CountryPriceService {
                             );
 
                     if (minPrice == null) {
-                        optionalCountryPrice.ifPresent(countryPriceRepository::delete);
+                        optionalCountryPrice.ifPresent(existingCountryPrice -> {
+                            CountryPriceDTO deletedCountryPrice = countryPriceMapper.toDTO(existingCountryPrice);
+                            // Soft delete via @SQLDelete
+                            countryPriceRepository.delete(existingCountryPrice);
+                            deletedCountryPrice.setDeleted(true);
+                            kafkaProducerService.sendCountryPrice(deletedCountryPrice);
+                        });
                         continue;
                     }
 

@@ -40,6 +40,7 @@ public class LocationCityService {
     @Transactional
     public LocationCityDTO createCity(LocationCityDTO locationCityDTO) {
         LocationCity locationCity = locationCityMapper.toEntity(locationCityDTO);
+        locationCity.setDeleted(false);
         LocationCity savedCity = locationCityRepository.save(locationCity);
         LocationCityDTO result = locationCityMapper.toDTO(savedCity);
         kafkaProducerService.sendLocationCity(result);
@@ -56,6 +57,7 @@ public class LocationCityService {
                 .map(existingCity -> {
                     LocationCity updatedCity = locationCityMapper.toEntity(locationCityDTO);
                     updatedCity.setId(id);
+                    updatedCity.setDeleted(false);
                     LocationCity savedCity = locationCityRepository.save(updatedCity);
                     LocationCityDTO result = locationCityMapper.toDTO(savedCity);
                     kafkaProducerService.sendLocationCity(result);
@@ -65,10 +67,15 @@ public class LocationCityService {
 
     @Transactional
     public boolean deleteCity(Long id) {
-        if (locationCityRepository.existsById(id)) {
-            locationCityRepository.deleteById(id);
-            return true;
-        }
-        return false;
+        return locationCityRepository.findById(id)
+                .map(locationCity -> {
+                    LocationCityDTO deletedLocationCity = locationCityMapper.toDTO(locationCity);
+                    // Soft delete via @SQLDelete
+                    locationCityRepository.delete(locationCity);
+                    deletedLocationCity.setDeleted(true);
+                    kafkaProducerService.sendLocationCity(deletedLocationCity);
+                    return true;
+                })
+                .orElse(false);
     }
 }

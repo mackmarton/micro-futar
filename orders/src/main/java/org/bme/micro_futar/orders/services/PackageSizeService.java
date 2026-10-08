@@ -41,6 +41,7 @@ public class PackageSizeService {
                 // Update existing entity fields
                 packageSize.setName(packageSizeDTO.getName());
                 packageSize.setMaxLength(packageSizeDTO.getMaxLength());
+                packageSize.setDeleted(packageSizeDTO.isDeleted());
             } else {
                 packageSize = packageSizeMapper.toEntity(packageSizeDTO);
             }

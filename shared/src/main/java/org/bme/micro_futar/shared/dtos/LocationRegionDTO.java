@@ -10,4 +10,5 @@ public class LocationRegionDTO {
     private Long id;
     @NonNull
     private String name;
+    private boolean deleted;
 }

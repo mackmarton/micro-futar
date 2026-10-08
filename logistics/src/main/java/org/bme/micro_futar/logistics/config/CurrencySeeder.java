@@ -14,7 +14,8 @@ public class CurrencySeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (!currencyRepository.existsByCode("HUF")) {
+        // Including soft-deleted rows: code is unique, so re-inserting a deleted HUF would fail on startup
+        if (currencyRepository.findIdByCodeIncludingDeleted("HUF").isEmpty()) {
             Currency huf = new Currency();
             huf.setCode("HUF");
             huf.setName("Hungarian Forint");

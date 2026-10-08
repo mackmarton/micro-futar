@@ -13,4 +13,5 @@ public class LocationCountryDTO {
     @NonNull
     private String name;
     private String currencyCode;
+    private boolean deleted;
 }

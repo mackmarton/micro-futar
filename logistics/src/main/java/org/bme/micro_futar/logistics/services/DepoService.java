@@ -37,6 +37,7 @@ public class DepoService {
     @Transactional
     public DepoDTO createDepo(DepoDTO depoDTO) {
         Depo depo = depoMapper.toEntity(depoDTO);
+        depo.setDeleted(false);
         Depo savedDepo = depoRepository.save(depo);
         DepoDTO result = depoMapper.toDTO(savedDepo);
         kafkaProducerService.sendDepo(result);
@@ -54,6 +55,7 @@ public class DepoService {
                 .map(_ -> {
                     Depo updatedDepo = depoMapper.toEntity(depoDTO);
                     updatedDepo.setId(id);
+                    updatedDepo.setDeleted(false);
                     Depo savedDepo = depoRepository.save(updatedDepo);
                     DepoDTO result = depoMapper.toDTO(savedDepo);
                     kafkaProducerService.sendDepo(result);
@@ -65,12 +67,17 @@ public class DepoService {
 
     @Transactional
     public boolean deleteDepo(Long id) {
-        if (depoRepository.existsById(id)) {
-            depoRepository.deleteById(id);
-            eventPublisher.publishEvent(new DepoChangedEvent(this, DepoChangedEvent.ChangeType.DELETED));
-            return true;
-        }
-        return false;
+        return depoRepository.findById(id)
+                .map(depo -> {
+                    DepoDTO deletedDepo = depoMapper.toDTO(depo);
+                    // Soft delete via @SQLDelete
+                    depoRepository.delete(depo);
+                    deletedDepo.setDeleted(true);
+                    kafkaProducerService.sendDepo(deletedDepo);
+                    eventPublisher.publishEvent(new DepoChangedEvent(this, DepoChangedEvent.ChangeType.DELETED));
+                    return true;
+                })
+                .orElse(false);
     }
 
     public List<DepoDTO> getAllDeposByCountryId(Long countryId) {

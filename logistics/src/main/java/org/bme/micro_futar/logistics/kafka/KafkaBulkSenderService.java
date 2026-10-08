@@ -65,7 +65,7 @@ public class KafkaBulkSenderService {
 
     public void sendLocationRegions() {
         log.info("Sending all LocationRegion entities to Kafka");
-        var entities = locationRegionRepository.findAll();
+        var entities = locationRegionRepository.findAllIncludingDeleted();
         entities.stream()
                 .map(locationRegionMapper::toDTO)
                 .forEach(dto -> {
@@ -80,7 +80,7 @@ public class KafkaBulkSenderService {
 
     public void sendLocationCountries() {
         log.info("Sending all LocationCountry entities to Kafka");
-        var entities = locationCountryRepository.findAll();
+        var entities = locationCountryRepository.findAllIncludingDeleted();
         entities.stream()
                 .map(locationCountryMapper::toDTO)
                 .forEach(dto -> {
@@ -95,7 +95,7 @@ public class KafkaBulkSenderService {
 
     public void sendLocationCities() {
         log.info("Sending all LocationCity entities to Kafka");
-        var entities = locationCityRepository.findAll();
+        var entities = locationCityRepository.findAllIncludingDeleted();
         entities.stream()
                 .map(locationCityMapper::toDTO)
                 .forEach(dto -> {
@@ -110,7 +110,7 @@ public class KafkaBulkSenderService {
 
     public void sendCountryPrices() {
         log.info("Sending all CountryPrice entities to Kafka");
-        var entities = countryPriceRepository.findAll();
+        var entities = countryPriceRepository.findAllIncludingDeleted();
         entities.stream()
                 .map(countryPriceMapper::toDTO)
                 .forEach(dto -> {
@@ -125,7 +125,7 @@ public class KafkaBulkSenderService {
 
     public void sendPackageSizes() {
         log.info("Sending all PackageSize entities to Kafka");
-        var entities = packageSizeRepository.findAll();
+        var entities = packageSizeRepository.findAllIncludingDeleted();
         entities.stream()
                 .map(packageSizeMapper::toDTO)
                 .forEach(dto -> {
@@ -140,7 +140,7 @@ public class KafkaBulkSenderService {
 
     public void sendDepos() {
         log.info("Sending all Depo entities to Kafka");
-        var entities = depoRepository.findAll();
+        var entities = depoRepository.findAllIncludingDeleted();
         entities.stream()
                 .map(depoMapper::toDTO)
                 .forEach(dto -> {
@@ -155,7 +155,7 @@ public class KafkaBulkSenderService {
 
     public void sendCouriers() {
         log.info("Sending all Courier entities to Kafka");
-        var entities = courierRepository.findAll();
+        var entities = courierRepository.findAllIncludingDeleted();
         entities.stream()
                 .map(courierMapper::toDTO)
                 .forEach(dto -> {
@@ -170,7 +170,7 @@ public class KafkaBulkSenderService {
 
     public void sendVehicles() {
         log.info("Sending all Vehicle entities to Kafka");
-        var entities = vehicleRepository.findAll();
+        var entities = vehicleRepository.findAllIncludingDeleted();
         entities.stream()
                 .map(vehicleMapper::toDTO)
                 .forEach(dto -> {
@@ -230,7 +230,7 @@ public class KafkaBulkSenderService {
 
     public void sendCurrencies() {
         log.info("Sending all Currency entities to Kafka");
-        var entities = currencyRepository.findAll();
+        var entities = currencyRepository.findAllIncludingDeleted();
         entities.stream()
                 .map(currencyMapper::toDTO)
                 .forEach(dto -> {

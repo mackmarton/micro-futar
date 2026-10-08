@@ -34,6 +34,7 @@ public class CourierService {
     @Transactional
     public CourierDTO createCourier(CourierDTO CourierDTO) {
         Courier courier = courierMapper.toEntity(CourierDTO);
+        courier.setDeleted(false);
         Courier savedCourier = courierRepository.save(courier);
         CourierDTO result = courierMapper.toDTO(savedCourier);
         kafkaProducerService.sendCourier(result);
@@ -50,6 +51,7 @@ public class CourierService {
                 .map(_ -> {
                     Courier updatedCourier = courierMapper.toEntity(CourierDTO);
                     updatedCourier.setId(id);
+                    updatedCourier.setDeleted(false);
                     Courier savedCourier = courierRepository.save(updatedCourier);
                     CourierDTO result = courierMapper.toDTO(savedCourier);
                     kafkaProducerService.sendCourier(result);
@@ -59,11 +61,16 @@ public class CourierService {
 
     @Transactional
     public boolean deleteCourier(Long id) {
-        if (courierRepository.existsById(id)) {
-            courierRepository.deleteById(id);
-            return true;
-        }
-        return false;
+        return courierRepository.findById(id)
+                .map(courier -> {
+                    CourierDTO deletedCourier = courierMapper.toDTO(courier);
+                    // Soft delete via @SQLDelete
+                    courierRepository.delete(courier);
+                    deletedCourier.setDeleted(true);
+                    kafkaProducerService.sendCourier(deletedCourier);
+                    return true;
+                })
+                .orElse(false);
     }
 
     public List<CourierDTO> getCouriersByDepoIdAndType(Long depoId, org.bme.micro_futar.shared.enums.CourierType courierType) {

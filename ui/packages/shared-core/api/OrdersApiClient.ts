@@ -53,6 +53,7 @@ export interface LocationRegionDTO {
   /** @format int64 */
   id?: number;
   name?: string;
+  deleted?: boolean;
 }
 
 export interface PackageSizeDTO {
@@ -61,6 +62,7 @@ export interface PackageSizeDTO {
   name?: string;
   /** @format double */
   maxLength?: number;
+  deleted?: boolean;
 }
 
 export interface CurrencyDTO {
@@ -69,6 +71,7 @@ export interface CurrencyDTO {
   code?: string;
   name?: string;
   symbol?: string;
+  deleted?: boolean;
 }
 
 export interface CountryPriceDTO {
@@ -84,6 +87,7 @@ export interface CountryPriceDTO {
   minPrice?: number;
   /** @format double */
   maxPrice?: number;
+  deleted?: boolean;
 }
 
 export interface LocationCountryDTO {
@@ -93,6 +97,7 @@ export interface LocationCountryDTO {
   regionId?: number;
   name?: string;
   currencyCode?: string;
+  deleted?: boolean;
 }
 
 export interface LocationCityDTO {
@@ -101,6 +106,7 @@ export interface LocationCityDTO {
   /** @format int64 */
   countryId?: number;
   name?: string;
+  deleted?: boolean;
 }
 
 export type QueryParamsType = Record<string | number, any>;

@@ -34,6 +34,7 @@ public class PackageSizeService {
     @Transactional
     public PackageSizeDTO createPackageSize(PackageSizeDTO packageSizeDTO) {
         PackageSize packageSize = packageSizeMapper.toEntity(packageSizeDTO);
+        packageSize.setDeleted(false);
         PackageSize savedPackageSize = packageSizeRepository.save(packageSize);
         PackageSizeDTO result = packageSizeMapper.toDTO(savedPackageSize);
         kafkaProducerService.sendPackageSize(result);
@@ -50,6 +51,7 @@ public class PackageSizeService {
                 .map(existingPackageSize -> {
                     PackageSize updatedPackageSize = packageSizeMapper.toEntity(packageSizeDTO);
                     updatedPackageSize.setId(id);
+                    updatedPackageSize.setDeleted(false);
                     PackageSize savedPackageSize = packageSizeRepository.save(updatedPackageSize);
                     PackageSizeDTO result = packageSizeMapper.toDTO(savedPackageSize);
                     kafkaProducerService.sendPackageSize(result);
@@ -59,10 +61,15 @@ public class PackageSizeService {
 
     @Transactional
     public boolean deletePackageSize(Long id) {
-        if (packageSizeRepository.existsById(id)) {
-            packageSizeRepository.deleteById(id);
-            return true;
-        }
-        return false;
+        return packageSizeRepository.findById(id)
+                .map(packageSize -> {
+                    PackageSizeDTO deletedPackageSize = packageSizeMapper.toDTO(packageSize);
+                    // Soft delete via @SQLDelete
+                    packageSizeRepository.delete(packageSize);
+                    deletedPackageSize.setDeleted(true);
+                    kafkaProducerService.sendPackageSize(deletedPackageSize);
+                    return true;
+                })
+                .orElse(false);
     }
 }

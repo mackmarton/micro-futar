@@ -14,4 +14,5 @@ public class DepoDTO {
     private String address;
     private Double latitude;
     private Double longitude;
+    private boolean deleted;
 }

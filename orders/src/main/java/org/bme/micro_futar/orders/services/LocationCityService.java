@@ -47,6 +47,7 @@ public class LocationCityService {
                 // Update existing entity fields
                 locationCity.setCountryId(locationCityDTO.getCountryId());
                 locationCity.setName(locationCityDTO.getName());
+                locationCity.setDeleted(locationCityDTO.isDeleted());
             } else {
                 locationCity = locationCityMapper.toEntity(locationCityDTO);
             }
