@@ -1,5 +1,6 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { DataTable } from '@package/shared-ui';
 import type { DataTableColumn } from '@package/shared-ui';
 import { toErrorMessage } from '@package/shared-core';
@@ -13,52 +14,67 @@ type ManifestDataTableProps = {
   assignments: ShipmentRouteCourierDTO[];
 };
 
-const columns: DataTableColumn<ManifestShipment>[] = [
-  {
-    id: 'assignmentType',
-    header: 'Típus',
-    mobileLabel: 'Típus',
-    cell: (shipment) => (
-      <span
-        className={
-          shipment.assignmentType === 'Pickup'
-            ? 'inline-flex rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-on-primary'
-            : shipment.assignmentType === 'Delivery'
-              ? 'inline-flex rounded-full bg-tertiary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-on-tertiary'
-              : 'inline-flex rounded-full bg-surface px-3 py-1 text-xs font-semibold uppercase tracking-wide text-on-surface'
-        }
-      >
-        {shipment.assignmentType}
-      </span>
-    ),
-  },
-  {
-    id: 'parcelNumber',
-    header: 'Csomagszám',
-    mobileLabel: 'Csomagszám',
-    cell: (shipment) => shipment.parcelNumber,
-  },
-  {
-    id: 'contact',
-    header: 'Kontakt',
-    mobileLabel: 'Kontakt',
-    cell: (shipment) => shipment.contact,
-  },
-  {
-    id: 'packageSize',
-    header: 'Csomagméret',
-    mobileLabel: 'Csomagméret',
-    cell: (shipment) => shipment.packageSize,
-  },
-  {
-    id: 'status',
-    header: 'Státusz',
-    mobileLabel: 'Státusz',
-    cell: (shipment) => shipment.status,
-  },
-];
-
 export const ManifestDataTable = ({ assignments }: ManifestDataTableProps) => {
+  const { t } = useTranslation(['manifest', 'common']);
+
+  const assignmentTypeLabel = useCallback(
+    (assignmentType: ManifestShipment['assignmentType']) =>
+      assignmentType === '-' ? '-' : t(`common:assignmentType.${assignmentType === 'Pickup' ? 'pickup' : 'delivery'}`),
+    [t],
+  );
+
+  const columns = useMemo<DataTableColumn<ManifestShipment>[]>(
+    () => [
+      {
+        id: 'assignmentType',
+        header: t('manifest:columns.type'),
+        mobileLabel: t('manifest:columns.type'),
+        cell: (shipment) => (
+          <span
+            className={
+              shipment.assignmentType === 'Pickup'
+                ? 'inline-flex rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-on-primary'
+                : shipment.assignmentType === 'Delivery'
+                  ? 'inline-flex rounded-full bg-tertiary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-on-tertiary'
+                  : 'inline-flex rounded-full bg-surface px-3 py-1 text-xs font-semibold uppercase tracking-wide text-on-surface'
+            }
+          >
+            {assignmentTypeLabel(shipment.assignmentType)}
+          </span>
+        ),
+      },
+      {
+        id: 'parcelNumber',
+        header: t('manifest:columns.parcelNumber'),
+        mobileLabel: t('manifest:columns.parcelNumber'),
+        // shipment.parcelNumber a backendtől (shipment DTO) jön, szabadszöveges adat - nem fordítjuk.
+        cell: (shipment) => shipment.parcelNumber,
+      },
+      {
+        id: 'contact',
+        header: t('manifest:columns.contact'),
+        mobileLabel: t('manifest:columns.contact'),
+        // shipment.contact a feladó/címzett neve a backendből - szabadszöveges adat, nem fordítjuk.
+        cell: (shipment) => shipment.contact,
+      },
+      {
+        id: 'packageSize',
+        header: t('manifest:columns.packageSize'),
+        mobileLabel: t('manifest:columns.packageSize'),
+        // shipment.packageSize a logisztikai szolgáltatás által karbantartott csomagméret neve -
+        // szabadszöveges adat a backendből, nem fordítjuk.
+        cell: (shipment) => shipment.packageSize,
+      },
+      {
+        id: 'status',
+        header: t('manifest:columns.status'),
+        mobileLabel: t('manifest:columns.status'),
+        cell: (shipment) => t(`manifest:status.${shipment.status}`),
+      },
+    ],
+    [t, assignmentTypeLabel],
+  );
+
   const queryKeySuffix = useMemo(
     () =>
       assignments.map((assignment, index) => ({
@@ -79,7 +95,7 @@ export const ManifestDataTable = ({ assignments }: ManifestDataTableProps) => {
 
   const shipments = manifestQuery.data ?? [];
   const errorMessage = manifestQuery.isError
-    ? toErrorMessage(manifestQuery.error, 'Nem sikerült betölteni a szállítási jegyzéket. Próbáld újra.')
+    ? toErrorMessage(manifestQuery.error, t('manifest:loadError'))
     : null;
 
   if (errorMessage) {
@@ -93,7 +109,7 @@ export const ManifestDataTable = ({ assignments }: ManifestDataTableProps) => {
           }}
           className="mt-4 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-medium text-on-primary"
         >
-          Ujratoltes
+          {t('common:actions.retry')}
         </button>
       </section>
     );
@@ -103,15 +119,15 @@ export const ManifestDataTable = ({ assignments }: ManifestDataTableProps) => {
     <DataTable
       data={shipments}
       rowKey={(shipment, index) => `${shipment.assignmentId ?? shipment.shipmentRouteId ?? 'row'}-${index}`}
-      title="Szállítási jegyzék"
+      title={t('manifest:title')}
       columns={columns}
       emptyMessage={
         assignments.length === 0
-          ? 'Nincs mai depó átvételi hozzárendelés.'
-          : 'Nincs küldemény a megadott feltételek alapján.'
+          ? t('manifest:emptyMessage.noAssignments')
+          : t('manifest:emptyMessage.noMatches')
       }
-      mobileCardEyebrow="Küldemény"
-      recordCountLabel={(visible, total) => `Látható küldemények: ${visible} / ${total}`}
+      mobileCardEyebrow={t('manifest:mobileCardEyebrow')}
+      recordCountLabel={(visible, total) => t('manifest:recordCountLabel', { visible, total })}
     />
   );
 };

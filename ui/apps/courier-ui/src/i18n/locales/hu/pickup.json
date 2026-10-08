@@ -1,0 +1,30 @@
+{
+  "heading": {
+    "prefix": "Depó átvételi",
+    "highlight": "jegyzék"
+  },
+  "subtitle": {
+    "loading": "Mai lista betöltése folyamatban...",
+    "waitingAtDepot": "{{count}} csomag vár átvételre a depóban"
+  },
+  "summary": {
+    "waiting": "{{count}} csomag vár átvételre"
+  },
+  "badges": {
+    "pickupCount": "Felvétel: {{count}}",
+    "deliveryCount": "Kiszállítás: {{count}}"
+  },
+  "pickupAllButton": {
+    "label": "Összes csomag felvétele"
+  },
+  "pickupAllError": "Nem sikerült az összes csomag felvétele.",
+  "loadError": "Nem sikerült betölteni a mai felvételi listát. Próbáld újra.",
+  "section": {
+    "eyebrow": "Szállítási jegyzék",
+    "heading": "Depó átvételi sor"
+  },
+  "vehicleLoad": {
+    "label": "Jármű terheltsége",
+    "capacity": "420 L / 600 L elérhető kapacitás"
+  }
+}

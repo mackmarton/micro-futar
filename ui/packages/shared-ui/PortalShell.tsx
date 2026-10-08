@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import { PortalLayout } from './PortalLayout';
@@ -8,6 +9,9 @@ export type PortalShellProps = {
   activeHref?: string;
   navigationItems?: PortalLayoutProps['navigationItems'];
   loadingLabel?: string;
+  topBarRightSlot?: ReactNode;
+  logoHref?: string;
+  brandSubtitle?: string;
 };
 
 export const PortalShell = ({
@@ -15,9 +19,19 @@ export const PortalShell = ({
   activeHref = '#/portal/dashboard',
   navigationItems,
   loadingLabel = 'Oldal betöltése folyamatban...',
+  topBarRightSlot,
+  logoHref,
+  brandSubtitle,
 }: PortalShellProps) => {
   return (
-    <PortalLayout title={title} activeHref={activeHref} navigationItems={navigationItems}>
+    <PortalLayout
+      title={title}
+      activeHref={activeHref}
+      navigationItems={navigationItems}
+      topBarRightSlot={topBarRightSlot}
+      logoHref={logoHref}
+      brandSubtitle={brandSubtitle}
+    >
       <Suspense
         fallback={
           <section className="rounded-2xl bg-surface-container-low p-6">

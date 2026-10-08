@@ -1,0 +1,24 @@
+{
+  "heading": {
+    "prefix": "Package dropoff",
+    "highlight": "manifest"
+  },
+  "subtitle": {
+    "loading": "Loading today's list...",
+    "waiting_one": "{{count}} package is waiting to be dropped off",
+    "waiting_other": "{{count}} packages are waiting to be dropped off"
+  },
+  "summary": {
+    "detected_one": "{{count}} package detected",
+    "detected_other": "{{count}} packages detected"
+  },
+  "dropoffAllButton": {
+    "label": "Drop off all"
+  },
+  "dropoffAllError": "Could not drop off all packages.",
+  "section": {
+    "eyebrow": "Shipping manifest",
+    "heading": "Dropoff queue"
+  },
+  "loadError": "Could not load today's dropoff list. Please try again."
+}

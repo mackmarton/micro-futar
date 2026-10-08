@@ -1,0 +1,23 @@
+{
+  "title": "Szállítási jegyzék",
+  "mobileCardEyebrow": "Küldemény",
+  "recordCountLabel": "Látható küldemények: {{visible}} / {{total}}",
+  "columns": {
+    "type": "Típus",
+    "parcelNumber": "Csomagszám",
+    "contact": "Kontakt",
+    "packageSize": "Csomagméret",
+    "status": "Státusz"
+  },
+  "status": {
+    "droppedAtDepot": "Depóban leadva",
+    "failed": "Sikertelen",
+    "pickedUp": "Felvéve",
+    "waiting": "Várakozik"
+  },
+  "emptyMessage": {
+    "noAssignments": "Nincs mai depó átvételi hozzárendelés.",
+    "noMatches": "Nincs küldemény a megadott feltételek alapján."
+  },
+  "loadError": "Nem sikerült betölteni a szállítási jegyzéket. Próbáld újra."
+}

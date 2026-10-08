@@ -5,6 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, Footer } from '@package/shared-ui';
 import { createAppQueryClient } from '@package/shared-core';
 import { registerSW } from 'virtual:pwa-register';
+import './i18n/i18n.ts';
 import './index.css';
 import App from './App.tsx';
 

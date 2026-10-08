@@ -39,6 +39,10 @@ export const failShipmentRouteAssignment = async (assignmentId: number): Promise
   await courierApiClient.api.failShipmentRouteAssignment(assignmentId);
 };
 
+// A státuszt egy stabil kulcsként adjuk vissza (nem kész szövegként), hogy a UI réteg
+// (ManifestDataTable) tudja a jelenlegi nyelven megjeleníteni - lásd manifest.json "status" ns.
+export type ManifestAssignmentStatus = 'droppedAtDepot' | 'failed' | 'pickedUp' | 'waiting';
+
 export type ManifestShipment = {
   assignmentId: number | null;
   shipmentRouteId: number | null;
@@ -49,23 +53,26 @@ export type ManifestShipment = {
   pickedUpForDelivery: boolean;
   failed: boolean;
   packageSize: string;
-  status: string;
+  status: ManifestAssignmentStatus;
 };
 
-const getAssignmentStatusLabel = (assignment: ShipmentRouteCourierDTO, route?: ShipmentRouteDTO | null): string => {
+const getAssignmentStatus = (
+  assignment: ShipmentRouteCourierDTO,
+  route?: ShipmentRouteDTO | null,
+): ManifestAssignmentStatus => {
   if (route?.fulfillmentTime) {
-    return 'Depóban leadva';
+    return 'droppedAtDepot';
   }
 
   if (assignment.failed) {
-    return 'Sikertelen';
+    return 'failed';
   }
 
   if (assignment.pickedUpForDelivery) {
-    return 'Felvéve';
+    return 'pickedUp';
   }
 
-  return 'Várakozik';
+  return 'waiting';
 };
 
 const toPackageSizeNameById = (packageSizes: PackageSizeDTO[]): Map<number, string> => {
@@ -133,13 +140,13 @@ export const fetchManifestShipmentsForAssignments = async (
           pickedUpForDelivery,
           failed,
           packageSize: '-',
-          status: getAssignmentStatusLabel(assignment),
+          status: getAssignmentStatus(assignment),
         } satisfies ManifestShipment;
       }
 
       try {
         const route = await fetchShipmentRouteById(shipmentRouteId, signal);
-        const status = getAssignmentStatusLabel(assignment, route);
+        const status = getAssignmentStatus(assignment, route);
         const shipmentId = route?.shipmentId;
         if (!shipmentId) {
           return {
@@ -202,7 +209,7 @@ export const fetchManifestShipmentsForAssignments = async (
           pickedUpForDelivery,
           failed,
           packageSize: '-',
-          status: getAssignmentStatusLabel(assignment),
+          status: getAssignmentStatus(assignment),
         } satisfies ManifestShipment;
       }
     }),

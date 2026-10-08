@@ -1,0 +1,68 @@
+{
+  "list": {
+    "heading": {
+      "prefix": "Packages allocated",
+      "highlight": "for today"
+    },
+    "subtitle": {
+      "loading": "Loading allocations...",
+      "count_one": "{{count}} package is shown in the list and on the map.",
+      "count_other": "{{count}} packages are shown in the list and on the map."
+    },
+    "loadError": "Could not load today's allocated packages. Please try again."
+  },
+  "table": {
+    "title": "Allocated packages",
+    "mobileCardEyebrow": "Allocation",
+    "columns": {
+      "type": "Type",
+      "parcelNumber": "Parcel number",
+      "contact": "Contact",
+      "address": "Address",
+      "action": "Action"
+    },
+    "emptyMessage": {
+      "loading": "Loading today's allocations...",
+      "empty": "There are no pickup or delivery allocations to show for today."
+    },
+    "recordCountLabel": {
+      "loading": "Loading...",
+      "loaded": "Shown allocations: {{visible}} / {{total}}"
+    }
+  },
+  "map": {
+    "heading": "Map view",
+    "currentPosition": "Current position",
+    "locationError": {
+      "permissionDenied": "Location access is not enabled, so your current position isn't shown on the map.",
+      "unavailable": "Your current position is currently unavailable."
+    }
+  },
+  "details": {
+    "title": "Allocated package details",
+    "subtitle": "Manage pickup, confirmation, and failure reporting here.",
+    "backToList": "Back to the list",
+    "invalidAssignmentId": "Invalid assignment id.",
+    "notFound": "The selected allocation could not be found in today's list.",
+    "actionErrorFallback": "The action could not be completed.",
+    "contactLabel": {
+      "recipient": "Recipient",
+      "sender": "Sender"
+    },
+    "locationLabel": {
+      "delivery": "Delivery location",
+      "pickup": "Pickup location"
+    },
+    "parcelNumberLabel": "Parcel number",
+    "phoneLabel": "Phone number",
+    "statusPill": {
+      "pickedUpLabel": "Picked up",
+      "failedLabel": "Failed"
+    },
+    "actions": {
+      "pickUpParcel": "Pick up parcel",
+      "confirmDelivery": "Confirm delivery",
+      "markFailed": "Mark delivery as failed"
+    }
+  }
+}

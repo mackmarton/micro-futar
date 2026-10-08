@@ -1,0 +1,5 @@
+{
+  "title": "Futár portál",
+  "description": "Üdvözlünk a micro-futár alkalmazás futár portálján.",
+  "accessDeniedMessage": "Nincs jogosultságod a portál használatához. A belépéshez courier-admin vagy courier-user szerepkör szükséges."
+}

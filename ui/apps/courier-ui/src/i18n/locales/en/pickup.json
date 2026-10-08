@@ -1,0 +1,32 @@
+{
+  "heading": {
+    "prefix": "Depot pickup",
+    "highlight": "manifest"
+  },
+  "subtitle": {
+    "loading": "Loading today's list...",
+    "waitingAtDepot_one": "{{count}} package is waiting for pickup at the depot",
+    "waitingAtDepot_other": "{{count}} packages are waiting for pickup at the depot"
+  },
+  "summary": {
+    "waiting_one": "{{count}} package is waiting for pickup",
+    "waiting_other": "{{count}} packages are waiting for pickup"
+  },
+  "badges": {
+    "pickupCount": "Pickup: {{count}}",
+    "deliveryCount": "Delivery: {{count}}"
+  },
+  "pickupAllButton": {
+    "label": "Pick up all packages"
+  },
+  "pickupAllError": "Could not pick up all packages.",
+  "loadError": "Could not load today's pickup list. Please try again.",
+  "section": {
+    "eyebrow": "Shipping manifest",
+    "heading": "Depot pickup queue"
+  },
+  "vehicleLoad": {
+    "label": "Vehicle load",
+    "capacity": "420 L / 600 L available capacity"
+  }
+}

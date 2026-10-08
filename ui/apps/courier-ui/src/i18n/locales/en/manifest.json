@@ -1,0 +1,23 @@
+{
+  "title": "Shipping manifest",
+  "mobileCardEyebrow": "Shipment",
+  "recordCountLabel": "Visible shipments: {{visible}} / {{total}}",
+  "columns": {
+    "type": "Type",
+    "parcelNumber": "Parcel number",
+    "contact": "Contact",
+    "packageSize": "Package size",
+    "status": "Status"
+  },
+  "status": {
+    "droppedAtDepot": "Dropped at depot",
+    "failed": "Failed",
+    "pickedUp": "Picked up",
+    "waiting": "Waiting"
+  },
+  "emptyMessage": {
+    "noAssignments": "There are no depot pickup assignments for today.",
+    "noMatches": "No shipments match the given criteria."
+  },
+  "loadError": "Could not load the shipping manifest. Please try again."
+}

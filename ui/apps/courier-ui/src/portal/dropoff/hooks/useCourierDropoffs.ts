@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { toErrorMessage } from '@package/shared-core';
 import type { ShipmentRouteCourierDTO } from '@package/shared-core/api/CourierApiClient';
 import {
@@ -16,6 +17,7 @@ type UseCourierDropoffsResult = {
 };
 
 export const useCourierDropoffs = (): UseCourierDropoffsResult => {
+  const { t } = useTranslation('dropoff');
   const dropoffsQuery = useQuery({
     queryKey: ['courier-dropoffs-today'],
     queryFn: ({ signal }) => fetchCourierPickedUpAssignmentsForToday(signal),
@@ -52,7 +54,7 @@ export const useCourierDropoffs = (): UseCourierDropoffsResult => {
       : (dropoffCountQuery.data
           ?? assignments.filter((assignment) => !assignment.failed && assignment.pickedUpForDelivery).length);
   const isLoading = dropoffsQuery.isPending || (assignments.length > 0 && dropoffCountQuery.isPending);
-  const dropoffErrorFallback = 'Nem sikerült betölteni a mai leadási listát. Próbáld újra.';
+  const dropoffErrorFallback = t('loadError');
   const errorMessage = dropoffsQuery.isError
     ? toErrorMessage(dropoffsQuery.error, dropoffErrorFallback)
     : dropoffCountQuery.isError

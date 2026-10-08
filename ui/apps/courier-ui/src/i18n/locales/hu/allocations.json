@@ -1,0 +1,67 @@
+{
+  "list": {
+    "heading": {
+      "prefix": "Mai napra kiosztott",
+      "highlight": "csomagok"
+    },
+    "subtitle": {
+      "loading": "Kiosztások betöltése folyamatban...",
+      "count": "{{count}} darab csomag jelenik meg listában és térképen."
+    },
+    "loadError": "Nem sikerült betölteni a mai kiosztott csomagokat. Próbáld újra."
+  },
+  "table": {
+    "title": "Kiosztott csomagok",
+    "mobileCardEyebrow": "Kiosztás",
+    "columns": {
+      "type": "Típus",
+      "parcelNumber": "Csomagszám",
+      "contact": "Kontakt",
+      "address": "Cím",
+      "action": "Művelet"
+    },
+    "emptyMessage": {
+      "loading": "A mai kiosztások betöltése folyamatban...",
+      "empty": "A mai napra nincs megjeleníthető pickup vagy delivery kiosztás."
+    },
+    "recordCountLabel": {
+      "loading": "Betöltés folyamatban...",
+      "loaded": "Megjelenített kiosztások: {{visible}} / {{total}}"
+    }
+  },
+  "map": {
+    "heading": "Térkép nézet",
+    "currentPosition": "Jelenlegi pozíció",
+    "locationError": {
+      "permissionDenied": "A helymeghatározás nincs engedélyezve, a jelenlegi pozíció nem jelenik meg a térképen.",
+      "unavailable": "A jelenlegi pozíció jelenleg nem érhető el."
+    }
+  },
+  "details": {
+    "title": "Kiosztott csomag részletei",
+    "subtitle": "Itt kezelheted a felvétel, nyugtázás és hibajelzés műveleteket.",
+    "backToList": "Vissza a listához",
+    "invalidAssignmentId": "Érvénytelen hozzárendelés azonosító.",
+    "notFound": "A kiválasztott kiosztás nem található a mai listában.",
+    "actionErrorFallback": "A művelet végrehajtása sikertelen volt.",
+    "contactLabel": {
+      "recipient": "Címzett",
+      "sender": "Feladó"
+    },
+    "locationLabel": {
+      "delivery": "Kiszállítás helye",
+      "pickup": "Felvétel helye"
+    },
+    "parcelNumberLabel": "Csomagszám",
+    "phoneLabel": "Telefonszám",
+    "statusPill": {
+      "pickedUpLabel": "Felvéve",
+      "failedLabel": "Sikertelen"
+    },
+    "actions": {
+      "pickUpParcel": "Csomag felvétele",
+      "confirmDelivery": "Szállítás nyugtázása",
+      "markFailed": "Sikertelen szállítás"
+    }
+  }
+}

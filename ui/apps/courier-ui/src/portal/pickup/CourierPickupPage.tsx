@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ManifestDataTable } from './components/ManifestDataTable';
 import { PortalLayout } from '@package/shared-ui';
 import { toErrorMessage } from '@package/shared-core';
-import { courierNavigationItems } from '../navigation.ts';
+import { useCourierNavigationItems } from '../navigation.ts';
 import { useMutation } from '@tanstack/react-query';
 import { useCourierPickups } from './hooks/useCourierPickups.ts';
 import {
@@ -15,6 +16,8 @@ const toAssignmentKey = (assignmentId: number | null | undefined, shipmentRouteI
 };
 
 export const CourierPickupPage = () => {
+    const { t } = useTranslation(['pickup', 'common']);
+    const courierNavigationItems = useCourierNavigationItems();
     const {assignments, isLoading, errorMessage, retry} = useCourierPickups();
     const {allocations, retry: retryAllocations} = useCourierAllocations();
     const deliveryAssignmentKeys = useMemo(
@@ -44,27 +47,27 @@ export const CourierPickupPage = () => {
         },
     });
     const pickupAllErrorMessage = pickupAllMutation.isError
-        ? toErrorMessage(pickupAllMutation.error, 'Nem sikerült az összes csomag felvétele.')
+        ? toErrorMessage(pickupAllMutation.error, t('pickup:pickupAllError'))
         : null;
 
     return (
-        <PortalLayout title="Csomag felvétel" activeHref="#/portal/shipment-pickup" navigationItems={courierNavigationItems}>
+        <PortalLayout title={t('common:nav.pickup')} activeHref="#/portal/shipment-pickup" navigationItems={courierNavigationItems}>
             <div className="space-y-6 md:space-y-8">
                 <section className="rounded-xl bg-surface-container-low p-6 md:p-8">
                     <div className="mt-4 flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
                         <div>
                             <h1 className="text-4xl font-headline font-bold leading-tight text-on-surface md:text-5xl">
-                                Depó átvételi <span className="text-on-primary-container">jegyzék</span>
+                                {t('pickup:heading.prefix')} <span className="text-on-primary-container">{t('pickup:heading.highlight')}</span>
                             </h1>
                             <p className="mt-3 font-body text-on-surface-variant">
-                                {isLoading ? 'Mai lista betöltése folyamatban...' : `${waitingShipmentsCount} csomag vár átvételre a depóban`}
+                                {isLoading ? t('pickup:subtitle.loading') : t('pickup:subtitle.waitingAtDepot', { count: waitingShipmentsCount })}
                             </p>
                             <div className="mt-4 flex flex-wrap items-center gap-2">
                                 <span className="inline-flex rounded-full bg-primary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-on-primary">
-                                    Pickup: {pickupAssignmentsCount}
+                                    {t('pickup:badges.pickupCount', { count: pickupAssignmentsCount })}
                                 </span>
                                 <span className="inline-flex rounded-full bg-tertiary px-3 py-1 text-xs font-semibold uppercase tracking-wide text-on-tertiary">
-                                    Delivery: {deliveryAssignmentsCount}
+                                    {t('pickup:badges.deliveryCount', { count: deliveryAssignmentsCount })}
                                 </span>
                             </div>
                         </div>
@@ -73,7 +76,7 @@ export const CourierPickupPage = () => {
                             className="flex flex-col gap-3 rounded-full bg-surface-container-lowest px-4 py-3 shadow-[0_24px_42px_rgba(11,28,48,0.05)] sm:flex-row sm:items-center sm:justify-between sm:px-5">
                             <div className="px-2">
                                 <p className="mt-1 font-body text-sm text-on-surface">
-                                    {isLoading ? 'Betoltes...' : `${waitingShipmentsCount} csomag vár átvételre`}
+                                    {isLoading ? t('common:status.loading') : t('pickup:summary.waiting', { count: waitingShipmentsCount })}
                                 </p>
                             </div>
                             <button
@@ -87,7 +90,7 @@ export const CourierPickupPage = () => {
                                 <span className="material-symbols-outlined text-base leading-none" aria-hidden="true">
                                     work
                                 </span>
-                                {pickupAllMutation.isPending ? 'Folyamatban...' : 'Összes csomag felvétele'}
+                                {pickupAllMutation.isPending ? t('common:status.pending') : t('pickup:pickupAllButton.label')}
                             </button>
                         </div>
                     </div>
@@ -106,15 +109,15 @@ export const CourierPickupPage = () => {
                             }}
                             className="mt-4 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-medium text-on-primary"
                         >
-                            Ujratoltes
+                            {t('common:actions.retry')}
                         </button>
                     </section>
                 ) : null}
 
                 <section className="rounded-xl bg-surface-container-low p-6 md:p-7">
-                    <p className="text-xs uppercase tracking-widest text-on-surface-variant">Jármű terheltsége</p>
+                    <p className="text-xs uppercase tracking-widest text-on-surface-variant">{t('pickup:vehicleLoad.label')}</p>
                     <p className="mt-3 text-5xl font-headline font-bold leading-none text-on-surface md:text-6xl">68%</p>
-                    <p className="mt-2 font-body text-sm text-on-surface-variant">420 L / 600 L elérhető kapacitás</p>
+                    <p className="mt-2 font-body text-sm text-on-surface-variant">{t('pickup:vehicleLoad.capacity')}</p>
 
                     <div className="mt-6 h-3 rounded-full bg-surface-container-high">
                         <div
@@ -127,8 +130,8 @@ export const CourierPickupPage = () => {
 
                 <section className="space-y-4">
                     <div className="rounded-xl bg-surface-container-low p-6 md:p-7">
-                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Szállítási jegyzék</p>
-                        <h2 className="mt-2 text-2xl font-headline font-bold text-on-surface">Depó átvételi sor</h2>
+                        <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('pickup:section.eyebrow')}</p>
+                        <h2 className="mt-2 text-2xl font-headline font-bold text-on-surface">{t('pickup:section.heading')}</h2>
                     </div>
 
                     <ManifestDataTable assignments={assignments}/>

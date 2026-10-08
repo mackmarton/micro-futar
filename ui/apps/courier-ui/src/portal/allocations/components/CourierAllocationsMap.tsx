@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as L from 'leaflet';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -26,6 +27,7 @@ const defaultMarkerIcon = L.icon({
 });
 
 export const CourierAllocationsMap = ({ allocations }: CourierAllocationsMapProps) => {
+  const { t } = useTranslation(['allocations', 'common']);
   const navigate = useNavigate();
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -40,9 +42,10 @@ export const CourierAllocationsMap = ({ allocations }: CourierAllocationsMapProp
         assignmentId: allocation.assignmentId,
         latitude: allocation.latitude,
         longitude: allocation.longitude,
-        popupLabel: `${allocation.assignmentType}: ${allocation.parcelNumber}`,
+        // A popupLabel második fele (allocation.parcelNumber) a backendről jön, szabadszöveges adat.
+        popupLabel: `${t(`common:assignmentType.${allocation.assignmentType === 'Pickup' ? 'pickup' : 'delivery'}`)}: ${allocation.parcelNumber}`,
       })),
-    [allocations],
+    [allocations, t],
   );
 
   useEffect(() => {
@@ -86,8 +89,8 @@ export const CourierAllocationsMap = ({ allocations }: CourierAllocationsMapProp
       (positionError) => {
         setLocationErrorMessage(
           positionError.code === positionError.PERMISSION_DENIED
-            ? 'A helymeghatározás nincs engedélyezve, a jelenlegi pozíció nem jelenik meg a térképen.'
-            : 'A jelenlegi pozíció jelenleg nem érhető el.',
+            ? t('allocations:map.locationError.permissionDenied')
+            : t('allocations:map.locationError.unavailable'),
         );
       },
       {
@@ -100,7 +103,7 @@ export const CourierAllocationsMap = ({ allocations }: CourierAllocationsMapProp
     return () => {
       navigator.geolocation.clearWatch(watchId);
     };
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (!mapRef.current || !markerLayerRef.current) {
@@ -137,7 +140,7 @@ export const CourierAllocationsMap = ({ allocations }: CourierAllocationsMapProp
         fillColor: '#6bd8cb',
         fillOpacity: 0.95,
       });
-      currentPositionMarker.bindPopup('Jelenlegi pozíció');
+      currentPositionMarker.bindPopup(t('allocations:map.currentPosition'));
       currentPositionMarker.addTo(markerLayer);
       bounds.extend([currentPosition.latitude, currentPosition.longitude]);
     }
@@ -145,11 +148,11 @@ export const CourierAllocationsMap = ({ allocations }: CourierAllocationsMapProp
     if (bounds.isValid()) {
       mapRef.current.fitBounds(bounds.pad(0.2), { animate: true });
     }
-  }, [points, currentPosition, navigate]);
+  }, [points, currentPosition, navigate, t]);
 
   return (
     <section className="rounded-3xl border border-outline-variant bg-surface-container-lowest p-4 shadow-sm md:p-5">
-      <h2 className="text-xl font-headline font-bold text-on-surface">Térkép nézet</h2>
+      <h2 className="text-xl font-headline font-bold text-on-surface">{t('allocations:map.heading')}</h2>
       {locationErrorMessage ? <p className="mt-1 text-sm text-red-600">{locationErrorMessage}</p> : null}
       <div ref={mapContainerRef} className="relative z-0 mt-4 h-[460px] w-full rounded-2xl" />
     </section>
