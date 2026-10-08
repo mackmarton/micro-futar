@@ -16,6 +16,12 @@ body {
   display: none !important;
 }
 
+/* A Keycloak beépített nyelvválasztóját elrejtjük; helyette a KcPage.tsx saját, földgombos
+   LanguageSwitcher-t renderel (lásd az ottani kommentet). */
+#kc-locale {
+  display: none !important;
+}
+
 .kinetic-gradient {
   background: linear-gradient(135deg, #000000 0%, #0c9488 100%);
 }
