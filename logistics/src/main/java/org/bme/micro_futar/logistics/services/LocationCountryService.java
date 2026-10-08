@@ -61,6 +61,7 @@ public class LocationCountryService {
         return locationCountryRepository.findById(id)
                 .map(existingCountry -> {
                     LocationCountry updatedCountry = locationCountryMapper.toEntity(locationCountryDTO);
+                    updatedCountry.setId(id);
                     LocationCountry savedCountry = locationCountryRepository.save(updatedCountry);
                     LocationCountryDTO result = locationCountryMapper.toDTO(savedCountry);
                     kafkaProducerService.sendLocationCountry(result);

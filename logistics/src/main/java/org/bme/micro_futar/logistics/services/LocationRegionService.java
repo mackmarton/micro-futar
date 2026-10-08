@@ -49,6 +49,7 @@ public class LocationRegionService {
         return locationRegionRepository.findById(id)
                 .map(existingRegion -> {
                     LocationRegion updatedRegion = locationRegionMapper.toEntity(locationRegionDTO);
+                    updatedRegion.setId(id);
                     LocationRegion savedRegion = locationRegionRepository.save(updatedRegion);
                     LocationRegionDTO result = locationRegionMapper.toDTO(savedRegion);
                     kafkaProducerService.sendLocationRegion(result);

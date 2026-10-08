@@ -49,6 +49,7 @@ public class PackageSizeService {
         return packageSizeRepository.findById(id)
                 .map(existingPackageSize -> {
                     PackageSize updatedPackageSize = packageSizeMapper.toEntity(packageSizeDTO);
+                    updatedPackageSize.setId(id);
                     PackageSize savedPackageSize = packageSizeRepository.save(updatedPackageSize);
                     PackageSizeDTO result = packageSizeMapper.toDTO(savedPackageSize);
                     kafkaProducerService.sendPackageSize(result);
