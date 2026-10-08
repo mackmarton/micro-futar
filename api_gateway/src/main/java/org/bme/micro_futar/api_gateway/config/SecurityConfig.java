@@ -30,7 +30,8 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(
             ServerHttpSecurity http,
-            SessionRedirectAuthenticationSuccessHandler sessionRedirectAuthenticationSuccessHandler) {
+            SessionRedirectAuthenticationSuccessHandler sessionRedirectAuthenticationSuccessHandler,
+            LocaleAwareOAuth2AuthorizationRequestResolver localeAwareOAuth2AuthorizationRequestResolver) {
         http
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/api/orders/**", "/api/tracking/**", "/api/auth/me")
@@ -39,6 +40,7 @@ public class SecurityConfig {
                         .authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .authorizationRequestResolver(localeAwareOAuth2AuthorizationRequestResolver)
                         .authenticationSuccessHandler(sessionRedirectAuthenticationSuccessHandler)
                 )
                 .logout(logout -> logout
