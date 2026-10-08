@@ -6,6 +6,7 @@ import DefaultPage from "keycloakify/login/DefaultPage";
 import Template from "keycloakify/login/Template";
 import "../index.css";
 import Register from "./pages/Register.tsx";
+import {LanguageSwitcher} from "./LanguageSwitcher.tsx";
 
 const Login = lazy(() => import("./pages/Login"));
 const UserProfileFormFields = lazy(
@@ -21,6 +22,17 @@ export default function KcPage(props: { kcContext: KcContext }) {
 
     return (
         <Suspense>
+            {/*
+                A Keycloak beépített `kc-locale` dropdownja (a `Template`-en belül, lásd
+                `index.css`-ben a `#kc-locale { display: none }`-t) stílus nélkül, egymás alatt
+                listázva jelenne meg (`doUseDefaultCss={false}`), ezért CSS-sel elrejtjük, és
+                helyette itt, a Template-től függetlenül, saját földgombos változót renderelünk.
+            */}
+            {i18n.enabledLanguages.length > 1 && (
+                <div className="fixed top-4 right-4 z-50">
+                    <LanguageSwitcher currentLanguageLabel={i18n.currentLanguage.label} languages={i18n.enabledLanguages} />
+                </div>
+            )}
             {(() => {
                 switch (kcContext.pageId) {
                     case "login.ftl":
