@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { PortalLayout } from '@package/shared-ui';
 import { toErrorMessage } from '@package/shared-core';
-import { courierNavigationItems } from '../navigation.ts';
+import { useCourierNavigationItems } from '../navigation.ts';
 import {
   failShipmentRouteAssignment,
   fulfillShipmentRouteAssignment,
@@ -14,6 +15,8 @@ import { CourierAllocatedPackageDetailsSection } from './components/CourierAlloc
 import { useCourierAllocations } from './hooks/useCourierAllocations.ts';
 
 export const CourierAllocatedPackageDetailsPage = () => {
+  const { t } = useTranslation(['allocations', 'common']);
+  const courierNavigationItems = useCourierNavigationItems();
   const { assignmentId } = useParams<{ assignmentId: string }>();
   const { allocations, isLoading, errorMessage, retry } = useCourierAllocations();
   const parsedAssignmentId = Number(assignmentId);
@@ -46,7 +49,7 @@ export const CourierAllocatedPackageDetailsPage = () => {
     },
   });
 
-  const actionErrorFallback = 'A művelet végrehajtása sikertelen volt.';
+  const actionErrorFallback = t('allocations:details.actionErrorFallback');
   const actionErrorMessage =
     pickUpMutation.isError
       ? toErrorMessage(pickUpMutation.error, actionErrorFallback)
@@ -70,26 +73,26 @@ export const CourierAllocatedPackageDetailsPage = () => {
   const canFail = Boolean(selectedAllocation && !selectedAllocation.failed);
 
   return (
-    <PortalLayout title="Kiosztott csomag részletei" activeHref="#/portal/allocated-packages" navigationItems={courierNavigationItems}>
+    <PortalLayout title={t('allocations:details.title')} activeHref="#/portal/allocated-packages" navigationItems={courierNavigationItems}>
       <div className="space-y-6 md:space-y-8">
         <section className="rounded-xl bg-surface-container-low p-6 md:p-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h1 className="text-4xl font-headline font-bold leading-tight text-on-surface md:text-5xl">Kiosztott csomag részletei</h1>
-              <p className="mt-3 text-on-surface-variant">Itt kezelheted a felvétel, nyugtázás és hibajelzés műveleteket.</p>
+              <h1 className="text-4xl font-headline font-bold leading-tight text-on-surface md:text-5xl">{t('allocations:details.title')}</h1>
+              <p className="mt-3 text-on-surface-variant">{t('allocations:details.subtitle')}</p>
             </div>
             <Link
               to="/portal/allocated-packages"
               className="inline-flex items-center rounded-lg border border-outline px-4 py-2 text-sm font-medium text-on-surface"
             >
-              Vissza a listához
+              {t('allocations:details.backToList')}
             </Link>
           </div>
         </section>
 
         {!isAssignmentIdValid ? (
           <section className="rounded-xl bg-surface-container-low p-6 md:p-7">
-            <p className="text-sm text-red-600">Érvénytelen hozzárendelés azonosító.</p>
+            <p className="text-sm text-red-600">{t('allocations:details.invalidAssignmentId')}</p>
           </section>
         ) : null}
 
@@ -103,14 +106,14 @@ export const CourierAllocatedPackageDetailsPage = () => {
               }}
               className="mt-4 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-medium text-on-primary"
             >
-              Ujratoltes
+              {t('common:actions.retry')}
             </button>
           </section>
         ) : null}
 
         {isAssignmentIdValid && !isLoading && !errorMessage && !selectedAllocation ? (
           <section className="rounded-xl bg-surface-container-low p-6 md:p-7">
-            <p className="text-sm text-on-surface-variant">A kiválasztott kiosztás nem található a mai listában.</p>
+            <p className="text-sm text-on-surface-variant">{t('allocations:details.notFound')}</p>
           </section>
         ) : null}
 

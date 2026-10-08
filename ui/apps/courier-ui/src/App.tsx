@@ -1,8 +1,10 @@
 import { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { PortalShell, RequireAccess, useAuth } from '@package/shared-ui';
 import { hasCourierPortalAccess } from './auth/portalAccess';
-import { courierNavigationItems } from './portal/navigation';
+import { useCourierNavigationItems } from './portal/navigation';
+import { LanguageSwitcher } from './i18n/LanguageSwitcher';
 
 const CourierLandingPage = lazy(() =>
   import('./landing/CourierLandingPage').then((module) => ({ default: module.CourierLandingPage })),
@@ -26,6 +28,8 @@ const CourierAllocatedPackageDetailsPage = lazy(() =>
 
 function App() {
   const { isLoading } = useAuth();
+  const { t } = useTranslation('common');
+  const courierNavigationItems = useCourierNavigationItems();
 
   if (isLoading) {
     return null;
@@ -42,7 +46,15 @@ function App() {
         }
       />
       <Route path="/portal" element={<RequireAccess hasAccess={hasCourierPortalAccess} />}>
-        <Route element={<PortalShell title="Futár" navigationItems={courierNavigationItems} />}>
+        <Route
+          element={
+            <PortalShell
+              title={t('brand.title')}
+              navigationItems={courierNavigationItems}
+              topBarRightSlot={<LanguageSwitcher />}
+            />
+          }
+        >
           <Route path="allocated-packages" element={<CourierAllocatedPackagesPage />} />
           <Route path="allocated-packages/:assignmentId" element={<CourierAllocatedPackageDetailsPage />} />
           <Route path="shipment-pickup" element={<CourierDashboardPage />} />

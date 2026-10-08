@@ -13,8 +13,10 @@
     "@package/shared-core": "^1.0.0",
     "@package/shared-ui": "^1.0.0",
     "@tanstack/react-query": "^5.90.2",
+    "i18next": "^26.4.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-i18next": "^17.0.16",
     "react-router-dom": "^7.9.5"
   },
   "devDependencies": {

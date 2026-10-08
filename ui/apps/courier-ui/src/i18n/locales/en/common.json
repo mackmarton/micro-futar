@@ -1,0 +1,32 @@
+{
+  "brand": {
+    "title": "Courier"
+  },
+  "nav": {
+    "pickup": "Package pickup",
+    "allocations": "Allocated packages",
+    "dropoff": "Package dropoff"
+  },
+  "actions": {
+    "retry": "Retry",
+    "open": "Open",
+    "call": "Call",
+    "navigate": "Navigate",
+    "back": "Back"
+  },
+  "status": {
+    "loading": "Loading...",
+    "pending": "In progress...",
+    "yes": "Yes",
+    "no": "No",
+    "notAvailable": "N/A"
+  },
+  "assignmentType": {
+    "pickup": "Pickup",
+    "delivery": "Delivery"
+  },
+  "languageSwitcher": {
+    "ariaLabel": "Select language",
+    "menuLabel": "Language"
+  }
+}

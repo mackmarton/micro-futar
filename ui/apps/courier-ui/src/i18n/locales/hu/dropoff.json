@@ -1,0 +1,22 @@
+{
+  "heading": {
+    "prefix": "Csomag leadási",
+    "highlight": "jegyzék"
+  },
+  "subtitle": {
+    "loading": "Mai lista betöltése folyamatban...",
+    "waiting": "{{count}} csomag vár leadásra"
+  },
+  "summary": {
+    "detected": "{{count}} csomag észlelve"
+  },
+  "dropoffAllButton": {
+    "label": "Összes leadása"
+  },
+  "dropoffAllError": "Nem sikerült az összes csomag leadása.",
+  "section": {
+    "eyebrow": "Szállítási jegyzék",
+    "heading": "Leadási sor"
+  },
+  "loadError": "Nem sikerült betölteni a mai leadási listát. Próbáld újra."
+}

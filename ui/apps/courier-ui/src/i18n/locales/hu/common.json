@@ -1,0 +1,32 @@
+{
+  "brand": {
+    "title": "Futár"
+  },
+  "nav": {
+    "pickup": "Csomag felvétel",
+    "allocations": "Kiosztott csomagok",
+    "dropoff": "Csomag leadás"
+  },
+  "actions": {
+    "retry": "Újratöltés",
+    "open": "Megnyitás",
+    "call": "Hívás",
+    "navigate": "Navigáció",
+    "back": "Vissza"
+  },
+  "status": {
+    "loading": "Betöltés...",
+    "pending": "Folyamatban...",
+    "yes": "Igen",
+    "no": "Nem",
+    "notAvailable": "N/A"
+  },
+  "assignmentType": {
+    "pickup": "Felvétel",
+    "delivery": "Kiszállítás"
+  },
+  "languageSwitcher": {
+    "ariaLabel": "Nyelv kiválasztása",
+    "menuLabel": "Nyelv"
+  }
+}
