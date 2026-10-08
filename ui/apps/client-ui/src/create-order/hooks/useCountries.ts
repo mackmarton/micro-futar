@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { fetchCountryOptions, type CountryOption } from '../api/ordersApi.ts';
 import { queryKeys } from '../../shared/queryKeys.ts';
 
@@ -11,6 +12,7 @@ type UseCountriesResult = {
 };
 
 export const useCountries = (): UseCountriesResult => {
+  const { t } = useTranslation('createOrder');
   const countriesQuery = useQuery({
     queryKey: queryKeys.countries,
     queryFn: ({ signal }) => fetchCountryOptions(signal),
@@ -25,7 +27,7 @@ export const useCountries = (): UseCountriesResult => {
   return {
     countryOptions: countriesQuery.data ?? [],
     isLoading: countriesQuery.isPending,
-    errorMessage: countriesQuery.isError ? 'Az országok listája jelenleg nem érhető el.' : null,
+    errorMessage: countriesQuery.isError ? t('dataErrors.countries') : null,
     retry,
   };
 };

@@ -1,0 +1,13 @@
+{
+  "brandSubtitle": "Logisztikai Portál",
+  "nav": {
+    "dashboard": "Saját csomagjaim",
+    "createOrder": "Csomag feladása",
+    "tracking": "Nyomonkövetés"
+  },
+  "notFound": {
+    "title": "Az oldal nem található",
+    "heading": "A keresett oldal nem található.",
+    "backHome": "Vissza a főoldalra"
+  }
+}

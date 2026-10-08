@@ -1,4 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@package/shared-ui';
 
 export type TrackingHeroProps = {
@@ -13,17 +14,23 @@ export type TrackingHeroProps = {
 };
 
 export const TrackingHero = ({
-  title = 'Nyomonkövetés',
-  subtitle = 'Kísérje figyelemmel küldeménye útját valós időben a felvételtől a sikeres kézbesítésig.',
-  placeholder = 'Adja meg a követési számot (pl. MF-7281-902)',
-  buttonLabel = 'Keresés',
+  title,
+  subtitle,
+  placeholder,
+  buttonLabel,
   value,
   onValueChange,
   onSearch,
   className,
 }: TrackingHeroProps) => {
+  const { t } = useTranslation('tracking');
   const [internalValue, setInternalValue] = useState('');
   const inputValue = value ?? internalValue;
+
+  const resolvedTitle = title ?? t('hero.title');
+  const resolvedSubtitle = subtitle ?? t('hero.subtitle');
+  const resolvedPlaceholder = placeholder ?? t('hero.placeholder');
+  const resolvedButtonLabel = buttonLabel ?? t('hero.button');
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const nextValue = event.target.value;
@@ -40,8 +47,8 @@ export const TrackingHero = ({
 
   return (
     <section className={cn('text-center max-w-2xl mx-auto mb-12', className)}>
-      <h2 className="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-4">{title}</h2>
-      <p className="text-on-surface-variant mb-8 font-body">{subtitle}</p>
+      <h2 className="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-4">{resolvedTitle}</h2>
+      <p className="text-on-surface-variant mb-8 font-body">{resolvedSubtitle}</p>
 
       <form className="relative" onSubmit={handleSubmit}>
         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -54,7 +61,7 @@ export const TrackingHero = ({
           type="text"
           value={inputValue}
           onChange={handleChange}
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
           className="block w-full pl-12 pr-32 py-5 bg-surface-container-lowest border-none rounded-xl shadow-sm focus:ring-2 focus:ring-on-primary-container text-on-surface transition-all placeholder:text-outline-variant font-medium"
         />
 
@@ -62,7 +69,7 @@ export const TrackingHero = ({
           type="submit"
           className="absolute right-2 top-2 bottom-2 px-6 bg-primary text-on-primary rounded-lg font-bold hover:bg-on-primary-container transition-all flex items-center gap-2"
         >
-          {buttonLabel}
+          {resolvedButtonLabel}
         </button>
       </form>
     </section>

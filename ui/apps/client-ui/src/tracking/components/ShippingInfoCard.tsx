@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { cn } from '@package/shared-ui';
 
 export type ShippingInfoCardProps = {
@@ -17,19 +18,25 @@ const iconBoxClassName =
   'bg-teal-50 w-10 h-10 rounded-lg flex items-center justify-center text-teal-600 shrink-0';
 
 export const ShippingInfoCard = ({
-  title = 'Szállítási információk',
-  addressTitle = 'Cím',
-  addressPrimary = '1117 Budapest, Infopark sétány 1.',
-  securityNotice = 'Fényképes igazolvány szükséges.',
+  title,
+  addressTitle,
+  addressPrimary,
+  securityNotice,
   className,
 }: ShippingInfoCardProps) => {
+  const { t } = useTranslation('tracking');
+  const resolvedTitle = title ?? t('shipping.title');
+  const resolvedAddressTitle = addressTitle ?? t('shipping.addressTitle');
+  const resolvedAddressPrimary = addressPrimary ?? t('shipping.defaultAddress');
+  const resolvedSecurityNotice = securityNotice ?? t('shipping.securityNotice');
+
   return (
     <section className={cn('bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-surface-container', className)}>
       <h3 className="text-sm font-bold mb-6 text-on-surface-variant uppercase tracking-widest flex items-center gap-2">
         <span className="material-symbols-outlined text-teal-600 text-lg" aria-hidden="true">
           info
         </span>
-        {title}
+        {resolvedTitle}
       </h3>
 
       <div className="space-y-6">
@@ -40,8 +47,8 @@ export const ShippingInfoCard = ({
             </span>
           </div>
           <div>
-            <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider mb-0.5">{addressTitle}</p>
-            <p className="text-sm font-semibold text-on-surface">{addressPrimary}</p>
+            <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider mb-0.5">{resolvedAddressTitle}</p>
+            <p className="text-sm font-semibold text-on-surface">{resolvedAddressPrimary}</p>
           </div>
         </div>
       </div>
@@ -51,7 +58,7 @@ export const ShippingInfoCard = ({
           <span className="material-symbols-outlined shrink-0 text-sm" aria-hidden="true">
             security
           </span>
-          <p className="text-[10px] font-medium leading-tight">{securityNotice}</p>
+          <p className="text-[10px] font-medium leading-tight">{resolvedSecurityNotice}</p>
         </div>
       </div>
     </section>

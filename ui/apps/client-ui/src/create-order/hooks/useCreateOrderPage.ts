@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useAuth, type MapCoordinate } from '@package/shared-ui';
 import { type AddressCardField, type AddressCardValue } from '../components/AddressCard.tsx';
 import { type PackageDetailsValue, type PackageSizeId } from '../components/PackageDetailsSection.tsx';
@@ -9,6 +10,7 @@ import { useCountries } from './useCountries.ts';
 import { useCountryPrices } from './useCountryPrices.ts';
 import { useCurrencies } from './useCurrencies.ts';
 import { usePackageSizes } from './usePackageSizes.ts';
+import type { AppLocale } from '../../i18n/createI18nInstance.ts';
 
 const DEFAULT_CURRENCY_SYMBOL = 'Ft';
 
@@ -44,6 +46,8 @@ type GeocodeResult = {
   longitude: number;
 };
 
+const GEOCODE_REQUEST_FAILED = 'GEOCODE_REQUEST_FAILED';
+
 const geocodeAddress = async (query: string, signal?: AbortSignal): Promise<GeocodeResult | null> => {
   const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`;
   const response = await fetch(url, {
@@ -54,7 +58,7 @@ const geocodeAddress = async (query: string, signal?: AbortSignal): Promise<Geoc
   });
 
   if (!response.ok) {
-    throw new Error('A cím geokódolása sikertelen.');
+    throw new Error(GEOCODE_REQUEST_FAILED);
   }
 
   const data = (await response.json()) as Array<{ lat?: string; lon?: string }>;
@@ -100,7 +104,8 @@ const isAddressCardValid = (addressCard: AddressCardValue) => {
   return hasRequiredTextValues && hasValidEmail;
 };
 
-export const useCreateOrderPage = () => {
+export const useCreateOrderPage = (locale: AppLocale) => {
+  const { t } = useTranslation('createOrder');
   const [addressCards, setAddressCards] = useState<Record<AddressCardRole, AddressCardValue>>({
     sender: createEmptyAddressCardValue(),
     recipient: createEmptyAddressCardValue(),
@@ -313,7 +318,7 @@ export const useCreateOrderPage = () => {
   };
 
   const senderAddressCardProps = {
-    title: 'Feladó adatai',
+    title: t('addressCard.senderTitle'),
     iconName: 'person_pin_circle',
     value: addressCards.sender,
     countryOptions,
@@ -324,7 +329,7 @@ export const useCreateOrderPage = () => {
   };
 
   const recipientAddressCardProps = {
-    title: 'Címzett adatai',
+    title: t('addressCard.recipientTitle'),
     iconName: 'local_shipping',
     value: addressCards.recipient,
     countryOptions,
@@ -425,7 +430,7 @@ export const useCreateOrderPage = () => {
             ...previous,
             [role]: {
               ...previous[role],
-              geocodeError: 'Nem találtunk pontos találatot a megadott címhez.',
+              geocodeError: t('geocode.noResult'),
             },
           }));
           return;
@@ -450,7 +455,7 @@ export const useCreateOrderPage = () => {
           ...previous,
           [role]: {
             ...previous[role],
-            geocodeError: (error as Error).message ?? 'A cím geokódolása sikertelen.',
+            geocodeError: t('geocode.failed'),
           },
         }));
       } finally {
@@ -463,7 +468,7 @@ export const useCreateOrderPage = () => {
         }));
       }
     },
-    [],
+    [t],
   );
 
   useEffect(() => {
@@ -507,7 +512,7 @@ export const useCreateOrderPage = () => {
         ...previous,
         [role]: {
           ...previous[role],
-          geocodeError: 'Adja meg a címet, irányítószámot, várost és országot az automatikus pozicionáláshoz.',
+          geocodeError: t('geocode.missingFields'),
         },
       }));
       return;
@@ -561,7 +566,7 @@ export const useCreateOrderPage = () => {
     const recipientCityId = parseSelectedId(addressCards.recipient.city);
 
     if (!senderCountryId || !senderCityId || !recipientCountryId || !recipientCityId) {
-      setSubmitErrorMessage('A rendeléshez érvényes ország és város kiválasztása szükséges.');
+      setSubmitErrorMessage(t('submit.missingLocation'));
       return;
     }
 
@@ -595,11 +600,11 @@ export const useCreateOrderPage = () => {
         packageSizeId: packageDetailsValue.sizeId,
       });
 
-      setSubmitSuccessMessage('A rendelést sikeresen rögzítettük.');
-      router.push('/portal/dashboard');
+      setSubmitSuccessMessage(t('submit.success'));
+      router.push(locale === 'en' ? '/en/portal/dashboard' : '/portal/dashboard');
     } catch (error) {
       console.error('Failed to create shipment.', error);
-      setSubmitErrorMessage('A rendelés mentése nem sikerült. Kérjük próbálja újra.');
+      setSubmitErrorMessage(t('submit.genericError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -622,9 +627,9 @@ export const useCreateOrderPage = () => {
     isPackageSizesLoading,
     isPackageSizeEnabled,
     sizeAvailabilityHint: !isRouteSelected
-      ? 'A csomagméretek az országpár kiválasztása után válnak elérhetővé.'
+      ? t('package.hintNoRoute')
       : isCountryPricesLoading
-        ? 'Az országpárhoz tartozó csomagméretek betöltése folyamatban van.'
+        ? t('package.hintLoadingPrices')
         : null,
     handleSizeChange,
     handleWeightChange,

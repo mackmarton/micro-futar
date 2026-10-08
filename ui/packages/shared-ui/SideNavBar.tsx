@@ -14,6 +14,7 @@ export type SideNavBarProps = {
     navigationItems: NavigationItem[];
     brandName?: string;
     brandSubtitle?: string;
+    logoHref?: string;
     className?: string;
 };
 
@@ -31,6 +32,7 @@ export const SideNavBar = ({
                                navigationItems,
                                brandName = 'micro-futár',
                                brandSubtitle = 'Logisztikai Portál',
+                               logoHref = '/',
                                className,
                            }: SideNavBarProps) => {
     const { user } = useAuth();
@@ -39,7 +41,7 @@ export const SideNavBar = ({
     return (
         <aside
             className={cn('h-screen w-64 hidden lg:flex flex-col fixed left-0 top-0 p-4 gap-2 z-40 bg-surface-container-low', className)}>
-            <a href="/" className="mb-8 px-2 flex items-center gap-3">
+            <a href={logoHref} className="mb-8 px-2 flex items-center gap-3">
                 <img src="/micro-futar-logo.svg" alt="micro-futár logo" className="w-10 h-10 shrink-0"/>
                 <div>
                     <h1 className="font-headline text-lg font-black tracking-tighter text-on-surface">{brandName}</h1>

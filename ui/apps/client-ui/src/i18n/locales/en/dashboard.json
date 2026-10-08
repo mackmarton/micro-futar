@@ -1,0 +1,30 @@
+{
+  "title": "My packages",
+  "heading": "Shipments",
+  "subtitle": "Manage and track all your shipments in one place.",
+  "newOrderButton": "Send a new package",
+  "loading": "Loading shipments...",
+  "error": {
+    "generic": "Couldn't load your shipments. Please try again.",
+    "retry": "Try again"
+  },
+  "empty": "You haven't sent any shipments yet.",
+  "stats": {
+    "inProgress": "In progress",
+    "delivered": "Delivered"
+  },
+  "table": {
+    "id": "ID",
+    "destination": "Destination",
+    "date": "Date",
+    "status": "Status",
+    "statusInProgress": "In progress",
+    "statusDelivered": "Delivered",
+    "statusFailed": "Failed",
+    "totalCount_one": "{{count}} result total",
+    "totalCount_other": "{{count}} results total",
+    "prevPage": "Previous page",
+    "nextPage": "Next page"
+  },
+  "unknownDestination": "Unknown destination"
+}

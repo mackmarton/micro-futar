@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "title": "Package tracking",
+    "description": "Track your shipment in real time from pickup to delivery – just enter the tracking number."
+  },
+  "hero": {
+    "title": "Tracking",
+    "subtitle": "Follow your shipment in real time from pickup through successful delivery.",
+    "placeholder": "Enter the tracking number (e.g. MF-7281-902)",
+    "button": "Search"
+  },
+  "loading": "Loading tracking data...",
+  "retry": "Try again",
+  "errors": {
+    "notFound": "No shipment found for this tracking number. Check it and try again.",
+    "generic": "Couldn't load the tracking data. Please try again."
+  },
+  "progress": {
+    "deliveredStatus": "Delivered",
+    "inTransitStatus": "In transit",
+    "deliveryTimeLabel": "Delivered at",
+    "unknownTime": "Unknown time"
+  },
+  "timeline": {
+    "title": "Detailed event history",
+    "arrivedDescription": "The package has arrived at its destination.",
+    "inProgressDescription": "The package is being processed at this stop."
+  },
+  "shipping": {
+    "title": "Shipping information",
+    "addressTitle": "Address",
+    "defaultAddress": "1117 Budapest, Infopark sétány 1.",
+    "securityNotice": "Photo ID required."
+  }
+}

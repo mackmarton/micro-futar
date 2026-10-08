@@ -1,0 +1,29 @@
+{
+  "title": "Saját csomagjaim",
+  "heading": "Küldemények listája",
+  "subtitle": "Kezelje és kövesse nyomon feladott csomagjait egy helyen.",
+  "newOrderButton": "Új csomag feladása",
+  "loading": "Küldemények betöltése...",
+  "error": {
+    "generic": "Nem sikerült betölteni a küldeményeket. Próbáld újra.",
+    "retry": "Újrapróbálás"
+  },
+  "empty": "Még nincs feladott küldeményed.",
+  "stats": {
+    "inProgress": "Folyamatban lévő",
+    "delivered": "Kiszállítva"
+  },
+  "table": {
+    "id": "Azonosító",
+    "destination": "Célállomás",
+    "date": "Dátum",
+    "status": "Státusz",
+    "statusInProgress": "Folyamatban",
+    "statusDelivered": "Kiszállítva",
+    "statusFailed": "Sikertelen",
+    "totalCount": "Összesen {{count}} találat",
+    "prevPage": "Előző oldal",
+    "nextPage": "Következő oldal"
+  },
+  "unknownDestination": "Ismeretlen célállomás"
+}

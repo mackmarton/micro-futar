@@ -1,0 +1,22 @@
+{
+  "nav": {
+    "login": "Bejelentkezés"
+  },
+  "hero": {
+    "badge": "Prémium Logisztika",
+    "headlineLine1": "Gyorsaság.",
+    "headlineLine2": "Biztonság.",
+    "headlineLine3": "Precizitás.",
+    "trackingPlaceholder": "Csomagkövetés (pl. MF-12345678)"
+  },
+  "process": {
+    "heading": "Hogyan működik?",
+    "subtitle": "Egyszerű, átlátható folyamat a feladástól az érkezésig.",
+    "step1Title": "Csomag összeállítása",
+    "step1Description": "Készítse el csomagját, és gondoskodjon a megfelelő csomagolásról. Mérje le a pontos méreteket.",
+    "step2Title": "Online feladás",
+    "step2Description": "Adja meg az adatokat weboldalunkon, fizesse ki a szállítást, és nyomtassa ki a címkét pár kattintással.",
+    "step3Title": "Gyors kézbesítés",
+    "step3Description": "Futárunk felveszi a küldeményt, és mi a legrövidebb úton eljuttatjuk a címzetthez."
+  }
+}

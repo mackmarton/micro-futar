@@ -3,9 +3,9 @@ import { Inter, Manrope } from 'next/font/google';
 import Script from 'next/script';
 import type { ReactNode } from 'react';
 import { Footer } from '@package/shared-ui/Footer';
-import { Providers } from './providers.tsx';
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from './site.ts';
-import '../index.css';
+import { Providers } from '../providers.tsx';
+import { SITE_DESCRIPTION_EN, SITE_NAME, SITE_URL } from '../site.ts';
+import '../../index.css';
 
 const manrope = Manrope({
   subsets: ['latin', 'latin-ext'],
@@ -24,25 +24,25 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} – online csomagfeladás és csomagkövetés`,
+    default: `${SITE_NAME} – online parcel shipping and tracking`,
     template: `%s | ${SITE_NAME}`,
   },
-  description: SITE_DESCRIPTION,
+  description: SITE_DESCRIPTION_EN,
   applicationName: SITE_NAME,
   icons: { icon: '/micro-futar-logo.svg' },
   openGraph: {
     type: 'website',
-    locale: 'hu_HU',
+    locale: 'en_US',
     siteName: SITE_NAME,
-    url: '/',
+    url: '/en',
     title: SITE_NAME,
-    description: SITE_DESCRIPTION,
-    images: [{ url: '/storage.webp', alt: 'Modern logisztikai raktár automatizált polcrendszerrel' }],
+    description: SITE_DESCRIPTION_EN,
+    images: [{ url: '/storage.webp', alt: 'Modern logistics warehouse with automated shelving' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: SITE_NAME,
-    description: SITE_DESCRIPTION,
+    description: SITE_DESCRIPTION_EN,
     images: ['/storage.webp'],
   },
 };
@@ -52,11 +52,16 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+/**
+ * Saját gyökér-layout a magyar (hu) group mellett ("multiple root layouts" App Router
+ * mintázat) — route group helyett külön `<html lang>`-ra van szükség, ezért ez nem a
+ * `(hu)/layout.tsx` alá, hanem vele egy szinten, önálló `<html>`-lel él. Az URL-prefix (`/en`)
+ * ebből a mappanévből jön, a magyar route-ok pedig a `(hu)` csoport miatt prefix nélkül maradnak.
+ */
+export default function EnglishRootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="hu" className={`${manrope.variable} ${inter.variable}`}>
+    <html lang="en" className={`${manrope.variable} ${inter.variable}`}>
       <head>
-        {/* Az ikonfont változtatható tengelyei miatt (FILL, wght) ez nem next/font-on keresztül töltődik. */}
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           rel="stylesheet"
@@ -64,13 +69,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
-        {/*
-          Futásidejű konfiguráció (pl. API base URL): a konténer indulásakor a
-          docker-entrypoint.d/20-write-app-env.sh írja felül. Minden app bundle előtt le kell
-          futnia, mert a shared-core API kliensei modul-betöltéskor olvassák ki.
-        */}
         <Script src="/app-env.js" strategy="beforeInteractive" />
-        <Providers>
+        <Providers locale="en">
           {children}
           <Footer />
         </Providers>

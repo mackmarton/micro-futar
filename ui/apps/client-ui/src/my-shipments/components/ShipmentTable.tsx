@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { cn } from '@package/shared-ui';
 
 export type ShipmentStatus = 'inProgress' | 'delivered' | 'failed';
@@ -29,30 +30,32 @@ export type ShipmentTableProps = {
 const STATUS_META: Record<
   ShipmentStatus,
   {
-    badgeLabel: string;
     badgeClass: string;
     icon: string;
     iconContainerClass: string;
   }
 > = {
   inProgress: {
-    badgeLabel: 'Folyamatban',
     badgeClass: 'bg-tertiary-fixed text-on-tertiary-fixed',
     icon: 'package_2',
     iconContainerClass: 'bg-secondary-container text-on-secondary-container',
   },
   delivered: {
-    badgeLabel: 'Kiszállítva',
     badgeClass: 'bg-primary-fixed text-on-primary-fixed-variant',
     icon: 'inventory_2',
     iconContainerClass: 'bg-surface-container-low text-on-surface-variant',
   },
   failed: {
-    badgeLabel: 'Sikertelen',
     badgeClass: 'bg-error text-on-error',
     icon: 'report',
     iconContainerClass: 'bg-error-container/30 text-error',
   },
+};
+
+const STATUS_LABEL_KEY: Record<ShipmentStatus, string> = {
+  inProgress: 'table.statusInProgress',
+  delivered: 'table.statusDelivered',
+  failed: 'table.statusFailed',
 };
 
 export const ShipmentTable = ({
@@ -64,7 +67,8 @@ export const ShipmentTable = ({
   isNextDisabled = false,
   className,
 }: ShipmentTableProps) => {
-  const totalLabel = totalCountText ?? `Összesen ${shipments.length} találat`;
+  const { t } = useTranslation('dashboard');
+  const totalLabel = totalCountText ?? t('table.totalCount', { count: shipments.length });
 
   return (
     <section className={cn('bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant overflow-hidden', className)}>
@@ -72,16 +76,17 @@ export const ShipmentTable = ({
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-surface-container-low border-b border-outline-variant">
-              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Azonosító</th>
-              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Célállomás</th>
-              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Dátum</th>
-              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Státusz</th>
+              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{t('table.id')}</th>
+              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{t('table.destination')}</th>
+              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{t('table.date')}</th>
+              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{t('table.status')}</th>
             </tr>
           </thead>
 
           <tbody className="divide-y divide-outline-variant/30">
             {shipments.map((shipment) => {
               const meta = STATUS_META[shipment.status];
+              const badgeLabel = t(STATUS_LABEL_KEY[shipment.status]);
 
               return (
                 <tr key={shipment.id} className="hover:bg-surface-container-low/50 transition-colors group">
@@ -106,7 +111,7 @@ export const ShipmentTable = ({
 
                   <td className="px-6 py-4">
                     <span className={cn('px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter', meta.badgeClass)}>
-                      {meta.badgeLabel}
+                      {badgeLabel}
                     </span>
                   </td>
                 </tr>
@@ -125,7 +130,7 @@ export const ShipmentTable = ({
             onClick={onPrevPage}
             disabled={isPrevDisabled}
             className="p-2 rounded hover:bg-surface-container transition-colors disabled:opacity-30"
-            aria-label="Előző oldal"
+            aria-label={t('table.prevPage')}
           >
             <span className="material-symbols-outlined" aria-hidden="true">
               chevron_left
@@ -137,7 +142,7 @@ export const ShipmentTable = ({
             onClick={onNextPage}
             disabled={isNextDisabled}
             className="p-2 rounded hover:bg-surface-container transition-colors disabled:opacity-30"
-            aria-label="Következő oldal"
+            aria-label={t('table.nextPage')}
           >
             <span className="material-symbols-outlined" aria-hidden="true">
               chevron_right

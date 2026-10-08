@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@package/shared-ui';
 
 export type TrackingTimelineStatus = 'completed' | 'previous';
@@ -88,17 +89,20 @@ const TimelineItem = ({ event }: TimelineItemProps) => {
 };
 
 export const TrackingTimelineCard = ({
-  title = 'Részletes eseménytörténet',
+  title,
   events = defaultEvents,
   className,
 }: TrackingTimelineCardProps) => {
+  const { t } = useTranslation('tracking');
+  const resolvedTitle = title ?? t('timeline.title');
+
   return (
     <section className={cn('bg-surface-container-lowest p-8 rounded-xl shadow-sm', className)}>
       <h3 className="text-xl font-bold mb-8 text-on-surface flex items-center gap-2">
         <span className="material-symbols-outlined text-teal-600" aria-hidden="true">
           history
         </span>
-        {title}
+        {resolvedTitle}
       </h3>
 
       <div className="relative ml-4 pl-8 border-l-2 border-surface-container space-y-12">

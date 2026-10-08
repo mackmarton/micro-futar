@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { FormSection, cn } from '@package/shared-ui';
 import type { PackageSizeOption } from '../api/ordersApi.ts';
 
@@ -34,18 +35,20 @@ export const PackageDetailsSection = ({
   onDescriptionChange,
   className,
 }: PackageDetailsSectionProps) => {
+  const { t } = useTranslation('createOrder');
+
   return (
-    <FormSection icon="inventory_2" title="Csomag adatai" className={className}>
+    <FormSection icon="inventory_2" title={t('package.title')} className={className}>
       <div className="space-y-8">
         <div>
           <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant block mb-4">
-            Csomag mérete
+            {t('package.sizeLabel')}
           </label>
 
           {isSizeLoading ? (
-            <p className="text-sm text-on-surface-variant">Csomagméretek betöltése...</p>
+            <p className="text-sm text-on-surface-variant">{t('package.sizeLoading')}</p>
           ) : sizeOptions.length === 0 ? (
-            <p className="text-sm text-on-surface-variant">Nincsenek elérhető csomagméretek.</p>
+            <p className="text-sm text-on-surface-variant">{t('package.sizeEmpty')}</p>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {sizeOptions.map((option) => {
@@ -68,7 +71,7 @@ export const PackageDetailsSection = ({
                     aria-pressed={isActive}
                   >
                     <span className="text-2xl font-bold mb-1 text-on-surface">{option.name}</span>
-                    <span className="text-[10px] text-on-surface-variant group-hover:text-primary">Maximum oldalhossz:<br/>{option.maxLength} cm</span>
+                    <span className="text-[10px] text-on-surface-variant group-hover:text-primary">{t('package.maxLength')}<br/>{option.maxLength} cm</span>
                   </button>
                 );
               })}
@@ -81,7 +84,7 @@ export const PackageDetailsSection = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-4">
-            <label className={labelClassName}>Súly (kg)</label>
+            <label className={labelClassName}>{t('package.weightLabel')}</label>
             <div className="relative">
               <input
                 type="number"
@@ -94,10 +97,10 @@ export const PackageDetailsSection = ({
           </div>
 
           <div className="space-y-4">
-            <label className={labelClassName}>Csomag leírása</label>
+            <label className={labelClassName}>{t('package.descriptionLabel')}</label>
             <input
               type="text"
-              placeholder="Például: Törékeny elektronika"
+              placeholder={t('package.descriptionPlaceholder')}
               value={value.description}
               onChange={(event) => onDescriptionChange?.(event.target.value)}
               className="w-full bg-surface-container-lowest border-none rounded-lg p-4 focus:ring-0 border-b-2 border-transparent focus:border-surface-tint transition-all"

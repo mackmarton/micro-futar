@@ -1,0 +1,22 @@
+{
+  "nav": {
+    "login": "Log in"
+  },
+  "hero": {
+    "badge": "Premium Logistics",
+    "headlineLine1": "Speed.",
+    "headlineLine2": "Security.",
+    "headlineLine3": "Precision.",
+    "trackingPlaceholder": "Track a package (e.g. MF-12345678)"
+  },
+  "process": {
+    "heading": "How it works",
+    "subtitle": "A simple, transparent process from pickup to arrival.",
+    "step1Title": "Pack your shipment",
+    "step1Description": "Prepare your package and make sure it's packaged properly. Measure the exact dimensions.",
+    "step2Title": "Ship online",
+    "step2Description": "Enter the details on our site, pay for shipping, and print the label in a few clicks.",
+    "step3Title": "Fast delivery",
+    "step3Description": "Our courier picks up the shipment and we get it to the recipient by the shortest route."
+  }
+}

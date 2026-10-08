@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "title": "Csomagkövetés",
+    "description": "Kövesse nyomon küldeménye útját valós időben a felvételtől a kézbesítésig – csak adja meg a követési számot."
+  },
+  "hero": {
+    "title": "Nyomonkövetés",
+    "subtitle": "Kísérje figyelemmel küldeménye útját valós időben a felvételtől a sikeres kézbesítésig.",
+    "placeholder": "Adja meg a követési számot (pl. MF-7281-902)",
+    "button": "Keresés"
+  },
+  "loading": "Követési adatok betöltése folyamatban...",
+  "retry": "Újrapróbálás",
+  "errors": {
+    "notFound": "Nincs találat erre a csomagszámra. Ellenőrizd és próbáld újra.",
+    "generic": "Nem sikerült betölteni a követési adatokat. Próbáld újra."
+  },
+  "progress": {
+    "deliveredStatus": "Kézbesítve",
+    "inTransitStatus": "Szállítás alatt",
+    "deliveryTimeLabel": "Kézbesítés időpontja",
+    "unknownTime": "Ismeretlen időpont"
+  },
+  "timeline": {
+    "title": "Részletes eseménytörténet",
+    "arrivedDescription": "A csomag megérkezett a célállomásra.",
+    "inProgressDescription": "A csomag feldolgozása folyamatban van ezen az állomáson."
+  },
+  "shipping": {
+    "title": "Szállítási információk",
+    "addressTitle": "Cím",
+    "defaultAddress": "1117 Budapest, Infopark sétány 1.",
+    "securityNotice": "Fényképes igazolvány szükséges."
+  }
+}

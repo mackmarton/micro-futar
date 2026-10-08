@@ -1,4 +1,5 @@
 import {useMemo, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {PrecisionInput} from '@package/shared-ui';
 import type {CityOption, CountryOption} from '../api/ordersApi.ts';
 
@@ -31,6 +32,7 @@ export const AddressCard = ({
                                 isCityLoading,
                                 onChange,
                             }: AddressCardProps) => {
+    const {t, i18n} = useTranslation('createOrder');
     const countryInputId = `${iconName}-country`;
     const countryListboxId = `${countryInputId}-listbox`;
     const cityInputId = `${iconName}-city`;
@@ -45,14 +47,14 @@ export const AddressCard = ({
         [countryOptions, value.country],
     );
 
-    const normalizedCountryQuery = countryQuery.trim().toLocaleLowerCase('hu');
+    const normalizedCountryQuery = countryQuery.trim().toLocaleLowerCase(i18n.language);
     const filteredCountryOptions = useMemo(() => {
         if (!normalizedCountryQuery) {
             return countryOptions;
         }
 
-        return countryOptions.filter((option) => option.label.toLocaleLowerCase('hu').includes(normalizedCountryQuery));
-    }, [countryOptions, normalizedCountryQuery]);
+        return countryOptions.filter((option) => option.label.toLocaleLowerCase(i18n.language).includes(normalizedCountryQuery));
+    }, [countryOptions, i18n.language, normalizedCountryQuery]);
 
     const inputValue = isCountryMenuOpen ? countryQuery : selectedCountryLabel;
 
@@ -60,14 +62,14 @@ export const AddressCard = ({
         () => cityOptions.find((option) => option.value === value.city)?.label ?? '',
         [cityOptions, value.city],
     );
-    const normalizedCityQuery = cityQuery.trim().toLocaleLowerCase('hu');
+    const normalizedCityQuery = cityQuery.trim().toLocaleLowerCase(i18n.language);
     const filteredCityOptions = useMemo(() => {
         if (!normalizedCityQuery) {
             return cityOptions;
         }
 
-        return cityOptions.filter((option) => option.label.toLocaleLowerCase('hu').includes(normalizedCityQuery));
-    }, [cityOptions, normalizedCityQuery]);
+        return cityOptions.filter((option) => option.label.toLocaleLowerCase(i18n.language).includes(normalizedCityQuery));
+    }, [cityOptions, i18n.language, normalizedCityQuery]);
     const cityInputValue = isCityMenuOpen ? cityQuery : selectedCityLabel;
     const normalizedEmail = value.email.trim();
     const isEmailInvalid = normalizedEmail.length > 0 && !EMAIL_PATTERN.test(normalizedEmail);
@@ -90,10 +92,10 @@ export const AddressCard = ({
     };
 
     const handleCityInputBlur = () => {
-        const normalizedQuery = cityQuery.trim().toLocaleLowerCase('hu');
+        const normalizedQuery = cityQuery.trim().toLocaleLowerCase(i18n.language);
         if (normalizedQuery) {
             const exactMatch = cityOptions.find(
-                (option) => option.label.trim().toLocaleLowerCase('hu') === normalizedQuery,
+                (option) => option.label.trim().toLocaleLowerCase(i18n.language) === normalizedQuery,
             );
 
             if (exactMatch) {
@@ -114,13 +116,13 @@ export const AddressCard = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <PrecisionInput
-                    label="Név"
+                    label={t('addressCard.nameLabel')}
                     value={value.name}
                     required
                     onChange={(event) => onChange('name', event.target.value)}
                 />
                 <PrecisionInput
-                    label="Telefonszám"
+                    label={t('addressCard.phoneLabel')}
                     type="tel"
                     value={value.phone}
                     required
@@ -128,20 +130,20 @@ export const AddressCard = ({
                 />
                 <div className="md:col-span-2">
                     <PrecisionInput
-                        label="Email cím"
+                        label={t('addressCard.emailLabel')}
                         type="email"
                         value={value.email}
                         required
                         onChange={(event) => onChange('email', event.target.value)}
                     />
                     {isEmailInvalid ? (
-                        <p className="mt-2 text-xs text-red-600">Kérjük adjon meg érvényes email címet.</p>
+                        <p className="mt-2 text-xs text-red-600">{t('addressCard.emailInvalid')}</p>
                     ) : null}
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 md:col-span-2">
                     <PrecisionInput
-                        label="Irányítószám"
+                        label={t('addressCard.zipLabel')}
                         value={value.zipCode}
                         required
                         onChange={(event) => onChange('zipCode', event.target.value)}
@@ -151,7 +153,7 @@ export const AddressCard = ({
                             htmlFor={countryInputId}
                             className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3 block"
                         >
-                            Ország
+                            {t('addressCard.countryLabel')}
                             <span className="ml-1 text-red-600" aria-hidden="true">
                                 *
                             </span>
@@ -166,7 +168,7 @@ export const AddressCard = ({
                             autoComplete="off"
                             value={inputValue}
                             required
-                            placeholder={isCountryLoading ? 'Országok betöltése...' : 'Kezdjen gépelni az országhoz'}
+                            placeholder={isCountryLoading ? t('addressCard.countryPlaceholderLoading') : t('addressCard.countryPlaceholderIdle')}
                             onFocus={() => {
                                 setCountryQuery('');
                                 setIsCountryMenuOpen(true);
@@ -203,7 +205,7 @@ export const AddressCard = ({
                                         </li>
                                     ))
                                 ) : (
-                                    <li className="px-4 py-2 text-sm text-on-surface-variant">Nincs találat.</li>
+                                    <li className="px-4 py-2 text-sm text-on-surface-variant">{t('addressCard.noResults')}</li>
                                 )}
                             </ul>
                         ) : null}
@@ -215,7 +217,7 @@ export const AddressCard = ({
                         htmlFor={cityInputId}
                         className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3 block"
                     >
-                        Város
+                        {t('addressCard.cityLabel')}
                         <span className="ml-1 text-red-600" aria-hidden="true">
                             *
                         </span>
@@ -232,10 +234,10 @@ export const AddressCard = ({
                         required
                         placeholder={
                             !value.country
-                                ? 'Válasszon előbb országot'
+                                ? t('addressCard.cityPlaceholderNoCountry')
                                 : isCityLoading
-                                    ? 'Városok betöltése...'
-                                    : 'Kezdjen gépelni a városhoz'
+                                    ? t('addressCard.cityPlaceholderLoading')
+                                    : t('addressCard.cityPlaceholderIdle')
                         }
                         onFocus={() => {
                             setCityQuery('');
@@ -272,13 +274,13 @@ export const AddressCard = ({
                                     </li>
                                 ))
                             ) : (
-                                <li className="px-4 py-2 text-sm text-on-surface-variant">Nincs találat.</li>
+                                <li className="px-4 py-2 text-sm text-on-surface-variant">{t('addressCard.noResults')}</li>
                             )}
                         </ul>
                     ) : null}
                 </div>
                 <PrecisionInput
-                    label="Cím"
+                    label={t('addressCard.addressLabel')}
                     value={value.address}
                     required
                     onChange={(event) => onChange('address', event.target.value)}

@@ -5,9 +5,14 @@ import {TrackingDetailsSection} from './components';
 import {useTracking} from './hooks/useTracking.ts';
 import { Suspense, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { PortalLayout, cn } from '@package/shared-ui';
+import type { AppLocale } from '../i18n/createI18nInstance.ts';
+import { LanguageSwitcher } from '../i18n/LanguageSwitcher.tsx';
+import { usePortalNavigation } from '../shared/usePortalNavigation.ts';
 
 export type TrackPackagePageProps = {
+    locale: AppLocale;
     className?: string;
 };
 
@@ -31,15 +36,25 @@ const InitialTrackingSearch = ({onSearch}: { onSearch: (trackingNumber: string) 
     return null;
 };
 
-export const TrackPackagePage = ({className}: TrackPackagePageProps) => {
+export const TrackPackagePage = ({locale, className}: TrackPackagePageProps) => {
     const {hasSearchStarted, isLoading, errorMessage, details, search, retry} = useTracking();
+    const {t} = useTranslation(['common', 'tracking']);
+    const {activeHref, navigationItems, homeHref, brandSubtitle} = usePortalNavigation(locale, 'tracking');
 
     const handleSearch = (trackingCode: string) => {
         void search(trackingCode);
     };
 
     return (
-        <PortalLayout title="Nyomonkövetés" activeHref="/portal/tracking" contentClassName={cn('px-6 py-8 md:p-12', className)}>
+        <PortalLayout
+            title={t('common:nav.tracking')}
+            activeHref={activeHref}
+            navigationItems={navigationItems}
+            logoHref={homeHref}
+            brandSubtitle={brandSubtitle}
+            topBarRightSlot={<LanguageSwitcher />}
+            contentClassName={cn('px-6 py-8 md:p-12', className)}
+        >
                     <Suspense fallback={null}>
                         <InitialTrackingSearch onSearch={search}/>
                     </Suspense>
@@ -47,7 +62,7 @@ export const TrackPackagePage = ({className}: TrackPackagePageProps) => {
 
                     {hasSearchStarted && isLoading && (
                         <section className="bg-surface-container-lowest rounded-xl p-6 shadow-sm text-center text-on-surface-variant">
-                            Követési adatok betöltése folyamatban...
+                            {t('tracking:loading')}
                         </section>
                     )}
 
@@ -59,7 +74,7 @@ export const TrackPackagePage = ({className}: TrackPackagePageProps) => {
                                 onClick={() => void retry()}
                                 className="px-4 py-2 rounded-lg bg-primary text-on-primary font-semibold hover:bg-on-primary-container transition-all"
                             >
-                                Újrapróbálás
+                                {t('tracking:retry')}
                             </button>
                         </section>
                     )}

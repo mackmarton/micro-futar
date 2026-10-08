@@ -1,0 +1,84 @@
+{
+  "page": {
+    "title": "Csomag feladása",
+    "subtitle": "Hozza létre új szállítmányát néhány egyszerű lépésben."
+  },
+  "errors": {
+    "senderCities": "Feladó városok: {{message}}",
+    "recipientCities": "Címzett városok: {{message}}",
+    "packageSizes": "Csomagméretek: {{message}}",
+    "countryPrices": "Országpár árak: {{message}}",
+    "retryCountries": "Országok újratöltése",
+    "retrySenderCities": "Feladó városok újratöltése",
+    "retryRecipientCities": "Címzett városok újratöltése",
+    "retryPackageSizes": "Csomagméretek újratöltése",
+    "retryCountryPrices": "Országpár árak újratöltése"
+  },
+  "addressCard": {
+    "senderTitle": "Feladó adatai",
+    "recipientTitle": "Címzett adatai",
+    "nameLabel": "Név",
+    "phoneLabel": "Telefonszám",
+    "emailLabel": "Email cím",
+    "emailInvalid": "Kérjük adjon meg érvényes email címet.",
+    "zipLabel": "Irányítószám",
+    "countryLabel": "Ország",
+    "countryPlaceholderLoading": "Országok betöltése...",
+    "countryPlaceholderIdle": "Kezdjen gépelni az országhoz",
+    "cityLabel": "Város",
+    "cityPlaceholderNoCountry": "Válasszon előbb országot",
+    "cityPlaceholderLoading": "Városok betöltése...",
+    "cityPlaceholderIdle": "Kezdjen gépelni a városhoz",
+    "addressLabel": "Cím",
+    "noResults": "Nincs találat."
+  },
+  "map": {
+    "senderCoordinatesLabel": "Feladó koordináták",
+    "recipientCoordinatesLabel": "Címzett koordináták",
+    "hint": "A térkép a beírt címhez igazodik. Húzza a jelölőt vagy kattintson a térképre, majd erősítse meg a pozíciót.",
+    "repositionButton": "Cím alapján újrapozicionálás",
+    "confirmButton": "Pin megerősítése",
+    "markedPoint": "Jelölt pont: {{lat}}, {{lng}}",
+    "senderUnconfirmed": "A feladó koordinátái még nincsenek megerősítve.",
+    "recipientUnconfirmed": "A címzett koordinátái még nincsenek megerősítve.",
+    "geocoding": "Automatikus címkeresés folyamatban..."
+  },
+  "package": {
+    "title": "Csomag adatai",
+    "sizeLabel": "Csomag mérete",
+    "sizeLoading": "Csomagméretek betöltése...",
+    "sizeEmpty": "Nincsenek elérhető csomagméretek.",
+    "maxLength": "Maximum oldalhossz:",
+    "weightLabel": "Súly (kg)",
+    "descriptionLabel": "Csomag leírása",
+    "descriptionPlaceholder": "Például: Törékeny elektronika",
+    "hintNoRoute": "A csomagméretek az országpár kiválasztása után válnak elérhetővé.",
+    "hintLoadingPrices": "Az országpárhoz tartozó csomagméretek betöltése folyamatban van."
+  },
+  "summary": {
+    "title": "Rendelés összegzése",
+    "minPrice": "Minimum ár",
+    "maxPrice": "Maximum ár",
+    "totalLabel": "Aktuális végösszeg",
+    "submit": "Rendelés leadása",
+    "submitting": "Feldolgozás...",
+    "terms": "A gombra kattintva elfogadja az Általános Szerződési Feltételeket és az Adatkezelési Tájékoztatót."
+  },
+  "submit": {
+    "missingLocation": "A rendeléshez érvényes ország és város kiválasztása szükséges.",
+    "success": "A rendelést sikeresen rögzítettük.",
+    "genericError": "A rendelés mentése nem sikerült. Kérjük próbálja újra."
+  },
+  "geocode": {
+    "noResult": "Nem találtunk pontos találatot a megadott címhez.",
+    "failed": "A cím geokódolása sikertelen.",
+    "missingFields": "Adja meg a címet, irányítószámot, várost és országot az automatikus pozicionáláshoz."
+  },
+  "dataErrors": {
+    "countries": "Az országok listája jelenleg nem érhető el.",
+    "cities": "A városok listája jelenleg nem érhető el.",
+    "currencies": "A pénznemek listája jelenleg nem érhető el.",
+    "packageSizes": "A csomagméretek listája jelenleg nem érhető el.",
+    "countryPrices": "Az adott országpárhoz tartozó árak jelenleg nem érhetőek el."
+  }
+}

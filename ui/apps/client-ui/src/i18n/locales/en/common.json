@@ -1,0 +1,13 @@
+{
+  "brandSubtitle": "Logistics Portal",
+  "nav": {
+    "dashboard": "My packages",
+    "createOrder": "Send a package",
+    "tracking": "Tracking"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "heading": "The page you're looking for could not be found.",
+    "backHome": "Back to homepage"
+  }
+}

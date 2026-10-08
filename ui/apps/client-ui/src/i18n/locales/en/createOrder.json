@@ -1,0 +1,84 @@
+{
+  "page": {
+    "title": "Send a package",
+    "subtitle": "Create your new shipment in a few simple steps."
+  },
+  "errors": {
+    "senderCities": "Sender cities: {{message}}",
+    "recipientCities": "Recipient cities: {{message}}",
+    "packageSizes": "Package sizes: {{message}}",
+    "countryPrices": "Country pair prices: {{message}}",
+    "retryCountries": "Reload countries",
+    "retrySenderCities": "Reload sender cities",
+    "retryRecipientCities": "Reload recipient cities",
+    "retryPackageSizes": "Reload package sizes",
+    "retryCountryPrices": "Reload country pair prices"
+  },
+  "addressCard": {
+    "senderTitle": "Sender details",
+    "recipientTitle": "Recipient details",
+    "nameLabel": "Name",
+    "phoneLabel": "Phone number",
+    "emailLabel": "Email address",
+    "emailInvalid": "Please enter a valid email address.",
+    "zipLabel": "ZIP code",
+    "countryLabel": "Country",
+    "countryPlaceholderLoading": "Loading countries...",
+    "countryPlaceholderIdle": "Start typing the country",
+    "cityLabel": "City",
+    "cityPlaceholderNoCountry": "Select a country first",
+    "cityPlaceholderLoading": "Loading cities...",
+    "cityPlaceholderIdle": "Start typing the city",
+    "addressLabel": "Address",
+    "noResults": "No results."
+  },
+  "map": {
+    "senderCoordinatesLabel": "Sender coordinates",
+    "recipientCoordinatesLabel": "Recipient coordinates",
+    "hint": "The map follows the address you entered. Drag the pin or click the map, then confirm the position.",
+    "repositionButton": "Reposition from address",
+    "confirmButton": "Confirm pin",
+    "markedPoint": "Marked point: {{lat}}, {{lng}}",
+    "senderUnconfirmed": "The sender's coordinates haven't been confirmed yet.",
+    "recipientUnconfirmed": "The recipient's coordinates haven't been confirmed yet.",
+    "geocoding": "Looking up the address automatically..."
+  },
+  "package": {
+    "title": "Package details",
+    "sizeLabel": "Package size",
+    "sizeLoading": "Loading package sizes...",
+    "sizeEmpty": "No package sizes available.",
+    "maxLength": "Maximum side length:",
+    "weightLabel": "Weight (kg)",
+    "descriptionLabel": "Package description",
+    "descriptionPlaceholder": "E.g. Fragile electronics",
+    "hintNoRoute": "Package sizes become available once you select the country pair.",
+    "hintLoadingPrices": "Loading the package sizes available for this country pair."
+  },
+  "summary": {
+    "title": "Order summary",
+    "minPrice": "Minimum price",
+    "maxPrice": "Maximum price",
+    "totalLabel": "Current total",
+    "submit": "Place order",
+    "submitting": "Processing...",
+    "terms": "By clicking the button you accept the Terms and Conditions and the Privacy Policy."
+  },
+  "submit": {
+    "missingLocation": "A valid country and city selection is required to place the order.",
+    "success": "Your order has been placed successfully.",
+    "genericError": "Couldn't save the order. Please try again."
+  },
+  "geocode": {
+    "noResult": "We couldn't find an exact match for the given address.",
+    "failed": "Address geocoding failed.",
+    "missingFields": "Enter the address, ZIP code, city and country for automatic positioning."
+  },
+  "dataErrors": {
+    "countries": "The list of countries is currently unavailable.",
+    "cities": "The list of cities is currently unavailable.",
+    "currencies": "The list of currencies is currently unavailable.",
+    "packageSizes": "The list of package sizes is currently unavailable.",
+    "countryPrices": "Prices for this country pair are currently unavailable."
+  }
+}

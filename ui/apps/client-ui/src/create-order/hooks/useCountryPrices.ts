@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { fetchCountryPrices, type CountryPriceOption } from '../api/ordersApi.ts';
 import { queryKeys } from '../../shared/queryKeys.ts';
 
@@ -14,6 +15,7 @@ export const useCountryPrices = (
   originCountryId: string,
   destinationCountryId: string,
 ): UseCountryPricesResult => {
+  const { t } = useTranslation('createOrder');
   const isEnabled = Boolean(originCountryId && destinationCountryId);
   const countryPricesQuery = useQuery({
     queryKey: queryKeys.countryPrices(originCountryId, destinationCountryId),
@@ -34,7 +36,7 @@ export const useCountryPrices = (
     countryPrices: isEnabled ? (countryPricesQuery.data ?? []) : [],
     isLoading: isEnabled ? countryPricesQuery.isPending : false,
     errorMessage: isEnabled && countryPricesQuery.isError
-      ? 'Az adott országpárhoz tartozó árak jelenleg nem érhetőek el.'
+      ? t('dataErrors.countryPrices')
       : null,
     retry,
   };
