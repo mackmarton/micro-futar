@@ -25,6 +25,17 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
     const login = useCallback(() => {
         const loginUrl = new URL(buildApiUrl('/oauth2/authorization/keycloak'), window.location.origin);
         loginUrl.searchParams.set('redirect_uri', window.location.href);
+
+        // A `<html lang>` minden appban az aktuális UI-nyelvet tükrözi (client-ui-nál build-időben
+        // útvonalanként, logistics-ui/courier-ui-nál runtime-ban szinkronizálva az i18next
+        // nyelvváltásra) – ezt küldjük tovább a Keycloak-nak szabványos OIDC `ui_locales`
+        // paraméterként, hogy a login oldal ugyanazon a nyelven jelenjen meg (lásd az
+        // api_gateway `LocaleAwareOAuth2AuthorizationRequestResolver`-ét).
+        const currentLocale = document.documentElement.lang;
+        if (currentLocale) {
+            loginUrl.searchParams.set('ui_locales', currentLocale);
+        }
+
         window.location.href = loginUrl.toString();
     }, []);
 

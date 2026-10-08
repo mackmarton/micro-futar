@@ -4,6 +4,7 @@ import { ManifestDataTable } from './components/ManifestDataTable';
 import { PortalLayout } from '@package/shared-ui';
 import { toErrorMessage } from '@package/shared-core';
 import { useCourierNavigationItems } from '../navigation.ts';
+import { LanguageSwitcher } from '../../i18n/LanguageSwitcher.tsx';
 import { useMutation } from '@tanstack/react-query';
 import { useCourierPickups } from './hooks/useCourierPickups.ts';
 import {
@@ -51,7 +52,13 @@ export const CourierPickupPage = () => {
         : null;
 
     return (
-        <PortalLayout title={t('common:nav.pickup')} activeHref="#/portal/shipment-pickup" navigationItems={courierNavigationItems}>
+        <PortalLayout
+          title={t('common:nav.pickup')}
+          activeHref="#/portal/shipment-pickup"
+          navigationItems={courierNavigationItems}
+          topBarRightSlot={<LanguageSwitcher />}
+          brandSubtitle={t('common:brand.subtitle')}
+        >
             <div className="space-y-6 md:space-y-8">
                 <section className="rounded-xl bg-surface-container-low p-6 md:p-8">
                     <div className="mt-4 flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">

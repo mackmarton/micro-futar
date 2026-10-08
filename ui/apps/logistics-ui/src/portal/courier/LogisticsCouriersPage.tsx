@@ -191,7 +191,13 @@ export const LogisticsCouriersPage = () => {
     );
 
     return (
-        <PortalLayout title={t('list.heading')} activeHref="#/portal/couriers" navigationItems={navigationItems} topBarRightSlot={<LanguageSwitcher />}>
+        <PortalLayout
+            title={t('list.heading')}
+            activeHref="#/portal/couriers"
+            navigationItems={navigationItems}
+            topBarRightSlot={<LanguageSwitcher />}
+            brandSubtitle={tCommon('brand.subtitle')}
+        >
             <section className="rounded-2xl bg-surface-container-low p-6 lg:col-span-2">
                 <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('list.sectionEyebrow')}</p>
                 <h1 className="mt-2 text-2xl font-headline text-on-surface">{t('list.heading')}</h1>

@@ -73,4 +73,12 @@ void i18next.use(initReactI18next).init({
   react: { useSuspense: false },
 });
 
+// A `<html lang>`-et a login redirect (AuthContext.login a shared-ui-ban) olvassa ki, hogy a
+// Keycloak login oldal is a jelenlegi UI-nyelven jelenjen meg – ezért kell induláskor és minden
+// nyelvváltáskor is szinkronban tartani.
+document.documentElement.lang = i18next.language;
+i18next.on('languageChanged', (locale) => {
+  document.documentElement.lang = locale;
+});
+
 export default i18next;

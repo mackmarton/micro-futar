@@ -69,6 +69,13 @@ i18next.on('languageChanged', (locale) => {
   } catch {
     // localStorage elérhetetlen (pl. privát böngészés) - a nyelv ettől futásidőben még működik.
   }
+
+  // A `<html lang>`-et a login redirect (AuthContext.login a shared-ui-ban) olvassa ki, hogy a
+  // Keycloak login oldal is a jelenlegi UI-nyelven jelenjen meg.
+  document.documentElement.lang = locale;
 });
+
+// Kezdeti beállítás induláskor is (a `languageChanged` esemény csak nyelvváltáskor tüzel).
+document.documentElement.lang = i18next.language;
 
 export default i18next;

@@ -79,6 +79,7 @@ export const LogisticsDepoDetailsPage = () => {
             activeHref="#/portal/depos"
             navigationItems={navigationItems}
             topBarRightSlot={<LanguageSwitcher />}
+            brandSubtitle={tCommon('brand.subtitle')}
         >
             <div className="flex flex-wrap gap-3 justify-between">
                 <Link

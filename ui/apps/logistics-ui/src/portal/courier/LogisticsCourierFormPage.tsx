@@ -216,6 +216,7 @@ export const LogisticsCourierFormPage = () => {
       activeHref="#/portal/couriers"
       navigationItems={navigationItems}
       topBarRightSlot={<LanguageSwitcher />}
+      brandSubtitle={tCommon('brand.subtitle')}
     >
       <section className="rounded-3xl bg-surface-container-low p-6 md:p-8">
         <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('form.eyebrow')}</p>

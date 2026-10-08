@@ -52,6 +52,7 @@ function App() {
               title={t('brand.title')}
               navigationItems={courierNavigationItems}
               topBarRightSlot={<LanguageSwitcher />}
+              brandSubtitle={t('brand.subtitle')}
             />
           }
         >

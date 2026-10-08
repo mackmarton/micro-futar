@@ -10,8 +10,7 @@ export const CourierLandingPage = () => {
     <div className="relative">
       {/* A shared-ui `PortalLandingPage`-nek nincs saját fejlécje/rightSlot propja (nem módosítható
           itt), ezért a nyelvváltó egy lebegő overlay-ként kerül a tartalom fölé, hogy kijelentkezve
-          is elérhető legyen. A gombok ("Bejelentkezés" stb.) saját, shared-ui szövege emiatt marad
-          magyar. */}
+          is elérhető legyen. */}
       <div className="absolute right-4 top-4 z-10">
         <LanguageSwitcher />
       </div>
@@ -21,6 +20,9 @@ export const CourierLandingPage = () => {
         portalHref="/portal/shipment-pickup"
         hasAccess={hasCourierPortalAccess}
         accessDeniedMessage={t('accessDeniedMessage')}
+        openPortalLabel={t('openPortalLabel')}
+        logoutLabel={t('logoutLabel')}
+        loginLabel={t('loginLabel')}
       />
     </div>
   );
