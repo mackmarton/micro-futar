@@ -47,6 +47,7 @@
       "errorHeading": "Nem sikerült betölteni az országokat.",
       "columns": {
         "name": "Ország",
+        "currency": "Pénznem",
         "next": "Tovább",
         "goToCities": "Városok"
       },
