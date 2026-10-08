@@ -55,6 +55,7 @@ public class LocationCityService {
         return locationCityRepository.findById(id)
                 .map(existingCity -> {
                     LocationCity updatedCity = locationCityMapper.toEntity(locationCityDTO);
+                    updatedCity.setId(id);
                     LocationCity savedCity = locationCityRepository.save(updatedCity);
                     LocationCityDTO result = locationCityMapper.toDTO(savedCity);
                     kafkaProducerService.sendLocationCity(result);
