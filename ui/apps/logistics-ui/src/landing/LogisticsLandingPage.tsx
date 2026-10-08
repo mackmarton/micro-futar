@@ -1,12 +1,23 @@
+import { useTranslation } from 'react-i18next';
 import { PortalLandingPage } from '@package/shared-ui';
 import { hasLogisticsPortalAccess } from '../auth/portalAccess';
+import { LanguageSwitcher } from '../i18n/LanguageSwitcher';
 
-export const LogisticsLandingPage = () => (
-  <PortalLandingPage
-    title="Logisztikai portál"
-    description="Üdvözlünk a micro-futár alkalmazás logisztikai portálján."
-    portalHref="/portal/depos"
-    hasAccess={hasLogisticsPortalAccess}
-    accessDeniedMessage="Nincs jogosultságod a portál használatához. A belépéshez logistics-admin vagy logistics-user szerepkör szükséges."
-  />
-);
+export const LogisticsLandingPage = () => {
+  const { t } = useTranslation('landing');
+
+  return (
+    <div className="relative">
+      <div className="absolute right-4 top-4 z-10">
+        <LanguageSwitcher />
+      </div>
+      <PortalLandingPage
+        title={t('title')}
+        description={t('description')}
+        portalHref="/portal/depos"
+        hasAccess={hasLogisticsPortalAccess}
+        accessDeniedMessage={t('accessDeniedMessage')}
+      />
+    </div>
+  );
+};

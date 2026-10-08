@@ -1,0 +1,195 @@
+{
+  "list": {
+    "eyebrow": "Logistics",
+    "heading": "Depots",
+    "addNew": "Create new depot",
+    "loading": "Loading depots...",
+    "errorHeading": "Failed to load depots.",
+    "empty": "There are currently no depot records available."
+  },
+  "table": {
+    "title": "Depot data",
+    "columns": {
+      "name": "Name",
+      "country": "Country",
+      "city": "City",
+      "zip": "ZIP code",
+      "address": "Address"
+    },
+    "filters": {
+      "countryLabel": "Country",
+      "countryAllOption": "All countries",
+      "cityLabel": "City",
+      "cityAllOption": "All cities",
+      "cityDependsOnText": "Select a country first."
+    },
+    "empty": "No results for the selected country and city filters.",
+    "mobileEyebrow": "Depot"
+  },
+  "details": {
+    "title": "Depot details",
+    "backToList": "Back to the list",
+    "editButton": "Edit",
+    "loading": "Loading depot details...",
+    "errorHeading": "Failed to load the depot details.",
+    "planning": {
+      "eyebrow": "Planning",
+      "heading": "Shipment assignment",
+      "depoShipments": {
+        "eyebrow": "Depot shipments",
+        "description": "Automatically assign the depot's shipments to couriers.",
+        "startButton": "Start shipment planning",
+        "pendingButton": "Planning...",
+        "success": "Shipment planning completed successfully.",
+        "errorFallback": "Shipment planning failed."
+      },
+      "crossDepoShipments": {
+        "eyebrow": "Cross-depot shipments",
+        "description": "Automatically assign the cross-depot shipments passing through this depot.",
+        "startButton": "Start cross-depot planning",
+        "pendingButton": "Planning...",
+        "success": "Cross-depot planning completed successfully.",
+        "errorFallback": "Cross-depot planning failed."
+      }
+    },
+    "data": {
+      "eyebrow": "Data",
+      "fields": {
+        "id": "Depot ID",
+        "name": "Name",
+        "country": "Country",
+        "city": "City",
+        "zip": "ZIP code",
+        "address": "Address"
+      }
+    },
+    "map": {
+      "eyebrow": "Map",
+      "noCoordinates": "Not enough coordinates to display.",
+      "iframeTitle": "Depot location on the map"
+    }
+  },
+  "form": {
+    "eyebrow": "Depot form",
+    "titleEdit": "Edit depot",
+    "titleCreate": "Create depot",
+    "headingEdit": "Edit depot",
+    "headingCreate": "Create new depot",
+    "requiredFieldsNote": "Required fields: name, country, city, ZIP code and address.",
+    "backToList": "Back to the depot list",
+    "loading": "Loading form data...",
+    "errorHeading": "Failed to open the form.",
+    "fields": {
+      "name": "Name",
+      "namePlaceholder": "e.g.: Budapest",
+      "country": "Country",
+      "countryPlaceholder": "Select a country",
+      "city": "City",
+      "cityPlaceholder": "Select a city",
+      "zip": "ZIP code",
+      "zipPlaceholder": "e.g.: 2045",
+      "address": "Address",
+      "addressPlaceholder": "e.g.: Main Street 1.",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "coordinatePlaceholder": "Filled in from the map"
+    },
+    "map": {
+      "eyebrow": "Map position",
+      "description": "The map positions to the entered address. Drag the pin or click on the map, then confirm it.",
+      "repositionButton": "Reposition based on address",
+      "confirmPinButton": "Confirm pin",
+      "markedPoint": "Marked point: {{latitude}}, {{longitude}}",
+      "geocoding": "Automatic address lookup in progress...",
+      "confirmPinHint": "Confirm the pin set on the map to save."
+    },
+    "validation": {
+      "nameRequired": "Name is required.",
+      "countryRequired": "Selecting a country is required.",
+      "cityRequired": "Selecting a city is required.",
+      "zipRequired": "ZIP code is required.",
+      "addressRequired": "Address is required.",
+      "pinRequired": "Mark the depot's coordinates on the map and confirm the pin.",
+      "pinNotConfirmed": "Confirm the pin positioned on the map first.",
+      "geocodeMissingFields": "Enter an address, city and country for automatic positioning.",
+      "geocodeFailed": "Failed to geocode the address.",
+      "geocodeNoResult": "No exact match found for the given address."
+    },
+    "saveFailed": "Save failed.",
+    "submitCreate": "Create depot",
+    "submitEdit": "Save changes"
+  },
+  "transportType": {
+    "road": "Road",
+    "air": "Air"
+  },
+  "transitForm": {
+    "eyebrow": "Depot transit form",
+    "titleEdit": "Edit depot transit",
+    "titleCreate": "Create depot transit",
+    "headingEdit": "Edit depot transit",
+    "headingCreate": "Create new depot transit",
+    "direction": {
+      "outgoing": "Outgoing transit",
+      "incoming": "Incoming transit",
+      "standalone": "Depot transit"
+    },
+    "contextLine": "{{direction}} • Context depot: {{depoName}}",
+    "backToDetails": "Back to depot details",
+    "loading": "Loading depot transit form...",
+    "errorHeading": "Failed to open the depot transit form.",
+    "fields": {
+      "originDepo": "Origin depot",
+      "originDepoPlaceholder": "Select an origin depot",
+      "fixedOriginHint": "For an outgoing transit, the origin depot is fixed.",
+      "destinationDepo": "Destination depot",
+      "destinationDepoPlaceholder": "Select a destination depot",
+      "fixedDestinationHint": "For an incoming transit, the destination depot is fixed.",
+      "packageSize": "Package size",
+      "packageSizePlaceholder": "Select a package size",
+      "transportType": "Transport type",
+      "price": "Price (Ft)",
+      "pricePlaceholder": "e.g.: 1990"
+    },
+    "validation": {
+      "originRequired": "Selecting an origin depot is required.",
+      "destinationRequired": "Selecting a destination depot is required.",
+      "sameOriginDestination": "The origin and destination depot cannot be the same.",
+      "packageSizeRequired": "Selecting a package size is required.",
+      "priceRequired": "Price is required.",
+      "priceNonNegative": "The price must be a non-negative number.",
+      "outgoingOriginMismatch": "For an outgoing transit, the origin depot must match the currently open depot.",
+      "incomingDestinationMismatch": "For an incoming transit, the destination depot must match the currently open depot."
+    },
+    "saveFailed": "Save failed.",
+    "submitCreate": "Create depot transit",
+    "submitEdit": "Save changes"
+  },
+  "transitTable": {
+    "sectionEyebrow": "Section",
+    "heading": "Transits",
+    "addOutgoing": "Add outgoing transit",
+    "addIncoming": "Add incoming transit",
+    "outgoingLoading": "Loading outgoing depot transits...",
+    "outgoingErrorHeading": "Failed to load the outgoing depot transits.",
+    "incomingLoading": "Loading incoming depot transits...",
+    "incomingErrorHeading": "Failed to load the incoming depot transits.",
+    "columns": {
+      "destinationDepo": "Destination depot",
+      "originDepo": "Origin depot",
+      "packageSize": "Package size",
+      "transportType": "Transport type",
+      "price": "Price"
+    },
+    "outgoingTable": {
+      "title": "Outgoing depot transits",
+      "empty": "No outgoing transit found for this depot.",
+      "mobileEyebrow": "Outgoing transit"
+    },
+    "incomingTable": {
+      "title": "Incoming depot transits",
+      "empty": "No incoming transit found for this depot.",
+      "mobileEyebrow": "Incoming transit"
+    }
+  }
+}

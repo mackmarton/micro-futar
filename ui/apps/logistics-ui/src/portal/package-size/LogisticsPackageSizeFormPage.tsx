@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FormSection, PrecisionInput } from '@package/shared-ui';
 import type { PackageSizeDTO } from '@package/shared-core/api/LogisticsApiClient';
 import {
@@ -8,8 +9,9 @@ import {
   getPackageSizeById,
   updatePackageSize,
 } from '../api/logisticsDeposApi';
-import { logisticsNavigationItems } from '../navigation';
+import { useLogisticsNavigationItems } from '../navigation';
 import { EntityFormShell } from '../shared/EntityFormShell';
+import { LanguageSwitcher } from '../../i18n/LanguageSwitcher';
 
 type PackageSizeFormState = {
   name: string;
@@ -26,13 +28,13 @@ const parsePositiveNumber = (value: string): number | null => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
 };
 
-const validateForm = (formState: PackageSizeFormState): string | null => {
+const validateForm = (formState: PackageSizeFormState, t: (key: string) => string): string | null => {
   if (!formState.name.trim()) {
-    return 'A csomagméret neve kötelező.';
+    return t('form.nameRequired');
   }
 
   if (parsePositiveNumber(formState.maxLength) === null) {
-    return 'A max hossz legyen pozitív szám.';
+    return t('form.maxLengthInvalid');
   }
 
   return null;
@@ -44,6 +46,9 @@ const buildPayload = (formState: PackageSizeFormState): PackageSizeDTO => ({
 });
 
 export const LogisticsPackageSizeFormPage = () => {
+  const { t } = useTranslation('packageSize');
+  const { t: tCommon } = useTranslation('common');
+  const navigationItems = useLogisticsNavigationItems();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const params = useParams();
@@ -104,7 +109,7 @@ export const LogisticsPackageSizeFormPage = () => {
   };
 
   const handleSubmit = () => {
-    const errorMessage = validateForm(formState);
+    const errorMessage = validateForm(formState, t);
     setValidationError(errorMessage);
 
     if (errorMessage) {
@@ -116,41 +121,42 @@ export const LogisticsPackageSizeFormPage = () => {
 
   return (
     <EntityFormShell
-      title={isEditMode ? 'Csomagméret szerkesztés' : 'Csomagméret létrehozás'}
+      title={isEditMode ? t('form.titleEdit') : t('form.titleCreate')}
       activeHref="#/portal/package-sizes"
-      navigationItems={logisticsNavigationItems}
-      eyebrow="Csomagméret form"
-      heading={isEditMode ? 'Csomagméret szerkesztés' : 'Új csomagméret létrehozás'}
+      navigationItems={navigationItems}
+      topBarRightSlot={<LanguageSwitcher />}
+      eyebrow={t('form.eyebrow')}
+      heading={isEditMode ? t('form.headingEdit') : t('form.headingCreate')}
       backLinks={
         <Link
           to="/portal/package-sizes"
           className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
         >
-          Vissza a csomagméretekhez
+          {t('form.backToList')}
         </Link>
       }
       isLoading={isEditMode && packageSizeQuery.isLoading}
-      loadingMessage="A csomagméret adatainak betöltése folyamatban..."
+      loadingMessage={t('form.loading')}
       isError={packageSizeQuery.isError}
-      errorMessage="A csomagméret adatainak betöltése sikertelen."
+      errorMessage={t('form.errorHeading')}
       errorDetail={(packageSizeQuery.error as Error)?.message}
     >
-      <FormSection icon="deployed_code" title="Csomagméret adatai" className="mt-6">
+      <FormSection icon="deployed_code" title={t('form.sectionTitle')} className="mt-6">
         <div className="grid gap-4 md:grid-cols-2">
           <PrecisionInput
-            label="Név"
+            label={t('form.nameLabel')}
             value={formState.name}
             onChange={(event) => handleInputChange('name', event.target.value)}
-            placeholder="Pl.: Közepes doboz"
+            placeholder={t('form.namePlaceholder')}
             required
           />
 
           <PrecisionInput
-            label="Max hossz (cm)"
+            label={t('form.maxLengthLabel')}
             type="number"
             value={formState.maxLength}
             onChange={(event) => handleInputChange('maxLength', event.target.value)}
-            placeholder="Pl.: 50"
+            placeholder={t('form.maxLengthPlaceholder')}
             required
           />
         </div>
@@ -164,7 +170,7 @@ export const LogisticsPackageSizeFormPage = () => {
         {saveMutation.isError ? (
           <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
             <p className="font-body text-on-surface">
-              {(saveMutation.error as Error)?.message ?? 'A mentés nem sikerült.'}
+              {(saveMutation.error as Error)?.message ?? t('form.saveFailed')}
             </p>
           </div>
         ) : null}
@@ -176,14 +182,14 @@ export const LogisticsPackageSizeFormPage = () => {
             disabled={saveMutation.isPending}
             className="inline-flex items-center rounded-lg bg-primary px-5 py-3 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {saveMutation.isPending ? 'Mentés...' : isEditMode ? 'Módosítás mentése' : 'Csomagméret létrehozása'}
+            {saveMutation.isPending ? tCommon('buttons.saving') : isEditMode ? t('form.submitEdit') : t('form.submitCreate')}
           </button>
           <button
             type="button"
             onClick={() => navigate('/portal/package-sizes')}
             className="inline-flex items-center rounded-lg bg-surface-container-lowest px-5 py-3 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
           >
-            Mégse
+            {tCommon('buttons.cancel')}
           </button>
         </div>
       </FormSection>

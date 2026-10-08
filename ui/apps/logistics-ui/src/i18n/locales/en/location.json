@@ -1,0 +1,121 @@
+{
+  "region": {
+    "list": {
+      "title": "Regions",
+      "eyebrow": "Locations",
+      "heading": "Regions",
+      "addNew": "Create new region",
+      "loading": "Loading regions...",
+      "errorHeading": "Failed to load regions.",
+      "columns": {
+        "name": "Region",
+        "next": "Next",
+        "goToCountries": "Countries"
+      },
+      "tableTitle": "Region list",
+      "empty": "No regions available.",
+      "mobileEyebrow": "Region"
+    },
+    "form": {
+      "eyebrow": "Location form",
+      "titleEdit": "Edit region",
+      "titleCreate": "Create region",
+      "headingEdit": "Edit region",
+      "headingCreate": "Create new region",
+      "backToList": "Back to regions",
+      "loading": "Loading region data...",
+      "errorHeading": "Failed to load the region data.",
+      "sectionTitle": "Region data",
+      "nameLabel": "Region name",
+      "namePlaceholder": "e.g.: Western Europe",
+      "nameRequired": "Region name is required.",
+      "saveFailed": "Save failed.",
+      "submitCreate": "Create region",
+      "submitEdit": "Save changes"
+    }
+  },
+  "country": {
+    "list": {
+      "title": "Countries",
+      "eyebrow": "Locations",
+      "heading": "Countries",
+      "selectedRegion": "Selected region: {{regionName}}",
+      "backToRegions": "Back to regions",
+      "addNew": "Create new country",
+      "emptyGuard": "Select a region on the regions page to list its countries.",
+      "loading": "Loading countries...",
+      "errorHeading": "Failed to load countries.",
+      "columns": {
+        "name": "Country",
+        "next": "Next",
+        "goToCities": "Cities"
+      },
+      "tableTitle": "Country list",
+      "empty": "No country belongs to the selected region.",
+      "mobileEyebrow": "Country"
+    },
+    "form": {
+      "eyebrow": "Location form",
+      "titleEdit": "Edit country",
+      "titleCreate": "Create country",
+      "headingEdit": "Edit country",
+      "headingCreate": "Create new country",
+      "backToList": "Back to countries",
+      "loading": "Loading the country form...",
+      "errorHeading": "Failed to open the country form.",
+      "sectionTitle": "Country data",
+      "nameLabel": "Country name",
+      "namePlaceholder": "e.g.: Hungary",
+      "regionLabel": "Region",
+      "regionPlaceholder": "Select a region",
+      "currencyLabel": "Currency",
+      "currencyDefaultOption": "Default (HUF)",
+      "nameRequired": "Country name is required.",
+      "regionRequired": "Selecting a region is required.",
+      "saveFailed": "Save failed.",
+      "submitCreate": "Create country",
+      "submitEdit": "Save changes"
+    }
+  },
+  "city": {
+    "list": {
+      "title": "Cities",
+      "eyebrow": "Locations",
+      "heading": "Cities",
+      "selectedCountry": "Selected country: {{countryName}}",
+      "backToCountries": "Back to countries",
+      "addNew": "Create new city",
+      "emptyGuard": "Select a country on the countries page to list its cities.",
+      "loading": "Loading cities...",
+      "errorHeading": "Failed to load cities.",
+      "columns": {
+        "id": "ID",
+        "name": "City"
+      },
+      "tableTitle": "City list",
+      "empty": "No city belongs to the selected country.",
+      "mobileEyebrow": "City"
+    },
+    "form": {
+      "eyebrow": "Location form",
+      "titleEdit": "Edit city",
+      "titleCreate": "Create city",
+      "headingEdit": "Edit city",
+      "headingCreate": "Create new city",
+      "backToList": "Back to cities",
+      "backToCountries": "Back to countries",
+      "loading": "Loading the city form...",
+      "errorHeading": "Failed to open the city form.",
+      "sectionTitle": "City data",
+      "nameLabel": "City name",
+      "namePlaceholder": "e.g.: Budapest",
+      "countryLabel": "Country",
+      "countryPlaceholder": "Select a country",
+      "nameRequired": "City name is required.",
+      "countryRequired": "Selecting a country is required.",
+      "saveFailed": "Save failed.",
+      "submitCreate": "Create city",
+      "submitEdit": "Save changes"
+    }
+  }
+}

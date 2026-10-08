@@ -1,0 +1,89 @@
+{
+  "qualifiedFor": {
+    "road": "Földi",
+    "air": "Légi"
+  },
+  "courierType": {
+    "crossDepo": "Cross-depó",
+    "delivery": "Kiszállító"
+  },
+  "list": {
+    "sectionEyebrow": "Szekció",
+    "heading": "Futárok",
+    "description": "A depóhoz tartozó futárok listázásához előbb válassz depót. A cross-depó futárok külön listában jelennek meg.",
+    "depoCouriers": {
+      "eyebrow": "Depó futárok",
+      "heading": "Depóhoz tartozó futárok",
+      "addNew": "Új depó futár létrehozása",
+      "depoSelectLabel": "Depó választás",
+      "depoSelectPlaceholder": "Válassz depót",
+      "loadingDepos": "Depók betöltése folyamatban...",
+      "errorLoadingDepos": "Nem sikerült betölteni a depó listát.",
+      "noDeposAvailable": "Nincs elérhető depó, ezért depó futár lista sem tölthető be.",
+      "selectDepoPrompt": "Válassz ki egy depót a futárok listázásához.",
+      "loading": "Depó futárok betöltése folyamatban...",
+      "errorHeading": "Nem sikerült betölteni a kiválasztott depó futárait.",
+      "errorLoadingVehicles": "Nem sikerült betölteni a jármű adatokat.",
+      "tableTitle": "Depó futárok",
+      "tableTitleWithDepo": "Depó futárok - {{depoName}}",
+      "empty": "Ehhez a depóhoz nem található futár rekord.",
+      "mobileEyebrow": "Depó futár"
+    },
+    "crossDepoCouriers": {
+      "eyebrow": "Cross-depó futárok",
+      "heading": "Cross-depó futárok",
+      "addNew": "Új cross-depó futár létrehozása",
+      "loading": "Cross-depó futárok betöltése folyamatban...",
+      "errorHeading": "Nem sikerült betölteni a cross-depó futárokat.",
+      "errorLoadingVehicles": "Nem sikerült betölteni a jármű adatokat.",
+      "tableTitle": "Cross-depó futárok",
+      "empty": "Nem található cross-depó futár rekord.",
+      "mobileEyebrow": "Cross-depó futár"
+    },
+    "columns": {
+      "name": "Név",
+      "email": "Email",
+      "telephone": "Telefon",
+      "vehicle": "Jármű",
+      "qualifiedFor": "Képzettség",
+      "courierType": "Típus"
+    }
+  },
+  "form": {
+    "eyebrow": "Futár form",
+    "titleEdit": "Futár szerkesztés",
+    "titleCreate": "Futár létrehozás",
+    "headingEdit": "Futár szerkesztés",
+    "headingCreate": "Új futár létrehozás",
+    "backToList": "Vissza a futárok oldalára",
+    "loading": "A futár form betöltése folyamatban...",
+    "errorHeading": "A futár form megnyitása sikertelen.",
+    "fields": {
+      "name": "Név",
+      "namePlaceholder": "Pl.: Kovács Béla",
+      "email": "Email",
+      "emailPlaceholder": "Pl.: bela.kovacs@example.com",
+      "telephone": "Telefonszám",
+      "telephonePlaceholder": "Pl.: +36 30 123 4567",
+      "vehicle": "Jármű",
+      "vehiclePlaceholder": "Válassz járművet",
+      "qualifiedFor": "Képzettség",
+      "courierType": "Futár típus",
+      "courierTypeDeliveryOption": "Depó (delivery)",
+      "courierTypeCrossDepoOption": "Cross-depó",
+      "depo": "Depó",
+      "depoPlaceholder": "Válassz depót",
+      "depoDisabledHint": "Cross-depó futárnál a depó mező nem használható."
+    },
+    "validation": {
+      "nameRequired": "A név megadása kötelező.",
+      "emailRequired": "Az email megadása kötelező.",
+      "telephoneRequired": "A telefonszám megadása kötelező.",
+      "vehicleRequired": "A jármű kiválasztása kötelező.",
+      "depoRequired": "Delivery típusnál a depó kiválasztása kötelező."
+    },
+    "saveFailed": "A mentés nem sikerült.",
+    "submitCreate": "Futár létrehozása",
+    "submitEdit": "Módosítás mentése"
+  }
+}

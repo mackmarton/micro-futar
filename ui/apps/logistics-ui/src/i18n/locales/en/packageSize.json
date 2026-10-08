@@ -1,0 +1,37 @@
+{
+  "list": {
+    "title": "Package sizes",
+    "eyebrow": "Logistics",
+    "heading": "Package sizes",
+    "addNew": "Create new package size",
+    "loading": "Loading package sizes...",
+    "errorHeading": "Failed to load package sizes.",
+    "columns": {
+      "name": "Name",
+      "maxLength": "Max length"
+    },
+    "tableTitle": "Package size list",
+    "empty": "No package size record available.",
+    "mobileEyebrow": "Package size"
+  },
+  "form": {
+    "eyebrow": "Package size form",
+    "titleEdit": "Edit package size",
+    "titleCreate": "Create package size",
+    "headingEdit": "Edit package size",
+    "headingCreate": "Create new package size",
+    "backToList": "Back to package sizes",
+    "loading": "Loading the package size data...",
+    "errorHeading": "Failed to load the package size data.",
+    "sectionTitle": "Package size data",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g.: Medium box",
+    "maxLengthLabel": "Max length (cm)",
+    "maxLengthPlaceholder": "e.g.: 50",
+    "nameRequired": "Package size name is required.",
+    "maxLengthInvalid": "Max length must be a positive number.",
+    "saveFailed": "Save failed.",
+    "submitCreate": "Create package size",
+    "submitEdit": "Save changes"
+  }
+}

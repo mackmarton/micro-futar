@@ -1,0 +1,37 @@
+{
+  "list": {
+    "title": "Csomagméretek",
+    "eyebrow": "Logisztika",
+    "heading": "Csomagméretek",
+    "addNew": "Új csomagméret létrehozása",
+    "loading": "A csomagméretek betöltése folyamatban...",
+    "errorHeading": "Nem sikerült betölteni a csomagméreteket.",
+    "columns": {
+      "name": "Név",
+      "maxLength": "Max hossz"
+    },
+    "tableTitle": "Csomagméret lista",
+    "empty": "Nincs elérhető csomagméret rekord.",
+    "mobileEyebrow": "Csomagméret"
+  },
+  "form": {
+    "eyebrow": "Csomagméret form",
+    "titleEdit": "Csomagméret szerkesztés",
+    "titleCreate": "Csomagméret létrehozás",
+    "headingEdit": "Csomagméret szerkesztés",
+    "headingCreate": "Új csomagméret létrehozás",
+    "backToList": "Vissza a csomagméretekhez",
+    "loading": "A csomagméret adatainak betöltése folyamatban...",
+    "errorHeading": "A csomagméret adatainak betöltése sikertelen.",
+    "sectionTitle": "Csomagméret adatai",
+    "nameLabel": "Név",
+    "namePlaceholder": "Pl.: Közepes doboz",
+    "maxLengthLabel": "Max hossz (cm)",
+    "maxLengthPlaceholder": "Pl.: 50",
+    "nameRequired": "A csomagméret neve kötelező.",
+    "maxLengthInvalid": "A max hossz legyen pozitív szám.",
+    "saveFailed": "A mentés nem sikerült.",
+    "submitCreate": "Csomagméret létrehozása",
+    "submitEdit": "Módosítás mentése"
+  }
+}

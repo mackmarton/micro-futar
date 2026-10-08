@@ -1,5 +1,6 @@
 import type { DepoWithLookups } from '../../api/logisticsDeposApi';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { DataTable } from '@package/shared-ui';
 import type { DataTableColumn, DataTableFilter } from '@package/shared-ui';
 
@@ -7,21 +8,26 @@ type DeposDataTableProps = {
   depos: DepoWithLookups[];
 };
 
-const valueOrFallback = (value?: string | number) =>
-  typeof value === 'number' || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
+const valueOrFallback = (value: string | number | undefined, notAvailableLabel: string) =>
+  typeof value === 'number' || (typeof value === 'string' && value.length > 0) ? value : notAvailableLabel;
 
 export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
+  const { t } = useTranslation('depo');
+  const { t: tCommon } = useTranslation('common');
+  const notAvailable = tCommon('status.notAvailable');
+
   const columns: DataTableColumn<DepoWithLookups>[] = [
     {
       id: 'name',
-      header: 'Név',
-      mobileLabel: 'Név',
+      header: t('table.columns.name'),
+      mobileLabel: t('table.columns.name'),
       cell:  (depo) => {
         if (typeof depo.id !== 'number') {
-          return 'N/A';
+          return notAvailable;
         }
 
         const depoId = depo.id;
+        // A depó neve backend-ről érkező szabad szöveg, nem fordítjuk.
         const depoName = depo.name ?? `#${depoId}`;
 
         return (
@@ -33,43 +39,45 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
     },
     {
       id: 'country',
-      header: 'Ország',
+      header: t('table.columns.country'),
       filterId: 'country',
-      mobileLabel: 'Ország',
-      cell: (depo) => valueOrFallback(depo.countryName),
+      mobileLabel: t('table.columns.country'),
+      // depo.countryName backend-ről érkező szabad szöveg, nem fordítjuk.
+      cell: (depo) => valueOrFallback(depo.countryName, notAvailable),
     },
     {
       id: 'city',
-      header: 'Város',
+      header: t('table.columns.city'),
       filterId: 'city',
-      mobileLabel: 'Város',
-      cell: (depo) => valueOrFallback(depo.cityName),
+      mobileLabel: t('table.columns.city'),
+      // depo.cityName backend-ről érkező szabad szöveg, nem fordítjuk.
+      cell: (depo) => valueOrFallback(depo.cityName, notAvailable),
     },
     {
       id: 'zip',
-      header: 'Irányítószám',
-      mobileLabel: 'Irányítószám',
-      cell: (depo) => valueOrFallback(depo.zip),
+      header: t('table.columns.zip'),
+      mobileLabel: t('table.columns.zip'),
+      cell: (depo) => valueOrFallback(depo.zip, notAvailable),
     },
     {
       id: 'address',
-      header: 'Cím',
-      mobileLabel: 'Cím',
-      cell: (depo) => valueOrFallback(depo.address),
+      header: t('table.columns.address'),
+      mobileLabel: t('table.columns.address'),
+      cell: (depo) => valueOrFallback(depo.address, notAvailable),
     },
     {
       id: 'edit',
-      header: 'Szerkesztés',
+      header: tCommon('table.editHeader'),
       cell: (depo) =>
         typeof depo.id === 'number' ? (
           <Link
             to={`/portal/depos/${depo.id}/edit`}
             className="inline-flex items-center rounded-lg bg-surface-container-lowest px-3 py-1.5 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container"
           >
-            Szerkeszt
+            {tCommon('buttons.edit')}
           </Link>
         ) : (
-          <span className="text-on-surface-variant">N/A</span>
+          <span className="text-on-surface-variant">{notAvailable}</span>
         ),
     },
   ];
@@ -77,16 +85,16 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
   const filters: DataTableFilter<DepoWithLookups>[] = [
     {
       id: 'country',
-      label: 'Ország',
-      allOptionLabel: 'Minden ország',
+      label: t('table.filters.countryLabel'),
+      allOptionLabel: t('table.filters.countryAllOption'),
       getOptionValue: (depo) => depo.countryName,
     },
     {
       id: 'city',
-      label: 'Város',
-      allOptionLabel: 'Minden város',
+      label: t('table.filters.cityLabel'),
+      allOptionLabel: t('table.filters.cityAllOption'),
       dependsOn: 'country',
-      dependsOnText: 'Először válassz országot.',
+      dependsOnText: t('table.filters.cityDependsOnText'),
       getOptionValue: (depo) => depo.cityName,
     },
   ];
@@ -95,12 +103,12 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
     <DataTable
       data={depos}
       rowKey={(depo, index) => String(depo.id ?? `${depo.address ?? 'depo'}-${index}`)}
-      title="Depo adatok"
+      title={t('table.title')}
       columns={columns}
       filters={filters}
-      emptyMessage="Nincs találat a kiválasztott ország és város szűrőkre."
-      mobileCardEyebrow="Depo"
-      recordCountLabel={(visible, total) => `Megjelenített rekordok: ${visible} / ${total}`}
+      emptyMessage={t('table.empty')}
+      mobileCardEyebrow={t('table.mobileEyebrow')}
+      recordCountLabel={(visible, total) => tCommon('table.recordCount', { visible, total })}
       renderMobileActions={(depo) =>
         typeof depo.id === 'number' ? (
           <>
@@ -108,20 +116,19 @@ export const DeposDataTable = ({ depos }: DeposDataTableProps) => {
               to={`/portal/depos/${depo.id}`}
               className="inline-flex items-center rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-on-primary"
             >
-              Megnyit
+              {tCommon('buttons.open')}
             </Link>
             <Link
               to={`/portal/depos/${depo.id}/edit`}
               className="inline-flex items-center rounded-lg bg-surface px-3 py-1.5 text-sm font-semibold text-on-surface"
             >
-              Szerkeszt
+              {tCommon('buttons.edit')}
             </Link>
           </>
         ) : (
-          <span className="text-on-surface-variant">N/A</span>
+          <span className="text-on-surface-variant">{notAvailable}</span>
         )
       }
     />
   );
 };
-

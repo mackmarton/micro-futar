@@ -1,0 +1,46 @@
+{
+  "brand": {
+    "name": "micro-futar",
+    "subtitle": "Logistics Portal"
+  },
+  "portal": {
+    "title": "Logistics"
+  },
+  "nav": {
+    "depos": "Depots",
+    "couriers": "Couriers",
+    "locations": "Locations",
+    "packageSizes": "Package sizes",
+    "vehicles": "Vehicles",
+    "currencies": "Currencies"
+  },
+  "buttons": {
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "edit": "Edit",
+    "open": "Open"
+  },
+  "eyebrow": {
+    "loading": "Loading",
+    "error": "Error",
+    "emptyState": "Empty state",
+    "section": "Section"
+  },
+  "status": {
+    "unknownError": "Unknown error",
+    "notAvailable": "N/A",
+    "loadingEllipsis": "Loading...",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "table": {
+    "editHeader": "Edit",
+    "recordCount": "Showing: {{visible}} / {{total}} records"
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "ariaLabel": "Select language"
+  }
+}

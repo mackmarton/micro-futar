@@ -1,15 +1,14 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { DataTable } from '@package/shared-ui';
 import type { DataTableColumn } from '@package/shared-ui';
 import type { LocationCountryDTO } from '@package/shared-core/api/LogisticsApiClient';
 import { Link, useSearchParams } from 'react-router-dom';
 import { getCountriesByRegionId, getRegionById } from '../../api/logisticsDeposApi';
-import { logisticsNavigationItems } from '../../navigation';
+import { useLogisticsNavigationItems } from '../../navigation';
 import { EntityListShell } from '../../shared/EntityListShell';
-
-const valueOrFallback = (value?: number | string) =>
-  typeof value === 'number' || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
+import { LanguageSwitcher } from '../../../i18n/LanguageSwitcher';
 
 const parseSelectedId = (value: string | null) => {
   const parsed = Number(value);
@@ -17,6 +16,14 @@ const parseSelectedId = (value: string | null) => {
 };
 
 export const LogisticsCountriesPage = () => {
+  const { t } = useTranslation('location');
+  const { t: tCommon } = useTranslation('common');
+  const navigationItems = useLogisticsNavigationItems();
+  const notAvailable = tCommon('status.notAvailable');
+
+  const valueOrFallback = (value?: number | string) =>
+    typeof value === 'number' || (typeof value === 'string' && value.length > 0) ? value : notAvailable;
+
   const [searchParams] = useSearchParams();
   const regionId = parseSelectedId(searchParams.get('regionId'));
 
@@ -37,65 +44,69 @@ export const LogisticsCountriesPage = () => {
     }
 
     if (regionQuery.isLoading) {
-      return 'Betöltés...';
+      return tCommon('status.loadingEllipsis');
     }
 
-    return regionQuery.data?.name ?? 'N/A';
-  }, [regionId, regionQuery.data, regionQuery.isLoading]);
+    // regionQuery.data.name backend-ről érkező szabad szöveg, nem fordítjuk.
+    return regionQuery.data?.name ?? notAvailable;
+  }, [regionId, regionQuery.data, regionQuery.isLoading, tCommon, notAvailable]);
 
   const columns = useMemo<DataTableColumn<LocationCountryDTO>[]>(
     () => [
       {
         id: 'name',
-        header: 'Ország',
-        mobileLabel: 'Ország',
+        header: t('country.list.columns.name'),
+        mobileLabel: t('country.list.columns.name'),
+        // country.name backend-ről érkező szabad szöveg, nem fordítjuk.
         cell: (country) => valueOrFallback(country.name),
       },
       {
         id: 'next',
-        header: 'Tovább',
+        header: t('country.list.columns.next'),
         cell: (country) =>
           typeof country.id === 'number' ? (
             <Link
               to={`/portal/locations/cities?countryId=${country.id}`}
               className="inline-flex items-center rounded-lg bg-primary px-3 py-1.5 text-sm font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
             >
-              Városok
+              {t('country.list.columns.goToCities')}
             </Link>
           ) : (
-            <span className="text-on-surface-variant">N/A</span>
+            <span className="text-on-surface-variant">{notAvailable}</span>
           ),
       },
       {
         id: 'edit',
-        header: 'Szerkesztés',
+        header: tCommon('table.editHeader'),
         cell: (country) =>
           typeof country.id === 'number' ? (
             <Link
               to={`/portal/locations/countries/${country.id}/edit${regionId !== null ? `?regionId=${regionId}` : ''}`}
               className="inline-flex items-center rounded-lg bg-surface-container-lowest px-3 py-1.5 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container"
             >
-              Szerkeszt
+              {tCommon('buttons.edit')}
             </Link>
           ) : (
-            <span className="text-on-surface-variant">N/A</span>
+            <span className="text-on-surface-variant">{notAvailable}</span>
           ),
       },
     ],
-    [regionId],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [regionId, t, tCommon],
   );
 
   return (
     <EntityListShell
-      title="Országok"
+      title={t('country.list.title')}
       activeHref="#/portal/locations/regions"
-      navigationItems={logisticsNavigationItems}
-      eyebrow="Helyszínek"
-      heading="Országok"
+      navigationItems={navigationItems}
+      topBarRightSlot={<LanguageSwitcher />}
+      eyebrow={t('country.list.eyebrow')}
+      heading={t('country.list.heading')}
       contextInfo={
         regionId !== null ? (
           <p className="mt-2 font-body text-on-surface-variant">
-            Kiválasztott régió: <span className="font-semibold text-on-surface">{selectedRegionName}</span>
+            {t('country.list.selectedRegion', { regionName: selectedRegionName })}
           </p>
         ) : null
       }
@@ -105,24 +116,24 @@ export const LogisticsCountriesPage = () => {
             to="/portal/locations/regions"
             className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
           >
-            Vissza a régiókhoz
+            {t('country.list.backToRegions')}
           </Link>
           {regionId !== null ? (
             <Link
               to={`/portal/locations/countries/new?regionId=${regionId}`}
               className="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
             >
-              Új ország létrehozása
+              {t('country.list.addNew')}
             </Link>
           ) : null}
         </>
       }
       readyGuard={regionId !== null}
-      emptyGuardMessage="Válassz régiót a régió oldalon az országok listázásához."
+      emptyGuardMessage={t('country.list.emptyGuard')}
       isLoading={countriesQuery.isLoading}
-      loadingMessage="Országok betöltése folyamatban..."
+      loadingMessage={t('country.list.loading')}
       isError={countriesQuery.isError}
-      errorMessage="Nem sikerült betölteni az országokat."
+      errorMessage={t('country.list.errorHeading')}
       errorDetail={(countriesQuery.error as Error)?.message}
       onRetry={() => {
         void countriesQuery.refetch();
@@ -131,10 +142,10 @@ export const LogisticsCountriesPage = () => {
       <DataTable
         data={countriesQuery.data ?? []}
         rowKey={(country, index) => `country-${country.id ?? country.name ?? index}`}
-        title="Ország lista"
+        title={t('country.list.tableTitle')}
         columns={columns}
-        emptyMessage="A kiválasztott régióhoz nem tartozik ország."
-        mobileCardEyebrow="Ország"
+        emptyMessage={t('country.list.empty')}
+        mobileCardEyebrow={t('country.list.mobileEyebrow')}
       />
     </EntityListShell>
   );

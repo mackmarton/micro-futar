@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FormSection, PrecisionInput } from '@package/shared-ui';
 import type { CurrencyDTO } from '@package/shared-core/api/LogisticsApiClient';
 import {
@@ -8,8 +9,9 @@ import {
   getCurrencyById,
   updateCurrency,
 } from '../api/logisticsDeposApi';
-import { logisticsNavigationItems } from '../navigation';
+import { useLogisticsNavigationItems } from '../navigation';
 import { EntityFormShell } from '../shared/EntityFormShell';
+import { LanguageSwitcher } from '../../i18n/LanguageSwitcher';
 
 type CurrencyFormState = {
   code: string;
@@ -25,13 +27,13 @@ const toFormState = (currency: CurrencyDTO): CurrencyFormState => ({
   symbol: currency.symbol ?? '',
 });
 
-const validateForm = (formState: CurrencyFormState): string | null => {
+const validateForm = (formState: CurrencyFormState, t: (key: string) => string): string | null => {
   if (!formState.code.trim()) {
-    return 'A pénznem kódja kötelező.';
+    return t('form.codeRequired');
   }
 
   if (!formState.name.trim()) {
-    return 'A pénznem neve kötelező.';
+    return t('form.nameRequired');
   }
 
   return null;
@@ -44,6 +46,9 @@ const buildPayload = (formState: CurrencyFormState): CurrencyDTO => ({
 });
 
 export const LogisticsCurrencyFormPage = () => {
+  const { t } = useTranslation('currency');
+  const { t: tCommon } = useTranslation('common');
+  const navigationItems = useLogisticsNavigationItems();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const params = useParams();
@@ -104,7 +109,7 @@ export const LogisticsCurrencyFormPage = () => {
   };
 
   const handleSubmit = () => {
-    const errorMessage = validateForm(formState);
+    const errorMessage = validateForm(formState, t);
     setValidationError(errorMessage);
 
     if (errorMessage) {
@@ -116,48 +121,49 @@ export const LogisticsCurrencyFormPage = () => {
 
   return (
     <EntityFormShell
-      title={isEditMode ? 'Pénznem szerkesztés' : 'Pénznem létrehozás'}
+      title={isEditMode ? t('form.titleEdit') : t('form.titleCreate')}
       activeHref="#/portal/currencies"
-      navigationItems={logisticsNavigationItems}
-      eyebrow="Pénznem form"
-      heading={isEditMode ? 'Pénznem szerkesztés' : 'Új pénznem létrehozás'}
+      navigationItems={navigationItems}
+      topBarRightSlot={<LanguageSwitcher />}
+      eyebrow={t('form.eyebrow')}
+      heading={isEditMode ? t('form.headingEdit') : t('form.headingCreate')}
       backLinks={
         <Link
           to="/portal/currencies"
           className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
         >
-          Vissza a pénznemekhez
+          {t('form.backToList')}
         </Link>
       }
       isLoading={isEditMode && currencyQuery.isLoading}
-      loadingMessage="A pénznem adatainak betöltése folyamatban..."
+      loadingMessage={t('form.loading')}
       isError={currencyQuery.isError}
-      errorMessage="A pénznem adatainak betöltése sikertelen."
+      errorMessage={t('form.errorHeading')}
       errorDetail={(currencyQuery.error as Error)?.message}
     >
-      <FormSection icon="payments" title="Pénznem adatai" className="mt-6">
+      <FormSection icon="payments" title={t('form.sectionTitle')} className="mt-6">
         <div className="grid gap-4 md:grid-cols-3">
           <PrecisionInput
-            label="Kód"
+            label={t('form.codeLabel')}
             value={formState.code}
             onChange={(event) => handleInputChange('code', event.target.value)}
-            placeholder="Pl.: HUF"
+            placeholder={t('form.codePlaceholder')}
             required
           />
 
           <PrecisionInput
-            label="Név"
+            label={t('form.nameLabel')}
             value={formState.name}
             onChange={(event) => handleInputChange('name', event.target.value)}
-            placeholder="Pl.: Magyar forint"
+            placeholder={t('form.namePlaceholder')}
             required
           />
 
           <PrecisionInput
-            label="Jel"
+            label={t('form.symbolLabel')}
             value={formState.symbol}
             onChange={(event) => handleInputChange('symbol', event.target.value)}
-            placeholder="Pl.: Ft"
+            placeholder={t('form.symbolPlaceholder')}
           />
         </div>
 
@@ -170,7 +176,7 @@ export const LogisticsCurrencyFormPage = () => {
         {saveMutation.isError ? (
           <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
             <p className="font-body text-on-surface">
-              {(saveMutation.error as Error)?.message ?? 'A mentés nem sikerült.'}
+              {(saveMutation.error as Error)?.message ?? t('form.saveFailed')}
             </p>
           </div>
         ) : null}
@@ -182,14 +188,14 @@ export const LogisticsCurrencyFormPage = () => {
             disabled={saveMutation.isPending}
             className="inline-flex items-center rounded-lg bg-primary px-5 py-3 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {saveMutation.isPending ? 'Mentés...' : isEditMode ? 'Módosítás mentése' : 'Pénznem létrehozása'}
+            {saveMutation.isPending ? tCommon('buttons.saving') : isEditMode ? t('form.submitEdit') : t('form.submitCreate')}
           </button>
           <button
             type="button"
             onClick={() => navigate('/portal/currencies')}
             className="inline-flex items-center rounded-lg bg-surface-container-lowest px-5 py-3 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
           >
-            Mégse
+            {tCommon('buttons.cancel')}
           </button>
         </div>
       </FormSection>

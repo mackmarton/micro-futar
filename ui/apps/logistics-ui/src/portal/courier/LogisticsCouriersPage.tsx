@@ -4,42 +4,49 @@ import {DataTable, PortalLayout} from '@package/shared-ui';
 import type {DataTableColumn} from '@package/shared-ui';
 import type {CourierDTO} from '@package/shared-core/api/LogisticsApiClient';
 import {Link} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
 import {
     getAllDepos,
     getCourierByDepoId,
     getCrossDepoCouriers,
     getVehicleRegistrationNumberById
 } from '../api/logisticsDeposApi';
-import {logisticsNavigationItems} from '../navigation';
-
-const valueOrFallback = (value?: string | number) =>
-    typeof value === 'number' || (typeof value === 'string' && value.length > 0) ? value : 'N/A';
-
-const decodeQualifiedFor = (qualifiedFor?: CourierDTO['qualifiedFor']) => {
-    if (qualifiedFor === 'ROAD') {
-        return 'Földi';
-    }
-
-    if (qualifiedFor === 'AIR') {
-        return 'Légi';
-    }
-
-    return 'N/A';
-};
-
-const decodeCourierType = (courierType?: CourierDTO['courierType']) => {
-    if (courierType === 'CROSS_DEPO') {
-        return 'Cross-depó';
-    }
-
-    if (courierType === 'DELIVERY') {
-        return 'Kiszállító';
-    }
-
-    return 'N/A';
-};
+import {useLogisticsNavigationItems} from '../navigation';
+import {LanguageSwitcher} from '../../i18n/LanguageSwitcher';
 
 export const LogisticsCouriersPage = () => {
+    const {t} = useTranslation('courier');
+    const {t: tCommon} = useTranslation('common');
+    const navigationItems = useLogisticsNavigationItems();
+    const notAvailable = tCommon('status.notAvailable');
+
+    const valueOrFallback = (value?: string | number) =>
+        typeof value === 'number' || (typeof value === 'string' && value.length > 0) ? value : notAvailable;
+
+    const decodeQualifiedFor = (qualifiedFor?: CourierDTO['qualifiedFor']) => {
+        if (qualifiedFor === 'ROAD') {
+            return t('qualifiedFor.road');
+        }
+
+        if (qualifiedFor === 'AIR') {
+            return t('qualifiedFor.air');
+        }
+
+        return notAvailable;
+    };
+
+    const decodeCourierType = (courierType?: CourierDTO['courierType']) => {
+        if (courierType === 'CROSS_DEPO') {
+            return t('courierType.crossDepo');
+        }
+
+        if (courierType === 'DELIVERY') {
+            return t('courierType.delivery');
+        }
+
+        return notAvailable;
+    };
+
     const [selectedDepoId, setSelectedDepoId] = useState('');
 
     const deposQuery = useQuery({
@@ -99,6 +106,7 @@ export const LogisticsCouriersPage = () => {
 
         for (const depo of deposQuery.data ?? []) {
             if (typeof depo.id === 'number') {
+                // depo.name backend-ről érkező szabad szöveg, nem fordítjuk.
                 map.set(depo.id, depo.name ?? `#${depo.id}`);
             }
         }
@@ -118,33 +126,33 @@ export const LogisticsCouriersPage = () => {
         () => [
             {
                 id: 'name',
-                header: 'Név',
-                mobileLabel: 'Név',
+                header: t('list.columns.name'),
+                mobileLabel: t('list.columns.name'),
                 cell: (courier) => valueOrFallback(courier.name),
             },
             {
                 id: 'email',
-                header: 'Email',
-                mobileLabel: 'Email',
+                header: t('list.columns.email'),
+                mobileLabel: t('list.columns.email'),
                 cell: (courier) => valueOrFallback(courier.email),
             },
             {
                 id: 'telephone',
-                header: 'Telefon',
-                mobileLabel: 'Telefon',
+                header: t('list.columns.telephone'),
+                mobileLabel: t('list.columns.telephone'),
                 cell: (courier) => valueOrFallback(courier.telephone),
             },
             {
                 id: 'vehicle',
-                header: 'Jármű',
-                mobileLabel: 'Jármű',
+                header: t('list.columns.vehicle'),
+                mobileLabel: t('list.columns.vehicle'),
                 cell: (courier) => {
                     if (typeof courier.vehicleId !== 'number') {
-                        return 'N/A';
+                        return notAvailable;
                     }
 
                     if (vehicleRegistrationsQuery.isLoading || vehicleRegistrationsQuery.isFetching) {
-                        return 'Betöltés...';
+                        return tCommon('status.loadingEllipsis');
                     }
 
                     return valueOrFallback(vehicleRegistrationsQuery.data?.get(courier.vehicleId));
@@ -152,71 +160,72 @@ export const LogisticsCouriersPage = () => {
             },
             {
                 id: 'qualifiedFor',
-                header: 'Képzettség',
-                mobileLabel: 'Képzettség',
+                header: t('list.columns.qualifiedFor'),
+                mobileLabel: t('list.columns.qualifiedFor'),
                 cell: (courier) => decodeQualifiedFor(courier.qualifiedFor),
             },
             {
                 id: 'courierType',
-                header: 'Típus',
-                mobileLabel: 'Típus',
+                header: t('list.columns.courierType'),
+                mobileLabel: t('list.columns.courierType'),
                 cell: (courier) => decodeCourierType(courier.courierType),
             },
             {
                 id: 'edit',
-                header: 'Szerkesztés',
+                header: tCommon('table.editHeader'),
                 cell: (courier) =>
                     typeof courier.id === 'number' ? (
                         <Link
                             to={`/portal/couriers/${courier.id}/edit`}
                             className="inline-flex items-center rounded-lg bg-surface-container-lowest px-3 py-1.5 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container"
                         >
-                            Szerkeszt
+                            {tCommon('buttons.edit')}
                         </Link>
                     ) : (
-                        <span className="text-on-surface-variant">N/A</span>
+                        <span className="text-on-surface-variant">{notAvailable}</span>
                     )
             }
         ],
-        [vehicleRegistrationsQuery.data, vehicleRegistrationsQuery.isFetching, vehicleRegistrationsQuery.isLoading]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [vehicleRegistrationsQuery.data, vehicleRegistrationsQuery.isFetching, vehicleRegistrationsQuery.isLoading, t, tCommon]
     );
 
     return (
-        <PortalLayout title="Futárok" activeHref="#/portal/couriers" navigationItems={logisticsNavigationItems}>
+        <PortalLayout title={t('list.heading')} activeHref="#/portal/couriers" navigationItems={navigationItems} topBarRightSlot={<LanguageSwitcher />}>
             <section className="rounded-2xl bg-surface-container-low p-6 lg:col-span-2">
-                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Szekció</p>
-                <h1 className="mt-2 text-2xl font-headline text-on-surface">Futárok</h1>
+                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('list.sectionEyebrow')}</p>
+                <h1 className="mt-2 text-2xl font-headline text-on-surface">{t('list.heading')}</h1>
                 <p className="mt-2 font-body text-on-surface-variant">
-                    A depóhoz tartozó futárok listázásához előbb válassz depót. A cross-depó futárok külön
-                    listában jelennek meg.
+                    {t('list.description')}
                 </p>
             </section>
 
             <section className="mt-6 rounded-2xl bg-surface-container-low p-6">
-                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Depó futárok</p>
-                <h2 className="mt-2 text-2xl font-headline text-on-surface">Depóhoz tartozó futárok</h2>
+                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('list.depoCouriers.eyebrow')}</p>
+                <h2 className="mt-2 text-2xl font-headline text-on-surface">{t('list.depoCouriers.heading')}</h2>
 
                 <div className="mt-4 flex justify-end">
                     <Link
                         to="/portal/couriers/new?type=DELIVERY"
                         className="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
                     >
-                        Új depó futár létrehozása
+                        {t('list.depoCouriers.addNew')}
                     </Link>
                 </div>
 
                 <label className="mt-4 block rounded-xl bg-surface-container-lowest p-4">
-                    <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Depó választás</p>
+                    <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('list.depoCouriers.depoSelectLabel')}</p>
                     <select
                         value={selectedDepoId}
                         onChange={(event) => setSelectedDepoId(event.target.value)}
                         className="mt-2 w-full rounded-lg bg-surface px-3 py-2 font-body text-on-surface"
                         disabled={deposQuery.isLoading || deposQuery.isError}
                     >
-                        <option value="">Válassz depót</option>
+                        <option value="">{t('list.depoCouriers.depoSelectPlaceholder')}</option>
                         {(deposQuery.data ?? []).map((depo) => (
                             <option key={depo.id ?? depo.name} value={depo.id ?? ''}>
-                                {depo.name ?? 'N/A'}
+                                {/* depo.name backend-ről érkező szabad szöveg, nem fordítjuk. */}
+                                {depo.name ?? notAvailable}
                             </option>
                         ))}
                     </select>
@@ -224,15 +233,15 @@ export const LogisticsCouriersPage = () => {
 
                 {deposQuery.isLoading ? (
                     <section className="mt-4 rounded-xl bg-surface-container-lowest p-4">
-                        <p className="font-body text-on-surface">Depók betöltése folyamatban...</p>
+                        <p className="font-body text-on-surface">{t('list.depoCouriers.loadingDepos')}</p>
                     </section>
                 ) : null}
 
                 {deposQuery.isError ? (
                     <section className="mt-4 rounded-xl bg-surface-container-lowest p-4">
-                        <p className="font-body text-on-surface">Nem sikerült betölteni a depó listát.</p>
+                        <p className="font-body text-on-surface">{t('list.depoCouriers.errorLoadingDepos')}</p>
                         <p className="mt-1 font-body text-on-surface-variant">
-                            {(deposQuery.error as Error)?.message ?? 'Ismeretlen hiba'}
+                            {(deposQuery.error as Error)?.message ?? tCommon('status.unknownError')}
                         </p>
                         <button
                             type="button"
@@ -241,36 +250,34 @@ export const LogisticsCouriersPage = () => {
                             }}
                             className="mt-3 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
                         >
-                            Ujrapróbálás
+                            {tCommon('buttons.retry')}
                         </button>
                     </section>
                 ) : null}
 
                 {!deposQuery.isLoading && !deposQuery.isError && (deposQuery.data ?? []).length === 0 ? (
                     <section className="mt-4 rounded-xl bg-surface-container-lowest p-4">
-                        <p className="font-body text-on-surface">Nincs elérhető depó, ezért depó futár lista sem
-                            tölthető be.</p>
+                        <p className="font-body text-on-surface">{t('list.depoCouriers.noDeposAvailable')}</p>
                     </section>
                 ) : null}
 
                 {!deposQuery.isLoading && !deposQuery.isError && !hasSelectedDepo && (deposQuery.data ?? []).length > 0 ? (
                     <section className="mt-4 rounded-xl bg-surface-container-lowest p-4">
-                        <p className="font-body text-on-surface">Válassz ki egy depót a futárok listázásához.</p>
+                        <p className="font-body text-on-surface">{t('list.depoCouriers.selectDepoPrompt')}</p>
                     </section>
                 ) : null}
 
                 {hasSelectedDepo && depoCouriersQuery.isLoading ? (
                     <section className="mt-4 rounded-xl bg-surface-container-lowest p-4">
-                        <p className="font-body text-on-surface">Depó futárok betöltése folyamatban...</p>
+                        <p className="font-body text-on-surface">{t('list.depoCouriers.loading')}</p>
                     </section>
                 ) : null}
 
                 {hasSelectedDepo && depoCouriersQuery.isError ? (
                     <section className="mt-4 rounded-xl bg-surface-container-lowest p-4">
-                        <p className="font-body text-on-surface">Nem sikerült betölteni a kiválasztott depó
-                            futárait.</p>
+                        <p className="font-body text-on-surface">{t('list.depoCouriers.errorHeading')}</p>
                         <p className="mt-1 font-body text-on-surface-variant">
-                            {(depoCouriersQuery.error as Error)?.message ?? 'Ismeretlen hiba'}
+                            {(depoCouriersQuery.error as Error)?.message ?? tCommon('status.unknownError')}
                         </p>
                         <button
                             type="button"
@@ -279,7 +286,7 @@ export const LogisticsCouriersPage = () => {
                             }}
                             className="mt-3 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
                         >
-                            Ujrapróbálás
+                            {tCommon('buttons.retry')}
                         </button>
                     </section>
                 ) : null}
@@ -288,9 +295,9 @@ export const LogisticsCouriersPage = () => {
                     <div className="mt-4">
                         {vehicleRegistrationsQuery.isError ? (
                             <section className="mb-4 rounded-xl bg-surface-container-lowest p-4">
-                                <p className="font-body text-on-surface">Nem sikerült betölteni a jármű adatokat.</p>
+                                <p className="font-body text-on-surface">{t('list.depoCouriers.errorLoadingVehicles')}</p>
                                 <p className="mt-1 font-body text-on-surface-variant">
-                                    {(vehicleRegistrationsQuery.error as Error)?.message ?? 'Ismeretlen hiba'}
+                                    {(vehicleRegistrationsQuery.error as Error)?.message ?? tCommon('status.unknownError')}
                                 </p>
                             </section>
                         ) : null}
@@ -298,21 +305,21 @@ export const LogisticsCouriersPage = () => {
                         <DataTable
                             data={depoCouriersQuery.data ?? []}
                             rowKey={(courier, index) => String(courier.id ?? `${courier.name ?? 'courier'}-${index}`)}
-                            title={`Depó futárok${selectedDepoName ? ` - ${selectedDepoName}` : ''}`}
+                            title={selectedDepoName ? t('list.depoCouriers.tableTitleWithDepo', {depoName: selectedDepoName}) : t('list.depoCouriers.tableTitle')}
                             columns={columns}
-                            emptyMessage="Ehhez a depóhoz nem található futár rekord."
-                            mobileCardEyebrow="Depó futár"
-                            recordCountLabel={(visible, total) => `Megjelenített rekordok: ${visible} / ${total}`}
+                            emptyMessage={t('list.depoCouriers.empty')}
+                            mobileCardEyebrow={t('list.depoCouriers.mobileEyebrow')}
+                            recordCountLabel={(visible, total) => tCommon('table.recordCount', {visible, total})}
                             renderMobileActions={(courier) =>
                                 typeof courier.id === 'number' ? (
                                     <Link
                                         to={`/portal/couriers/${courier.id}/edit`}
                                         className="inline-flex items-center rounded-lg bg-surface px-3 py-1.5 text-sm font-semibold text-on-surface"
                                     >
-                                        Szerkeszt
+                                        {tCommon('buttons.edit')}
                                     </Link>
                                 ) : (
-                                    <span className="text-on-surface-variant">N/A</span>
+                                    <span className="text-on-surface-variant">{notAvailable}</span>
                                 )
                             }
                         />
@@ -321,29 +328,29 @@ export const LogisticsCouriersPage = () => {
             </section>
 
             <section className="mt-6 rounded-2xl bg-surface-container-low p-6">
-                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">Cross-depó futárok</p>
-                <h2 className="mt-2 text-2xl font-headline text-on-surface">Cross-depó futárok</h2>
+                <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('list.crossDepoCouriers.eyebrow')}</p>
+                <h2 className="mt-2 text-2xl font-headline text-on-surface">{t('list.crossDepoCouriers.heading')}</h2>
 
                 <div className="mt-4 flex justify-end">
                     <Link
                         to="/portal/couriers/new?type=CROSS_DEPO"
                         className="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
                     >
-                        Új cross-depó futár létrehozása
+                        {t('list.crossDepoCouriers.addNew')}
                     </Link>
                 </div>
 
                 {crossDepoCouriersQuery.isLoading ? (
                     <section className="mt-4 rounded-xl bg-surface-container-lowest p-4">
-                        <p className="font-body text-on-surface">Cross-depó futárok betöltése folyamatban...</p>
+                        <p className="font-body text-on-surface">{t('list.crossDepoCouriers.loading')}</p>
                     </section>
                 ) : null}
 
                 {crossDepoCouriersQuery.isError ? (
                     <section className="mt-4 rounded-xl bg-surface-container-lowest p-4">
-                        <p className="font-body text-on-surface">Nem sikerült betölteni a cross-depó futárokat.</p>
+                        <p className="font-body text-on-surface">{t('list.crossDepoCouriers.errorHeading')}</p>
                         <p className="mt-1 font-body text-on-surface-variant">
-                            {(crossDepoCouriersQuery.error as Error)?.message ?? 'Ismeretlen hiba'}
+                            {(crossDepoCouriersQuery.error as Error)?.message ?? tCommon('status.unknownError')}
                         </p>
                         <button
                             type="button"
@@ -352,7 +359,7 @@ export const LogisticsCouriersPage = () => {
                             }}
                             className="mt-3 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container"
                         >
-                            Ujrapróbálás
+                            {tCommon('buttons.retry')}
                         </button>
                     </section>
                 ) : null}
@@ -361,9 +368,9 @@ export const LogisticsCouriersPage = () => {
                     <div className="mt-4">
                         {vehicleRegistrationsQuery.isError ? (
                             <section className="mb-4 rounded-xl bg-surface-container-lowest p-4">
-                                <p className="font-body text-on-surface">Nem sikerült betölteni a jármű adatokat.</p>
+                                <p className="font-body text-on-surface">{t('list.crossDepoCouriers.errorLoadingVehicles')}</p>
                                 <p className="mt-1 font-body text-on-surface-variant">
-                                    {(vehicleRegistrationsQuery.error as Error)?.message ?? 'Ismeretlen hiba'}
+                                    {(vehicleRegistrationsQuery.error as Error)?.message ?? tCommon('status.unknownError')}
                                 </p>
                             </section>
                         ) : null}
@@ -371,21 +378,21 @@ export const LogisticsCouriersPage = () => {
                         <DataTable
                             data={crossDepoCouriersQuery.data ?? []}
                             rowKey={(courier, index) => String(courier.id ?? `${courier.name ?? 'courier'}-${index}`)}
-                            title="Cross-depó futárok"
+                            title={t('list.crossDepoCouriers.tableTitle')}
                             columns={columns}
-                            emptyMessage="Nem található cross-depó futár rekord."
-                            mobileCardEyebrow="Cross-depó futár"
-                            recordCountLabel={(visible, total) => `Megjelenített rekordok: ${visible} / ${total}`}
+                            emptyMessage={t('list.crossDepoCouriers.empty')}
+                            mobileCardEyebrow={t('list.crossDepoCouriers.mobileEyebrow')}
+                            recordCountLabel={(visible, total) => tCommon('table.recordCount', {visible, total})}
                             renderMobileActions={(courier) =>
                                 typeof courier.id === 'number' ? (
                                     <Link
                                         to={`/portal/couriers/${courier.id}/edit`}
                                         className="inline-flex items-center rounded-lg bg-surface px-3 py-1.5 text-sm font-semibold text-on-surface"
                                     >
-                                        Szerkeszt
+                                        {tCommon('buttons.edit')}
                                     </Link>
                                 ) : (
-                                    <span className="text-on-surface-variant">N/A</span>
+                                    <span className="text-on-surface-variant">{notAvailable}</span>
                                 )
                             }
                         />

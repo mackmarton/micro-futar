@@ -1,0 +1,195 @@
+{
+  "list": {
+    "eyebrow": "Logisztika",
+    "heading": "Depók",
+    "addNew": "Új depó létrehozása",
+    "loading": "Depók betöltése folyamatban...",
+    "errorHeading": "Nem sikerült betölteni a depókat.",
+    "empty": "Jelenleg nincs elérhető depó rekord."
+  },
+  "table": {
+    "title": "Depo adatok",
+    "columns": {
+      "name": "Név",
+      "country": "Ország",
+      "city": "Város",
+      "zip": "Irányítószám",
+      "address": "Cím"
+    },
+    "filters": {
+      "countryLabel": "Ország",
+      "countryAllOption": "Minden ország",
+      "cityLabel": "Város",
+      "cityAllOption": "Minden város",
+      "cityDependsOnText": "Először válassz országot."
+    },
+    "empty": "Nincs találat a kiválasztott ország és város szűrőkre.",
+    "mobileEyebrow": "Depo"
+  },
+  "details": {
+    "title": "Depó részletek",
+    "backToList": "Vissza a listához",
+    "editButton": "Szerkesztés",
+    "loading": "Depó részletek betöltése...",
+    "errorHeading": "Nem sikerült betölteni a depó részleteket.",
+    "planning": {
+      "eyebrow": "Tervezés",
+      "heading": "Küldemények kiosztása",
+      "depoShipments": {
+        "eyebrow": "Depó szállítmányok",
+        "description": "A depóhoz tartozó szállítmányok automatikus kiosztása futárokhoz.",
+        "startButton": "Szállítmány tervezés indítása",
+        "pendingButton": "Tervezés...",
+        "success": "A szállítmány tervezés sikeresen lefutott.",
+        "errorFallback": "A szállítmány tervezés nem sikerült."
+      },
+      "crossDepoShipments": {
+        "eyebrow": "Cross-depó szállítmányok",
+        "description": "A depón áthaladó cross-depó szállítmányok automatikus kiosztása.",
+        "startButton": "Cross-depó tervezés indítása",
+        "pendingButton": "Tervezés...",
+        "success": "A cross-depó tervezés sikeresen lefutott.",
+        "errorFallback": "A cross-depó tervezés nem sikerült."
+      }
+    },
+    "data": {
+      "eyebrow": "Adatok",
+      "fields": {
+        "id": "Depó ID",
+        "name": "Név",
+        "country": "Ország",
+        "city": "Város",
+        "zip": "Irányítószám",
+        "address": "Cím"
+      }
+    },
+    "map": {
+      "eyebrow": "Térkép",
+      "noCoordinates": "Nincs elegendő koordináta a megjelenítéshez.",
+      "iframeTitle": "Depó helyzete térképen"
+    }
+  },
+  "form": {
+    "eyebrow": "Depo form",
+    "titleEdit": "Depó szerkesztés",
+    "titleCreate": "Depó létrehozás",
+    "headingEdit": "Depó szerkesztés",
+    "headingCreate": "Új depó létrehozás",
+    "requiredFieldsNote": "A kötelező mezők: név, ország, város, irányítószám és cím.",
+    "backToList": "Vissza a depók listájához",
+    "loading": "A form adatok betöltése folyamatban...",
+    "errorHeading": "A form megnyitása sikertelen.",
+    "fields": {
+      "name": "Név",
+      "namePlaceholder": "Pl.: Budapest",
+      "country": "Ország",
+      "countryPlaceholder": "Válassz országot",
+      "city": "Város",
+      "cityPlaceholder": "Válassz várost",
+      "zip": "Irányítószám",
+      "zipPlaceholder": "Pl.: 2045",
+      "address": "Cím",
+      "addressPlaceholder": "Pl.: Fő utca 1.",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "coordinatePlaceholder": "Térképről kerül kitöltésre"
+    },
+    "map": {
+      "eyebrow": "Térképes pozíció",
+      "description": "A térkép a beírt címre pozicionál. Húzd a pint vagy kattints a térképen, majd erősítsd meg.",
+      "repositionButton": "Cím alapján újrapozicionálás",
+      "confirmPinButton": "Pin megerősítése",
+      "markedPoint": "Jelölt pont: {{latitude}}, {{longitude}}",
+      "geocoding": "Automatikus címkeresés folyamatban...",
+      "confirmPinHint": "A mentéshez erősítsd meg a térképen beállított pint."
+    },
+    "validation": {
+      "nameRequired": "A név megadása kötelező.",
+      "countryRequired": "Az ország kiválasztása kötelező.",
+      "cityRequired": "A város kiválasztása kötelező.",
+      "zipRequired": "Az irányítószám megadása kötelező.",
+      "addressRequired": "A cím megadása kötelező.",
+      "pinRequired": "A térképen jelöld ki a depó koordinátáit és erősítsd meg a pint.",
+      "pinNotConfirmed": "A térképen pozicionált pint előbb erősítsd meg.",
+      "geocodeMissingFields": "Adj meg címet, várost és országot az automatikus pozicionáláshoz.",
+      "geocodeFailed": "A cím geokódolása sikertelen.",
+      "geocodeNoResult": "Nem találtunk pontos találatot a megadott címhez."
+    },
+    "saveFailed": "A mentés nem sikerült.",
+    "submitCreate": "Depó létrehozása",
+    "submitEdit": "Módosítás mentése"
+  },
+  "transportType": {
+    "road": "Földi",
+    "air": "Légi"
+  },
+  "transitForm": {
+    "eyebrow": "Depó tranzit form",
+    "titleEdit": "Depó tranzit szerkesztés",
+    "titleCreate": "Depó tranzit létrehozás",
+    "headingEdit": "Depó tranzit szerkesztés",
+    "headingCreate": "Új depó tranzit létrehozás",
+    "direction": {
+      "outgoing": "Kimenő tranzit",
+      "incoming": "Bejövő tranzit",
+      "standalone": "Depó tranzit"
+    },
+    "contextLine": "{{direction}} • Kontextus depó: {{depoName}}",
+    "backToDetails": "Vissza a depó részleteihez",
+    "loading": "A depó tranzit form betöltése folyamatban...",
+    "errorHeading": "A depó tranzit form megnyitása sikertelen.",
+    "fields": {
+      "originDepo": "Forrás depó",
+      "originDepoPlaceholder": "Válassz forrás depót",
+      "fixedOriginHint": "Kimenő tranzitnál a forrás depó rögzített.",
+      "destinationDepo": "Cél depó",
+      "destinationDepoPlaceholder": "Válassz cél depót",
+      "fixedDestinationHint": "Bejövő tranzitnál a cél depó rögzített.",
+      "packageSize": "Csomagméret",
+      "packageSizePlaceholder": "Válassz csomagméretet",
+      "transportType": "Szállítás típusa",
+      "price": "Ár (Ft)",
+      "pricePlaceholder": "Pl.: 1990"
+    },
+    "validation": {
+      "originRequired": "A forrás depó kiválasztása kötelező.",
+      "destinationRequired": "A cél depó kiválasztása kötelező.",
+      "sameOriginDestination": "A forrás és cél depó nem lehet azonos.",
+      "packageSizeRequired": "A csomagméret kiválasztása kötelező.",
+      "priceRequired": "Az ár megadása kötelező.",
+      "priceNonNegative": "Az ár csak nem negatív szám lehet.",
+      "outgoingOriginMismatch": "Kimenő tranzitnál a forrás depónak a megnyitott depóval kell egyeznie.",
+      "incomingDestinationMismatch": "Bejövő tranzitnál a cél depónak a megnyitott depóval kell egyeznie."
+    },
+    "saveFailed": "A mentés nem sikerült.",
+    "submitCreate": "Depó tranzit létrehozása",
+    "submitEdit": "Módosítás mentése"
+  },
+  "transitTable": {
+    "sectionEyebrow": "Szekció",
+    "heading": "Tranzitok",
+    "addOutgoing": "Kimenő tranzit hozzáadása",
+    "addIncoming": "Bejövő tranzit hozzáadása",
+    "outgoingLoading": "Kimenő depo tranzitok betöltése...",
+    "outgoingErrorHeading": "Nem sikerült betölteni a kimenő depo tranzitokat.",
+    "incomingLoading": "Bejövő depó tranzitok betöltése...",
+    "incomingErrorHeading": "Nem sikerült betölteni a bejövő depó tranzitokat.",
+    "columns": {
+      "destinationDepo": "Cél depó",
+      "originDepo": "Forrás depó",
+      "packageSize": "Csomagméret",
+      "transportType": "Szállítás típusa",
+      "price": "Ár"
+    },
+    "outgoingTable": {
+      "title": "Kimenő depó tranzitok",
+      "empty": "Ehhez a depóhoz nem található kimenő tranzit.",
+      "mobileEyebrow": "Kimenő tranzit"
+    },
+    "incomingTable": {
+      "title": "Bejövő depó tranzitok",
+      "empty": "Ehhez a depóhoz nem található bejövő tranzit.",
+      "mobileEyebrow": "Bejövő tranzit"
+    }
+  }
+}

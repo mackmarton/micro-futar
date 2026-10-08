@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FormSection, PrecisionInput } from '@package/shared-ui';
 import type { LocationCityDTO } from '@package/shared-core/api/LogisticsApiClient';
 import {
@@ -10,8 +11,9 @@ import {
   getCountryById,
   updateCity,
 } from '../../api/logisticsDeposApi';
-import { logisticsNavigationItems } from '../../navigation';
+import { useLogisticsNavigationItems } from '../../navigation';
 import { EntityFormShell } from '../../shared/EntityFormShell';
+import { LanguageSwitcher } from '../../../i18n/LanguageSwitcher';
 
 type CityFormState = {
   name: string;
@@ -28,13 +30,13 @@ const toFormState = (city: LocationCityDTO): CityFormState => ({
   countryId: typeof city.countryId === 'number' ? String(city.countryId) : '',
 });
 
-const validateForm = (formState: CityFormState): string | null => {
+const validateForm = (formState: CityFormState, t: (key: string) => string): string | null => {
   if (!formState.name.trim()) {
-    return 'A város neve kötelező.';
+    return t('city.form.nameRequired');
   }
 
   if (!formState.countryId) {
-    return 'Az ország kiválasztása kötelező.';
+    return t('city.form.countryRequired');
   }
 
   return null;
@@ -46,6 +48,9 @@ const buildPayload = (formState: CityFormState): LocationCityDTO => ({
 });
 
 export const LogisticsCityFormPage = () => {
+  const { t } = useTranslation('location');
+  const { t: tCommon } = useTranslation('common');
+  const navigationItems = useLogisticsNavigationItems();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const params = useParams();
@@ -126,7 +131,7 @@ export const LogisticsCityFormPage = () => {
   };
 
   const handleSubmit = () => {
-    const errorMessage = validateForm(formState);
+    const errorMessage = validateForm(formState, t);
     setValidationError(errorMessage);
 
     if (errorMessage) {
@@ -145,46 +150,47 @@ export const LogisticsCityFormPage = () => {
 
   return (
     <EntityFormShell
-      title={isEditMode ? 'Város szerkesztés' : 'Város létrehozás'}
+      title={isEditMode ? t('city.form.titleEdit') : t('city.form.titleCreate')}
       activeHref="#/portal/locations/regions"
-      navigationItems={logisticsNavigationItems}
-      eyebrow="Helyszín form"
-      heading={isEditMode ? 'Város szerkesztés' : 'Új város létrehozás'}
+      navigationItems={navigationItems}
+      topBarRightSlot={<LanguageSwitcher />}
+      eyebrow={t('city.form.eyebrow')}
+      heading={isEditMode ? t('city.form.headingEdit') : t('city.form.headingCreate')}
       backLinks={
         <>
           <Link
             to={citiesPageHref}
             className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
           >
-            Vissza a városokhoz
+            {t('city.form.backToList')}
           </Link>
           <Link
             to={countriesPageHref}
             className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
           >
-            Vissza az országokhoz
+            {t('city.form.backToCountries')}
           </Link>
         </>
       }
       isLoading={countriesQuery.isLoading || (isEditMode && cityQuery.isLoading)}
-      loadingMessage="A város form betöltése folyamatban..."
+      loadingMessage={t('city.form.loading')}
       isError={countriesQuery.isError || cityQuery.isError}
-      errorMessage="A város form megnyitása sikertelen."
+      errorMessage={t('city.form.errorHeading')}
       errorDetail={(countriesQuery.error as Error | null)?.message ?? (cityQuery.error as Error | null)?.message}
     >
-      <FormSection icon="location_city" title="Város adatai" className="mt-6">
+      <FormSection icon="location_city" title={t('city.form.sectionTitle')} className="mt-6">
         <div className="grid gap-4 md:grid-cols-2">
           <PrecisionInput
-            label="Város név"
+            label={t('city.form.nameLabel')}
             value={formState.name}
             onChange={(event) => handleInputChange('name', event.target.value)}
-            placeholder="Pl.: Budapest"
+            placeholder={t('city.form.namePlaceholder')}
             required
           />
 
           <label className="block">
             <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3 block">
-              Ország
+              {t('city.form.countryLabel')}
               <span className="ml-1 text-red-600" aria-hidden="true">*</span>
             </span>
             <select
@@ -192,10 +198,11 @@ export const LogisticsCityFormPage = () => {
               onChange={(event) => handleInputChange('countryId', event.target.value)}
               className="w-full bg-surface-container-lowest border-none rounded-lg p-4 focus:ring-0 border-b-2 border-transparent focus:border-surface-tint transition-all"
             >
-              <option value="">Válassz országot</option>
+              <option value="">{t('city.form.countryPlaceholder')}</option>
               {(countriesQuery.data ?? []).map((country) => (
                 <option key={country.id ?? country.name} value={country.id ?? ''}>
-                  {country.name ?? 'N/A'}
+                  {/* country.name backend-ről érkező szabad szöveg, nem fordítjuk. */}
+                  {country.name ?? tCommon('status.notAvailable')}
                 </option>
               ))}
             </select>
@@ -211,7 +218,7 @@ export const LogisticsCityFormPage = () => {
         {saveMutation.isError ? (
           <div className="mt-4 rounded-xl bg-surface-container-lowest p-4">
             <p className="font-body text-on-surface">
-              {(saveMutation.error as Error)?.message ?? 'A mentés nem sikerült.'}
+              {(saveMutation.error as Error)?.message ?? t('city.form.saveFailed')}
             </p>
           </div>
         ) : null}
@@ -223,14 +230,14 @@ export const LogisticsCityFormPage = () => {
             disabled={saveMutation.isPending}
             className="inline-flex items-center rounded-lg bg-primary px-5 py-3 font-body font-semibold text-on-primary transition-colors hover:bg-on-primary-container disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {saveMutation.isPending ? 'Mentés...' : isEditMode ? 'Módosítás mentése' : 'Város létrehozása'}
+            {saveMutation.isPending ? tCommon('buttons.saving') : isEditMode ? t('city.form.submitEdit') : t('city.form.submitCreate')}
           </button>
           <button
             type="button"
             onClick={() => navigate(citiesPageHref)}
             className="inline-flex items-center rounded-lg bg-surface-container-lowest px-5 py-3 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container"
           >
-            Mégse
+            {tCommon('buttons.cancel')}
           </button>
         </div>
       </FormSection>

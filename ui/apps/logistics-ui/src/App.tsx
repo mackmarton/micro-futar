@@ -1,8 +1,10 @@
 import { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { PortalShell, RequireAccess, useAuth } from '@package/shared-ui';
 import { hasLogisticsPortalAccess } from './auth/portalAccess';
-import { logisticsNavigationItems } from './portal/navigation';
+import { useLogisticsNavigationItems } from './portal/navigation';
+import { LanguageSwitcher } from './i18n/LanguageSwitcher';
 
 const LogisticsLandingPage = lazy(() =>
   import('./landing/LogisticsLandingPage').then((module) => ({ default: module.LogisticsLandingPage })),
@@ -64,6 +66,8 @@ const LogisticsCurrencyFormPage = lazy(() =>
 
 function App() {
   const { isLoading } = useAuth();
+  const { t } = useTranslation('common');
+  const navigationItems = useLogisticsNavigationItems();
 
   if (isLoading) {
     return null;
@@ -80,7 +84,15 @@ function App() {
         )}
       />
       <Route path="/portal" element={<RequireAccess hasAccess={hasLogisticsPortalAccess} />}>
-        <Route element={<PortalShell title="Logisztika" navigationItems={logisticsNavigationItems} />}>
+        <Route
+          element={(
+            <PortalShell
+              title={t('portal.title')}
+              navigationItems={navigationItems}
+              topBarRightSlot={<LanguageSwitcher />}
+            />
+          )}
+        >
           <Route path="depos" element={<LogisticsDeposPage />} />
           <Route path="depos/new" element={<LogisticsDepoFormPage />} />
           <Route path="depos/:depoId/edit" element={<LogisticsDepoFormPage />} />
