@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { toErrorMessage } from '@package/shared-core';
 import type { Shipment } from '../components/ShipmentTable.tsx';
 import type { ShipmentStatsObject } from '../components/ShipmentStats.tsx';
@@ -21,6 +22,7 @@ const EMPTY_STATS: ShipmentStatsObject = {
 };
 
 export const useUserShipments = (): UseUserShipmentsResult => {
+  const { t } = useTranslation('dashboard');
   const shipmentsQuery = useQuery({
     queryKey: queryKeys.userShipments,
     queryFn: ({ signal }) => fetchShipmentsForUser(signal),
@@ -32,13 +34,13 @@ export const useUserShipments = (): UseUserShipmentsResult => {
       return [];
     }
 
-    return mapShipmentDtosToShipments(shipmentsQuery.data);
-  }, [shipmentsQuery.data]);
+    return mapShipmentDtosToShipments(shipmentsQuery.data, t('unknownDestination'));
+  }, [shipmentsQuery.data, t]);
 
   const stats = useMemo<ShipmentStatsObject>(() => buildShipmentStats(shipments), [shipments]);
 
   const errorMessage = shipmentsQuery.isError
-    ? toErrorMessage(shipmentsQuery.error, 'Nem sikerült betölteni a küldeményeket. Próbáld újra.')
+    ? toErrorMessage(shipmentsQuery.error, t('error.generic'))
     : null;
 
   const retry = useCallback(async () => {

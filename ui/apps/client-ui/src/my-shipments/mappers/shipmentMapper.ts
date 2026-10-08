@@ -2,15 +2,14 @@ import type { ShipmentDTO } from '@package/shared-core/api/OrdersApiClient';
 import type { Shipment, ShipmentStatus } from '../components/ShipmentTable.tsx';
 import type { ShipmentStatsObject } from '../components/ShipmentStats.tsx';
 
-const UNKNOWN_DESTINATION = 'Ismeretlen célállomás';
 const UNKNOWN_DATE = '-';
 
-const formatDestination = (shipment: ShipmentDTO) => {
+const formatDestination = (shipment: ShipmentDTO, unknownDestinationLabel: string) => {
   const segments = [shipment.recipientZip, shipment.recipientAddress]
     .map((value) => (typeof value === 'string' ? value.trim() : ''))
     .filter((value) => value.length > 0);
 
-  return segments.length > 0 ? segments.join(', ') : UNKNOWN_DESTINATION;
+  return segments.length > 0 ? segments.join(', ') : unknownDestinationLabel;
 };
 
 const getStatus = (shipment: ShipmentDTO): ShipmentStatus => {
@@ -21,7 +20,11 @@ const getStatus = (shipment: ShipmentDTO): ShipmentStatus => {
   return 'inProgress';
 };
 
-export const mapShipmentDtoToShipment = (shipment: ShipmentDTO, index: number): Shipment => {
+export const mapShipmentDtoToShipment = (
+  shipment: ShipmentDTO,
+  index: number,
+  unknownDestinationLabel: string,
+): Shipment => {
   const stableFallbackId = shipment.id ?? index + 1;
   const id = shipment.parcelNumber?.trim() || `#HU-${stableFallbackId}`;
   const status = getStatus(shipment);
@@ -29,13 +32,16 @@ export const mapShipmentDtoToShipment = (shipment: ShipmentDTO, index: number): 
   return {
     id,
     createdAt: UNKNOWN_DATE,
-    destination: formatDestination(shipment),
+    destination: formatDestination(shipment, unknownDestinationLabel),
     status,
   };
 };
 
-export const mapShipmentDtosToShipments = (shipments: ShipmentDTO[]): Shipment[] => {
-  return shipments.map(mapShipmentDtoToShipment);
+export const mapShipmentDtosToShipments = (
+  shipments: ShipmentDTO[],
+  unknownDestinationLabel: string,
+): Shipment[] => {
+  return shipments.map((shipment, index) => mapShipmentDtoToShipment(shipment, index, unknownDestinationLabel));
 };
 
 export const buildShipmentStats = (shipments: Shipment[]): ShipmentStatsObject => {

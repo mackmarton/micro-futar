@@ -13,6 +13,7 @@ export type TopNavBarProps = {
   mobileBrandName?: string;
   onProfileClick?: () => void;
   profileIcon?: ReactNode | string;
+  rightSlot?: ReactNode;
   className?: string;
 };
 
@@ -33,6 +34,7 @@ export const TopNavBar = ({
   mobileBrandName = 'micro-futar',
   onProfileClick,
   profileIcon = 'account_circle',
+  rightSlot,
   className,
 }: TopNavBarProps) => {
   const { user, isLoading, login, logout } = useAuth();
@@ -93,6 +95,7 @@ export const TopNavBar = ({
       </div>
 
       <div className="flex items-center gap-6">
+        {rightSlot}
         <div className="relative flex items-center gap-3" ref={profileMenuRef}>
           <button
             type="button"

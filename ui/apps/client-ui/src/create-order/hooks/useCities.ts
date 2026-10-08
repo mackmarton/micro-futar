@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { fetchCityOptionsByCountryId, type CityOption } from '../api/ordersApi.ts';
 import { queryKeys } from '../../shared/queryKeys.ts';
 
@@ -11,6 +12,7 @@ type UseCitiesResult = {
 };
 
 export const useCities = (countryId: string): UseCitiesResult => {
+  const { t } = useTranslation('createOrder');
   const isEnabled = Boolean(countryId);
   const citiesQuery = useQuery({
     queryKey: queryKeys.cities(countryId),
@@ -30,7 +32,7 @@ export const useCities = (countryId: string): UseCitiesResult => {
   return {
     cityOptions: isEnabled ? (citiesQuery.data ?? []) : [],
     isLoading: isEnabled ? citiesQuery.isPending : false,
-    errorMessage: isEnabled && citiesQuery.isError ? 'A városok listája jelenleg nem érhető el.' : null,
+    errorMessage: isEnabled && citiesQuery.isError ? t('dataErrors.cities') : null,
     retry,
   };
 };

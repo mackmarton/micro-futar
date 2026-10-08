@@ -18,6 +18,9 @@ export type PortalLayoutProps = {
   title: string;
   activeHref: string;
   navigationItems?: PortalNavigationItem[];
+  topBarRightSlot?: ReactNode;
+  logoHref?: string;
+  brandSubtitle?: string;
   className?: string;
   contentClassName?: string;
   children: ReactNode;
@@ -27,6 +30,9 @@ type PortalLayoutState = {
   title: string;
   activeHref: string;
   navigationItems: PortalNavigationItem[];
+  topBarRightSlot?: ReactNode;
+  logoHref?: string;
+  brandSubtitle?: string;
   contentClassName?: string;
 };
 
@@ -88,6 +94,9 @@ export const PortalLayout = ({
   title,
   activeHref,
   navigationItems = defaultNavigationItems,
+  topBarRightSlot,
+  logoHref,
+  brandSubtitle,
   className,
   contentClassName,
   children,
@@ -99,9 +108,12 @@ export const PortalLayout = ({
       title,
       activeHref,
       navigationItems,
+      topBarRightSlot,
+      logoHref,
+      brandSubtitle,
       contentClassName,
     }),
-    [activeHref, contentClassName, navigationItems, title],
+    [activeHref, brandSubtitle, contentClassName, logoHref, navigationItems, title, topBarRightSlot],
   );
 
   const [layoutState, setLayoutState] = useState<PortalLayoutState>(desiredLayoutState);
@@ -124,10 +136,10 @@ export const PortalLayout = ({
   return (
     <PortalLayoutContext.Provider value={{ setLayoutState }}>
       <div className={cn('bg-surface text-on-surface min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed', className)}>
-        <SideNavBar navigationItems={sideNavigationItems} />
+        <SideNavBar navigationItems={sideNavigationItems} logoHref={layoutState.logoHref} brandSubtitle={layoutState.brandSubtitle} />
 
         <main className="lg:ml-64 min-h-screen flex flex-col pb-24 lg:pb-0">
-          <TopNavBar title={layoutState.title} />
+          <TopNavBar title={layoutState.title} rightSlot={layoutState.topBarRightSlot} />
 
           <div className={cn('max-w-7xl mx-auto p-6 md:p-10 w-full', layoutState.contentClassName)}>{children}</div>
         </main>

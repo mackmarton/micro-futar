@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
-import { DashboardPage } from '../../../my-shipments/DashboardPage.tsx';
+import { DashboardPage } from '../../../../my-shipments/DashboardPage.tsx';
 
 export const metadata: Metadata = {
-  title: 'Saját csomagjaim',
+  title: 'My packages',
   robots: { index: false, follow: true },
 };
 
 export default function DashboardRoute() {
-  return <DashboardPage />;
+  return <DashboardPage locale="en" />;
 }

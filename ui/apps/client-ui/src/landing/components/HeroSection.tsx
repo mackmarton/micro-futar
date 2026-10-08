@@ -3,37 +3,44 @@
 import { useState, type CSSProperties, type FormEvent } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@package/shared-ui';
+import type { AppLocale } from '../../i18n/createI18nInstance.ts';
 
 export type HeroSectionProps = {
+  locale: AppLocale;
   className?: string;
   imageSrc?: string;
 };
 
 const DEFAULT_IMAGE_SRC = '/storage.webp';
 
-const HEADLINE_LINES = [
-  { text: 'Gyorsaság.' },
-  { text: 'Biztonság.' },
-  { text: 'Precizitás.', className: 'text-on-primary-container' },
-];
 const HEADLINE_FIRST_DELAY_MS = 100;
 const HEADLINE_STAGGER_MS = 140;
 
-export const HeroSection = ({ className, imageSrc = DEFAULT_IMAGE_SRC }: HeroSectionProps) => {
+export const HeroSection = ({ locale, className, imageSrc = DEFAULT_IMAGE_SRC }: HeroSectionProps) => {
   const router = useRouter();
+  const { t } = useTranslation(['tracking', 'landing']);
   const [trackingNumber, setTrackingNumber] = useState('');
+
+  const headlineLines = [
+    { text: t('landing:hero.headlineLine1') },
+    { text: t('landing:hero.headlineLine2') },
+    { text: t('landing:hero.headlineLine3'), className: 'text-on-primary-container' },
+  ];
+
+  const trackingPath = locale === 'en' ? '/en/portal/tracking' : '/portal/tracking';
 
   const navigateToTracking = (value: string) => {
     const trimmedValue = value.trim();
 
     if (trimmedValue) {
       const query = new URLSearchParams({ trackingNumber: trimmedValue }).toString();
-      router.push(`/portal/tracking?${query}`);
+      router.push(`${trackingPath}?${query}`);
       return;
     }
 
-    router.push('/portal/tracking');
+    router.push(trackingPath);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -46,11 +53,11 @@ export const HeroSection = ({ className, imageSrc = DEFAULT_IMAGE_SRC }: HeroSec
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div className="z-10">
           <span className="inline-block px-4 py-1.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-xs font-bold uppercase tracking-wider mb-6">
-            Prémium Logisztika
+            {t('landing:hero.badge')}
           </span>
 
           <h1 className="font-headline text-6xl md:text-7xl font-extrabold text-on-surface leading-[1.1] mb-8 tracking-tight">
-            {HEADLINE_LINES.map((line, index) => (
+            {headlineLines.map((line, index) => (
               <span key={line.text} className="hero-line">
                 <span
                   className={cn('hero-line-inner', line.className)}
@@ -74,7 +81,7 @@ export const HeroSection = ({ className, imageSrc = DEFAULT_IMAGE_SRC }: HeroSec
                 type="text"
                 value={trackingNumber}
                 onChange={(event) => setTrackingNumber(event.target.value)}
-                placeholder="Csomagkövetés (pl. MF-12345678)"
+                placeholder={t('landing:hero.trackingPlaceholder')}
                 className="w-full border-none focus:ring-0 text-on-surface font-medium bg-transparent py-3"
               />
             </div>
@@ -83,7 +90,7 @@ export const HeroSection = ({ className, imageSrc = DEFAULT_IMAGE_SRC }: HeroSec
               type="submit"
               className="kinetic-gradient text-on-primary px-8 py-4 rounded-lg font-bold text-sm flex items-center justify-center gap-2"
             >
-              <span>Keresés</span>
+              <span>{t('tracking:hero.button')}</span>
               <span className="material-symbols-outlined text-sm" aria-hidden="true">
                 arrow_forward
               </span>

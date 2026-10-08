@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { fetchPackageSizeOptions, type PackageSizeOption } from '../api/ordersApi.ts';
 import { queryKeys } from '../../shared/queryKeys.ts';
 
@@ -11,6 +12,7 @@ type UsePackageSizesResult = {
 };
 
 export const usePackageSizes = (): UsePackageSizesResult => {
+  const { t } = useTranslation('createOrder');
   const packageSizesQuery = useQuery({
     queryKey: queryKeys.packageSizes,
     queryFn: ({ signal }) => fetchPackageSizeOptions(signal),
@@ -25,7 +27,7 @@ export const usePackageSizes = (): UsePackageSizesResult => {
   return {
     packageSizeOptions: packageSizesQuery.data ?? [],
     isLoading: packageSizesQuery.isPending,
-    errorMessage: packageSizesQuery.isError ? 'A csomagméretek listája jelenleg nem érhető el.' : null,
+    errorMessage: packageSizesQuery.isError ? t('dataErrors.packageSizes') : null,
     retry,
   };
 };

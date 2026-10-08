@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@package/shared-ui';
 
 export type TrackingProgressStep = {
@@ -49,12 +50,15 @@ const getProgressWidth = (steps: TrackingProgressStep[]) => {
 
 export const TrackingProgressCard = ({
   trackingNumber,
-  statusLabel = 'Kézbesítve',
-  deliveryTimeLabel = 'Kézbesítés időpontja',
+  statusLabel,
+  deliveryTimeLabel,
   deliveryTimeValue,
   steps = defaultSteps,
   className,
 }: TrackingProgressCardProps) => {
+  const { t } = useTranslation('tracking');
+  const resolvedStatusLabel = statusLabel ?? t('progress.deliveredStatus');
+  const resolvedDeliveryTimeLabel = deliveryTimeLabel ?? t('progress.deliveryTimeLabel');
   const progressWidth = getProgressWidth(steps);
 
   return (
@@ -62,14 +66,14 @@ export const TrackingProgressCard = ({
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
         <div>
           <span className="text-xs font-bold uppercase tracking-widest text-on-primary-container bg-primary-fixed px-3 py-1 rounded-full">
-            {statusLabel}
+            {resolvedStatusLabel}
           </span>
           <h3 className="text-2xl font-bold mt-2 text-on-surface">{trackingNumber}</h3>
         </div>
 
         {deliveryTimeValue && (
           <div className="text-right">
-            <p className="text-xs uppercase tracking-widest text-on-surface-variant font-medium">{deliveryTimeLabel}</p>
+            <p className="text-xs uppercase tracking-widest text-on-surface-variant font-medium">{resolvedDeliveryTimeLabel}</p>
             <p className="text-xl font-bold text-teal-600">{deliveryTimeValue}</p>
           </div>
         )}

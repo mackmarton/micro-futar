@@ -1,6 +1,23 @@
 import type { TrackingDTO, TrackingPartDTO } from '@package/shared-core/api/TrackingApiClient';
 import type { TrackingProgressStep } from '../components/TrackingProgressCard.tsx';
 import type { TrackingTimelineEvent } from '../components/TrackingTimelineCard.tsx';
+import type { AppLocale } from '../../i18n/createI18nInstance.ts';
+
+/**
+ * A `part.title`/`part.place` a trackingApi válaszából jön (a logisztikai szolgáltatás szabad
+ * szövegként adja vissza, pl. "Felvéve a feladótól") – ez backend-oldali, szabadszöveges adat,
+ * amit a frontend i18n nem tud lefordítani. Ehhez a backendnek kellene stabil státuszkódot
+ * (enum) küldenie a jelenlegi szöveg helyett, amit a frontend aztán maga fordítana.
+ */
+export type TrackingDetailsFormatters = {
+  t: (key: string) => string;
+  locale: AppLocale;
+};
+
+const DATE_LOCALE_BY_APP_LOCALE: Record<AppLocale, string> = {
+  hu: 'hu-HU',
+  en: 'en-GB',
+};
 
 export type TrackingDetailsViewModel = {
   trackingNumber: string;
@@ -38,9 +55,9 @@ const getUnixTime = (value?: string) => {
   return Number.isNaN(timestamp) ? Number.NEGATIVE_INFINITY : timestamp;
 };
 
-const formatTimestamp = (value?: string) => {
+const formatTimestamp = (value: string | undefined, formatters: TrackingDetailsFormatters) => {
   if (!value) {
-    return 'Ismeretlen időpont';
+    return formatters.t('progress.unknownTime');
   }
 
   const date = new Date(value);
@@ -49,7 +66,7 @@ const formatTimestamp = (value?: string) => {
     return value;
   }
 
-  return new Intl.DateTimeFormat('hu-HU', {
+  return new Intl.DateTimeFormat(DATE_LOCALE_BY_APP_LOCALE[formatters.locale], {
     year: 'numeric',
     month: 'short',
     day: '2-digit',
@@ -58,12 +75,16 @@ const formatTimestamp = (value?: string) => {
   }).format(date);
 };
 
-const toTimelineEvent = (part: TrackingPart, index: number): TrackingTimelineEvent => ({
+const toTimelineEvent = (
+  part: TrackingPart,
+  index: number,
+  formatters: TrackingDetailsFormatters,
+): TrackingTimelineEvent => ({
   title: part.place ? `${part.title} (${part.place})` : part.title,
-  timestamp: formatTimestamp(part.time),
+  timestamp: formatTimestamp(part.time, formatters),
   description: part.destination
-    ? 'A csomag megérkezett a célállomásra.'
-    : 'A csomag feldolgozása folyamatban van ezen az állomáson.',
+    ? formatters.t('timeline.arrivedDescription')
+    : formatters.t('timeline.inProgressDescription'),
   icon: part.destination ? 'inventory_2' : 'local_shipping',
   status: index === 0 ? 'completed' : 'previous',
 });
@@ -78,6 +99,7 @@ const toProgressStep = (part: TrackingPart, index: number, total: number): Track
 export const mapTrackingDtoToDetails = (
   trackingDto: TrackingDTO | null,
   trackingNumber: string,
+  formatters: TrackingDetailsFormatters,
 ): TrackingDetailsViewModel | null => {
   if (!trackingDto) {
     return null;
@@ -97,10 +119,10 @@ export const mapTrackingDtoToDetails = (
 
   return {
     trackingNumber,
-    statusLabel: destinationPart ? 'Kézbesítve' : 'Szállítás alatt',
-    deliveryTimeValue: formatTimestamp(destinationPart?.time ?? latestPart?.time),
+    statusLabel: destinationPart ? formatters.t('progress.deliveredStatus') : formatters.t('progress.inTransitStatus'),
+    deliveryTimeValue: formatTimestamp(destinationPart?.time ?? latestPart?.time, formatters),
     progressSteps: orderedByTimeAsc.map((part, index) => toProgressStep(part, index, orderedByTimeAsc.length)),
-    timelineEvents: orderedByTimeDesc.map(toTimelineEvent),
+    timelineEvents: orderedByTimeDesc.map((part, index) => toTimelineEvent(part, index, formatters)),
     shippingAddressPrimary: destinationPart?.place ?? latestPart?.place,
   };
 };

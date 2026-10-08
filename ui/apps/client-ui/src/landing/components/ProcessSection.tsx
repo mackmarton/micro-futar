@@ -1,11 +1,12 @@
 import type { CSSProperties } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@package/shared-ui/cn';
 import { RevealOnScroll } from './RevealOnScroll.tsx';
 
 type ProcessStep = {
   id: number;
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   isHighlighted?: boolean;
 };
 
@@ -14,24 +15,9 @@ export type ProcessSectionProps = {
 };
 
 const steps: ProcessStep[] = [
-  {
-    id: 1,
-    title: 'Csomag összeállítása',
-    description: 'Készítse el csomagját, és gondoskodjon a megfelelő csomagolásról. Mérje le a pontos méreteket.',
-  },
-  {
-    id: 2,
-    title: 'Online feladás',
-    description:
-      'Adja meg az adatokat weboldalunkon, fizesse ki a szállítást, és nyomtassa ki a címkét pár kattintással.',
-  },
-  {
-    id: 3,
-    title: 'Gyors kézbesítés',
-    description:
-      'Futárunk felveszi a küldeményt, és mi a legrövidebb úton eljuttatjuk a címzetthez.',
-    isHighlighted: true,
-  },
+  { id: 1, titleKey: 'process.step1Title', descriptionKey: 'process.step1Description' },
+  { id: 2, titleKey: 'process.step2Title', descriptionKey: 'process.step2Description' },
+  { id: 3, titleKey: 'process.step3Title', descriptionKey: 'process.step3Description', isHighlighted: true },
 ];
 
 // Az összekötő vonal lineárisan töltődik ki; minden lépés akkor jelenik meg, amikor a vonal
@@ -42,13 +28,15 @@ const stepRevealDelayMs = (index: number) => LINE_DELAY_MS + (LINE_DURATION_MS *
 const revealDelay = (delayMs: number) => ({ '--reveal-delay': `${Math.round(delayMs)}ms` }) as CSSProperties;
 
 export const ProcessSection = ({ className }: ProcessSectionProps) => {
+  const { t } = useTranslation('landing');
+
   return (
     <section className={cn('py-32 px-8 overflow-hidden bg-surface-container-low', className)}>
       <RevealOnScroll className="max-w-7xl mx-auto">
         <div className="text-center mb-24 reveal-fade-up">
-          <h2 className="font-headline text-4xl font-extrabold text-on-surface mb-4 tracking-tight">Hogyan működik?</h2>
+          <h2 className="font-headline text-4xl font-extrabold text-on-surface mb-4 tracking-tight">{t('process.heading')}</h2>
           <p className="text-on-surface-variant font-medium text-lg">
-            Egyszerű, átlátható folyamat a feladástól az érkezésig.
+            {t('process.subtitle')}
           </p>
         </div>
 
@@ -76,8 +64,8 @@ export const ProcessSection = ({ className }: ProcessSectionProps) => {
                 </div>
 
                 <div className="reveal-fade-up" style={revealDelay(stepRevealDelayMs(index) + 150)}>
-                  <h3 className="text-xl font-bold text-on-surface mb-4">{step.title}</h3>
-                  <p className="text-sm font-medium text-on-surface-variant leading-relaxed max-w-xs">{step.description}</p>
+                  <h3 className="text-xl font-bold text-on-surface mb-4">{t(step.titleKey)}</h3>
+                  <p className="text-sm font-medium text-on-surface-variant leading-relaxed max-w-xs">{t(step.descriptionKey)}</p>
                 </div>
               </article>
             ))}

@@ -1,8 +1,10 @@
 import { useCallback, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { toErrorMessage } from '@package/shared-core';
 import { fetchTrackingByParcelNumber } from '../api/trackingApi.ts';
 import { mapTrackingDtoToDetails, type TrackingDetailsViewModel } from '../mappers/trackingMapper.ts';
+import type { AppLocale } from '../../i18n/createI18nInstance.ts';
 import { queryKeys } from '../../shared/queryKeys.ts';
 
 type UseTrackingResult = {
@@ -16,6 +18,7 @@ type UseTrackingResult = {
 
 export const useTracking = (): UseTrackingResult => {
   const queryClient = useQueryClient();
+  const { t, i18n } = useTranslation('tracking');
   const [hasSearchStarted, setHasSearchStarted] = useState(false);
   const [lastTrackingNumber, setLastTrackingNumber] = useState<string | null>(null);
 
@@ -26,7 +29,10 @@ export const useTracking = (): UseTrackingResult => {
         queryKey: queryKeys.tracking(normalizedTrackingNumber),
         queryFn: async ({ signal }) => {
           const trackingDto = await fetchTrackingByParcelNumber(normalizedTrackingNumber, signal);
-          const mappedDetails = mapTrackingDtoToDetails(trackingDto, normalizedTrackingNumber);
+          const mappedDetails = mapTrackingDtoToDetails(trackingDto, normalizedTrackingNumber, {
+            t,
+            locale: i18n.language as AppLocale,
+          });
 
           if (!mappedDetails) {
             throw new Error('NO_TRACKING_RESULT');
@@ -73,8 +79,8 @@ export const useTracking = (): UseTrackingResult => {
 
   const errorMessage = trackingSearchMutation.isError
     ? trackingSearchMutation.error instanceof Error && trackingSearchMutation.error.message === 'NO_TRACKING_RESULT'
-      ? 'Nincs találat erre a csomagszámra. Ellenőrizd és próbáld újra.'
-      : toErrorMessage(trackingSearchMutation.error, 'Nem sikerült betölteni a követési adatokat. Próbáld újra.')
+      ? t('errors.notFound')
+      : toErrorMessage(trackingSearchMutation.error, t('errors.generic'))
     : null;
 
   return {

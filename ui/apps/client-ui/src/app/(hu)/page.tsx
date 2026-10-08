@@ -1,5 +1,5 @@
-import { LandingPage } from '../landing/LandingPage.tsx';
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from './site.ts';
+import { LandingPage } from '../../landing/LandingPage.tsx';
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '../site.ts';
 
 const organizationJsonLd = {
   '@context': 'https://schema.org',
@@ -11,7 +11,7 @@ const organizationJsonLd = {
 };
 
 export const metadata = {
-  alternates: { canonical: '/' },
+  alternates: { canonical: '/', languages: { hu: '/', en: '/en' } },
 };
 
 export default function HomePage() {
@@ -21,7 +21,7 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
-      <LandingPage />
+      <LandingPage locale="hu" />
     </>
   );
 }
