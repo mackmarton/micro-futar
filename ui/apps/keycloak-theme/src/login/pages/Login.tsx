@@ -97,7 +97,7 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                             <img src={icon} alt="micro-futár logó" className="w-8 h-8"/>
                             <span className="text-xl font-bold text-on-surface">micro-futár</span>
                         </div>
-                        <h1 className="font-headline text-3xl font-extrabold text-on-surface">Bejelentkezés</h1>
+                        <h1 className="font-headline text-3xl font-extrabold text-on-surface">{msg("loginPageHeading")}</h1>
                     </header>
 
                     {realm.password && (
