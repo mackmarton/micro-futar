@@ -4,6 +4,7 @@ import type {PackageSizeDTO} from '@package/shared-core/api/OrdersApiClient';
 import type {CountryPriceDTO} from '@package/shared-core/api/OrdersApiClient';
 import type {ShipmentDTO} from '@package/shared-core/api/OrdersApiClient';
 import type {CurrencyDTO} from '@package/shared-core/api/OrdersApiClient';
+import type {CreateShipmentResponseDTO} from '@package/shared-core/api/OrdersApiClient';
 import { resolveApiBaseUrl } from '@package/shared-core';
 
 export type CountryOption = {
@@ -227,7 +228,7 @@ export const fetchCountryPrices = async (
         }));
 };
 
-export const createShipment = async (payload: CreateShipmentPayload): Promise<ShipmentDTO> => {
+export const createShipment = async (payload: CreateShipmentPayload): Promise<CreateShipmentResponseDTO> => {
     const response = await ordersApiClient.api.newShipment(payload, {
         format: 'json',
     });

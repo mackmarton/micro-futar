@@ -55,8 +55,8 @@ public class PaymentService {
      * clicking twice does not create a second authorization.
      */
     @Transactional
-    public CheckoutResponseDTO startCheckout(Long shipmentId, String paymentToken) {
-        Payment payment = findOwnedPayment(shipmentId, paymentToken);
+    public CheckoutResponseDTO startCheckout(Long shipmentId, String paymentToken, String userEmail, String locale) {
+        Payment payment = findOwnedPayment(shipmentId, paymentToken, userEmail);
         if (payment.getStatus() != PaymentStatus.PENDING) {
             throw new PaymentStateException(shipmentId, payment.getStatus());
         }
@@ -69,7 +69,7 @@ public class PaymentService {
             stripeGateway.expireCheckoutSession(payment.getCheckoutSessionId());
         }
         ZonedDateTime expiresAt = now.plus(StripeGateway.CHECKOUT_TTL);
-        Session session = stripeGateway.createCheckoutSession(payment, expiresAt);
+        Session session = stripeGateway.createCheckoutSession(payment, expiresAt, locale);
         payment.setCheckoutSessionId(session.getId());
         payment.setCheckoutUrl(session.getUrl());
         payment.setCheckoutExpiresAt(expiresAt);
@@ -77,8 +77,8 @@ public class PaymentService {
     }
 
     @Transactional(readOnly = true)
-    public PaymentStatusResponseDTO getStatus(Long shipmentId, String paymentToken) {
-        Payment payment = findOwnedPayment(shipmentId, paymentToken);
+    public PaymentStatusResponseDTO getStatus(Long shipmentId, String paymentToken, String userEmail) {
+        Payment payment = findOwnedPayment(shipmentId, paymentToken, userEmail);
         return PaymentStatusResponseDTO.builder()
                 .shipmentId(payment.getShipmentId())
                 .status(payment.getStatus())
@@ -183,10 +183,15 @@ public class PaymentService {
                 PaymentStatusEventDTO.of(payment.getShipmentId(), status, amount, payment.getCurrencyCode()));
     }
 
-    private Payment findOwnedPayment(Long shipmentId, String paymentToken) {
+    /**
+     * The sender proves ownership with the payment token from order creation, or, when logged in, with the email
+     * in their JWT (so they can also pay from another device, where the token is not stored).
+     */
+    private Payment findOwnedPayment(Long shipmentId, String paymentToken, String userEmail) {
         Payment payment = paymentRepository.findByShipmentId(shipmentId)
                 .orElseThrow(() -> new PaymentNotReadyException(shipmentId));
-        if (!paymentTokenHasher.matches(paymentToken, payment.getPaymentTokenHash())) {
+        boolean ownerByEmail = userEmail != null && userEmail.equalsIgnoreCase(payment.getSenderEmail());
+        if (!ownerByEmail && !paymentTokenHasher.matches(paymentToken, payment.getPaymentTokenHash())) {
             throw new PaymentNotFoundException();
         }
         return payment;

@@ -32,15 +32,16 @@ public class StripeGateway {
     @Value("${url.client-ui}")
     private String clientUiUrl;
 
-    public Session createCheckoutSession(Payment payment, ZonedDateTime expiresAt) {
+    public Session createCheckoutSession(Payment payment, ZonedDateTime expiresAt, String locale) {
         String shipmentId = payment.getShipmentId().toString();
-        String resultUrl = clientUiUrl + "/payment/result?shipmentId=" + shipmentId;
+        boolean english = "en".equalsIgnoreCase(locale);
+        String resultUrl = clientUiUrl + (english ? "/en" : "") + "/portal/payment?shipmentId=" + shipmentId;
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setClientReferenceId(shipmentId)
                 .putMetadata(SHIPMENT_ID_METADATA, shipmentId)
                 .setCustomerEmail(payment.getSenderEmail())
-                .setLocale(SessionCreateParams.Locale.AUTO)
+                .setLocale(english ? SessionCreateParams.Locale.EN : SessionCreateParams.Locale.HU)
                 .setExpiresAt(expiresAt.toEpochSecond())
                 .setSuccessUrl(resultUrl + "&outcome=success")
                 .setCancelUrl(resultUrl + "&outcome=cancel")

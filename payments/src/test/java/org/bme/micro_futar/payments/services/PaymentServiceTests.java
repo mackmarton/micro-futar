@@ -82,9 +82,9 @@ class PaymentServiceTests {
         Session session = new Session();
         session.setId("cs_1");
         session.setUrl("https://checkout.stripe.com/cs_1");
-        when(stripeGateway.createCheckoutSession(eq(payment), any())).thenReturn(session);
+        when(stripeGateway.createCheckoutSession(eq(payment), any(), eq("hu"))).thenReturn(session);
 
-        var response = paymentService.startCheckout(SHIPMENT_ID, TOKEN);
+        var response = paymentService.startCheckout(SHIPMENT_ID, TOKEN, null, "hu");
 
         assertThat(response.getCheckoutUrl()).isEqualTo("https://checkout.stripe.com/cs_1");
         assertThat(payment.getCheckoutSessionId()).isEqualTo("cs_1");
@@ -97,7 +97,7 @@ class PaymentServiceTests {
         payment.setCheckoutExpiresAt(ZonedDateTime.now().plusMinutes(30));
         when(paymentRepository.findByShipmentId(SHIPMENT_ID)).thenReturn(Optional.of(payment));
 
-        var response = paymentService.startCheckout(SHIPMENT_ID, TOKEN);
+        var response = paymentService.startCheckout(SHIPMENT_ID, TOKEN, null, "hu");
 
         assertThat(response.getCheckoutUrl()).isEqualTo("https://checkout.stripe.com/cs_1");
         verifyNoInteractions(stripeGateway);
@@ -112,9 +112,9 @@ class PaymentServiceTests {
         Session session = new Session();
         session.setId("cs_new");
         session.setUrl("https://checkout.stripe.com/cs_new");
-        when(stripeGateway.createCheckoutSession(eq(payment), any())).thenReturn(session);
+        when(stripeGateway.createCheckoutSession(eq(payment), any(), eq("hu"))).thenReturn(session);
 
-        paymentService.startCheckout(SHIPMENT_ID, TOKEN);
+        paymentService.startCheckout(SHIPMENT_ID, TOKEN, null, "hu");
 
         verify(stripeGateway).expireCheckoutSession("cs_old");
         assertThat(payment.getCheckoutSessionId()).isEqualTo("cs_new");
@@ -124,16 +124,37 @@ class PaymentServiceTests {
     void startCheckoutRejectsWrongToken() {
         when(paymentRepository.findByShipmentId(SHIPMENT_ID)).thenReturn(Optional.of(payment));
 
-        assertThatThrownBy(() -> paymentService.startCheckout(SHIPMENT_ID, "guessed"))
+        assertThatThrownBy(() -> paymentService.startCheckout(SHIPMENT_ID, "guessed", null, "hu"))
                 .isInstanceOf(PaymentNotFoundException.class);
         verifyNoInteractions(stripeGateway);
+    }
+
+    @Test
+    void loggedInSenderCanStartCheckoutWithoutToken() {
+        when(paymentRepository.findByShipmentId(SHIPMENT_ID)).thenReturn(Optional.of(payment));
+        Session session = new Session();
+        session.setId("cs_1");
+        session.setUrl("https://checkout.stripe.com/cs_1");
+        when(stripeGateway.createCheckoutSession(eq(payment), any(), eq("en"))).thenReturn(session);
+
+        var response = paymentService.startCheckout(SHIPMENT_ID, null, "John@Example.com", "en");
+
+        assertThat(response.getCheckoutUrl()).isEqualTo("https://checkout.stripe.com/cs_1");
+    }
+
+    @Test
+    void otherLoggedInUserNeedsToken() {
+        when(paymentRepository.findByShipmentId(SHIPMENT_ID)).thenReturn(Optional.of(payment));
+
+        assertThatThrownBy(() -> paymentService.getStatus(SHIPMENT_ID, null, "someone@else.com"))
+                .isInstanceOf(PaymentNotFoundException.class);
     }
 
     @Test
     void startCheckoutBeforePaymentRequestArrivedIsNotReady() {
         when(paymentRepository.findByShipmentId(SHIPMENT_ID)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> paymentService.startCheckout(SHIPMENT_ID, TOKEN))
+        assertThatThrownBy(() -> paymentService.startCheckout(SHIPMENT_ID, TOKEN, null, "hu"))
                 .isInstanceOf(PaymentNotReadyException.class);
     }
 
@@ -142,7 +163,7 @@ class PaymentServiceTests {
         payment.setStatus(PaymentStatus.AUTHORIZED);
         when(paymentRepository.findByShipmentId(SHIPMENT_ID)).thenReturn(Optional.of(payment));
 
-        assertThatThrownBy(() -> paymentService.startCheckout(SHIPMENT_ID, TOKEN))
+        assertThatThrownBy(() -> paymentService.startCheckout(SHIPMENT_ID, TOKEN, null, "hu"))
                 .isInstanceOf(PaymentStateException.class);
     }
 

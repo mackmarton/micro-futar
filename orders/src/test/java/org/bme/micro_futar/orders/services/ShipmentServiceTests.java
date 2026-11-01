@@ -1,13 +1,11 @@
 package org.bme.micro_futar.orders.services;
 
 import org.bme.micro_futar.orders.dtos.CreateShipmentResponseDTO;
-import org.bme.micro_futar.orders.entities.LocationCountry;
 import org.bme.micro_futar.orders.entities.Shipment;
 import org.bme.micro_futar.orders.exceptions.PriceNotAvailableException;
 import org.bme.micro_futar.orders.kafka.ShipmentNotificationProducer;
 import org.bme.micro_futar.orders.kafka.ShipmentProducer;
 import org.bme.micro_futar.orders.mappers.ShipmentMapper;
-import org.bme.micro_futar.orders.repositories.LocationCountryRepository;
 import org.bme.micro_futar.orders.repositories.ShipmentRepository;
 import org.bme.micro_futar.shared.dtos.CountryPriceDTO;
 import org.bme.micro_futar.shared.dtos.PaymentRequestedEventDTO;
@@ -54,9 +52,6 @@ class ShipmentServiceTests {
 
     @Mock
     private ShipmentNotificationProducer shipmentNotificationProducer;
-
-    @Mock
-    private LocationCountryRepository locationCountryRepository;
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
@@ -129,9 +124,6 @@ class ShipmentServiceTests {
     @Test
     void testNewShipment_Success() {
         when(countryPriceService.findPriceByCountriesAndSize(1L, 2L, 1L)).thenReturn(Optional.of(countryPriceDTO));
-        LocationCountry senderCountry = new LocationCountry();
-        senderCountry.setCurrencyCode("EUR");
-        when(locationCountryRepository.findById(1L)).thenReturn(Optional.of(senderCountry));
         when(shipmentMapper.toEntity(any(ShipmentDTO.class))).thenReturn(shipmentEntity);
         when(shipmentRepository.save(any(Shipment.class))).thenReturn(shipmentEntity);
         ShipmentDTO savedDTO = ShipmentDTO.builder()
@@ -156,7 +148,7 @@ class ShipmentServiceTests {
                 .recipientLongitude(1.234)
                 .packageSizeId(1L)
                 .maxPrice(20.0)
-                .currencyCode("EUR")
+                .currencyCode("HUF")
                 .paymentStatus(PaymentStatus.PENDING)
                 .parcelNumber("parcel-1")
                 .build();
@@ -170,13 +162,13 @@ class ShipmentServiceTests {
         // The client-sent price is ignored; the max price comes from the price table.
         verify(shipmentMapper).toEntity(argThat(dto -> dto.getPrice() == null
                 && dto.getMaxPrice() == 20.0
-                && "EUR".equals(dto.getCurrencyCode())
+                && "HUF".equals(dto.getCurrencyCode())
                 && dto.getPaymentStatus() == PaymentStatus.PENDING
                 && !dto.isConfirmed()));
         verify(eventPublisher).publishEvent(argThat((PaymentRequestedEventDTO request) ->
                 request.getShipmentId().equals(1L)
                         && request.getMaxAmount().compareTo(new BigDecimal("20.0")) == 0
-                        && request.getCurrencyCode().equals("EUR")
+                        && request.getCurrencyCode().equals("HUF")
                         && request.getPaymentTokenHash().equals(PaymentTokens.hash(result.getPaymentToken()))));
         // Logistics and the sender only hear about it once the payment is authorized.
         verifyNoInteractions(shipmentProducer, shipmentNotificationProducer);
