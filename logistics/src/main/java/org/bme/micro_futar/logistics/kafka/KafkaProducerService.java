@@ -8,6 +8,7 @@ import org.bme.micro_futar.shared.exceptions.KafkaException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @Service
@@ -52,6 +53,9 @@ public class KafkaProducerService {
 
     @Value("${kafka.topics.currency-topic}")
     private String currencyTopic;
+
+    @Value("${kafka.topics.shipment-priced-topic}")
+    private String shipmentPricedTopic;
 
     public void sendLocationRegion(LocationRegionDTO locationRegionDTO) {
         log.info("Sending location region message to topic {}: {}", locationRegionTopic, locationRegionDTO);
@@ -190,6 +194,30 @@ public class KafkaProducerService {
         } catch (Exception e) {
             log.error("Error sending depo message to Kafka", e);
             throw new KafkaException("Failed to send depo message", e);
+        }
+    }
+
+    /**
+     * Runs after the shipment's route and price are committed; payments captures the final price from it.
+     * TODO: replace with a transactional outbox; a crash between commit and send currently loses the event.
+     */
+    @TransactionalEventListener
+    public void sendShipmentPriced(ShipmentPricedEventDTO event) {
+        log.info("Sending shipment priced message to topic {}: {}", shipmentPricedTopic, event);
+        try {
+            String message = objectMapper.writeValueAsString(event);
+            kafkaTemplate.send(shipmentPricedTopic, event.getShipmentId().toString(), message)
+                    .whenComplete((_, ex) -> {
+                        if (ex == null) {
+                            log.info("Successfully sent shipment priced event for shipment ID: {} to topic: {}",
+                                    event.getShipmentId(), shipmentPricedTopic);
+                        } else {
+                            log.error("Failed to send shipment priced event for shipment ID: {} to topic: {}",
+                                    event.getShipmentId(), shipmentPricedTopic, ex);
+                        }
+                    });
+        } catch (Exception e) {
+            log.error("Error sending shipment priced event to Kafka", e);
         }
     }
 
