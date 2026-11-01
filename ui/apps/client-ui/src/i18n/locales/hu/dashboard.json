@@ -18,9 +18,11 @@
     "destination": "Célállomás",
     "date": "Dátum",
     "status": "Státusz",
+    "statusAwaitingPayment": "Fizetésre vár",
     "statusInProgress": "Folyamatban",
     "statusDelivered": "Kiszállítva",
     "statusFailed": "Sikertelen",
+    "payAction": "Fizetés",
     "totalCount": "Összesen {{count}} találat",
     "prevPage": "Előző oldal",
     "nextPage": "Következő oldal"

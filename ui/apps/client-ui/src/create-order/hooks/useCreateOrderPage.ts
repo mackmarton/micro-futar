@@ -5,14 +5,16 @@ import { useAuth, type MapCoordinate } from '@package/shared-ui';
 import { type AddressCardField, type AddressCardValue } from '../components/AddressCard.tsx';
 import { type PackageDetailsValue, type PackageSizeId } from '../components/PackageDetailsSection.tsx';
 import { createShipment } from '../api/ordersApi.ts';
+import { redirectToCheckout } from '../../payment/redirectToCheckout.ts';
+import { savePaymentToken } from '../../payment/paymentTokenStore.ts';
 import { useCities } from './useCities.ts';
 import { useCountries } from './useCountries.ts';
 import { useCountryPrices } from './useCountryPrices.ts';
-import { useCurrencies } from './useCurrencies.ts';
 import { usePackageSizes } from './usePackageSizes.ts';
 import type { AppLocale } from '../../i18n/createI18nInstance.ts';
 
-const DEFAULT_CURRENCY_SYMBOL = 'Ft';
+// Az ártábla (a depók közötti szakaszárak) forintban van, a fizetés is forintban történik.
+const PRICE_CURRENCY_SYMBOL = 'Ft';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -152,7 +154,6 @@ export const useCreateOrderPage = (locale: AppLocale) => {
     errorMessage: countryPricesErrorMessage,
     retry: retryCountryPrices,
   } = useCountryPrices(addressCards.sender.country, addressCards.recipient.country);
-  const { currencyOptions } = useCurrencies();
 
   const isRouteSelected = Boolean(addressCards.sender.country && addressCards.recipient.country);
 
@@ -343,17 +344,6 @@ export const useCreateOrderPage = (locale: AppLocale) => {
     () => countryOptions.find((option) => option.value === addressCards.sender.country)?.label ?? '',
     [addressCards.sender.country, countryOptions],
   );
-  const selectedSenderCurrencySymbol = useMemo(() => {
-    const senderCurrencyCode = countryOptions.find(
-      (option) => option.value === addressCards.sender.country,
-    )?.currencyCode;
-
-    if (!senderCurrencyCode) {
-      return DEFAULT_CURRENCY_SYMBOL;
-    }
-
-    return currencyOptions.find((currency) => currency.code === senderCurrencyCode)?.symbol ?? senderCurrencyCode;
-  }, [addressCards.sender.country, countryOptions, currencyOptions]);
   const selectedRecipientCountryName = useMemo(
     () => countryOptions.find((option) => option.value === addressCards.recipient.country)?.label ?? '',
     [addressCards.recipient.country, countryOptions],
@@ -578,7 +568,7 @@ export const useCreateOrderPage = (locale: AppLocale) => {
       const senderConfirmedPosition = addressLocations.sender.confirmedPosition;
       const recipientConfirmedPosition = addressLocations.recipient.confirmedPosition;
 
-      await createShipment({
+      const { shipment, paymentToken } = await createShipment({
         senderName: addressCards.sender.name.trim(),
         senderEmail: addressCards.sender.email.trim(),
         senderPhone: addressCards.sender.phone.trim(),
@@ -600,8 +590,22 @@ export const useCreateOrderPage = (locale: AppLocale) => {
         packageSizeId: packageDetailsValue.sizeId,
       });
 
+      const shipmentId = shipment?.id;
+      if (shipmentId === undefined) {
+        throw new Error('Missing shipment id in the response');
+      }
+      if (paymentToken) {
+        savePaymentToken(shipmentId, paymentToken);
+      }
       setSubmitSuccessMessage(t('submit.success'));
-      router.push(locale === 'en' ? '/en/portal/dashboard' : '/portal/dashboard');
+
+      try {
+        await redirectToCheckout(shipmentId, paymentToken ?? null, locale);
+      } catch (checkoutError) {
+        // A rendelés már elkészült: a fizetés oldalon újra elindítható.
+        console.error('Failed to start checkout.', checkoutError);
+        router.push(`${locale === 'en' ? '/en' : ''}/portal/payment?shipmentId=${shipmentId}`);
+      }
     } catch (error) {
       console.error('Failed to create shipment.', error);
       setSubmitErrorMessage(t('submit.genericError'));
@@ -613,7 +617,7 @@ export const useCreateOrderPage = (locale: AppLocale) => {
   const orderSummaryCardProps = {
     minPrice: selectedCountryPrice?.minPrice,
     maxPrice: selectedCountryPrice?.maxPrice,
-    currencySymbol: selectedSenderCurrencySymbol,
+    currencySymbol: PRICE_CURRENCY_SYMBOL,
     isSubmitDisabled: isSubmitDisabled || isSubmitting,
     isSubmitting,
     submitErrorMessage,

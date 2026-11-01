@@ -60,13 +60,14 @@
     "minPrice": "Minimum ár",
     "maxPrice": "Maximum ár",
     "totalLabel": "Aktuális végösszeg",
-    "submit": "Rendelés leadása",
+    "submit": "Tovább a fizetéshez",
     "submitting": "Feldolgozás...",
-    "terms": "A gombra kattintva elfogadja az Általános Szerződési Feltételeket és az Adatkezelési Tájékoztatót."
+    "terms": "A gombra kattintva elfogadja az Általános Szerződési Feltételeket és az Adatkezelési Tájékoztatót.",
+    "paymentNote": "Bankkártyás fizetés: most a maximum árat zároljuk a kártyáján, a végleges árat az útvonal megtervezése után vonjuk le, a különbözet felszabadul."
   },
   "submit": {
     "missingLocation": "A rendeléshez érvényes ország és város kiválasztása szükséges.",
-    "success": "A rendelést sikeresen rögzítettük.",
+    "success": "A rendelést rögzítettük, átirányítjuk a fizetéshez...",
     "genericError": "A rendelés mentése nem sikerült. Kérjük próbálja újra."
   },
   "geocode": {

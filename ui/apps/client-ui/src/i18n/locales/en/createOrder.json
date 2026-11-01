@@ -60,13 +60,14 @@
     "minPrice": "Minimum price",
     "maxPrice": "Maximum price",
     "totalLabel": "Current total",
-    "submit": "Place order",
+    "submit": "Continue to payment",
     "submitting": "Processing...",
-    "terms": "By clicking the button you accept the Terms and Conditions and the Privacy Policy."
+    "terms": "By clicking the button you accept the Terms and Conditions and the Privacy Policy.",
+    "paymentNote": "Card payment: we now hold the maximum price on your card and charge the final price once the route is planned; the rest is released."
   },
   "submit": {
     "missingLocation": "A valid country and city selection is required to place the order.",
-    "success": "Your order has been placed successfully.",
+    "success": "Your order has been placed, redirecting you to payment...",
     "genericError": "Couldn't save the order. Please try again."
   },
   "geocode": {

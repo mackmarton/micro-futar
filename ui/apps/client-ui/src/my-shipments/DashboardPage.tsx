@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PortalLayout } from '@package/shared-ui';
 import {ShipmentStats} from './components/ShipmentStats.tsx';
@@ -14,9 +15,11 @@ export type DashboardPageProps = {
 };
 
 export const DashboardPage = ({locale}: DashboardPageProps) => {
-    const {shipments, stats, isLoading, errorMessage, retry} = useUserShipments();
     const {t} = useTranslation(['common', 'dashboard']);
     const {activeHref, navigationItems, routeHref, homeHref, brandSubtitle} = usePortalNavigation(locale, 'dashboard');
+    const paymentHref = routeHref('payment');
+    const paymentHrefFor = useCallback((shipmentId: number) => `${paymentHref}?shipmentId=${shipmentId}`, [paymentHref]);
+    const {shipments, stats, isLoading, errorMessage, retry} = useUserShipments(paymentHrefFor);
 
     return (
         <PortalLayout

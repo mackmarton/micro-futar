@@ -4,12 +4,13 @@ import type { AppLocale } from '../i18n/createI18nInstance.ts';
 
 const basePathFor = (locale: AppLocale) => (locale === 'en' ? '/en' : '');
 
-export type PortalRoute = 'dashboard' | 'createOrder' | 'tracking';
+export type PortalRoute = 'dashboard' | 'createOrder' | 'tracking' | 'payment';
 
 const ROUTE_PATH: Record<PortalRoute, string> = {
   dashboard: '/portal/dashboard',
   createOrder: '/portal/create-order',
   tracking: '/portal/tracking',
+  payment: '/portal/payment',
 };
 
 /**

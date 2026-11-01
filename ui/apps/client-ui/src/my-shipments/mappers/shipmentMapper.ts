@@ -13,6 +13,15 @@ const formatDestination = (shipment: ShipmentDTO, unknownDestinationLabel: strin
 };
 
 const getStatus = (shipment: ShipmentDTO): ShipmentStatus => {
+  switch (shipment.paymentStatus) {
+    case 'PENDING':
+      return 'awaitingPayment';
+    case 'EXPIRED':
+    case 'FAILED':
+    case 'CANCELED':
+      return 'failed';
+  }
+
   if (shipment.delivered === true) {
     return 'delivered';
   }
@@ -24,6 +33,7 @@ export const mapShipmentDtoToShipment = (
   shipment: ShipmentDTO,
   index: number,
   unknownDestinationLabel: string,
+  paymentHrefFor: (shipmentId: number) => string,
 ): Shipment => {
   const stableFallbackId = shipment.id ?? index + 1;
   const id = shipment.parcelNumber?.trim() || `#HU-${stableFallbackId}`;
@@ -34,14 +44,18 @@ export const mapShipmentDtoToShipment = (
     createdAt: UNKNOWN_DATE,
     destination: formatDestination(shipment, unknownDestinationLabel),
     status,
+    paymentHref: status === 'awaitingPayment' && shipment.id !== undefined ? paymentHrefFor(shipment.id) : undefined,
   };
 };
 
 export const mapShipmentDtosToShipments = (
   shipments: ShipmentDTO[],
   unknownDestinationLabel: string,
+  paymentHrefFor: (shipmentId: number) => string,
 ): Shipment[] => {
-  return shipments.map((shipment, index) => mapShipmentDtoToShipment(shipment, index, unknownDestinationLabel));
+  return shipments.map((shipment, index) =>
+    mapShipmentDtoToShipment(shipment, index, unknownDestinationLabel, paymentHrefFor),
+  );
 };
 
 export const buildShipmentStats = (shipments: Shipment[]): ShipmentStatsObject => {
