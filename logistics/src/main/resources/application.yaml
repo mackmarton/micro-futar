@@ -52,6 +52,7 @@ kafka:
     courier-topic: ${COURIER_TOPIC}
     vehicle-topic: ${VEHICLE_TOPIC}
     currency-topic: ${CURRENCY_TOPIC}
+    shipment-priced-topic: ${SHIPMENT_PRICED_TOPIC}
 
 url:
   api-gateway: ${API_GATEWAY_URL}

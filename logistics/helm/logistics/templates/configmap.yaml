@@ -24,3 +24,4 @@ data:
   COURIER_TOPIC: {{ .Values.kafka.topics.courier_topic | quote }}
   VEHICLE_TOPIC: {{ .Values.kafka.topics.vehicle_topic | quote }}
   CURRENCY_TOPIC: {{ .Values.kafka.topics.currency_topic | quote }}
+  SHIPMENT_PRICED_TOPIC: {{ .Values.kafka.topics.shipment_priced_topic | quote }}

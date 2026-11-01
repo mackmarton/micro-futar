@@ -53,3 +53,4 @@ kafka:
     courier_topic: couriers
     vehicle_topic: vehicles
     currency_topic: currencies
+    shipment_priced_topic: shipment-priced

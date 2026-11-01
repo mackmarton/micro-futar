@@ -21,7 +21,8 @@ public class ShipmentRoutePlanner {
     private final DepoRouteFinderService depoRouteFinderService;
     private final ShipmentRouteService shipmentRouteService;
 
-    public void planRouteForShipment(ShipmentDTO shipment) {
+    /** Plans and saves the route of the shipment and returns its depo route price. */
+    public double planRouteForShipment(ShipmentDTO shipment) {
         DepoDTO originDepo = findClosestDepo(
                 shipment.getSenderLongitude(),
                 shipment.getSenderLatitude(),
@@ -52,6 +53,10 @@ public class ShipmentRoutePlanner {
         );
 
         shipmentRouteService.saveAll(shipmentRoutes);
+
+        Double routePrice = depoRouteFinderService.findCheapestRoutePrice(
+                originDepo.getId(), destinationDepo.getId(), shipment.getPackageSizeId());
+        return routePrice != null ? routePrice : 0.0;
     }
 
     private DepoDTO findClosestDepo(double longitude, double latitude, long countryId) {
