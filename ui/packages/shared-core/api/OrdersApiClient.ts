@@ -46,7 +46,22 @@ export interface ShipmentDTO {
   parcelNumber?: string;
   /** @format double */
   price?: number;
+  /** @format double */
+  maxPrice?: number;
   currencyCode?: string;
+  paymentStatus?:
+    | "PENDING"
+    | "AUTHORIZED"
+    | "PAID"
+    | "EXPIRED"
+    | "FAILED"
+    | "CANCELED"
+    | "REFUNDED";
+}
+
+export interface CreateShipmentResponseDTO {
+  shipment?: ShipmentDTO;
+  paymentToken?: string;
 }
 
 export interface LocationRegionDTO {
@@ -381,7 +396,7 @@ export class Api<
      * @request POST:/api/orders/shipments/new
      */
     newShipment: (data: ShipmentDTO, params: RequestParams = {}) =>
-      this.request<ShipmentDTO, any>({
+      this.request<CreateShipmentResponseDTO, any>({
         path: `/api/orders/shipments/new`,
         method: "POST",
         body: data,

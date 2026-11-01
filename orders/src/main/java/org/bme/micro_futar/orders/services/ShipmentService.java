@@ -3,13 +3,11 @@ package org.bme.micro_futar.orders.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.orders.dtos.CreateShipmentResponseDTO;
-import org.bme.micro_futar.orders.entities.LocationCountry;
 import org.bme.micro_futar.orders.entities.Shipment;
 import org.bme.micro_futar.orders.exceptions.PriceNotAvailableException;
 import org.bme.micro_futar.orders.kafka.ShipmentNotificationProducer;
 import org.bme.micro_futar.orders.kafka.ShipmentProducer;
 import org.bme.micro_futar.orders.mappers.ShipmentMapper;
-import org.bme.micro_futar.orders.repositories.LocationCountryRepository;
 import org.bme.micro_futar.orders.repositories.ShipmentRepository;
 import org.bme.micro_futar.shared.dtos.CountryPriceDTO;
 import org.bme.micro_futar.shared.dtos.PaymentRequestedEventDTO;
@@ -33,14 +31,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ShipmentService {
 
-    private static final String DEFAULT_CURRENCY_CODE = "HUF";
+    private static final String PRICE_CURRENCY_CODE = "HUF";
 
     private final ShipmentRepository shipmentRepository;
     private final CountryPriceService countryPriceService;
     private final ShipmentMapper shipmentMapper;
     private final ShipmentProducer shipmentProducer;
     private final ShipmentNotificationProducer shipmentNotificationProducer;
-    private final LocationCountryRepository locationCountryRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     /**
@@ -62,7 +59,7 @@ public class ShipmentService {
         shipmentDTO.setDelivered(false);
         shipmentDTO.setPrice(null);
         shipmentDTO.setMaxPrice(countryPrice.getMaxPrice());
-        shipmentDTO.setCurrencyCode(resolveCurrencyCode(shipmentDTO.getSenderLocationCountryId()));
+        shipmentDTO.setCurrencyCode(PRICE_CURRENCY_CODE);
         shipmentDTO.setPaymentStatus(PaymentStatus.PENDING);
         shipmentDTO.setParcelNumber(UUID.randomUUID().toString());
         Shipment savedEntity = shipmentRepository.save(shipmentMapper.toEntity(shipmentDTO));
@@ -137,13 +134,5 @@ public class ShipmentService {
         return shipmentRepository.findBySenderEmail(senderEmail).stream()
                 .map(shipmentMapper::toDTO)
                 .toList();
-    }
-
-    /** Prices are defined in the sender country's currency, so that is what the sender pays in. */
-    private String resolveCurrencyCode(Long senderCountryId) {
-        return locationCountryRepository.findById(senderCountryId)
-                .map(LocationCountry::getCurrencyCode)
-                .filter(code -> !code.isBlank())
-                .orElse(DEFAULT_CURRENCY_CODE);
     }
 }

@@ -11,13 +11,16 @@ the API gateway and asynchronously via Kafka, and authenticate through Keycloak 
 ## Repository layout
 
 - `api_gateway/` — Spring Cloud Gateway (WebFlux). Single entry point; routes `/api/orders/**`,
-  `/api/tracking/**`, `/api/logistics/**`, `/api/courier/**` to the corresponding service and
+  `/api/tracking/**`, `/api/logistics/**`, `/api/courier/**`, `/api/payments/**` to the corresponding service and
   performs the OAuth2 `TokenRelay` (login happens here via Keycloak).
 - `orders/` — sender-facing service: shipment creation, price calculation, order records.
 - `logistics/` — dispatcher/admin service: route planning (via an external routing API), depo
   transit, courier assignment.
 - `tracking/` — read-optimized status/tracking service consumed by the public tracking UI.
 - `courier/` — courier-facing service: assigned routes, delivery status updates.
+- `payments/` — Stripe payments: authorizes the max price via Checkout (manual capture) and captures the
+  final price once logistics publishes `shipment-priced`. Guests prove ownership with a payment token
+  returned by `orders` on shipment creation; the Stripe webhook is verified by signature, not JWT.
 - `shared/` — plain (non-Spring-Boot) Maven library with the DTOs, enums, and exceptions that are
   serialized onto Kafka topics and shared across services. Every other backend module depends on
   it as `org.bme.micro_futar:shared:1.0.0`, so it must be `mvn install`ed locally before the other
