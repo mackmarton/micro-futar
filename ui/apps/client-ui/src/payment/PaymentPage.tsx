@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { PortalLayout, cn } from '@package/shared-ui';
+import { PortalLayout, cn, useAuth } from '@package/shared-ui';
 import type { AppLocale } from '../i18n/createI18nInstance.ts';
 import { LanguageSwitcher } from '../i18n/LanguageSwitcher.tsx';
 import { usePortalNavigation } from '../shared/usePortalNavigation.ts';
@@ -57,6 +57,7 @@ const parseShipmentId = (value: string | null): number | null => {
 const PaymentContent = ({ locale }: PaymentPageProps) => {
     const { t } = useTranslation('payment');
     const { routeHref } = usePortalNavigation(locale, 'payment');
+    const { user } = useAuth();
     const searchParams = useSearchParams();
     const shipmentId = parseShipmentId(searchParams.get('shipmentId'));
     const outcome = searchParams.get('outcome');
@@ -159,7 +160,7 @@ const PaymentContent = ({ locale }: PaymentPageProps) => {
                 </a>
             ) : null}
 
-            {data.status === 'AUTHORIZED' || data.status === 'PAID' ? (
+            {user && (data.status === 'AUTHORIZED' || data.status === 'PAID') ? (
                 <a
                     href={routeHref('dashboard')}
                     className="inline-flex items-center gap-2 text-primary font-bold hover:underline"
