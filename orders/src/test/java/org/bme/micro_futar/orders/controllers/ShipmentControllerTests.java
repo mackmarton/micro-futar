@@ -2,6 +2,7 @@ package org.bme.micro_futar.orders.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bme.micro_futar.orders.EnableTestContainers;
+import org.bme.micro_futar.orders.dtos.CreateShipmentResponseDTO;
 import org.bme.micro_futar.orders.services.CountryPriceService;
 import org.bme.micro_futar.orders.services.ShipmentService;
 import org.bme.micro_futar.shared.dtos.CountryPriceDTO;
@@ -97,14 +98,16 @@ class ShipmentControllerTests {
                         .maxPrice(15.0)
                         .build()));
 
-        when(shipmentService.newShipment(shipmentDTO)).thenReturn(savedShipment);
+        when(shipmentService.newShipment(shipmentDTO))
+                .thenReturn(new CreateShipmentResponseDTO(savedShipment, "payment-token"));
 
         mockMvc.perform(post("/api/shipments/new")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(shipmentDTO)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.price").value(100.0))
-                .andExpect(jsonPath("$.id").value(1));
+                .andExpect(jsonPath("$.shipment.price").value(100.0))
+                .andExpect(jsonPath("$.shipment.id").value(1))
+                .andExpect(jsonPath("$.paymentToken").value("payment-token"));
     }
 
     @Test
@@ -165,15 +168,16 @@ class ShipmentControllerTests {
                         .maxPrice(15.0)
                         .build()));
 
-        when(shipmentService.newShipment(shipmentDTO)).thenReturn(savedShipment);
+        when(shipmentService.newShipment(shipmentDTO))
+                .thenReturn(new CreateShipmentResponseDTO(savedShipment, "payment-token"));
 
         mockMvc.perform(post("/api/shipments/new")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(shipmentDTO)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(2))
-                .andExpect(jsonPath("$.price").value(200.0))
-                .andExpect(jsonPath("$.senderName").value("John Doe"))
-                .andExpect(jsonPath("$.recipientName").value("Jane Smith"));
+                .andExpect(jsonPath("$.shipment.id").value(2))
+                .andExpect(jsonPath("$.shipment.price").value(200.0))
+                .andExpect(jsonPath("$.shipment.senderName").value("John Doe"))
+                .andExpect(jsonPath("$.shipment.recipientName").value("Jane Smith"));
     }
 }

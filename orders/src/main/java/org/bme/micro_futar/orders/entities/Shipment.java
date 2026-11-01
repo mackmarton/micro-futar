@@ -3,6 +3,7 @@ package org.bme.micro_futar.orders.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bme.micro_futar.shared.enums.PaymentStatus;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
@@ -36,7 +37,12 @@ public class Shipment {
     private boolean delivered;
     //Not filled straight away
     private String parcelNumber;
+    /** Final price, known once logistics priced the shipment and the payment was captured. */
     private Double price;
+    /** Upper bound of the price, authorized on the sender's card at checkout. */
+    private Double maxPrice;
     @ColumnDefault("'HUF'")
     private String currencyCode;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 }

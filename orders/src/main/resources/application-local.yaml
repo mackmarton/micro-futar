@@ -11,3 +11,5 @@ kafka:
     shipment-topic: shipments
     shipment-notification-topic: shipment-notifications
     currency-topic: currencies
+    payment-request-topic: payment-requests
+    payment-status-topic: payment-statuses

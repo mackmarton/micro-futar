@@ -19,3 +19,5 @@ data:
   SHIPMENT_TOPIC: {{ .Values.kafka.topics.shipment_topic | quote }}
   SHIPMENT_NOTIFICATION_TOPIC: {{ .Values.kafka.topics.shipment_notification_topic | quote }}
   CURRENCY_TOPIC: {{ .Values.kafka.topics.currency_topic | quote }}
+  PAYMENT_REQUEST_TOPIC: {{ .Values.kafka.topics.payment_request_topic | quote }}
+  PAYMENT_STATUS_TOPIC: {{ .Values.kafka.topics.payment_status_topic | quote }}

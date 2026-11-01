@@ -1,6 +1,7 @@
 package org.bme.micro_futar.orders.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.bme.micro_futar.orders.dtos.CreateShipmentResponseDTO;
 import org.bme.micro_futar.orders.services.ShipmentService;
 import org.bme.micro_futar.shared.dtos.ShipmentDTO;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ public class ShipmentController {
     private final ShipmentService shipmentService;
 
     @PostMapping("new")
-    public ResponseEntity<ShipmentDTO> newShipment(@RequestBody ShipmentDTO shipmentDTO) {
+    public ResponseEntity<CreateShipmentResponseDTO> newShipment(@RequestBody ShipmentDTO shipmentDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(shipmentService.newShipment(shipmentDTO));
     }
 
