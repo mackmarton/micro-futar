@@ -7,5 +7,6 @@ export const queryKeys = {
     ['countryPrices', originCountryId, destinationCountryId] as const,
   userShipments: ['userShipments'] as const,
   tracking: (trackingNumber: string) => ['tracking', trackingNumber] as const,
+  paymentStatus: (shipmentId: number) => ['paymentStatus', shipmentId] as const,
 };
 

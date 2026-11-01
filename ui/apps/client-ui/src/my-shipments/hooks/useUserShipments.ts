@@ -21,7 +21,7 @@ const EMPTY_STATS: ShipmentStatsObject = {
   delivered: 0,
 };
 
-export const useUserShipments = (): UseUserShipmentsResult => {
+export const useUserShipments = (paymentHrefFor: (shipmentId: number) => string): UseUserShipmentsResult => {
   const { t } = useTranslation('dashboard');
   const shipmentsQuery = useQuery({
     queryKey: queryKeys.userShipments,
@@ -34,8 +34,8 @@ export const useUserShipments = (): UseUserShipmentsResult => {
       return [];
     }
 
-    return mapShipmentDtosToShipments(shipmentsQuery.data, t('unknownDestination'));
-  }, [shipmentsQuery.data, t]);
+    return mapShipmentDtosToShipments(shipmentsQuery.data, t('unknownDestination'), paymentHrefFor);
+  }, [shipmentsQuery.data, t, paymentHrefFor]);
 
   const stats = useMemo<ShipmentStatsObject>(() => buildShipmentStats(shipments), [shipments]);
 

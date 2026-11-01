@@ -4,11 +4,13 @@ import huTracking from './locales/hu/tracking.json';
 import huDashboard from './locales/hu/dashboard.json';
 import huCreateOrder from './locales/hu/createOrder.json';
 import huLanding from './locales/hu/landing.json';
+import huPayment from './locales/hu/payment.json';
 import enCommon from './locales/en/common.json';
 import enTracking from './locales/en/tracking.json';
 import enDashboard from './locales/en/dashboard.json';
 import enCreateOrder from './locales/en/createOrder.json';
 import enLanding from './locales/en/landing.json';
+import enPayment from './locales/en/payment.json';
 
 export type AppLocale = 'hu' | 'en';
 
@@ -16,8 +18,8 @@ export const SUPPORTED_LOCALES: AppLocale[] = ['hu', 'en'];
 export const DEFAULT_LOCALE: AppLocale = 'hu';
 
 const resources = {
-  hu: { common: huCommon, tracking: huTracking, dashboard: huDashboard, createOrder: huCreateOrder, landing: huLanding },
-  en: { common: enCommon, tracking: enTracking, dashboard: enDashboard, createOrder: enCreateOrder, landing: enLanding },
+  hu: { common: huCommon, tracking: huTracking, dashboard: huDashboard, createOrder: huCreateOrder, landing: huLanding, payment: huPayment },
+  en: { common: enCommon, tracking: enTracking, dashboard: enDashboard, createOrder: enCreateOrder, landing: enLanding, payment: enPayment },
 };
 
 /**
@@ -32,7 +34,7 @@ export const createI18nInstance = (locale: AppLocale): I18nInstance => {
     lng: locale,
     fallbackLng: DEFAULT_LOCALE,
     defaultNS: 'common',
-    ns: ['common', 'tracking', 'dashboard', 'createOrder', 'landing'],
+    ns: ['common', 'tracking', 'dashboard', 'createOrder', 'landing', 'payment'],
     resources,
     interpolation: { escapeValue: false },
     react: { useSuspense: false },

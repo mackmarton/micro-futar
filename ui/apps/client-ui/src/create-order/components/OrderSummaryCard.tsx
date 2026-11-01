@@ -68,6 +68,10 @@ export const OrderSummaryCard = ({
                     <p className="mt-3 text-xs text-green-700">{submitSuccessMessage}</p>
                 ) : null}
 
+                <p className="text-xs text-on-surface-variant mt-4 leading-relaxed">
+                    {t('summary.paymentNote')}
+                </p>
+
                 <p className="text-[10px] text-center text-on-surface-variant mt-4 leading-relaxed">
                     {t('summary.terms')}
                 </p>

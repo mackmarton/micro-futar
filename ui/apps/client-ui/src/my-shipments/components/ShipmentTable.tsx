@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { cn } from '@package/shared-ui';
 
-export type ShipmentStatus = 'inProgress' | 'delivered' | 'failed';
+export type ShipmentStatus = 'awaitingPayment' | 'inProgress' | 'delivered' | 'failed';
 
 export type Shipment = {
   id: string;
@@ -15,6 +15,8 @@ export type Shipment = {
   progressPercent?: number;
   onDownloadProof?: () => void;
   onRetry?: () => void;
+  /** Fizetésre váró szállítmánynál a fizetés oldal címe. */
+  paymentHref?: string;
 };
 
 export type ShipmentTableProps = {
@@ -35,6 +37,11 @@ const STATUS_META: Record<
     iconContainerClass: string;
   }
 > = {
+  awaitingPayment: {
+    badgeClass: 'bg-secondary-container text-on-secondary-container',
+    icon: 'credit_card',
+    iconContainerClass: 'bg-secondary-container text-on-secondary-container',
+  },
   inProgress: {
     badgeClass: 'bg-tertiary-fixed text-on-tertiary-fixed',
     icon: 'package_2',
@@ -53,6 +60,7 @@ const STATUS_META: Record<
 };
 
 const STATUS_LABEL_KEY: Record<ShipmentStatus, string> = {
+  awaitingPayment: 'table.statusAwaitingPayment',
   inProgress: 'table.statusInProgress',
   delivered: 'table.statusDelivered',
   failed: 'table.statusFailed',
@@ -110,9 +118,16 @@ export const ShipmentTable = ({
                   </td>
 
                   <td className="px-6 py-4">
-                    <span className={cn('px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter', meta.badgeClass)}>
-                      {badgeLabel}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className={cn('px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter', meta.badgeClass)}>
+                        {badgeLabel}
+                      </span>
+                      {shipment.paymentHref ? (
+                        <a href={shipment.paymentHref} className="text-xs font-bold text-primary hover:underline">
+                          {t('table.payAction')}
+                        </a>
+                      ) : null}
+                    </div>
                   </td>
                 </tr>
               );

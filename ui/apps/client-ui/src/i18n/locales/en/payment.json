@@ -1,0 +1,56 @@
+{
+  "title": "Payment",
+  "loading": "Loading payment status...",
+  "payButton": "Pay by card ({{maxAmount}})",
+  "redirecting": "Redirecting to the payment page...",
+  "checkoutError": "Couldn't start the payment. Please try again.",
+  "cancelled": "You cancelled the payment; your order is waiting to be paid.",
+  "newOrder": "Send a new package",
+  "toDashboard": "Go to my packages",
+  "invalidLink": {
+    "title": "Invalid payment link",
+    "text": "The link doesn't contain a valid order ID."
+  },
+  "notFound": {
+    "title": "Payment not found",
+    "text": "The payment for this order isn't available from this browser. If you have an account, log in with the email address you sent the package with."
+  },
+  "error": {
+    "title": "Something went wrong",
+    "text": "Couldn't load the payment status. Please refresh the page."
+  },
+  "processing": {
+    "title": "Processing payment...",
+    "text": "Waiting for confirmation from your bank, this usually takes a few seconds."
+  },
+  "status": {
+    "PENDING": {
+      "title": "Awaiting payment",
+      "text": "Pay by card to send your package. We now hold at most {{maxAmount}} on your card; the final price is charged once the route is planned and the rest is released."
+    },
+    "AUTHORIZED": {
+      "title": "Payment successful",
+      "text": "{{maxAmount}} is held on your card. The final price is charged once the route is planned, and the rest is released automatically. We'll send you a confirmation email."
+    },
+    "PAID": {
+      "title": "Paid",
+      "text": "The final price of the package ({{capturedAmount}}) has been charged."
+    },
+    "EXPIRED": {
+      "title": "Payment deadline expired",
+      "text": "The order wasn't paid in time, so it wasn't sent. Please place a new order."
+    },
+    "FAILED": {
+      "title": "Payment failed",
+      "text": "The payment didn't go through, so the order wasn't sent. Please place a new order."
+    },
+    "CANCELED": {
+      "title": "Payment cancelled",
+      "text": "The amount held on your card has been released; the order won't be delivered."
+    },
+    "REFUNDED": {
+      "title": "Refunded",
+      "text": "The amount paid has been refunded to your card."
+    }
+  }
+}

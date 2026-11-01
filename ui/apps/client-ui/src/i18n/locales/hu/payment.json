@@ -1,0 +1,56 @@
+{
+  "title": "Fizetés",
+  "loading": "Fizetés állapotának betöltése...",
+  "payButton": "Fizetés bankkártyával ({{maxAmount}})",
+  "redirecting": "Átirányítás a fizetési oldalra...",
+  "checkoutError": "Nem sikerült elindítani a fizetést. Kérjük, próbálja újra.",
+  "cancelled": "A fizetést megszakította, a rendelése fizetésre vár.",
+  "newOrder": "Új csomag feladása",
+  "toDashboard": "Tovább a csomagjaimhoz",
+  "invalidLink": {
+    "title": "Érvénytelen fizetési link",
+    "text": "A link nem tartalmaz érvényes rendelésazonosítót."
+  },
+  "notFound": {
+    "title": "A fizetés nem található",
+    "text": "Ehhez a rendeléshez ebből a böngészőből nem érhető el fizetés. Ha van fiókja, jelentkezzen be azzal az e-mail-címmel, amellyel a csomagot feladta."
+  },
+  "error": {
+    "title": "Hiba történt",
+    "text": "Nem sikerült lekérdezni a fizetés állapotát. Kérjük, frissítse az oldalt."
+  },
+  "processing": {
+    "title": "Fizetés feldolgozása...",
+    "text": "A bankjától visszaigazolásra várunk, ez általában néhány másodperc."
+  },
+  "status": {
+    "PENDING": {
+      "title": "Fizetésre vár",
+      "text": "A csomag feladásához fizessen bankkártyával. Most legfeljebb {{maxAmount}} összeget zárolunk a kártyáján, a végleges árat az útvonal megtervezése után vonjuk le, a különbözet felszabadul."
+    },
+    "AUTHORIZED": {
+      "title": "Sikeres fizetés",
+      "text": "{{maxAmount}} zárolva a kártyáján. A végleges árat az útvonal megtervezése után vonjuk le, a különbözet automatikusan felszabadul. A visszaigazolást e-mailben küldjük."
+    },
+    "PAID": {
+      "title": "Kifizetve",
+      "text": "A csomag végleges ára ({{capturedAmount}}) levonásra került."
+    },
+    "EXPIRED": {
+      "title": "Lejárt a fizetési határidő",
+      "text": "A rendelést nem fizették ki időben, ezért nem került feladásra. Adjon fel új rendelést."
+    },
+    "FAILED": {
+      "title": "Sikertelen fizetés",
+      "text": "A fizetés nem sikerült, a rendelés nem került feladásra. Adjon fel új rendelést."
+    },
+    "CANCELED": {
+      "title": "A fizetés visszavonva",
+      "text": "A kártyáján zárolt összeg felszabadult, a rendelés nem kerül kézbesítésre."
+    },
+    "REFUNDED": {
+      "title": "Visszatérítve",
+      "text": "A kifizetett összeget visszautaltuk a kártyájára."
+    }
+  }
+}
