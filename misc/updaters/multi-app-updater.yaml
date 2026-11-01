@@ -51,6 +51,17 @@ spec:
           commonUpdateSettings:
             updateStrategy: "digest"
             pullSecret: "pullsecret:argocd/ghcr-login-secret"
+    - namePattern: "payments"
+      images:
+        - alias: "payments"
+          imageName: "ghcr.io/mackmarton/payments:latest"
+          manifestTargets:
+            helm:
+              name: "ghcr.io/mackmarton/payments"
+              tag: "image.tag"
+          commonUpdateSettings:
+            updateStrategy: "digest"
+            pullSecret: "pullsecret:argocd/ghcr-login-secret"
     - namePattern: "api-gateway"
       images:
         - alias: "api-gateway"
