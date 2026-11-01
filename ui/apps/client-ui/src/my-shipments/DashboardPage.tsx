@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PortalLayout } from '@package/shared-ui';
+import { PortalLayout, useAuth } from '@package/shared-ui';
 import {ShipmentStats} from './components/ShipmentStats.tsx';
 import {ShipmentTable} from "./components/ShipmentTable.tsx";
 import {useUserShipments} from './hooks/useUserShipments.ts';
@@ -19,7 +19,17 @@ export const DashboardPage = ({locale}: DashboardPageProps) => {
     const {activeHref, navigationItems, routeHref, homeHref, brandSubtitle} = usePortalNavigation(locale, 'dashboard');
     const paymentHref = routeHref('payment');
     const paymentHrefFor = useCallback((shipmentId: number) => `${paymentHref}?shipmentId=${shipmentId}`, [paymentHref]);
-    const {shipments, stats, isLoading, errorMessage, retry} = useUserShipments(paymentHrefFor);
+    const {user, isLoading: isAuthLoading, login} = useAuth();
+    const isLoggedIn = !isAuthLoading && user !== null;
+    const {shipments, stats, isLoading, errorMessage, retry} = useUserShipments(paymentHrefFor, isLoggedIn);
+
+    // A saját csomagok csak bejelentkezve érhetők el: vendéget a bejelentkezésre küldjük, onnan
+    // ide tér vissza.
+    useEffect(() => {
+        if (!isAuthLoading && !user) {
+            login();
+        }
+    }, [isAuthLoading, user, login]);
 
     return (
         <PortalLayout
@@ -31,6 +41,12 @@ export const DashboardPage = ({locale}: DashboardPageProps) => {
             topBarRightSlot={<LanguageSwitcher />}
             contentClassName="flex-grow"
         >
+            {!isLoggedIn ? (
+                <section className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-8 text-center text-on-surface-variant">
+                    {t('dashboard:redirectingToLogin')}
+                </section>
+            ) : (
+                <>
                     <ShipmentStats stats={stats}/>
 
                     <div className="flex justify-between items-end mb-8 gap-6">
@@ -85,6 +101,8 @@ export const DashboardPage = ({locale}: DashboardPageProps) => {
                     {!isLoading && !errorMessage && shipments.length > 0 ? (
                         <ShipmentTable shipments={shipments}/>
                     ) : null}
+                </>
+            )}
         </PortalLayout>
     );
 };

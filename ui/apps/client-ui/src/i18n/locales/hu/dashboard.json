@@ -4,6 +4,7 @@
   "subtitle": "Kezelje és kövesse nyomon feladott csomagjait egy helyen.",
   "newOrderButton": "Új csomag feladása",
   "loading": "Küldemények betöltése...",
+  "redirectingToLogin": "Átirányítás a bejelentkezéshez...",
   "error": {
     "generic": "Nem sikerült betölteni a küldeményeket. Próbáld újra.",
     "retry": "Újrapróbálás"
