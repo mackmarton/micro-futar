@@ -57,6 +57,12 @@ spring:
                 - Path=/api/logistics/**
               filters:
                 - RewritePath=/api/logistics/(?<segment>.*), /api/$\{segment}
+            - id: payment-service
+              uri: ${PAYMENT_SERVICE_URI}
+              predicates:
+                - Path=/api/payments/**
+              filters:
+                - RewritePath=/api/payments/(?<segment>.*), /api/$\{segment}
             - id: courier-service
               uri: ${COURIER_SERVICE_URI}
               predicates:

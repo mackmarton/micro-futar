@@ -34,7 +34,8 @@ public class SecurityConfig {
             LocaleAwareOAuth2AuthorizationRequestResolver localeAwareOAuth2AuthorizationRequestResolver) {
         http
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/api/orders/**", "/api/tracking/**", "/api/auth/me")
+                        // Payments: guests pay with the payment token from order creation, Stripe calls the webhook with a signature. Both are verified by the payments service itself.
+                        .pathMatchers("/api/orders/**", "/api/tracking/**", "/api/payments/**", "/api/auth/me")
                         .permitAll()
                         .anyExchange()
                         .authenticated()

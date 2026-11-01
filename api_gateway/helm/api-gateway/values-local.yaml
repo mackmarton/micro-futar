@@ -44,3 +44,4 @@ config:
     tracking: http://tracking.micro-futar-services:8081
     logistics: http://logistics.micro-futar-services:8081
     courier: http://courier.micro-futar-services:8081
+    payment: http://payments.micro-futar-services:8081

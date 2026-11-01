@@ -43,3 +43,4 @@ config:
     tracking: http://tracking.micro-futar-apps-dev:8080
     logistics: http://logistics.micro-futar-apps-dev:8080
     courier: http://courier.micro-futar-apps-dev:8080
+    payment: http://payments.micro-futar-apps-dev:8080
