@@ -39,3 +39,5 @@ kafka:
     shipment_topic: shipments
     shipment_notification_topic: shipment-notifications
     currency_topic: currencies
+    payment_request_topic: payment-requests
+    payment_status_topic: payment-statuses

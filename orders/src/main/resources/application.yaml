@@ -45,6 +45,8 @@ kafka:
     shipment-topic: ${SHIPMENT_TOPIC}
     shipment-notification-topic: ${SHIPMENT_NOTIFICATION_TOPIC}
     currency-topic: ${CURRENCY_TOPIC}
+    payment-request-topic: ${PAYMENT_REQUEST_TOPIC}
+    payment-status-topic: ${PAYMENT_STATUS_TOPIC}
 
 url:
   api-gateway: ${API_GATEWAY_URL:http://localhost:8085}
