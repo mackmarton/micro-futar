@@ -21,11 +21,15 @@ const EMPTY_STATS: ShipmentStatsObject = {
   delivered: 0,
 };
 
-export const useUserShipments = (paymentHrefFor: (shipmentId: number) => string): UseUserShipmentsResult => {
+export const useUserShipments = (
+  paymentHrefFor: (shipmentId: number) => string,
+  enabled: boolean,
+): UseUserShipmentsResult => {
   const { t } = useTranslation('dashboard');
   const shipmentsQuery = useQuery({
     queryKey: queryKeys.userShipments,
     queryFn: ({ signal }) => fetchShipmentsForUser(signal),
+    enabled,
     retry: 1,
   });
 
