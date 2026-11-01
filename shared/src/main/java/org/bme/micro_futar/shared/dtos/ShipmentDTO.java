@@ -1,6 +1,7 @@
 package org.bme.micro_futar.shared.dtos;
 
 import lombok.*;
+import org.bme.micro_futar.shared.enums.PaymentStatus;
 
 @Data
 @Builder
@@ -50,6 +51,10 @@ public class ShipmentDTO {
     private boolean delivered;
     //Not filled straight away
     private String parcelNumber;
+    /** Final price, set once logistics priced the shipment and the payment was captured. */
     private Double price;
+    /** Upper bound authorized on the sender's card at checkout. */
+    private Double maxPrice;
     private String currencyCode;
+    private PaymentStatus paymentStatus;
 }

@@ -18,3 +18,4 @@ data:
   TRACKING_SERVICE_URI: {{ .Values.config.services.tracking | quote }}
   LOGISTICS_SERVICE_URI: {{ .Values.config.services.logistics | quote }}
   COURIER_SERVICE_URI: {{ .Values.config.services.courier | quote }}
+  PAYMENT_SERVICE_URI: {{ .Values.config.services.payment | quote }}

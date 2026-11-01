@@ -1,0 +1,8 @@
+spring:
+  jpa:
+    generate-ddl: true
+kafka:
+  topics:
+    payment-request-topic: payment-requests
+    payment-status-topic: payment-statuses
+    shipment-priced-topic: shipment-priced
