@@ -4,6 +4,7 @@
   "subtitle": "Manage and track all your shipments in one place.",
   "newOrderButton": "Send a new package",
   "loading": "Loading shipments...",
+  "redirectingToLogin": "Redirecting to login...",
   "error": {
     "generic": "Couldn't load your shipments. Please try again.",
     "retry": "Try again"
