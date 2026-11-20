@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface ShipmentRouteRepository extends JpaRepository<ShipmentRoute, Long> {
 
+    boolean existsByShipmentId(Long shipmentId);
+
     @Query("SELECT sr FROM ShipmentRoute sr WHERE sr.originDepoId = :depoId AND sr.destinationAddress IS NOT NULL AND sr.fulfillmentTime IS NULL")
     List<ShipmentRoute> findDeliveryRoutes(@Param("depoId") Long depoId);
 

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.logistics.services.ShipmentService;
 import org.bme.micro_futar.shared.dtos.ShipmentDTO;
+import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,7 @@ public class ShipmentConsumer {
             log.info("Successfully processed shipment with ID: {}", shipmentDTO.getId());
         } catch (Exception e) {
             log.error("Error processing shipment message: {}", message, e);
+            throw new KafkaException("Failed to process shipment message", e);
         }
     }
 }

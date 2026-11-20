@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.logistics.entities.Shipment;
 import org.bme.micro_futar.logistics.mappers.ShipmentMapper;
 import org.bme.micro_futar.logistics.repositories.ShipmentRepository;
+import org.bme.micro_futar.logistics.repositories.ShipmentRouteRepository;
 import org.bme.micro_futar.logistics.services.planners.ShipmentRoutePlanner;
 import org.bme.micro_futar.shared.dtos.ShipmentDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentPricedEventDTO;
@@ -20,6 +21,7 @@ public class ShipmentService {
 
     private final ShipmentMapper shipmentMapper;
     private final ShipmentRepository shipmentRepository;
+    private final ShipmentRouteRepository shipmentRouteRepository;
     private final ShipmentRoutePlanner shipmentRoutePlanner;
     private final ShipmentPricingService shipmentPricingService;
     private final ApplicationEventPublisher eventPublisher;
@@ -27,6 +29,15 @@ public class ShipmentService {
     @Transactional
     public void processShipment(ShipmentDTO shipmentDTO) {
         Shipment shipment = shipmentMapper.toEntity(shipmentDTO);
+
+        if (shipmentRouteRepository.existsByShipmentId(shipmentDTO.getId())) {
+            shipmentRepository.findById(shipmentDTO.getId())
+                    .map(Shipment::getPrice)
+                    .ifPresent(shipment::setPrice);
+            shipmentRepository.save(shipment);
+            return;
+        }
+
         double routePrice = shipmentRoutePlanner.planRouteForShipment(shipmentDTO);
 
         // Shipments from before online payment have no authorized maximum, so there is nothing to capture.
