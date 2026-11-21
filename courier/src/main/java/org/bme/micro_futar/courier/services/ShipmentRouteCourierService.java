@@ -64,6 +64,7 @@ public class ShipmentRouteCourierService {
         return toDTOs(shipmentRouteCourierRepository.findAllPickedUpParcelsByCourierIdAndDateAssignedFor(courierId, LocalDate.now()));
     }
 
+    @Transactional
     public void pickUpAllDeliveryShipmentsForCurrentDay(Authentication authentication) {
         List<ShipmentRouteCourierDTO> shipmentRouteCouriers = findAllDeliveriesForCourierForCurrentDay(authentication);
         for (var assignment : shipmentRouteCouriers) {
@@ -71,6 +72,7 @@ public class ShipmentRouteCourierService {
         }
     }
 
+    @Transactional
     public void pickUpParcel(Long id, Authentication authentication) {
         markPickedUp(findOwnAssignment(id, authentication));
     }
@@ -88,6 +90,7 @@ public class ShipmentRouteCourierService {
                 .ifPresent(route -> shipmentNotificationService.notifyOutForDelivery(route, assignment.getId()));
     }
 
+    @Transactional
     public void fulfillAllPickupsForCurrentDay(Authentication authentication) {
         List<ShipmentRouteCourierDTO> shipmentRouteCouriers = findAllPickedUpAssignmentsForCourierForCurrentDay(authentication);
         for (var assignment : shipmentRouteCouriers) {
@@ -95,6 +98,7 @@ public class ShipmentRouteCourierService {
         }
     }
 
+    @Transactional
     public void fulfillAssignment(Long id, Authentication authentication) {
         fulfill(findOwnAssignment(id, authentication));
     }
@@ -110,6 +114,7 @@ public class ShipmentRouteCourierService {
         shipmentRouteService.fulfillShipmentRoute(assignment.getShipmentRouteId(), now);
     }
 
+    @Transactional
     public void failAssignment(Long id, Authentication authentication) {
         var assignment = findOwnAssignment(id, authentication);
         AssignmentProgress progress = progressOf(assignment.getId());

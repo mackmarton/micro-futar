@@ -12,7 +12,8 @@ import org.bme.micro_futar.shared.exceptions.KafkaException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.TimeUnit;
 
 
 @Slf4j
@@ -29,61 +30,40 @@ public class KafkaProducerService {
     private String shipmentRouteFulfilledTopic;
     @Value("${kafka.topics.assignment-status-topic}")
     private String assignmentStatusTopic;
+    @Value("${kafka.send-timeout-seconds:10}")
+    private long sendTimeoutSeconds;
     @Value("${kafka.topics.shipment-notification-topic}")
     private String shipmentNotificationTopic;
 
     public void sendShipmentRouteFulfilled(ShipmentRouteFulfilledEventDTO event) {
-        send(shipmentRouteFulfilledTopic, event.getShipmentRouteId().toString(), event, "shipment route fulfilled");
+        sendAndWait(shipmentRouteFulfilledTopic, event.getShipmentRouteId().toString(), event, "shipment route fulfilled");
     }
 
     public void sendAssignmentStatus(AssignmentStatusEventDTO event) {
-        send(assignmentStatusTopic, event.getAssignmentId().toString(), event, "assignment status");
+        sendAndWait(assignmentStatusTopic, event.getAssignmentId().toString(), event, "assignment status");
     }
 
-    private void send(String topic, String key, Object event, String what) {
+    public void sendShipmentDelivered(ShipmentDeliveredEventDTO event) {
+        sendAndWait(shipmentDeliveredTopic, event.getShipmentId().toString(), event, "shipment delivered");
+    }
+
+    private void sendAndWait(String topic, String key, Object event, String what) {
         log.info("Sending {} event to topic {}: {}", what, topic, event);
         try {
             String jsonMessage = objectMapper.writeValueAsString(event);
-            kafkaTemplate.send(topic, key, jsonMessage)
-                    .whenComplete((_, ex) -> {
-                        if (ex == null) {
-                            log.info("Successfully sent {} event with key {} to topic: {}", what, key, topic);
-                        } else {
-                            log.error("Failed to send {} event with key {} to topic: {}", what, key, topic, ex);
-                        }
-                    });
-        } catch (JsonProcessingException e) {
-            log.error("Error serializing {} event to JSON", what, e);
-            throw new KafkaException("Failed to serialize " + what + " event", e);
+            kafkaTemplate.send(topic, key, jsonMessage).get(sendTimeoutSeconds, TimeUnit.SECONDS);
+            log.info("Successfully sent {} event with key {} to topic: {}", what, key, topic);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Interrupted while sending {} event with key {} to topic: {}", what, key, topic, e);
+            throw new KafkaException("Interrupted while sending " + what + " event", e);
         } catch (Exception e) {
-            log.error("Error sending {} event to Kafka", what, e);
+            log.error("Failed to send {} event with key {} to topic: {}", what, key, topic, e);
             throw new KafkaException("Failed to send " + what + " event", e);
         }
     }
 
-    public void sendShipmentDelivered(ShipmentDeliveredEventDTO event) {
-        log.info("Sending shipment delivered event to topic {}: {}", shipmentDeliveredTopic, event);
-        try {
-            String jsonMessage = objectMapper.writeValueAsString(event);
-            kafkaTemplate.send(shipmentDeliveredTopic, event.getShipmentId().toString(), jsonMessage)
-                    .whenComplete((_, ex) -> {
-                        if (ex == null) {
-                            log.info("Successfully sent shipment delivered event for shipment ID: {} to topic: {}",
-                                    event.getShipmentId(), shipmentDeliveredTopic);
-                        } else {
-                            log.error("Failed to send shipment delivered event for shipment ID: {} to topic: {}",
-                                    event.getShipmentId(), shipmentDeliveredTopic, ex);
-                        }
-                    });
-        } catch (JsonProcessingException e) {
-            log.error("Error serializing shipment delivered event to JSON", e);
-            throw new KafkaException("Failed to serialize shipment delivered event", e);
-        } catch (Exception e) {
-            log.error("Error sending shipment delivered event to Kafka", e);
-            throw new KafkaException("Failed to send shipment delivered event", e);
-        }
-    }
-
+    /** Best effort: a lost notification never fails the courier's action. */
     public void sendShipmentNotification(ShipmentNotificationEventDTO event) {
         log.info("Sending shipment notification event to topic {}: {}", shipmentNotificationTopic, event.getDedupKey());
         try {
