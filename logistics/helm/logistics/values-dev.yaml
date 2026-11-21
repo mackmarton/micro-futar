@@ -44,6 +44,8 @@ kafka:
     shipment_topic: shipments
     depo_topic: depos
     shipment_route_courier_topic: shipment-route-couriers
+    shipment_route_fulfilled_topic: shipment-route-fulfilled
+    assignment_status_topic: assignment-status
     shipment_route_topic: shipment-routes
     courier_topic: couriers
     vehicle_topic: vehicles

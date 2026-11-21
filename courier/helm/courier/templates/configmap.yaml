@@ -16,6 +16,8 @@ data:
   SHIPMENT_DELIVERED_TOPIC: {{ .Values.kafka.topics.shipment_delivered_topic | quote }}
   SHIPMENT_NOTIFICATION_TOPIC: {{ .Values.kafka.topics.shipment_notification_topic | quote }}
   SHIPMENT_ROUTE_COURIER_TOPIC: {{ .Values.kafka.topics.shipment_route_courier_topic | quote }}
+  SHIPMENT_ROUTE_FULFILLED_TOPIC: {{ .Values.kafka.topics.shipment_route_fulfilled_topic | quote }}
+  ASSIGNMENT_STATUS_TOPIC: {{ .Values.kafka.topics.assignment_status_topic | quote }}
   DEPO_TOPIC: {{ .Values.kafka.topics.depo_topic | quote }}
   SHIPMENT_ROUTE_TOPIC: {{ .Values.kafka.topics.shipment_route_topic | quote }}
   COURIER_TOPIC: {{ .Values.kafka.topics.courier_topic | quote }}

@@ -10,12 +10,11 @@ import java.time.LocalDate;
 @Data
 @Entity
 @NoArgsConstructor
+/** Read-only copy of the assignment owned by logistics; courier's own facts are in {@link AssignmentProgress}. */
 public class ShipmentRouteCourier {
     @Id
     private Long id;
     private Long courierId;
     private Long shipmentRouteId;
     private LocalDate dateAssignedFor;
-    private Boolean pickedUpForDelivery = false;
-    private Boolean failed = false;
 }

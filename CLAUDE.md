@@ -69,7 +69,13 @@ copies of entities they need (e.g. `LocationCity`, `PackageSize`, `Depo`, `Shipm
   the shared Shipment copy) and goes to `payments` via `shipment-priced`; `orders` stores the authoritative
   price from `payment-status` `PAID`. Shipments are re-published in bulk with `POST /api/orders/shipments/republish`
   (ADMIN). When adding data to a shared entity, give a single service the write and publish events, not the
-  entity, from everyone else. (`ShipmentRoute`/`ShipmentRouteCourier` still have two writers: logistics and courier.)
+  entity, from everyone else.
+- The same rule applies to `ShipmentRoute` and `ShipmentRouteCourier`: `logistics` owns them and is the only
+  producer on `shipment-route-topic`/`shipment-route-courier-topic`; `courier` and `tracking` keep read-only
+  copies. `courier` reports what couriers did as events: `ShipmentRouteFulfilledEventDTO` on
+  `shipment-route-fulfilled` and `AssignmentStatusEventDTO` (`PICKED_UP`/`FAILED`) on `assignment-status`.
+  `logistics` applies them idempotently and republishes the entity after commit. Courier keeps its own facts in
+  `AssignmentProgress`, which the upsert from logistics never touches, so its UI sees them immediately.
 - `logistics/controllers/KafkaBulkSenderController` exists to re-publish current state in bulk (everything it owns; not Shipment)
   (useful for backfilling a new/rebuilt consumer).
 - Each service has its own Postgres database (`orders_db`, `logistics_db`, `courier_db`,

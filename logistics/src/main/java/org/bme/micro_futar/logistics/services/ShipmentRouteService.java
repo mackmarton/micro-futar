@@ -7,6 +7,8 @@ import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.ShipmentRouteMapper;
 import org.bme.micro_futar.logistics.repositories.ShipmentRouteRepository;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteDTO;
+import org.bme.micro_futar.shared.dtos.ShipmentRouteFulfilledEventDTO;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,7 @@ public class ShipmentRouteService {
     private final ShipmentRouteRepository shipmentRouteRepository;
     private final ShipmentRouteMapper shipmentRouteMapper;
     private final KafkaProducerService kafkaProducerService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public List<ShipmentRouteDTO> getAllShipmentRoutes() {
         return shipmentRouteRepository.findAll().stream()
@@ -57,11 +60,20 @@ public class ShipmentRouteService {
         shipmentRouteMapper.toDTOList(savedShipmentRoutes).forEach(kafkaProducerService::sendShipmentRoute);
     }
 
+    /** Sets the fulfillment time reported by courier and republishes the route; repeated events are ignored. */
     @Transactional
-    public ShipmentRouteDTO saveWithoutTopicSend(ShipmentRouteDTO shipmentRouteDTO) {
-        log.info("Saving shipmentRoute: {}", shipmentRouteDTO);
-        ShipmentRoute shipmentRoute = shipmentRouteMapper.toEntity(shipmentRouteDTO);
-        ShipmentRoute savedShipmentRoute = shipmentRouteRepository.save(shipmentRoute);
-        return shipmentRouteMapper.toDTO(savedShipmentRoute);
+    public void applyFulfilled(ShipmentRouteFulfilledEventDTO event) {
+        Optional<ShipmentRoute> found = shipmentRouteRepository.findById(event.getShipmentRouteId());
+        if (found.isEmpty()) {
+            log.warn("Ignoring fulfilled event for unknown shipmentRoute {}", event.getShipmentRouteId());
+            return;
+        }
+        ShipmentRoute route = found.get();
+        if (route.getFulfillmentTime() != null) {
+            return;
+        }
+        route.setFulfillmentTime(event.getFulfilledAt());
+        // Sent to Kafka by KafkaProducerService only after this transaction commits.
+        eventPublisher.publishEvent(shipmentRouteMapper.toDTO(shipmentRouteRepository.save(route)));
     }
 }

@@ -8,7 +8,7 @@ import org.bme.micro_futar.courier.mappers.ShipmentRouteMapper;
 import org.bme.micro_futar.courier.repositories.ShipmentRouteRepository;
 import org.bme.micro_futar.shared.dtos.ShipmentDeliveredEventDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteDTO;
-import org.springframework.context.ApplicationContext;
+import org.bme.micro_futar.shared.dtos.ShipmentRouteFulfilledEventDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +22,6 @@ import java.util.Optional;
 public class ShipmentRouteService {
 
     private final ShipmentNotificationService shipmentNotificationService;
-    private final ApplicationContext applicationContext;
     private final ShipmentRouteMapper shipmentRouteMapper;
     private final KafkaProducerService kafkaProducerService;
     private final ShipmentRouteRepository shipmentRouteRepository;
@@ -40,26 +39,27 @@ public class ShipmentRouteService {
                 .toList();
     }
 
-    public void fulfillShipmentRoute(long shipmentRouteId) {
+    /**
+     * Reports the leg as fulfilled to logistics, which owns the route. On the delivery leg it also reports the
+     * delivery to orders, which owns the shipment. Callers guard against fulfilling a leg twice.
+     */
+    public void fulfillShipmentRoute(long shipmentRouteId, ZonedDateTime fulfilledAt) {
         var shipmentRoute = findById(shipmentRouteId).orElseThrow();
-        shipmentRoute.setFulfillmentTime(ZonedDateTime.now());
-        save(shipmentRoute);
+        kafkaProducerService.sendShipmentRouteFulfilled(ShipmentRouteFulfilledEventDTO.builder()
+                .shipmentRouteId(shipmentRouteId)
+                .shipmentId(shipmentRoute.getShipmentId())
+                .fulfilledAt(fulfilledAt)
+                .build());
         if (shipmentRoute.getDestinationAddress() != null) {
             kafkaProducerService.sendShipmentDelivered(ShipmentDeliveredEventDTO.builder()
                     .shipmentId(shipmentRoute.getShipmentId())
-                    .deliveredAt(shipmentRoute.getFulfillmentTime())
+                    .deliveredAt(fulfilledAt)
                     .build());
             shipmentNotificationService.notifyDelivered(shipmentRoute);
         }
     }
 
-    public ShipmentRouteDTO save(ShipmentRouteDTO shipmentRouteDTO) {
-        var self = applicationContext.getBean(ShipmentRouteService.class);
-        var savedShipmentRouteDTO = self.saveWithoutTopicSend(shipmentRouteDTO);
-        kafkaProducerService.sendShipmentRoute(savedShipmentRouteDTO);
-        return savedShipmentRouteDTO;
-    }
-
+    /** Upserts the read-only copy of the route owned by logistics; courier never publishes routes. */
     @Transactional
     public ShipmentRouteDTO saveWithoutTopicSend(ShipmentRouteDTO shipmentRouteDTO) {
         log.info("Saving shipmentRoute: {}", shipmentRouteDTO);

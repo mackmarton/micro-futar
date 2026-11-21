@@ -47,6 +47,8 @@ kafka:
     package-size-topic: ${PACKAGE_SIZE_TOPIC}
     shipment-topic: ${SHIPMENT_TOPIC}
     shipment-route-courier-topic: ${SHIPMENT_ROUTE_COURIER_TOPIC}
+    shipment-route-fulfilled-topic: ${SHIPMENT_ROUTE_FULFILLED_TOPIC}
+    assignment-status-topic: ${ASSIGNMENT_STATUS_TOPIC}
     depo-topic: ${DEPO_TOPIC}
     shipment-route-topic: ${SHIPMENT_ROUTE_TOPIC}
     courier-topic: ${COURIER_TOPIC}

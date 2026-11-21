@@ -20,9 +20,10 @@ public interface ShipmentRouteCourierRepository extends JpaRepository<ShipmentRo
 
     @Query("SELECT c FROM ShipmentRouteCourier c " +
             "INNER JOIN ShipmentRoute r ON c.shipmentRouteId = r.id " +
+            "INNER JOIN AssignmentProgress p ON p.assignmentId = c.id " +
             "WHERE c.courierId = :courierId " +
             "AND c.dateAssignedFor = :now " +
-            "AND c.pickedUpForDelivery = true " +
+            "AND p.pickedUpAt IS NOT NULL " +
             "AND r.originAddress IS NOT NULL")
     List<ShipmentRouteCourier> findAllPickedUpParcelsByCourierIdAndDateAssignedFor(Long courierId, LocalDate now);
 }

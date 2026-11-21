@@ -2,13 +2,16 @@ package org.bme.micro_futar.courier.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bme.micro_futar.courier.entities.AssignmentProgress;
 import org.bme.micro_futar.courier.entities.ShipmentRouteCourier;
 import org.bme.micro_futar.courier.kafka.KafkaProducerService;
 import org.bme.micro_futar.courier.mappers.ShipmentRouteCourierMapper;
+import org.bme.micro_futar.courier.repositories.AssignmentProgressRepository;
 import org.bme.micro_futar.courier.repositories.ShipmentRouteCourierRepository;
+import org.bme.micro_futar.shared.dtos.AssignmentStatusEventDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
+import org.bme.micro_futar.shared.enums.AssignmentStatus;
 import org.bme.micro_futar.shared.exceptions.UnauthorizedException;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -16,7 +19,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -26,7 +33,7 @@ import java.util.Optional;
 public class ShipmentRouteCourierService {
 
     private final CourierService courierService;
-    private final ApplicationContext applicationContext;
+    private final AssignmentProgressRepository assignmentProgressRepository;
     private final KafkaProducerService kafkaProducerService;
     private final ShipmentRouteService shipmentRouteService;
     private final ShipmentNotificationService shipmentNotificationService;
@@ -35,34 +42,26 @@ public class ShipmentRouteCourierService {
 
     public Optional<ShipmentRouteCourierDTO> findById(Long id) {
         return shipmentRouteCourierRepository.findById(id)
-                .map(shipmentRouteCourierMapper::toDTO);
+                .map(entity -> toDTOs(List.of(entity)).getFirst());
     }
 
     public List<ShipmentRouteCourierDTO> findAll() {
-        return shipmentRouteCourierRepository.findAll().stream()
-                .map(shipmentRouteCourierMapper::toDTO)
-                .toList();
+        return toDTOs(shipmentRouteCourierRepository.findAll());
     }
 
     public List<ShipmentRouteCourierDTO> findAllForCourierForCurrentDay(Authentication authentication) {
         Long courierId = getCourierIdByAuthentication(authentication);
-        return shipmentRouteCourierRepository.findAllByCourierIdAndDateAssignedFor(courierId, LocalDate.now()).stream()
-                .map(shipmentRouteCourierMapper::toDTO)
-                .toList();
+        return toDTOs(shipmentRouteCourierRepository.findAllByCourierIdAndDateAssignedFor(courierId, LocalDate.now()));
     }
 
     public List<ShipmentRouteCourierDTO> findAllDeliveriesForCourierForCurrentDay(Authentication authentication) {
         Long courierId = getCourierIdByAuthentication(authentication);
-        return shipmentRouteCourierRepository.findAllDeliveriesByCourierIdAndDateAssignedFor(courierId, LocalDate.now()).stream()
-                .map(shipmentRouteCourierMapper::toDTO)
-                .toList();
+        return toDTOs(shipmentRouteCourierRepository.findAllDeliveriesByCourierIdAndDateAssignedFor(courierId, LocalDate.now()));
     }
 
     public List<ShipmentRouteCourierDTO> findAllPickedUpAssignmentsForCourierForCurrentDay(Authentication authentication) {
         Long courierId = getCourierIdByAuthentication(authentication);
-        return shipmentRouteCourierRepository.findAllPickedUpParcelsByCourierIdAndDateAssignedFor(courierId, LocalDate.now()).stream()
-                .map(shipmentRouteCourierMapper::toDTO)
-                .toList();
+        return toDTOs(shipmentRouteCourierRepository.findAllPickedUpParcelsByCourierIdAndDateAssignedFor(courierId, LocalDate.now()));
     }
 
     public void pickUpAllDeliveryShipmentsForCurrentDay(Authentication authentication) {
@@ -76,46 +75,94 @@ public class ShipmentRouteCourierService {
         markPickedUp(findOwnAssignment(id, authentication));
     }
 
-    private void markPickedUp(ShipmentRouteCourierDTO shipmentRouteCourier) {
-        shipmentRouteCourier.setPickedUpForDelivery(true);
-        save(shipmentRouteCourier);
-        shipmentRouteService.findById(shipmentRouteCourier.getShipmentRouteId())
-                .ifPresent(route -> shipmentNotificationService.notifyOutForDelivery(route, shipmentRouteCourier.getId()));
+    private void markPickedUp(ShipmentRouteCourierDTO assignment) {
+        AssignmentProgress progress = progressOf(assignment.getId());
+        if (progress.getPickedUpAt() != null) {
+            return;
+        }
+        ZonedDateTime now = ZonedDateTime.now();
+        progress.setPickedUpAt(now);
+        assignmentProgressRepository.save(progress);
+        kafkaProducerService.sendAssignmentStatus(statusEvent(assignment, AssignmentStatus.PICKED_UP, now));
+        shipmentRouteService.findById(assignment.getShipmentRouteId())
+                .ifPresent(route -> shipmentNotificationService.notifyOutForDelivery(route, assignment.getId()));
     }
 
     public void fulfillAllPickupsForCurrentDay(Authentication authentication) {
         List<ShipmentRouteCourierDTO> shipmentRouteCouriers = findAllPickedUpAssignmentsForCourierForCurrentDay(authentication);
         for (var assignment : shipmentRouteCouriers) {
-            shipmentRouteService.fulfillShipmentRoute(assignment.getShipmentRouteId());
+            fulfill(assignment);
         }
     }
 
     public void fulfillAssignment(Long id, Authentication authentication) {
-        var shipmentRouteCourier = findOwnAssignment(id, authentication);
-        shipmentRouteService.fulfillShipmentRoute(shipmentRouteCourier.getShipmentRouteId());
+        fulfill(findOwnAssignment(id, authentication));
+    }
+
+    private void fulfill(ShipmentRouteCourierDTO assignment) {
+        AssignmentProgress progress = progressOf(assignment.getId());
+        if (progress.getFulfilledAt() != null) {
+            return;
+        }
+        ZonedDateTime now = ZonedDateTime.now();
+        progress.setFulfilledAt(now);
+        assignmentProgressRepository.save(progress);
+        shipmentRouteService.fulfillShipmentRoute(assignment.getShipmentRouteId(), now);
     }
 
     public void failAssignment(Long id, Authentication authentication) {
-        var shipmentRouteCourier = findOwnAssignment(id, authentication);
-        shipmentRouteCourier.setFailed(true);
-        save(shipmentRouteCourier);
-        shipmentRouteService.findById(shipmentRouteCourier.getShipmentRouteId())
-                .ifPresent(route -> shipmentNotificationService.notifyDeliveryFailed(route, shipmentRouteCourier.getId()));
+        var assignment = findOwnAssignment(id, authentication);
+        AssignmentProgress progress = progressOf(assignment.getId());
+        if (progress.getFailedAt() != null) {
+            return;
+        }
+        ZonedDateTime now = ZonedDateTime.now();
+        progress.setFailedAt(now);
+        assignmentProgressRepository.save(progress);
+        kafkaProducerService.sendAssignmentStatus(statusEvent(assignment, AssignmentStatus.FAILED, now));
+        shipmentRouteService.findById(assignment.getShipmentRouteId())
+                .ifPresent(route -> shipmentNotificationService.notifyDeliveryFailed(route, assignment.getId()));
     }
 
-    public ShipmentRouteCourierDTO save(ShipmentRouteCourierDTO shipmentRouteCourierDTO) {
-        var self = applicationContext.getBean(ShipmentRouteCourierService.class);
-        var savedShipmentRouteCourierDTO = self.saveWithoutTopicSend(shipmentRouteCourierDTO);
-        kafkaProducerService.sendShipmentRouteCourier(savedShipmentRouteCourierDTO);
-        return savedShipmentRouteCourierDTO;
-    }
-
+    /** Upserts the read-only copy of the assignment owned by logistics; courier never publishes assignments. */
     @Transactional
     public ShipmentRouteCourierDTO saveWithoutTopicSend(ShipmentRouteCourierDTO shipmentRouteCourierDTO) {
         log.info("Saving shipmentRouteCourier: {}", shipmentRouteCourierDTO);
         ShipmentRouteCourier shipmentRouteCourier = shipmentRouteCourierMapper.toEntity(shipmentRouteCourierDTO);
         ShipmentRouteCourier savedShipmentRouteCourier = shipmentRouteCourierRepository.save(shipmentRouteCourier);
-        return shipmentRouteCourierMapper.toDTO(savedShipmentRouteCourier);
+        return toDTOs(List.of(savedShipmentRouteCourier)).getFirst();
+    }
+
+    private AssignmentProgress progressOf(Long assignmentId) {
+        return assignmentProgressRepository.findById(assignmentId).orElseGet(() -> {
+            AssignmentProgress progress = new AssignmentProgress();
+            progress.setAssignmentId(assignmentId);
+            return progress;
+        });
+    }
+
+    private static AssignmentStatusEventDTO statusEvent(ShipmentRouteCourierDTO assignment, AssignmentStatus status,
+                                                        ZonedDateTime at) {
+        return AssignmentStatusEventDTO.builder()
+                .assignmentId(assignment.getId())
+                .shipmentRouteId(assignment.getShipmentRouteId())
+                .status(status)
+                .occurredAt(at)
+                .build();
+    }
+
+    /** Merges the courier-owned progress into the assignments received from logistics. */
+    private List<ShipmentRouteCourierDTO> toDTOs(List<ShipmentRouteCourier> assignments) {
+        Map<Long, AssignmentProgress> progressById = assignmentProgressRepository
+                .findAllById(assignments.stream().map(ShipmentRouteCourier::getId).toList()).stream()
+                .collect(Collectors.toMap(AssignmentProgress::getAssignmentId, Function.identity()));
+        return assignments.stream().map(assignment -> {
+            ShipmentRouteCourierDTO dto = shipmentRouteCourierMapper.toDTO(assignment);
+            AssignmentProgress progress = progressById.get(assignment.getId());
+            dto.setPickedUpForDelivery(progress != null && progress.getPickedUpAt() != null);
+            dto.setFailed(progress != null && progress.getFailedAt() != null);
+            return dto;
+        }).toList();
     }
 
     private ShipmentRouteCourierDTO findOwnAssignment(Long id, Authentication authentication) {

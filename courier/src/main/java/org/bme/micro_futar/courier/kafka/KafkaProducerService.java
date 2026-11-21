@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.shared.dtos.ShipmentDeliveredEventDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentNotificationEventDTO;
-import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
-import org.bme.micro_futar.shared.dtos.ShipmentRouteDTO;
+import org.bme.micro_futar.shared.dtos.AssignmentStatusEventDTO;
+import org.bme.micro_futar.shared.dtos.ShipmentRouteFulfilledEventDTO;
 import org.bme.micro_futar.shared.exceptions.KafkaException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -25,58 +25,39 @@ public class KafkaProducerService {
 
     @Value("${kafka.topics.shipment-delivered-topic}")
     private String shipmentDeliveredTopic;
-    @Value("${kafka.topics.shipment-route-topic}")
-    private String shipmentRouteTopic;
-    @Value("${kafka.topics.shipment-route-courier-topic}")
-    private String shipmentRouteCourierTopic;
+    @Value("${kafka.topics.shipment-route-fulfilled-topic}")
+    private String shipmentRouteFulfilledTopic;
+    @Value("${kafka.topics.assignment-status-topic}")
+    private String assignmentStatusTopic;
     @Value("${kafka.topics.shipment-notification-topic}")
     private String shipmentNotificationTopic;
 
-    @Transactional
-    public void sendShipmentRoute(ShipmentRouteDTO shipmentRouteDTO) {
-        log.info("Sending shipment route message to topic {}: {}", shipmentRouteTopic, shipmentRouteDTO);
-        try {
-            String jsonMessage = objectMapper.writeValueAsString(shipmentRouteDTO);
-            kafkaTemplate.send(shipmentRouteTopic, shipmentRouteDTO.getId().toString(), jsonMessage)
-                    .whenComplete((_, ex) -> {
-                        if (ex == null) {
-                            log.info("Successfully sent shipment route with ID: {} to topic: {}",
-                                    shipmentRouteDTO.getId(), shipmentRouteTopic);
-                        } else {
-                            log.error("Failed to send shipment route with ID: {} to topic: {}",
-                                    shipmentRouteDTO.getId(), shipmentRouteTopic, ex);
-                        }
-                    });
-        } catch (JsonProcessingException e) {
-            log.error("Error serializing shipment route message to JSON", e);
-            throw new KafkaException("Failed to serialize shipment route message", e);
-        } catch (Exception e) {
-            log.error("Error sending shipment route message to Kafka", e);
-            throw new KafkaException("Failed to send shipment route message", e);
-        }
+    public void sendShipmentRouteFulfilled(ShipmentRouteFulfilledEventDTO event) {
+        send(shipmentRouteFulfilledTopic, event.getShipmentRouteId().toString(), event, "shipment route fulfilled");
     }
 
-    @Transactional
-    public void sendShipmentRouteCourier(ShipmentRouteCourierDTO shipmentRouteCourierDTO) {
-        log.info("Sending shipment route courier message to topic {}: {}", shipmentRouteCourierTopic, shipmentRouteCourierDTO);
+    public void sendAssignmentStatus(AssignmentStatusEventDTO event) {
+        send(assignmentStatusTopic, event.getAssignmentId().toString(), event, "assignment status");
+    }
+
+    private void send(String topic, String key, Object event, String what) {
+        log.info("Sending {} event to topic {}: {}", what, topic, event);
         try {
-            String jsonMessage = objectMapper.writeValueAsString(shipmentRouteCourierDTO);
-            kafkaTemplate.send(shipmentRouteCourierTopic, shipmentRouteCourierDTO.getId().toString(), jsonMessage)
+            String jsonMessage = objectMapper.writeValueAsString(event);
+            kafkaTemplate.send(topic, key, jsonMessage)
                     .whenComplete((_, ex) -> {
                         if (ex == null) {
-                            log.info("Successfully sent shipment route courier with ID: {} to topic: {}",
-                                    shipmentRouteCourierDTO.getId(), shipmentRouteCourierTopic);
+                            log.info("Successfully sent {} event with key {} to topic: {}", what, key, topic);
                         } else {
-                            log.error("Failed to send shipment route courier with ID: {} to topic: {}",
-                                    shipmentRouteCourierDTO.getId(), shipmentRouteCourierTopic, ex);
+                            log.error("Failed to send {} event with key {} to topic: {}", what, key, topic, ex);
                         }
                     });
         } catch (JsonProcessingException e) {
-            log.error("Error serializing shipment route courier message to JSON", e);
-            throw new KafkaException("Failed to serialize shipment route courier message", e);
+            log.error("Error serializing {} event to JSON", what, e);
+            throw new KafkaException("Failed to serialize " + what + " event", e);
         } catch (Exception e) {
-            log.error("Error sending shipment route courier message to Kafka", e);
-            throw new KafkaException("Failed to send shipment route courier message", e);
+            log.error("Error sending {} event to Kafka", what, e);
+            throw new KafkaException("Failed to send " + what + " event", e);
         }
     }
 

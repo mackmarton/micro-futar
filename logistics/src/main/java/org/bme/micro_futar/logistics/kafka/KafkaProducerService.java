@@ -155,6 +155,18 @@ public class KafkaProducerService {
         }
     }
 
+    /** Republish after courier's status was applied and committed. */
+    @TransactionalEventListener(fallbackExecution = true)
+    public void onShipmentRouteCourierChanged(ShipmentRouteCourierDTO shipmentRouteCourierDTO) {
+        sendShipmentRouteCourier(shipmentRouteCourierDTO);
+    }
+
+    /** Republish after courier's fulfillment was applied and committed. */
+    @TransactionalEventListener(fallbackExecution = true)
+    public void onShipmentRouteChanged(ShipmentRouteDTO shipmentRouteDTO) {
+        sendShipmentRoute(shipmentRouteDTO);
+    }
+
     public void sendShipmentRouteCourier(ShipmentRouteCourierDTO shipmentRouteCourierDTO) {
         log.info("Sending shipment route courier message to topic {}: {}", shipmentRouteCourierTopic, shipmentRouteCourierDTO);
         try {
