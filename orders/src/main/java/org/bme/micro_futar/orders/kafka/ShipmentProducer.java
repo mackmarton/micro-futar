@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @Component
@@ -20,6 +21,11 @@ public class ShipmentProducer {
 
     @Value("${kafka.topics.shipment-topic}")
     private String shipmentTopic;
+
+    @TransactionalEventListener(fallbackExecution = true)
+    public void onShipmentChanged(ShipmentDTO shipmentDTO) {
+        sendShipmentToTopic(shipmentDTO);
+    }
 
     @Transactional
     public void sendShipmentToTopic(ShipmentDTO shipmentDTO) {

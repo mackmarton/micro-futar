@@ -1,7 +1,9 @@
 package org.bme.micro_futar.logistics.services;
 
 import org.bme.micro_futar.logistics.entities.Shipment;
+import org.bme.micro_futar.logistics.entities.ShipmentPricing;
 import org.bme.micro_futar.logistics.mappers.ShipmentMapper;
+import org.bme.micro_futar.logistics.repositories.ShipmentPricingRepository;
 import org.bme.micro_futar.logistics.repositories.ShipmentRepository;
 import org.bme.micro_futar.logistics.repositories.ShipmentRouteRepository;
 import org.bme.micro_futar.logistics.services.planners.ShipmentRoutePlanner;
@@ -16,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,6 +37,9 @@ class ShipmentServiceTests {
 
     @Mock
     private ShipmentRepository shipmentRepository;
+
+    @Mock
+    private ShipmentPricingRepository shipmentPricingRepository;
 
     @Mock
     private ShipmentRouteRepository shipmentRouteRepository;
@@ -59,6 +63,7 @@ class ShipmentServiceTests {
     void setUp() {
         shipmentDTO = new ShipmentDTO();
         shipmentDTO.setId(7L);
+        shipmentDTO.setConfirmed(true);
         shipmentDTO.setCurrencyCode("HUF");
         shipment = new Shipment();
         lenient().when(shipmentMapper.toEntity(shipmentDTO)).thenReturn(shipment);
@@ -66,14 +71,17 @@ class ShipmentServiceTests {
     }
 
     @Test
-    void paidShipmentIsPricedAfterRoutePlanning() {
+    void paidShipmentIsPricedAfterRoutePlanningAndPriceIsStoredSeparately() {
         shipmentDTO.setMaxPrice(3000.0);
         when(shipmentPricingService.finalPrice(shipmentDTO, 2490.0)).thenReturn(new BigDecimal("2490.0"));
 
         shipmentService.processShipment(shipmentDTO);
 
-        assertThat(shipment.getPrice()).isEqualTo(2490.0);
         verify(shipmentRepository).save(shipment);
+        verify(shipmentPricingRepository).save(argThat((ShipmentPricing pricing) ->
+                pricing.getShipmentId().equals(7L)
+                        && pricing.getFinalPrice().compareTo(new BigDecimal("2490")) == 0
+                        && pricing.getCurrencyCode().equals("HUF")));
         verify(eventPublisher).publishEvent(argThat((ShipmentPricedEventDTO event) ->
                 event.getShipmentId().equals(7L)
                         && event.getFinalAmount().compareTo(new BigDecimal("2490")) == 0
@@ -85,7 +93,8 @@ class ShipmentServiceTests {
         shipmentService.processShipment(shipmentDTO);
 
         verify(shipmentRepository).save(any(Shipment.class));
-        verifyNoInteractions(shipmentPricingService, eventPublisher);
+        verify(shipmentRoutePlanner).planRouteForShipment(shipmentDTO);
+        verifyNoInteractions(shipmentPricingService, shipmentPricingRepository, eventPublisher);
     }
 
     @Test
@@ -93,36 +102,48 @@ class ShipmentServiceTests {
         shipmentDTO.setMaxPrice(3000.0);
         when(shipmentPricingService.finalPrice(shipmentDTO, 2490.0)).thenReturn(new BigDecimal("2490.0"));
         when(shipmentRouteRepository.existsByShipmentId(7L)).thenReturn(false, true);
-        when(shipmentRepository.findById(7L)).thenReturn(Optional.of(savedWithPrice(2490.0)));
 
         shipmentService.processShipment(shipmentDTO);
         shipmentService.processShipment(shipmentDTO);
 
         verify(shipmentRoutePlanner, times(1)).planRouteForShipment(shipmentDTO);
+        verify(shipmentPricingRepository, times(1)).save(any(ShipmentPricing.class));
         verify(eventPublisher, times(1)).publishEvent(any(ShipmentPricedEventDTO.class));
         verify(shipmentRepository, times(2)).save(shipment);
     }
 
     @Test
-    void deliveredMessageWithoutPriceKeepsExistingFinalPriceAndCreatesNoRoutes() {
+    void shipmentMessageKeepsTheFinalPriceBecauseItIsNeverTouched() {
         shipmentDTO.setDelivered(true);
         shipmentDTO.setPrice(null);
         shipmentDTO.setMaxPrice(3000.0);
         when(shipmentRouteRepository.existsByShipmentId(7L)).thenReturn(true);
-        when(shipmentRepository.findById(7L)).thenReturn(Optional.of(savedWithPrice(2490.0)));
 
         shipmentService.processShipment(shipmentDTO);
 
-        assertThat(shipment.getPrice()).isEqualTo(2490.0);
         verify(shipmentRepository).save(shipment);
         verify(shipmentRoutePlanner, never()).planRouteForShipment(any());
-        verifyNoInteractions(shipmentPricingService, eventPublisher);
+        verifyNoInteractions(shipmentPricingService, shipmentPricingRepository, eventPublisher);
     }
 
-    private Shipment savedWithPrice(double price) {
-        Shipment saved = new Shipment();
-        saved.setId(7L);
-        saved.setPrice(price);
-        return saved;
+    @Test
+    void unconfirmedShipmentIsOnlyUpsertedNotPlanned() {
+        shipmentDTO.setConfirmed(false);
+
+        shipmentService.processShipment(shipmentDTO);
+
+        verify(shipmentRepository).save(shipment);
+        verify(shipmentRoutePlanner, never()).planRouteForShipment(any());
+        verifyNoInteractions(shipmentPricingService, shipmentPricingRepository, eventPublisher);
+    }
+
+    @Test
+    void logisticsNeverSendsShipmentsToShipmentTopic() {
+        assertThat(java.util.Arrays.stream(org.bme.micro_futar.logistics.kafka.KafkaProducerService.class.getMethods())
+                .map(java.lang.reflect.Method::getName))
+                .doesNotContain("sendShipment");
+        assertThat(java.util.Arrays.stream(org.bme.micro_futar.logistics.kafka.KafkaBulkSenderService.class.getMethods())
+                .map(java.lang.reflect.Method::getName))
+                .doesNotContain("sendShipments");
     }
 }

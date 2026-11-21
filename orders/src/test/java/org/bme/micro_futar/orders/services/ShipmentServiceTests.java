@@ -11,6 +11,7 @@ import org.bme.micro_futar.shared.dtos.CountryPriceDTO;
 import org.bme.micro_futar.shared.dtos.PaymentRequestedEventDTO;
 import org.bme.micro_futar.shared.dtos.PaymentStatusEventDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentDTO;
+import org.bme.micro_futar.shared.dtos.ShipmentDeliveredEventDTO;
 import org.bme.micro_futar.shared.enums.NotificationType;
 import org.bme.micro_futar.shared.enums.PaymentStatus;
 import org.bme.micro_futar.shared.utils.PaymentTokens;
@@ -23,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -198,7 +200,8 @@ class ShipmentServiceTests {
 
         assertThat(shipmentEntity.getPaymentStatus()).isEqualTo(PaymentStatus.AUTHORIZED);
         assertThat(shipmentEntity.isConfirmed()).isTrue();
-        verify(shipmentProducer).sendShipmentToTopic(dto);
+        verify(eventPublisher).publishEvent((Object) dto);
+        verify(shipmentProducer, never()).sendShipmentToTopic(any());
         verify(shipmentNotificationProducer).sendNotificationToTopic(argThat(event ->
                 event.getType() == NotificationType.SHIPMENT_CREATED
                         && event.getDedupKey().equals("SHIPMENT_CREATED:shipment:1")));
@@ -220,12 +223,69 @@ class ShipmentServiceTests {
     void testApplyPaymentStatus_PaidStoresFinalPrice() {
         shipmentEntity.setPaymentStatus(PaymentStatus.AUTHORIZED);
         when(shipmentRepository.findById(1L)).thenReturn(Optional.of(shipmentEntity));
+        when(shipmentRepository.save(shipmentEntity)).thenReturn(shipmentEntity);
+        shipmentDTO.setId(1L);
+        when(shipmentMapper.toDTO(shipmentEntity)).thenReturn(shipmentDTO);
 
         shipmentService.applyPaymentStatus(
                 PaymentStatusEventDTO.of(1L, PaymentStatus.PAID, new BigDecimal("14.5"), "HUF"));
 
         assertThat(shipmentEntity.getPaymentStatus()).isEqualTo(PaymentStatus.PAID);
         assertThat(shipmentEntity.getPrice()).isEqualTo(14.5);
+        // The other services learn the captured price from the republished shipment.
+        verify(eventPublisher).publishEvent((Object) shipmentDTO);
+    }
+
+    @Test
+    void testApplyDelivered_MarksDeliveredAndRepublishesShipment() {
+        when(shipmentRepository.findById(1L)).thenReturn(Optional.of(shipmentEntity));
+        when(shipmentRepository.save(shipmentEntity)).thenReturn(shipmentEntity);
+        shipmentDTO.setId(1L);
+        shipmentDTO.setDelivered(true);
+        when(shipmentMapper.toDTO(shipmentEntity)).thenReturn(shipmentDTO);
+
+        shipmentService.applyDelivered(
+                ShipmentDeliveredEventDTO.builder().shipmentId(1L).deliveredAt(ZonedDateTime.now()).build());
+
+        assertThat(shipmentEntity.isDelivered()).isTrue();
+        verify(shipmentRepository).save(shipmentEntity);
+        verify(eventPublisher).publishEvent((Object) argThat((Object o) ->
+                o instanceof ShipmentDTO dto && dto.getId().equals(1L) && dto.isDelivered()));
+    }
+
+    @Test
+    void testApplyDelivered_RedeliveredEventIsIgnored() {
+        shipmentEntity.setDelivered(true);
+        when(shipmentRepository.findById(1L)).thenReturn(Optional.of(shipmentEntity));
+
+        shipmentService.applyDelivered(
+                ShipmentDeliveredEventDTO.builder().shipmentId(1L).deliveredAt(ZonedDateTime.now()).build());
+
+        verify(shipmentRepository, never()).save(any());
+        verifyNoInteractions(eventPublisher, shipmentProducer);
+    }
+
+    @Test
+    void testApplyDelivered_UnknownShipmentIsIgnored() {
+        when(shipmentRepository.findById(99L)).thenReturn(Optional.empty());
+
+        shipmentService.applyDelivered(
+                ShipmentDeliveredEventDTO.builder().shipmentId(99L).deliveredAt(ZonedDateTime.now()).build());
+
+        verify(shipmentRepository, never()).save(any());
+        verifyNoInteractions(eventPublisher, shipmentProducer);
+    }
+
+    @Test
+    void testRepublishAllShipments_SendsEveryShipmentDirectly() {
+        when(shipmentRepository.findAll()).thenReturn(java.util.List.of(shipmentEntity));
+        shipmentDTO.setId(1L);
+        when(shipmentMapper.toDTO(shipmentEntity)).thenReturn(shipmentDTO);
+
+        int count = shipmentService.republishAllShipments();
+
+        assertThat(count).isEqualTo(1);
+        verify(shipmentProducer).sendShipmentToTopic(shipmentDTO);
     }
 
     @Test

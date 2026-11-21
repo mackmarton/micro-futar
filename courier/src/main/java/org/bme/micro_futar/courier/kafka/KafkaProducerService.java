@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bme.micro_futar.shared.dtos.ShipmentDTO;
+import org.bme.micro_futar.shared.dtos.ShipmentDeliveredEventDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentNotificationEventDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteDTO;
@@ -23,38 +23,14 @@ public class KafkaProducerService {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
-    @Value("${kafka.topics.shipment-topic}")
-    private String shipmentTopic;
+    @Value("${kafka.topics.shipment-delivered-topic}")
+    private String shipmentDeliveredTopic;
     @Value("${kafka.topics.shipment-route-topic}")
     private String shipmentRouteTopic;
     @Value("${kafka.topics.shipment-route-courier-topic}")
     private String shipmentRouteCourierTopic;
     @Value("${kafka.topics.shipment-notification-topic}")
     private String shipmentNotificationTopic;
-
-    @Transactional
-    public void sendShipment(ShipmentDTO shipmentDTO) {
-        log.info("Sending shipment message to topic {}: {}", shipmentTopic, shipmentDTO);
-        try {
-            String jsonMessage = objectMapper.writeValueAsString(shipmentDTO);
-            kafkaTemplate.send(shipmentTopic, shipmentDTO.getId().toString(), jsonMessage)
-                    .whenComplete((_, ex) -> {
-                        if (ex == null) {
-                            log.info("Successfully sent shipment with ID: {} to topic: {}",
-                                    shipmentDTO.getId(), shipmentTopic);
-                        } else {
-                            log.error("Failed to send shipment with ID: {} to topic: {}",
-                                    shipmentDTO.getId(), shipmentTopic, ex);
-                        }
-                    });
-        } catch (JsonProcessingException e) {
-            log.error("Error serializing shipment message to JSON", e);
-            throw new KafkaException("Failed to serialize shipment message", e);
-        } catch (Exception e) {
-            log.error("Error sending shipment message to Kafka", e);
-            throw new KafkaException("Failed to send shipment message", e);
-        }
-    }
 
     @Transactional
     public void sendShipmentRoute(ShipmentRouteDTO shipmentRouteDTO) {
@@ -101,6 +77,29 @@ public class KafkaProducerService {
         } catch (Exception e) {
             log.error("Error sending shipment route courier message to Kafka", e);
             throw new KafkaException("Failed to send shipment route courier message", e);
+        }
+    }
+
+    public void sendShipmentDelivered(ShipmentDeliveredEventDTO event) {
+        log.info("Sending shipment delivered event to topic {}: {}", shipmentDeliveredTopic, event);
+        try {
+            String jsonMessage = objectMapper.writeValueAsString(event);
+            kafkaTemplate.send(shipmentDeliveredTopic, event.getShipmentId().toString(), jsonMessage)
+                    .whenComplete((_, ex) -> {
+                        if (ex == null) {
+                            log.info("Successfully sent shipment delivered event for shipment ID: {} to topic: {}",
+                                    event.getShipmentId(), shipmentDeliveredTopic);
+                        } else {
+                            log.error("Failed to send shipment delivered event for shipment ID: {} to topic: {}",
+                                    event.getShipmentId(), shipmentDeliveredTopic, ex);
+                        }
+                    });
+        } catch (JsonProcessingException e) {
+            log.error("Error serializing shipment delivered event to JSON", e);
+            throw new KafkaException("Failed to serialize shipment delivered event", e);
+        } catch (Exception e) {
+            log.error("Error sending shipment delivered event to Kafka", e);
+            throw new KafkaException("Failed to send shipment delivered event", e);
         }
     }
 

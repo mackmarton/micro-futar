@@ -16,7 +16,7 @@ public class ShipmentRouteConsumer {
     private final ShipmentRouteService shipmentRouteService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "${kafka.topics.shipment-route-topic}", groupId = "courier-group")
+    @KafkaListener(topics = "${kafka.topics.shipment-route-topic}", groupId = "logistics-shipment-route-group")
     public void consumeShipmentRoute(String message) {
         log.info("Received shipmentRoute message: {}", message);
         try {

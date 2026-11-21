@@ -13,6 +13,7 @@ import org.bme.micro_futar.shared.dtos.CountryPriceDTO;
 import org.bme.micro_futar.shared.dtos.PaymentRequestedEventDTO;
 import org.bme.micro_futar.shared.dtos.PaymentStatusEventDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentDTO;
+import org.bme.micro_futar.shared.dtos.ShipmentDeliveredEventDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentNotificationEventDTO;
 import org.bme.micro_futar.shared.enums.NotificationType;
 import org.bme.micro_futar.shared.enums.PaymentStatus;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -99,14 +101,15 @@ public class ShipmentService {
                 shipment.setConfirmed(true);
                 ShipmentDTO shipmentDTO = shipmentMapper.toDTO(shipmentRepository.save(shipment));
                 // Only now does the shipment become real for logistics and the sender gets the confirmation.
-                shipmentProducer.sendShipmentToTopic(shipmentDTO);
+                publishShipment(shipmentDTO);
                 shipmentNotificationProducer.sendNotificationToTopic(
                         ShipmentNotificationEventDTO.forShipment(NotificationType.SHIPMENT_CREATED, shipmentDTO));
             }
             case PAID -> {
                 shipment.setPaymentStatus(PaymentStatus.PAID);
                 shipment.setPrice(event.getAmount() != null ? event.getAmount().doubleValue() : null);
-                shipmentRepository.save(shipment);
+                // The captured amount is the authoritative price; the other services get it from this republish.
+                publishShipment(shipmentMapper.toDTO(shipmentRepository.save(shipment)));
             }
             case EXPIRED, FAILED, CANCELED -> {
                 if (current == PaymentStatus.PAID || current == PaymentStatus.REFUNDED) {
@@ -127,6 +130,32 @@ public class ShipmentService {
             }
             case PENDING -> log.debug("Ignoring PENDING payment status for shipment {}", shipment.getId());
         }
+    }
+
+    @Transactional
+    public void applyDelivered(ShipmentDeliveredEventDTO event) {
+        Optional<Shipment> found = shipmentRepository.findById(event.getShipmentId());
+        if (found.isEmpty()) {
+            log.warn("Ignoring delivered event for unknown shipment {}", event.getShipmentId());
+            return;
+        }
+        Shipment shipment = found.get();
+        if (shipment.isDelivered()) {
+            return;
+        }
+        shipment.setDelivered(true);
+        publishShipment(shipmentMapper.toDTO(shipmentRepository.save(shipment)));
+    }
+
+    private void publishShipment(ShipmentDTO shipmentDTO) {
+        eventPublisher.publishEvent(shipmentDTO);
+    }
+
+    @Transactional(readOnly = true)
+    public int republishAllShipments() {
+        List<Shipment> shipments = shipmentRepository.findAll();
+        shipments.stream().map(shipmentMapper::toDTO).forEach(shipmentProducer::sendShipmentToTopic);
+        return shipments.size();
     }
 
     @Transactional(readOnly = true)

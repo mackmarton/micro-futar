@@ -6,7 +6,7 @@ import org.bme.micro_futar.courier.entities.ShipmentRoute;
 import org.bme.micro_futar.courier.kafka.KafkaProducerService;
 import org.bme.micro_futar.courier.mappers.ShipmentRouteMapper;
 import org.bme.micro_futar.courier.repositories.ShipmentRouteRepository;
-import org.bme.micro_futar.shared.dtos.ShipmentDTO;
+import org.bme.micro_futar.shared.dtos.ShipmentDeliveredEventDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteDTO;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ShipmentRouteService {
 
-    private final ShipmentService shipmentService;
     private final ShipmentNotificationService shipmentNotificationService;
     private final ApplicationContext applicationContext;
     private final ShipmentRouteMapper shipmentRouteMapper;
@@ -46,9 +45,10 @@ public class ShipmentRouteService {
         shipmentRoute.setFulfillmentTime(ZonedDateTime.now());
         save(shipmentRoute);
         if (shipmentRoute.getDestinationAddress() != null) {
-            ShipmentDTO shipmentDTO = shipmentService.findById(shipmentRoute.getShipmentId()).orElseThrow();
-            shipmentDTO.setDelivered(true);
-            shipmentService.save(shipmentDTO);
+            kafkaProducerService.sendShipmentDelivered(ShipmentDeliveredEventDTO.builder()
+                    .shipmentId(shipmentRoute.getShipmentId())
+                    .deliveredAt(shipmentRoute.getFulfillmentTime())
+                    .build());
             shipmentNotificationService.notifyDelivered(shipmentRoute);
         }
     }

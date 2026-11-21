@@ -1,8 +1,9 @@
 package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
-import org.bme.micro_futar.logistics.entities.Shipment;
+import org.bme.micro_futar.logistics.entities.ShipmentPricing;
 import org.bme.micro_futar.logistics.mappers.ShipmentMapper;
+import org.bme.micro_futar.logistics.repositories.ShipmentPricingRepository;
 import org.bme.micro_futar.logistics.repositories.ShipmentRepository;
 import org.bme.micro_futar.logistics.repositories.ShipmentRouteRepository;
 import org.bme.micro_futar.logistics.services.planners.ShipmentRoutePlanner;
@@ -22,19 +23,16 @@ public class ShipmentService {
     private final ShipmentMapper shipmentMapper;
     private final ShipmentRepository shipmentRepository;
     private final ShipmentRouteRepository shipmentRouteRepository;
+    private final ShipmentPricingRepository shipmentPricingRepository;
     private final ShipmentRoutePlanner shipmentRoutePlanner;
     private final ShipmentPricingService shipmentPricingService;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void processShipment(ShipmentDTO shipmentDTO) {
-        Shipment shipment = shipmentMapper.toEntity(shipmentDTO);
+        shipmentRepository.save(shipmentMapper.toEntity(shipmentDTO));
 
-        if (shipmentRouteRepository.existsByShipmentId(shipmentDTO.getId())) {
-            shipmentRepository.findById(shipmentDTO.getId())
-                    .map(Shipment::getPrice)
-                    .ifPresent(shipment::setPrice);
-            shipmentRepository.save(shipment);
+        if (!shipmentDTO.isConfirmed() || shipmentRouteRepository.existsByShipmentId(shipmentDTO.getId())) {
             return;
         }
 
@@ -43,16 +41,21 @@ public class ShipmentService {
         // Shipments from before online payment have no authorized maximum, so there is nothing to capture.
         if (shipmentDTO.getMaxPrice() != null) {
             BigDecimal finalPrice = shipmentPricingService.finalPrice(shipmentDTO, routePrice);
-            shipment.setPrice(finalPrice.doubleValue());
+            ZonedDateTime pricedAt = ZonedDateTime.now();
+            ShipmentPricing pricing = new ShipmentPricing();
+            pricing.setShipmentId(shipmentDTO.getId());
+            pricing.setFinalPrice(finalPrice);
+            pricing.setCurrencyCode(shipmentDTO.getCurrencyCode());
+            pricing.setPricedAt(pricedAt);
+            shipmentPricingRepository.save(pricing);
             // Sent to Kafka by KafkaProducerService only after this transaction commits.
             eventPublisher.publishEvent(ShipmentPricedEventDTO.builder()
                     .shipmentId(shipmentDTO.getId())
                     .finalAmount(finalPrice)
                     .currencyCode(shipmentDTO.getCurrencyCode())
-                    .pricedAt(ZonedDateTime.now())
+                    .pricedAt(pricedAt)
                     .build());
         }
-        shipmentRepository.save(shipment);
     }
 
     public ShipmentDTO getShipmentById(Long id) {

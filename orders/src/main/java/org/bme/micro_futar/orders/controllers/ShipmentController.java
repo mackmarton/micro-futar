@@ -6,12 +6,14 @@ import org.bme.micro_futar.orders.services.ShipmentService;
 import org.bme.micro_futar.shared.dtos.ShipmentDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +34,13 @@ public class ShipmentController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.ok(shipmentService.getShipmentsForUser(userEmail));
+    }
+
+    @PostMapping("republish")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, String>> republishShipments() {
+        int count = shipmentService.republishAllShipments();
+        return ResponseEntity.ok(Map.of("status", "success", "message", count + " shipments sent to Kafka"));
     }
 
     private String extractUserEmail(Authentication authentication) {

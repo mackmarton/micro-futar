@@ -60,7 +60,17 @@ copies of entities they need (e.g. `LocationCity`, `PackageSize`, `Depo`, `Shipm
 - Every interested service runs a `*Consumer` (`@KafkaListener`) that deserializes the message and
   upserts its own local copy via a `*Service`, so each service's Postgres schema is an
   eventually-consistent read replica of the entities it needs plus the entities it owns.
-- `logistics/controllers/KafkaBulkSenderController` exists to re-publish current state in bulk
+- **Shipment has exactly one owner: `orders`**, the only producer on `shipment-topic`. `logistics`,
+  `courier` and `tracking` keep strictly read-only copies that they upsert from `shipment-topic` and never
+  republish. Facts another service owns are reported as separate domain events, never by republishing
+  Shipment: `courier` publishes `ShipmentDeliveredEventDTO` on `shipment-delivered`, and `orders` consumes it,
+  sets `delivered` and republishes the Shipment (as it also does on payment `AUTHORIZED` and `PAID`, after the
+  transaction commits). The final price logistics computes lives in its own `ShipmentPricing` entity (never on
+  the shared Shipment copy) and goes to `payments` via `shipment-priced`; `orders` stores the authoritative
+  price from `payment-status` `PAID`. Shipments are re-published in bulk with `POST /api/orders/shipments/republish`
+  (ADMIN). When adding data to a shared entity, give a single service the write and publish events, not the
+  entity, from everyone else. (`ShipmentRoute`/`ShipmentRouteCourier` still have two writers: logistics and courier.)
+- `logistics/controllers/KafkaBulkSenderController` exists to re-publish current state in bulk (everything it owns; not Shipment)
   (useful for backfilling a new/rebuilt consumer).
 - Each service has its own Postgres database (`orders_db`, `logistics_db`, `courier_db`,
   `tracking_db`, plus `keycloak_db`), created by `init-multiple-databases.sh` — there is no shared

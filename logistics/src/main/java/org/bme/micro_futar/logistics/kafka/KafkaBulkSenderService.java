@@ -26,7 +26,6 @@ public class KafkaBulkSenderService {
     private final DepoRepository depoRepository;
     private final CourierRepository courierRepository;
     private final VehicleRepository vehicleRepository;
-    private final ShipmentRepository shipmentRepository;
     private final ShipmentRouteRepository shipmentRouteRepository;
     private final ShipmentRouteCourierRepository shipmentRouteCourierRepository;
     private final CurrencyRepository currencyRepository;
@@ -40,7 +39,6 @@ public class KafkaBulkSenderService {
     private final DepoMapper depoMapper;
     private final CourierMapper courierMapper;
     private final VehicleMapper vehicleMapper;
-    private final ShipmentMapper shipmentMapper;
     private final ShipmentRouteMapper shipmentRouteMapper;
     private final ShipmentRouteCourierMapper shipmentRouteCourierMapper;
     private final CurrencyMapper currencyMapper;
@@ -181,21 +179,6 @@ public class KafkaBulkSenderService {
                     }
                 });
         log.info("Sent {} Vehicle entities to Kafka", entities.size());
-    }
-
-    public void sendShipments() {
-        log.info("Sending all Shipment entities to Kafka");
-        var entities = shipmentRepository.findAll();
-        entities.stream()
-                .map(shipmentMapper::toDTO)
-                .forEach(dto -> {
-                    try {
-                        kafkaProducerService.sendShipment(dto);
-                    } catch (Exception e) {
-                        log.error("Failed to send Shipment with ID: {}", dto.getId(), e);
-                    }
-                });
-        log.info("Sent {} Shipment entities to Kafka", entities.size());
     }
 
     public void sendShipmentRoutes() {

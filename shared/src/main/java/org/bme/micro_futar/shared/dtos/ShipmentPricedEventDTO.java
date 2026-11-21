@@ -8,10 +8,6 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
-/**
- * Published by logistics once the final price of a shipment is known (after route planning). Payments captures
- * this amount from the authorization; orders and tracking store it as the shipment's price.
- */
 @Data
 @Builder
 @NoArgsConstructor

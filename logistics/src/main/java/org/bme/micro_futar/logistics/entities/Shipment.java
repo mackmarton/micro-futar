@@ -36,5 +36,4 @@ public class Shipment {
     private boolean delivered;
     //Not filled straight away
     private String parcelNumber;
-    private Double price;
 }

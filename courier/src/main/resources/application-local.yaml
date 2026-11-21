@@ -5,6 +5,7 @@ kafka:
   topics:
     package-size-topic: package-sizes
     shipment-topic: shipments
+    shipment-delivered-topic: shipment-delivered
     shipment-notification-topic: shipment-notifications
     depo-topic: depos
     shipment-route-courier-topic: shipment-route-couriers

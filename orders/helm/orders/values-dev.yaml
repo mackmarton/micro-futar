@@ -37,6 +37,7 @@ kafka:
     country_price_topic: country-prices
     package_size_topic: package-sizes
     shipment_topic: shipments
+    shipment_delivered_topic: shipment-delivered
     shipment_notification_topic: shipment-notifications
     currency_topic: currencies
     payment_request_topic: payment-requests
