@@ -75,7 +75,8 @@ copies of entities they need (e.g. `LocationCity`, `PackageSize`, `Depo`, `Shipm
   copies. `courier` reports what couriers did as events: `ShipmentRouteFulfilledEventDTO` on
   `shipment-route-fulfilled` and `AssignmentStatusEventDTO` (`PICKED_UP`/`FAILED`) on `assignment-status`.
   `logistics` applies them idempotently and republishes the entity after commit. Courier keeps its own facts in
-  `AssignmentProgress`, which the upsert from logistics never touches, so its UI sees them immediately.
+  `AssignmentProgress`, which the upsert from logistics never touches, so its UI sees them immediately. These fact events are sent synchronously inside the courier action's
+  transaction (`send(...).get(timeout)`): if the broker does not acknowledge, the action rolls back and is retried.
 - `logistics/controllers/KafkaBulkSenderController` exists to re-publish current state in bulk (everything it owns; not Shipment)
   (useful for backfilling a new/rebuilt consumer).
 - Each service has its own Postgres database (`orders_db`, `logistics_db`, `courier_db`,
