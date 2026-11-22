@@ -25,9 +25,9 @@ public class Shipment {
     private String recipientName;
     private String recipientEmail;
     private String recipientPhone;
-    private String recipientLocationCountryId;
+    private Long recipientLocationCountryId;
     private String recipientZip;
-    private String recipientLocationCityId;
+    private Long recipientLocationCityId;
     private String recipientAddress;
     private Double recipientLatitude;
     private Double recipientLongitude;

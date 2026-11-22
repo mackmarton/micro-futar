@@ -103,9 +103,9 @@ class ShipmentServiceTests {
         shipmentEntity.setRecipientName("Jane Smith");
         shipmentEntity.setRecipientEmail("jane@example.com");
         shipmentEntity.setRecipientPhone("+43201234567");
-        shipmentEntity.setRecipientLocationCountryId("2");
+        shipmentEntity.setRecipientLocationCountryId(2L);
         shipmentEntity.setRecipientZip("5678");
-        shipmentEntity.setRecipientLocationCityId("2");
+        shipmentEntity.setRecipientLocationCityId(2L);
         shipmentEntity.setRecipientAddress("Test Avenue 2");
         shipmentEntity.setRecipientLatitude(1.234);
         shipmentEntity.setRecipientLongitude(1.234);
