@@ -11,10 +11,15 @@
       "recipientAddress": "Recipient address",
       "status": "Status",
       "reason": "Reason",
-      "flaggedAt": "Flagged at"
+      "flaggedAt": "Flagged at",
+      "resolve": "Resolution"
     },
     "statusDelivered": "Delivered",
     "statusPickedUp": "Picked up",
+    "resolveButton": "Mark resolved",
+    "resolvedBy": "Resolved by {{by}}, {{at}}",
+    "resolveFailed": "Failed to resolve the item.",
+    "showResolved": "Show resolved items",
     "tableTitle": "Shipments needing manual handling",
     "empty": "No shipment needs manual handling.",
     "mobileEyebrow": "Shipment"
