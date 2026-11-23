@@ -25,6 +25,7 @@ public class ShipmentRouteCourierService {
     private final KafkaProducerService kafkaProducerService;
     private final ShipmentRouteCourierMapper shipmentRouteCourierMapper;
     private final ShipmentRouteCourierRepository shipmentRouteCourierRepository;
+    private final ReferenceValidator referenceValidator;
 
     public long countByCourierIdAndDate(Long courierId, LocalDate date) {
         return shipmentRouteCourierRepository.countByCourierIdAndDate(courierId, date);
@@ -38,6 +39,7 @@ public class ShipmentRouteCourierService {
 
     @Transactional
     public ShipmentRouteCourierDTO save(ShipmentRouteCourierDTO dto) {
+        referenceValidator.validate(dto);
         ShipmentRouteCourier saved = shipmentRouteCourierRepository.save(shipmentRouteCourierMapper.toEntity(dto));
         ShipmentRouteCourierDTO savedDTO = shipmentRouteCourierMapper.toDTO(saved);
         kafkaProducerService.sendShipmentRouteCourier(savedDTO);

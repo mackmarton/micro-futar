@@ -20,6 +20,7 @@ public class DepoTransitService {
     private final DepoTransitMapper depoTransitMapper;
     private final DepoTransitRepository depoTransitRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final ReferenceValidator referenceValidator;
 
     public List<DepoTransitDTO> getAllDepoTransits() {
         return depoTransitRepository.findAll().stream()
@@ -46,6 +47,7 @@ public class DepoTransitService {
 
     @Transactional
     public DepoTransitDTO createDepoTransit(DepoTransitDTO depoTransitDTO) {
+        referenceValidator.validate(depoTransitDTO);
         DepoTransit depoTransit = depoTransitMapper.toEntity(depoTransitDTO);
         DepoTransit savedDepoTransit = depoTransitRepository.save(depoTransit);
         eventPublisher.publishEvent(new DepoTransitChangedEvent(this, DepoTransitChangedEvent.ChangeType.CREATED));
@@ -60,6 +62,7 @@ public class DepoTransitService {
 
         var updatedDepoTransitDTO = depoTransitRepository.findById(id)
                 .map(_ -> {
+                    referenceValidator.validate(depoTransitDTO);
                     DepoTransit updatedDepoTransit = depoTransitMapper.toEntity(depoTransitDTO);
                     updatedDepoTransit.setId(id);
                     DepoTransit savedDepoTransit = depoTransitRepository.save(updatedDepoTransit);

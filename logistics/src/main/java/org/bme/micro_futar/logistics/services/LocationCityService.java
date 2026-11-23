@@ -19,6 +19,7 @@ public class LocationCityService {
     private final LocationCityRepository locationCityRepository;
     private final LocationCityMapper locationCityMapper;
     private final KafkaProducerService kafkaProducerService;
+    private final ReferenceValidator referenceValidator;
 
     public List<LocationCityDTO> getAllCities() {
         return locationCityRepository.findAll().stream()
@@ -39,6 +40,7 @@ public class LocationCityService {
 
     @Transactional
     public LocationCityDTO createCity(LocationCityDTO locationCityDTO) {
+        referenceValidator.validate(locationCityDTO);
         LocationCity locationCity = locationCityMapper.toEntity(locationCityDTO);
         locationCity.setDeleted(false);
         LocationCity savedCity = locationCityRepository.save(locationCity);
@@ -55,6 +57,7 @@ public class LocationCityService {
 
         return locationCityRepository.findById(id)
                 .map(existingCity -> {
+                    referenceValidator.validate(locationCityDTO);
                     LocationCity updatedCity = locationCityMapper.toEntity(locationCityDTO);
                     updatedCity.setId(id);
                     updatedCity.setDeleted(false);

@@ -7,6 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface LocationCityRepository extends JpaRepository<LocationCity, Long> {
+    boolean existsByIdAndCountryIdAndDeletedFalse(Long id, Long countryId);
+
+    boolean existsByIdAndDeletedFalse(Long id);
+
     List<LocationCity> findAllByCountryId(Long countryId);
 
     // Native query: bypasses @SQLRestriction so consumers also learn about deleted rows

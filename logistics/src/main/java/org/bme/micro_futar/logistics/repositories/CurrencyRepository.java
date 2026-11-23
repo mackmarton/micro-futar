@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CurrencyRepository extends JpaRepository<Currency, Long> {
+    boolean existsByCodeAndDeletedFalse(String code);
+
     boolean existsByCode(String code);
 
     // Native query: bypasses @SQLRestriction so consumers also learn about deleted rows

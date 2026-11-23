@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.logistics.entities.LocationCountry;
 import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.LocationCountryMapper;
-import org.bme.micro_futar.logistics.repositories.CurrencyRepository;
 import org.bme.micro_futar.logistics.repositories.LocationCountryRepository;
 import org.bme.micro_futar.shared.dtos.LocationCountryDTO;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ public class LocationCountryService {
     private final LocationCountryRepository locationCountryRepository;
     private final LocationCountryMapper locationCountryMapper;
     private final KafkaProducerService kafkaProducerService;
-    private final CurrencyRepository currencyRepository;
+    private final ReferenceValidator referenceValidator;
 
     public List<LocationCountryDTO> getAllCountries() {
         return locationCountryRepository.findAll().stream()
@@ -44,6 +43,7 @@ public class LocationCountryService {
     @Transactional
     public LocationCountryDTO createCountry(LocationCountryDTO locationCountryDTO) {
         locationCountryDTO.setCurrencyCode(resolveCurrencyCode(locationCountryDTO.getCurrencyCode()));
+        referenceValidator.validate(locationCountryDTO);
         LocationCountry locationCountry = locationCountryMapper.toEntity(locationCountryDTO);
         locationCountry.setDeleted(false);
         LocationCountry savedCountry = locationCountryRepository.save(locationCountry);
@@ -61,6 +61,7 @@ public class LocationCountryService {
 
         return locationCountryRepository.findById(id)
                 .map(existingCountry -> {
+                    referenceValidator.validate(locationCountryDTO);
                     LocationCountry updatedCountry = locationCountryMapper.toEntity(locationCountryDTO);
                     updatedCountry.setId(id);
                     updatedCountry.setDeleted(false);
@@ -88,9 +89,6 @@ public class LocationCountryService {
     private String resolveCurrencyCode(String currencyCode) {
         if (currencyCode == null || currencyCode.isBlank()) {
             return DEFAULT_CURRENCY_CODE;
-        }
-        if (!currencyRepository.existsByCode(currencyCode)) {
-            throw new IllegalArgumentException("Unknown currency code: " + currencyCode);
         }
         return currencyCode;
     }

@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CourierRepository extends JpaRepository<Courier, Long> {
+    boolean existsByIdAndDeletedFalse(Long id);
+
     List<Courier> findByDepoIdAndCourierType(Long depoId, CourierType courierType);
 
     List<Courier> findAllByDepoId(Long depoId);

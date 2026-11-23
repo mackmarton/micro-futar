@@ -19,6 +19,7 @@ public class CourierService {
     private final CourierRepository courierRepository;
     private final CourierMapper courierMapper;
     private final KafkaProducerService kafkaProducerService;
+    private final ReferenceValidator referenceValidator;
 
     public List<CourierDTO> getAllCouriers() {
         return courierRepository.findAll().stream()
@@ -33,6 +34,7 @@ public class CourierService {
 
     @Transactional
     public CourierDTO createCourier(CourierDTO CourierDTO) {
+        referenceValidator.validate(CourierDTO);
         Courier courier = courierMapper.toEntity(CourierDTO);
         courier.setDeleted(false);
         Courier savedCourier = courierRepository.save(courier);
@@ -49,6 +51,7 @@ public class CourierService {
 
         return courierRepository.findById(id)
                 .map(_ -> {
+                    referenceValidator.validate(CourierDTO);
                     Courier updatedCourier = courierMapper.toEntity(CourierDTO);
                     updatedCourier.setId(id);
                     updatedCourier.setDeleted(false);

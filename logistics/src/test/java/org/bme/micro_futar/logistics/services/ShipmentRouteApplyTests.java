@@ -47,13 +47,16 @@ class ShipmentRouteApplyTests {
     @Mock
     private ApplicationEventPublisher eventPublisher;
 
+    @Mock
+    private ReferenceValidator referenceValidator;
+
     private ShipmentRouteService routeService() {
         return new ShipmentRouteService(shipmentRouteRepository, shipmentRouteMapper, kafkaProducerService, eventPublisher);
     }
 
     private ShipmentRouteCourierService assignmentService() {
         return new ShipmentRouteCourierService(eventPublisher, kafkaProducerService, shipmentRouteCourierMapper,
-                shipmentRouteCourierRepository);
+                shipmentRouteCourierRepository, referenceValidator);
     }
 
     @Test

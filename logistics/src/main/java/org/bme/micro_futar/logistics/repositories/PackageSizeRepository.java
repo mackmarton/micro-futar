@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface PackageSizeRepository extends JpaRepository<PackageSize, Long> {
+    boolean existsByIdAndDeletedFalse(Long id);
+
 
     // Native query: bypasses @SQLRestriction so consumers also learn about deleted rows
     @Query(value = "SELECT * FROM package_size", nativeQuery = true)

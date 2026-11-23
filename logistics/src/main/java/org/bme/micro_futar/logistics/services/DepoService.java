@@ -22,6 +22,7 @@ public class DepoService {
     private final DepoMapper depoMapper;
     private final KafkaProducerService kafkaProducerService;
     private final ApplicationEventPublisher eventPublisher;
+    private final ReferenceValidator referenceValidator;
 
     public List<DepoDTO> getAllDepos() {
         return depoRepository.findAll().stream()
@@ -36,6 +37,7 @@ public class DepoService {
 
     @Transactional
     public DepoDTO createDepo(DepoDTO depoDTO) {
+        referenceValidator.validate(depoDTO);
         Depo depo = depoMapper.toEntity(depoDTO);
         depo.setDeleted(false);
         Depo savedDepo = depoRepository.save(depo);
@@ -53,6 +55,7 @@ public class DepoService {
 
         var updatedDepoDTO = depoRepository.findById(id)
                 .map(_ -> {
+                    referenceValidator.validate(depoDTO);
                     Depo updatedDepo = depoMapper.toEntity(depoDTO);
                     updatedDepo.setId(id);
                     updatedDepo.setDeleted(false);
