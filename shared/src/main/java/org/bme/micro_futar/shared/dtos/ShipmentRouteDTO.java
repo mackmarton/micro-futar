@@ -21,4 +21,6 @@ public class ShipmentRouteDTO {
     private String destinationAddress;
     private Integer routePartNumber;
     private ZonedDateTime fulfillmentTime;
+    /** Set by logistics when the shipment was canceled before this leg was fulfilled. */
+    private boolean canceled;
 }

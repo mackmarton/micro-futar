@@ -20,5 +20,7 @@ public class ShipmentRouteCourierDTO {
     private LocalDate dateAssignedFor;
     private Boolean pickedUpForDelivery;
     private Boolean failed;
+    /** Set by logistics when the shipment was canceled before the courier picked it up. */
+    private boolean canceled;
 }
 

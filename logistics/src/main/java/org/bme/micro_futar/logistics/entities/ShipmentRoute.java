@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import java.time.ZonedDateTime;
 
 @Data
@@ -29,4 +31,6 @@ public class ShipmentRoute {
     private Integer routePartNumber;
     @Nullable
     private ZonedDateTime fulfillmentTime;
+    @ColumnDefault("false")
+    private boolean canceled;
 }

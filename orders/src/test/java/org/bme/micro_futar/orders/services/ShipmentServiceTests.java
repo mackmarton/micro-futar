@@ -18,6 +18,8 @@ import org.bme.micro_futar.shared.utils.PaymentTokens;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,6 +35,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -297,7 +300,59 @@ class ShipmentServiceTests {
 
         assertThat(shipmentEntity.getPaymentStatus()).isEqualTo(PaymentStatus.EXPIRED);
         assertThat(shipmentEntity.isConfirmed()).isFalse();
+        // Logistics never saw this shipment, so there is nothing to cancel there.
+        assertThat(shipmentEntity.isCanceled()).isFalse();
+        verifyNoInteractions(shipmentProducer, shipmentNotificationProducer, eventPublisher);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = PaymentStatus.class, names = {"EXPIRED", "FAILED", "CANCELED"})
+    void testApplyPaymentStatus_FailureAfterAuthorizationCancelsAndRepublishesShipment(PaymentStatus failure) {
+        shipmentEntity.setPaymentStatus(PaymentStatus.AUTHORIZED);
+        shipmentEntity.setConfirmed(true);
+        when(shipmentRepository.findById(1L)).thenReturn(Optional.of(shipmentEntity));
+        when(shipmentRepository.save(shipmentEntity)).thenReturn(shipmentEntity);
+        shipmentDTO.setId(1L);
+        shipmentDTO.setCanceled(true);
+        when(shipmentMapper.toDTO(shipmentEntity)).thenReturn(shipmentDTO);
+
+        shipmentService.applyPaymentStatus(PaymentStatusEventDTO.of(1L, failure, null, "HUF"));
+
+        assertThat(shipmentEntity.getPaymentStatus()).isEqualTo(failure);
+        assertThat(shipmentEntity.isConfirmed()).isFalse();
+        assertThat(shipmentEntity.isCanceled()).isTrue();
+        verify(eventPublisher, times(1)).publishEvent((Object) shipmentDTO);
         verifyNoInteractions(shipmentProducer, shipmentNotificationProducer);
+    }
+
+    @Test
+    void testApplyPaymentStatus_SecondFailureAfterCancelDoesNotPublishAgain() {
+        shipmentEntity.setPaymentStatus(PaymentStatus.AUTHORIZED);
+        when(shipmentRepository.findById(1L)).thenReturn(Optional.of(shipmentEntity));
+        when(shipmentRepository.save(shipmentEntity)).thenReturn(shipmentEntity);
+        when(shipmentMapper.toDTO(shipmentEntity)).thenReturn(shipmentDTO);
+
+        shipmentService.applyPaymentStatus(PaymentStatusEventDTO.of(1L, PaymentStatus.FAILED, null, "HUF"));
+        // Redelivery of the same event and a later, different failure.
+        shipmentService.applyPaymentStatus(PaymentStatusEventDTO.of(1L, PaymentStatus.FAILED, null, "HUF"));
+        shipmentService.applyPaymentStatus(PaymentStatusEventDTO.of(1L, PaymentStatus.EXPIRED, null, "HUF"));
+
+        assertThat(shipmentEntity.isCanceled()).isTrue();
+        verify(eventPublisher, times(1)).publishEvent((Object) shipmentDTO);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = PaymentStatus.class, names = {"PAID", "REFUNDED"})
+    void testApplyPaymentStatus_FailureDoesNotOverwritePaidOrRefunded(PaymentStatus settled) {
+        shipmentEntity.setPaymentStatus(settled);
+        when(shipmentRepository.findById(1L)).thenReturn(Optional.of(shipmentEntity));
+
+        shipmentService.applyPaymentStatus(PaymentStatusEventDTO.of(1L, PaymentStatus.CANCELED, null, "HUF"));
+
+        assertThat(shipmentEntity.getPaymentStatus()).isEqualTo(settled);
+        assertThat(shipmentEntity.isCanceled()).isFalse();
+        verify(shipmentRepository, never()).save(any());
+        verifyNoInteractions(eventPublisher);
     }
 
 }

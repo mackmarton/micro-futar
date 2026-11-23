@@ -12,7 +12,8 @@
     "locations": "Locations",
     "packageSizes": "Package sizes",
     "vehicles": "Vehicles",
-    "currencies": "Currencies"
+    "currencies": "Currencies",
+    "manualReviews": "Manual handling"
   },
   "buttons": {
     "save": "Save",

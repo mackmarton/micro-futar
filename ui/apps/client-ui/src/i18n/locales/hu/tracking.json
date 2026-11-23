@@ -17,6 +17,7 @@
   },
   "progress": {
     "deliveredStatus": "Kézbesítve",
+    "canceledStatus": "Lemondva",
     "inTransitStatus": "Szállítás alatt",
     "deliveryTimeLabel": "Kézbesítés időpontja",
     "unknownTime": "Ismeretlen időpont"

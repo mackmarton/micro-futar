@@ -124,6 +124,18 @@ export interface ShipmentRouteDTO {
   routePartNumber?: number;
   /** @format date-time */
   fulfillmentTime?: string;
+  canceled?: boolean;
+}
+
+export interface ShipmentManualReviewDTO {
+  /** @format int64 */
+  shipmentId?: number;
+  parcelNumber?: string;
+  recipientAddress?: string;
+  delivered?: boolean;
+  reason?: string;
+  /** @format date-time */
+  flaggedAt?: string;
 }
 
 export interface CountryPriceDTO {
@@ -979,20 +991,6 @@ export class Api<
      * No description
      *
      * @tags kafka-bulk-sender-controller
-     * @name SendShipments
-     * @request POST:/api/logistics/kafka/bulk/send-shipments
-     */
-    sendShipments: (params: RequestParams = {}) =>
-      this.request<Record<string, string>, any>({
-        path: `/api/logistics/kafka/bulk/send-shipments`,
-        method: "POST",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags kafka-bulk-sender-controller
      * @name SendShipmentRoutes
      * @request POST:/api/logistics/kafka/bulk/send-shipment-routes
      */
@@ -1389,6 +1387,20 @@ export class Api<
     getShipmentRouteById: (id: number, params: RequestParams = {}) =>
       this.request<ShipmentRouteDTO, any>({
         path: `/api/logistics/shipment-routes/${id}`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags shipment-manual-review-controller
+     * @name GetManualReviews
+     * @request GET:/api/logistics/shipment-manual-reviews
+     */
+    getManualReviews: (params: RequestParams = {}) =>
+      this.request<ShipmentManualReviewDTO[], any>({
+        path: `/api/logistics/shipment-manual-reviews`,
         method: "GET",
         ...params,
       }),

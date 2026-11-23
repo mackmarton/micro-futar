@@ -12,7 +12,8 @@
     "locations": "Helyszínek",
     "packageSizes": "Csomagméretek",
     "vehicles": "Járművek",
-    "currencies": "Pénznemek"
+    "currencies": "Pénznemek",
+    "manualReviews": "Kézi kezelés"
   },
   "buttons": {
     "save": "Mentés",

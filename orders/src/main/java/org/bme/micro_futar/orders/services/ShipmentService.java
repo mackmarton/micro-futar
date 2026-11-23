@@ -115,14 +115,18 @@ public class ShipmentService {
                 if (current == PaymentStatus.PAID || current == PaymentStatus.REFUNDED) {
                     return;
                 }
-                if (current == PaymentStatus.AUTHORIZED) {
-                    // TODO: logistics already planned this shipment; it has to be told to cancel it.
-                    log.warn("Payment of shipment {} became {} after it was handed to logistics",
-                            shipment.getId(), next);
-                }
+                boolean handedToLogistics = current == PaymentStatus.AUTHORIZED && !shipment.isCanceled();
                 shipment.setPaymentStatus(next);
                 shipment.setConfirmed(false);
-                shipmentRepository.save(shipment);
+                if (handedToLogistics) {
+                    // Logistics already received this shipment as confirmed; it has to learn that it is canceled.
+                    log.warn("Payment of shipment {} became {} after it was handed to logistics; canceling it",
+                            shipment.getId(), next);
+                    shipment.setCanceled(true);
+                    publishShipment(shipmentMapper.toDTO(shipmentRepository.save(shipment)));
+                } else {
+                    shipmentRepository.save(shipment);
+                }
             }
             case REFUNDED -> {
                 shipment.setPaymentStatus(PaymentStatus.REFUNDED);

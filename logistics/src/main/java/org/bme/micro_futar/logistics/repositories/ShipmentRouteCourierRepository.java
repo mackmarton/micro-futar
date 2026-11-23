@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 public interface ShipmentRouteCourierRepository extends JpaRepository<ShipmentRouteCourier, Long> {
@@ -14,5 +15,7 @@ public interface ShipmentRouteCourierRepository extends JpaRepository<ShipmentRo
     long countByCourierIdAndDate(@Param("courierId") Long courierId, @Param("date") LocalDate date);
 
     List<ShipmentRouteCourier> findByCourierIdAndDateAssignedFor(Long courierId, LocalDate date);
+
+    List<ShipmentRouteCourier> findByShipmentRouteIdIn(Collection<Long> shipmentRouteIds);
 }
 

@@ -11,6 +11,7 @@
  */
 
 export interface TrackingDTO {
+  canceled?: boolean;
   trackingParts?: Record<string, TrackingPartDTO>;
 }
 

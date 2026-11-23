@@ -33,6 +33,8 @@ public class Shipment {
     private Long packageSizeId;
     @ColumnDefault("false")
     private boolean delivered;
+    @ColumnDefault("false")
+    private boolean canceled;
     private boolean confirmed;
     //Not filled straight away
     private String parcelNumber;

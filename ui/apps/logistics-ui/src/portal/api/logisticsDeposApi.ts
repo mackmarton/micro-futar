@@ -9,6 +9,7 @@ import {
   type LocationCountryDTO,
   type LocationRegionDTO,
   type PackageSizeDTO,
+  type ShipmentManualReviewDTO,
   type VehicleDTO,
 } from '@package/shared-core/api/LogisticsApiClient';
 
@@ -382,4 +383,10 @@ export const updateCurrency = async (currencyId: number, currency: CurrencyDTO):
 export const deleteCurrency = async (currencyId: number): Promise<void> =>
   withAuthRedirect(async () => {
     await logisticsApi.api.deleteCurrency(currencyId, { format: 'json' });
+  });
+
+export const getManualReviews = async (): Promise<ShipmentManualReviewDTO[]> =>
+  withAuthRedirect(async () => {
+    const response = await logisticsApi.api.getManualReviews({ format: 'json' });
+    return response.data ?? [];
   });

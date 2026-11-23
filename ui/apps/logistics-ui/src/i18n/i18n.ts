@@ -7,6 +7,7 @@ import huLocation from './locales/hu/location.json';
 import huPackageSize from './locales/hu/packageSize.json';
 import huVehicle from './locales/hu/vehicle.json';
 import huCurrency from './locales/hu/currency.json';
+import huManualReview from './locales/hu/manualReview.json';
 import huLanding from './locales/hu/landing.json';
 import enCommon from './locales/en/common.json';
 import enDepo from './locales/en/depo.json';
@@ -15,6 +16,7 @@ import enLocation from './locales/en/location.json';
 import enPackageSize from './locales/en/packageSize.json';
 import enVehicle from './locales/en/vehicle.json';
 import enCurrency from './locales/en/currency.json';
+import enManualReview from './locales/en/manualReview.json';
 import enLanding from './locales/en/landing.json';
 
 export type AppLocale = 'hu' | 'en';
@@ -32,6 +34,7 @@ const resources = {
     packageSize: huPackageSize,
     vehicle: huVehicle,
     currency: huCurrency,
+    manualReview: huManualReview,
     landing: huLanding,
   },
   en: {
@@ -42,6 +45,7 @@ const resources = {
     packageSize: enPackageSize,
     vehicle: enVehicle,
     currency: enCurrency,
+    manualReview: enManualReview,
     landing: enLanding,
   },
 };
@@ -67,7 +71,7 @@ void i18next.use(initReactI18next).init({
   lng: readStoredLocale(),
   fallbackLng: DEFAULT_LOCALE,
   defaultNS: 'common',
-  ns: ['common', 'depo', 'courier', 'location', 'packageSize', 'vehicle', 'currency', 'landing'],
+  ns: ['common', 'depo', 'courier', 'location', 'packageSize', 'vehicle', 'currency', 'manualReview', 'landing'],
   resources,
   interpolation: { escapeValue: false },
   react: { useSuspense: false },

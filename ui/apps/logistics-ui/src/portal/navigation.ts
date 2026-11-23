@@ -53,6 +53,13 @@ export const useLogisticsNavigationItems = (): NonNullable<PortalLayoutProps['na
         bottomIcon: 'payments',
         onlyLoggedIn: true,
       },
+      {
+        label: t('nav.manualReviews'),
+        href: '#/portal/manual-reviews',
+        sideIcon: 'report',
+        bottomIcon: 'report',
+        onlyLoggedIn: true,
+      },
     ],
     [t],
   );

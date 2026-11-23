@@ -43,6 +43,7 @@ export interface ShipmentDTO {
   packageSizeId?: number;
   confirmed?: boolean;
   delivered?: boolean;
+  canceled?: boolean;
   parcelNumber?: string;
   /** @format double */
   price?: number;
@@ -388,6 +389,20 @@ export class Api<
   SecurityDataType extends unknown,
 > extends HttpClient<SecurityDataType> {
   api = {
+    /**
+     * No description
+     *
+     * @tags shipment-controller
+     * @name RepublishShipments
+     * @request POST:/api/orders/shipments/republish
+     */
+    republishShipments: (params: RequestParams = {}) =>
+      this.request<Record<string, string>, any>({
+        path: `/api/orders/shipments/republish`,
+        method: "POST",
+        ...params,
+      }),
+
     /**
      * No description
      *

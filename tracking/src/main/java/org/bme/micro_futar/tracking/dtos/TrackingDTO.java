@@ -7,5 +7,7 @@ import java.util.Map;
 
 @Data
 public class TrackingDTO {
+    /** The shipment was canceled (its payment fell through); no further progress is to be expected. */
+    private boolean canceled;
     private final Map<Integer, TrackingPartDTO> trackingParts = new HashMap<>();
 }

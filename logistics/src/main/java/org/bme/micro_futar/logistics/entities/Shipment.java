@@ -34,6 +34,8 @@ public class Shipment {
     private boolean confirmed;
     @ColumnDefault("false")
     private boolean delivered;
+    @ColumnDefault("false")
+    private boolean canceled;
     //Not filled straight away
     private String parcelNumber;
 }

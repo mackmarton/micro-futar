@@ -51,7 +51,7 @@ public class ShipmentRouteCourierService {
 
     public List<ShipmentRouteCourierDTO> findAllForCourierForCurrentDay(Authentication authentication) {
         Long courierId = getCourierIdByAuthentication(authentication);
-        return toDTOs(shipmentRouteCourierRepository.findAllByCourierIdAndDateAssignedFor(courierId, LocalDate.now()));
+        return toDTOs(shipmentRouteCourierRepository.findAllByCourierIdAndDateAssignedForAndCanceledFalse(courierId, LocalDate.now()));
     }
 
     public List<ShipmentRouteCourierDTO> findAllDeliveriesForCourierForCurrentDay(Authentication authentication) {
@@ -78,6 +78,10 @@ public class ShipmentRouteCourierService {
     }
 
     private void markPickedUp(ShipmentRouteCourierDTO assignment) {
+        if (assignment.isCanceled()) {
+            log.warn("Not picking up canceled assignment {}", assignment.getId());
+            return;
+        }
         AssignmentProgress progress = progressOf(assignment.getId());
         if (progress.getPickedUpAt() != null) {
             return;

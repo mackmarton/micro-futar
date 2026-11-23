@@ -107,7 +107,7 @@ export const mapTrackingDtoToDetails = (
 
   const parts = parseTrackingParts(trackingDto);
 
-  if (parts.length === 0) {
+  if (parts.length === 0 && !trackingDto.canceled) {
     return null;
   }
 
@@ -119,8 +119,13 @@ export const mapTrackingDtoToDetails = (
 
   return {
     trackingNumber,
-    statusLabel: destinationPart ? formatters.t('progress.deliveredStatus') : formatters.t('progress.inTransitStatus'),
-    deliveryTimeValue: formatTimestamp(destinationPart?.time ?? latestPart?.time, formatters),
+    statusLabel: trackingDto.canceled
+      ? formatters.t('progress.canceledStatus')
+      : destinationPart
+        ? formatters.t('progress.deliveredStatus')
+        : formatters.t('progress.inTransitStatus'),
+    // A canceled shipment is never delivered, so there is no delivery time to show.
+    deliveryTimeValue: trackingDto.canceled ? '' : formatTimestamp(destinationPart?.time ?? latestPart?.time, formatters),
     progressSteps: orderedByTimeAsc.map((part, index) => toProgressStep(part, index, orderedByTimeAsc.length)),
     timelineEvents: orderedByTimeDesc.map((part, index) => toTimelineEvent(part, index, formatters)),
     shippingAddressPrimary: destinationPart?.place ?? latestPart?.place,

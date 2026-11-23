@@ -17,6 +17,7 @@
   },
   "progress": {
     "deliveredStatus": "Delivered",
+    "canceledStatus": "Canceled",
     "inTransitStatus": "In transit",
     "deliveryTimeLabel": "Delivered at",
     "unknownTime": "Unknown time"

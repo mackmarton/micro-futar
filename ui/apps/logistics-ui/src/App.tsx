@@ -63,6 +63,9 @@ const LogisticsCurrenciesPage = lazy(() =>
 const LogisticsCurrencyFormPage = lazy(() =>
   import('./portal/currency/LogisticsCurrencyFormPage').then((module) => ({ default: module.LogisticsCurrencyFormPage })),
 );
+const LogisticsManualReviewsPage = lazy(() =>
+  import('./portal/manual-review/LogisticsManualReviewsPage').then((module) => ({ default: module.LogisticsManualReviewsPage })),
+);
 
 function App() {
   const { isLoading } = useAuth();
@@ -122,6 +125,7 @@ function App() {
           <Route path="currencies" element={<LogisticsCurrenciesPage />} />
           <Route path="currencies/new" element={<LogisticsCurrencyFormPage />} />
           <Route path="currencies/:currencyId/edit" element={<LogisticsCurrencyFormPage />} />
+          <Route path="manual-reviews" element={<LogisticsManualReviewsPage />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

@@ -30,6 +30,7 @@ public class TrackingService {
         TrackingDTO trackingDTO = new TrackingDTO();
         Map<Integer, TrackingPartDTO> trackingParts = trackingDTO.getTrackingParts();
         ShipmentDTO shipmentDTO = optionalShipmentDTO.get();
+        trackingDTO.setCanceled(shipmentDTO.isCanceled());
         List<ShipmentRouteDTO> fulfilledShipmentRoutesForShipment = shipmentRouteService.findAllFulfilledByShipmentId(shipmentDTO.getId());
         for (int i = 0; i < fulfilledShipmentRoutesForShipment.size(); i++) {
             var shipmentRoute = fulfilledShipmentRoutesForShipment.get(i);

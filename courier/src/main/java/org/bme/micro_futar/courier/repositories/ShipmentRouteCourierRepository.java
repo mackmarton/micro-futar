@@ -9,12 +9,13 @@ import java.util.List;
 
 public interface ShipmentRouteCourierRepository extends JpaRepository<ShipmentRouteCourier, Long> {
 
-    List<ShipmentRouteCourier> findAllByCourierIdAndDateAssignedFor(Long courierId, LocalDate now);
+    List<ShipmentRouteCourier> findAllByCourierIdAndDateAssignedForAndCanceledFalse(Long courierId, LocalDate now);
 
     @Query("SELECT c FROM ShipmentRouteCourier c " +
             "INNER JOIN ShipmentRoute r ON c.shipmentRouteId = r.id " +
             "WHERE c.courierId = :courierId " +
             "AND c.dateAssignedFor = :now " +
+            "AND c.canceled = false " +
             "AND r.destinationAddress IS NOT NULL")
     List<ShipmentRouteCourier> findAllDeliveriesByCourierIdAndDateAssignedFor(Long courierId, LocalDate now);
 
@@ -23,6 +24,7 @@ public interface ShipmentRouteCourierRepository extends JpaRepository<ShipmentRo
             "INNER JOIN AssignmentProgress p ON p.assignmentId = c.id " +
             "WHERE c.courierId = :courierId " +
             "AND c.dateAssignedFor = :now " +
+            "AND c.canceled = false " +
             "AND p.pickedUpAt IS NOT NULL " +
             "AND r.originAddress IS NOT NULL")
     List<ShipmentRouteCourier> findAllPickedUpParcelsByCourierIdAndDateAssignedFor(Long courierId, LocalDate now);

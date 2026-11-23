@@ -5,6 +5,8 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import java.time.LocalDate;
 
 @Data
@@ -17,4 +19,6 @@ public class ShipmentRouteCourier {
     private Long courierId;
     private Long shipmentRouteId;
     private LocalDate dateAssignedFor;
+    @ColumnDefault("false")
+    private boolean canceled;
 }

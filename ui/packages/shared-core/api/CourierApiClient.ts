@@ -52,10 +52,21 @@ export interface ShipmentDTO {
   packageSizeId?: number;
   confirmed?: boolean;
   delivered?: boolean;
+  canceled?: boolean;
   parcelNumber?: string;
   /** @format double */
   price?: number;
+  /** @format double */
+  maxPrice?: number;
   currencyCode?: string;
+  paymentStatus?:
+    | "PENDING"
+    | "AUTHORIZED"
+    | "PAID"
+    | "EXPIRED"
+    | "FAILED"
+    | "CANCELED"
+    | "REFUNDED";
 }
 
 export interface ShipmentRouteDTO {
@@ -73,6 +84,7 @@ export interface ShipmentRouteDTO {
   routePartNumber?: number;
   /** @format date-time */
   fulfillmentTime?: string;
+  canceled?: boolean;
 }
 
 export interface ShipmentRouteCourierDTO {
@@ -86,6 +98,7 @@ export interface ShipmentRouteCourierDTO {
   dateAssignedFor?: string;
   pickedUpForDelivery?: boolean;
   failed?: boolean;
+  canceled?: boolean;
 }
 
 export interface PackageSizeDTO {

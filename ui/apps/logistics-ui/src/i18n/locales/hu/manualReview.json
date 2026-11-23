@@ -1,0 +1,22 @@
+{
+  "list": {
+    "title": "Kézi kezelés",
+    "eyebrow": "Logisztika",
+    "heading": "Kézi kezelést igénylő csomagok",
+    "description": "Ezeket a csomagokat a fizetés elmaradása miatt le kellett volna mondani, de a futár már felvette vagy kézbesítették őket, ezért automatikusan nem mondhatók le.",
+    "loading": "Csomagok betöltése...",
+    "errorHeading": "Nem sikerült betölteni a csomagokat.",
+    "columns": {
+      "parcelNumber": "Csomagszám",
+      "recipientAddress": "Címzett címe",
+      "status": "Állapot",
+      "reason": "Ok",
+      "flaggedAt": "Megjelölve"
+    },
+    "statusDelivered": "Kézbesítve",
+    "statusPickedUp": "Felvéve",
+    "tableTitle": "Kézi kezelést igénylő csomagok",
+    "empty": "Nincs kézi kezelést igénylő csomag.",
+    "mobileEyebrow": "Csomag"
+  }
+}

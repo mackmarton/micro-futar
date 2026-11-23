@@ -1,0 +1,22 @@
+{
+  "list": {
+    "title": "Manual handling",
+    "eyebrow": "Logistics",
+    "heading": "Shipments needing manual handling",
+    "description": "These shipments should have been canceled because their payment fell through, but a courier already picked them up or they were delivered, so they cannot be canceled automatically.",
+    "loading": "Loading shipments...",
+    "errorHeading": "Failed to load the shipments.",
+    "columns": {
+      "parcelNumber": "Parcel number",
+      "recipientAddress": "Recipient address",
+      "status": "Status",
+      "reason": "Reason",
+      "flaggedAt": "Flagged at"
+    },
+    "statusDelivered": "Delivered",
+    "statusPickedUp": "Picked up",
+    "tableTitle": "Shipments needing manual handling",
+    "empty": "No shipment needs manual handling.",
+    "mobileEyebrow": "Shipment"
+  }
+}

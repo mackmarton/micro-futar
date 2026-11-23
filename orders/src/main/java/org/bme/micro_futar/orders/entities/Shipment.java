@@ -35,6 +35,8 @@ public class Shipment {
     private boolean confirmed;
     @ColumnDefault("false")
     private boolean delivered;
+    @ColumnDefault("false")
+    private boolean canceled;
     //Not filled straight away
     private String parcelNumber;
     /** Final price, known once logistics priced the shipment and the payment was captured. */
