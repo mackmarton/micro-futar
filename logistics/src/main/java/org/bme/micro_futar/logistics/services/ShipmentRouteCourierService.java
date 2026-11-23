@@ -6,7 +6,9 @@ import org.bme.micro_futar.logistics.entities.ShipmentRouteCourier;
 import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.ShipmentRouteCourierMapper;
 import org.bme.micro_futar.logistics.repositories.ShipmentRouteCourierRepository;
+import org.bme.micro_futar.logistics.repositories.ShipmentRouteRepository;
 import org.bme.micro_futar.shared.dtos.AssignmentStatusEventDTO;
+import org.bme.micro_futar.shared.enums.AssignmentStatus;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ public class ShipmentRouteCourierService {
     private final ShipmentRouteCourierMapper shipmentRouteCourierMapper;
     private final ShipmentRouteCourierRepository shipmentRouteCourierRepository;
     private final ReferenceValidator referenceValidator;
+    private final ShipmentRouteRepository shipmentRouteRepository;
+    private final ShipmentManualReviewService shipmentManualReviewService;
 
     public long countByCourierIdAndDate(Long courierId, LocalDate date) {
         return shipmentRouteCourierRepository.countByCourierIdAndDate(courierId, date);
@@ -71,5 +75,12 @@ public class ShipmentRouteCourierService {
         }
         // Sent to Kafka by KafkaProducerService only after this transaction commits.
         eventPublisher.publishEvent(shipmentRouteCourierMapper.toDTO(shipmentRouteCourierRepository.save(assignment)));
+        if (event.getStatus() == AssignmentStatus.PICKED_UP && assignment.isCanceled()) {
+            // The courier's report is a fact and is kept, but the canceled shipment is now physically with them.
+            shipmentRouteRepository.findById(assignment.getShipmentRouteId()).ifPresentOrElse(
+                    route -> shipmentManualReviewService.flag(route.getShipmentId(), "Picked up after cancellation"),
+                    () -> log.warn("Assignment {} was picked up after cancellation but its route {} is unknown",
+                            assignment.getId(), assignment.getShipmentRouteId()));
+        }
     }
 }

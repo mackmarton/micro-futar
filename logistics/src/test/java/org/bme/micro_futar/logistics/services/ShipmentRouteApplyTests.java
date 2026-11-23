@@ -49,14 +49,17 @@ class ShipmentRouteApplyTests {
 
     @Mock
     private ReferenceValidator referenceValidator;
+    @Mock
+    private ShipmentManualReviewService shipmentManualReviewService;
 
     private ShipmentRouteService routeService() {
-        return new ShipmentRouteService(shipmentRouteRepository, shipmentRouteMapper, kafkaProducerService, eventPublisher);
+        return new ShipmentRouteService(shipmentRouteRepository, shipmentRouteMapper, kafkaProducerService, eventPublisher,
+                shipmentManualReviewService);
     }
 
     private ShipmentRouteCourierService assignmentService() {
         return new ShipmentRouteCourierService(eventPublisher, kafkaProducerService, shipmentRouteCourierMapper,
-                shipmentRouteCourierRepository, referenceValidator);
+                shipmentRouteCourierRepository, referenceValidator, shipmentRouteRepository, shipmentManualReviewService);
     }
 
     @Test
@@ -128,6 +131,89 @@ class ShipmentRouteApplyTests {
 
         verify(shipmentRouteCourierRepository, never()).save(any());
         verifyNoInteractions(eventPublisher);
+    }
+
+    @Test
+    void pickedUpEventOnCanceledAssignmentIsRecordedPublishedAndFlaggedForManualReview() {
+        ShipmentRouteCourier assignment = new ShipmentRouteCourier();
+        assignment.setShipmentRouteId(3L);
+        assignment.setCanceled(true);
+        ShipmentRoute route = new ShipmentRoute();
+        route.setShipmentId(7L);
+        ShipmentRouteCourierDTO dto = new ShipmentRouteCourierDTO();
+        when(shipmentRouteCourierRepository.findById(5L)).thenReturn(Optional.of(assignment));
+        when(shipmentRouteCourierRepository.save(assignment)).thenReturn(assignment);
+        when(shipmentRouteCourierMapper.toDTO(assignment)).thenReturn(dto);
+        when(shipmentRouteRepository.findById(3L)).thenReturn(Optional.of(route));
+        ShipmentRouteCourierService service = assignmentService();
+
+        service.applyStatus(status(AssignmentStatus.PICKED_UP));
+        service.applyStatus(status(AssignmentStatus.PICKED_UP));
+
+        assertThat(assignment.getPickedUpForDelivery()).isTrue();
+        verify(eventPublisher, times(1)).publishEvent((Object) dto);
+        verify(shipmentManualReviewService, times(1)).flag(7L, "Picked up after cancellation");
+    }
+
+    @Test
+    void failedEventOnCanceledAssignmentIsRecordedWithoutManualReview() {
+        ShipmentRouteCourier assignment = new ShipmentRouteCourier();
+        assignment.setCanceled(true);
+        when(shipmentRouteCourierRepository.findById(5L)).thenReturn(Optional.of(assignment));
+        when(shipmentRouteCourierRepository.save(assignment)).thenReturn(assignment);
+        when(shipmentRouteCourierMapper.toDTO(assignment)).thenReturn(new ShipmentRouteCourierDTO());
+
+        assignmentService().applyStatus(status(AssignmentStatus.FAILED));
+
+        assertThat(assignment.getFailed()).isTrue();
+        verifyNoInteractions(shipmentManualReviewService);
+    }
+
+    @Test
+    void pickedUpEventOnRegularAssignmentIsNotFlagged() {
+        ShipmentRouteCourier assignment = new ShipmentRouteCourier();
+        when(shipmentRouteCourierRepository.findById(5L)).thenReturn(Optional.of(assignment));
+        when(shipmentRouteCourierRepository.save(assignment)).thenReturn(assignment);
+        when(shipmentRouteCourierMapper.toDTO(assignment)).thenReturn(new ShipmentRouteCourierDTO());
+
+        assignmentService().applyStatus(status(AssignmentStatus.PICKED_UP));
+
+        verifyNoInteractions(shipmentManualReviewService);
+    }
+
+    @Test
+    void fulfilledEventOnCanceledRouteIsRecordedPublishedAndFlaggedForManualReview() {
+        ZonedDateTime at = ZonedDateTime.now();
+        ShipmentRoute route = new ShipmentRoute();
+        route.setId(3L);
+        route.setShipmentId(7L);
+        route.setCanceled(true);
+        ShipmentRouteDTO dto = new ShipmentRouteDTO();
+        when(shipmentRouteRepository.findById(3L)).thenReturn(Optional.of(route));
+        when(shipmentRouteRepository.save(route)).thenReturn(route);
+        when(shipmentRouteMapper.toDTO(route)).thenReturn(dto);
+
+        ShipmentRouteFulfilledEventDTO event =
+                ShipmentRouteFulfilledEventDTO.builder().shipmentRouteId(3L).shipmentId(7L).fulfilledAt(at).build();
+        routeService().applyFulfilled(event);
+        routeService().applyFulfilled(event);
+
+        assertThat(route.getFulfillmentTime()).isEqualTo(at);
+        verify(eventPublisher, times(1)).publishEvent((Object) dto);
+        verify(shipmentManualReviewService, times(1)).flag(7L, "Leg fulfilled after cancellation");
+    }
+
+    @Test
+    void fulfilledEventOnRegularRouteIsNotFlagged() {
+        ShipmentRoute route = new ShipmentRoute();
+        when(shipmentRouteRepository.findById(3L)).thenReturn(Optional.of(route));
+        when(shipmentRouteRepository.save(route)).thenReturn(route);
+        when(shipmentRouteMapper.toDTO(route)).thenReturn(new ShipmentRouteDTO());
+
+        routeService().applyFulfilled(
+                ShipmentRouteFulfilledEventDTO.builder().shipmentRouteId(3L).fulfilledAt(ZonedDateTime.now()).build());
+
+        verifyNoInteractions(shipmentManualReviewService);
     }
 
     @Test

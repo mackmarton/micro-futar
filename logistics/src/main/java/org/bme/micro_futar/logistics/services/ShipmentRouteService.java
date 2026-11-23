@@ -24,6 +24,7 @@ public class ShipmentRouteService {
     private final ShipmentRouteMapper shipmentRouteMapper;
     private final KafkaProducerService kafkaProducerService;
     private final ApplicationEventPublisher eventPublisher;
+    private final ShipmentManualReviewService shipmentManualReviewService;
 
     public List<ShipmentRouteDTO> getAllShipmentRoutes() {
         return shipmentRouteRepository.findAll().stream()
@@ -75,5 +76,9 @@ public class ShipmentRouteService {
         route.setFulfillmentTime(event.getFulfilledAt());
         // Sent to Kafka by KafkaProducerService only after this transaction commits.
         eventPublisher.publishEvent(shipmentRouteMapper.toDTO(shipmentRouteRepository.save(route)));
+        if (route.isCanceled()) {
+            // The courier's report is a fact and is kept, but the canceled shipment physically moved on.
+            shipmentManualReviewService.flag(route.getShipmentId(), "Leg fulfilled after cancellation");
+        }
     }
 }

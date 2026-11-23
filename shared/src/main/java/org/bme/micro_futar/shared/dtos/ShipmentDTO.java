@@ -49,6 +49,8 @@ public class ShipmentDTO {
     private Long packageSizeId;
     private boolean confirmed;
     private boolean delivered;
+    /** Set by orders when the payment fell through after the shipment was handed to logistics. Irreversible. */
+    private boolean canceled;
     //Not filled straight away
     private String parcelNumber;
     /** Final price, set once logistics priced the shipment and the payment was captured. */

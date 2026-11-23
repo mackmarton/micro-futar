@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.logistics.dtos.ShipmentManualReviewDTO;
 import org.bme.micro_futar.logistics.entities.Shipment;
-import org.bme.micro_futar.logistics.entities.ShipmentManualReview;
 import org.bme.micro_futar.logistics.entities.ShipmentRoute;
 import org.bme.micro_futar.logistics.entities.ShipmentRouteCourier;
 import org.bme.micro_futar.logistics.mappers.ShipmentRouteCourierMapper;
@@ -39,6 +38,7 @@ public class ShipmentService {
     private final ShipmentRouteRepository shipmentRouteRepository;
     private final ShipmentRouteCourierRepository shipmentRouteCourierRepository;
     private final ShipmentManualReviewRepository shipmentManualReviewRepository;
+    private final ShipmentManualReviewService shipmentManualReviewService;
     private final ShipmentRouteMapper shipmentRouteMapper;
     private final ShipmentRouteCourierMapper shipmentRouteCourierMapper;
     private final ShipmentPricingRepository shipmentPricingRepository;
@@ -98,7 +98,7 @@ public class ShipmentService {
         boolean pickedUp = assignments.stream()
                 .anyMatch(assignment -> Boolean.TRUE.equals(assignment.getPickedUpForDelivery()));
         if (shipmentDTO.isDelivered() || pickedUp) {
-            flagForManualReview(shipmentDTO, shipmentDTO.isDelivered()
+            shipmentManualReviewService.flag(shipmentDTO.getId(), shipmentDTO.isDelivered()
                     ? "Shipment was canceled after it had been delivered"
                     : "Shipment was canceled after a courier had picked it up");
             return;
@@ -120,18 +120,6 @@ public class ShipmentService {
                         shipmentRouteCourierMapper.toDTO(shipmentRouteCourierRepository.save(assignment)));
             }
         }
-    }
-
-    private void flagForManualReview(ShipmentDTO shipmentDTO, String reason) {
-        log.warn("Shipment {} needs manual handling: {}", shipmentDTO.getId(), reason);
-        if (shipmentManualReviewRepository.existsById(shipmentDTO.getId())) {
-            return;
-        }
-        ShipmentManualReview review = new ShipmentManualReview();
-        review.setShipmentId(shipmentDTO.getId());
-        review.setReason(reason);
-        review.setFlaggedAt(ZonedDateTime.now());
-        shipmentManualReviewRepository.save(review);
     }
 
     @Transactional(readOnly = true)

@@ -307,7 +307,7 @@ class ReferenceValidationInServicesTests {
 
     private ShipmentRouteCourierService assignmentService() {
         return new ShipmentRouteCourierService(eventPublisher, kafkaProducerService, assignmentMapper,
-                assignmentRepository, referenceValidator);
+                assignmentRepository, referenceValidator, null, null);
     }
 
     @Test

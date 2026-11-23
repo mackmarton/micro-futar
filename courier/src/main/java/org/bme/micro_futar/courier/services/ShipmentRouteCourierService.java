@@ -109,7 +109,7 @@ public class ShipmentRouteCourierService {
 
     private void fulfill(ShipmentRouteCourierDTO assignment) {
         AssignmentProgress progress = progressOf(assignment.getId());
-        if (progress.getFulfilledAt() != null) {
+        if (progress.getFulfilledAt() != null || rejectedByCancellation(assignment, progress, "fulfill")) {
             return;
         }
         ZonedDateTime now = ZonedDateTime.now();
@@ -122,7 +122,7 @@ public class ShipmentRouteCourierService {
     public void failAssignment(Long id, Authentication authentication) {
         var assignment = findOwnAssignment(id, authentication);
         AssignmentProgress progress = progressOf(assignment.getId());
-        if (progress.getFailedAt() != null) {
+        if (progress.getFailedAt() != null || rejectedByCancellation(assignment, progress, "fail")) {
             return;
         }
         ZonedDateTime now = ZonedDateTime.now();
@@ -131,6 +131,23 @@ public class ShipmentRouteCourierService {
         kafkaProducerService.sendAssignmentStatus(statusEvent(assignment, AssignmentStatus.FAILED, now));
         shipmentRouteService.findById(assignment.getShipmentRouteId())
                 .ifPresent(route -> shipmentNotificationService.notifyDeliveryFailed(route, assignment.getId()));
+    }
+
+    /**
+     * A canceled assignment can no longer be fulfilled or failed, unless the courier already picked the parcel up:
+     * it is physically with them, so what they report is kept (and logistics flags the shipment for manual handling).
+     */
+    private static boolean rejectedByCancellation(ShipmentRouteCourierDTO assignment, AssignmentProgress progress,
+                                                  String action) {
+        if (!assignment.isCanceled()) {
+            return false;
+        }
+        if (progress.getPickedUpAt() != null) {
+            log.warn("Canceled assignment {} was already picked up, allowing it to {}", assignment.getId(), action);
+            return false;
+        }
+        log.warn("Not able to {} canceled assignment {} that was never picked up", action, assignment.getId());
+        return true;
     }
 
     /** Upserts the read-only copy of the assignment owned by logistics; courier never publishes assignments. */

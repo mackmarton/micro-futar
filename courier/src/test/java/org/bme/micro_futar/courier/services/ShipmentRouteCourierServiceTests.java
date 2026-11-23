@@ -80,6 +80,7 @@ class ShipmentRouteCourierServiceTests {
             copy.setId(5L);
             copy.setCourierId(2L);
             copy.setShipmentRouteId(3L);
+            copy.setCanceled(entity.isCanceled());
             return copy;
         });
         lenient().when(assignmentProgressRepository.findById(anyLong()))
@@ -130,6 +131,45 @@ class ShipmentRouteCourierServiceTests {
 
         verify(shipmentRouteService, times(1)).fulfillShipmentRoute(anyLong(), any(ZonedDateTime.class));
         verify(shipmentRouteService).fulfillShipmentRoute(org.mockito.ArgumentMatchers.eq(3L), any(ZonedDateTime.class));
+    }
+
+    @Test
+    void canceledAssignmentThatWasNeverPickedUpCannotBePickedUpFulfilledOrFailed() {
+        entity.setCanceled(true);
+
+        service.pickUpParcel(5L, authentication);
+        service.fulfillAssignment(5L, authentication);
+        service.failAssignment(5L, authentication);
+
+        assertThat(progressStore).isEmpty();
+        verify(kafkaProducerService, never()).sendAssignmentStatus(any());
+        verify(shipmentRouteService, never()).fulfillShipmentRoute(anyLong(), any(ZonedDateTime.class));
+    }
+
+    @Test
+    void canceledAssignmentAlreadyPickedUpCanStillBeFulfilledBecauseTheParcelIsWithTheCourier() {
+        service.pickUpParcel(5L, authentication);
+        entity.setCanceled(true);
+
+        service.fulfillAssignment(5L, authentication);
+        service.fulfillAssignment(5L, authentication);
+
+        assertThat(progressStore.get(5L).getFulfilledAt()).isNotNull();
+        verify(shipmentRouteService, times(1)).fulfillShipmentRoute(org.mockito.ArgumentMatchers.eq(3L),
+                any(ZonedDateTime.class));
+    }
+
+    @Test
+    void canceledAssignmentAlreadyPickedUpCanStillBeFailed() {
+        service.pickUpParcel(5L, authentication);
+        entity.setCanceled(true);
+
+        service.failAssignment(5L, authentication);
+        service.failAssignment(5L, authentication);
+
+        assertThat(progressStore.get(5L).getFailedAt()).isNotNull();
+        verify(kafkaProducerService, times(1)).sendAssignmentStatus(argThat((AssignmentStatusEventDTO event) ->
+                event.getStatus() == AssignmentStatus.FAILED));
     }
 
     @Test

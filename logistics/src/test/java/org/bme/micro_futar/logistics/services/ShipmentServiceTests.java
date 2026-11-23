@@ -1,7 +1,6 @@
 package org.bme.micro_futar.logistics.services;
 
 import org.bme.micro_futar.logistics.entities.Shipment;
-import org.bme.micro_futar.logistics.entities.ShipmentManualReview;
 import org.bme.micro_futar.logistics.entities.ShipmentRoute;
 import org.bme.micro_futar.logistics.entities.ShipmentRouteCourier;
 import org.bme.micro_futar.logistics.mappers.ShipmentRouteCourierMapper;
@@ -60,6 +59,9 @@ class ShipmentServiceTests {
 
     @Mock
     private ShipmentManualReviewRepository shipmentManualReviewRepository;
+
+    @Mock
+    private ShipmentManualReviewService shipmentManualReviewService;
 
     @Mock
     private ShipmentRouteMapper shipmentRouteMapper;
@@ -230,7 +232,7 @@ class ShipmentServiceTests {
         verify(eventPublisher, times(1)).publishEvent(any(ShipmentRouteCourierDTO.class));
         verify(shipmentRouteRepository, never()).delete(any());
         verify(shipmentRoutePlanner, never()).planRouteForShipment(any());
-        verifyNoInteractions(shipmentManualReviewRepository);
+        verifyNoInteractions(shipmentManualReviewService);
     }
 
     @Test
@@ -261,23 +263,20 @@ class ShipmentServiceTests {
 
         assertThat(open.isCanceled()).isFalse();
         assertThat(pickedUp.isCanceled()).isFalse();
-        verify(shipmentManualReviewRepository).save(argThat((ShipmentManualReview review) ->
-                review.getShipmentId().equals(7L) && review.getFlaggedAt() != null));
+        verify(shipmentManualReviewService).flag(7L, "Shipment was canceled after a courier had picked it up");
         verifyNoInteractions(eventPublisher);
     }
 
     @Test
-    void canceledDeliveredShipmentIsFlaggedOnlyOnce() {
+    void canceledDeliveredShipmentIsFlaggedForManualReview() {
         shipmentDTO.setCanceled(true);
         shipmentDTO.setDelivered(true);
         when(shipmentRouteRepository.findByShipmentId(7L)).thenReturn(List.of(route(1L, ZonedDateTime.now())));
         when(shipmentRouteCourierRepository.findByShipmentRouteIdIn(List.of(1L))).thenReturn(List.of());
-        when(shipmentManualReviewRepository.existsById(7L)).thenReturn(false, true);
 
         shipmentService.processShipment(shipmentDTO);
-        shipmentService.processShipment(shipmentDTO);
 
-        verify(shipmentManualReviewRepository, times(1)).save(any(ShipmentManualReview.class));
+        verify(shipmentManualReviewService).flag(7L, "Shipment was canceled after it had been delivered");
         verifyNoInteractions(eventPublisher);
     }
 }
