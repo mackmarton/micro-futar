@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.logistics.dtos.ShipmentManualReviewDTO;
 import org.bme.micro_futar.logistics.entities.Shipment;
+import org.bme.micro_futar.logistics.entities.ShipmentManualReview;
 import org.bme.micro_futar.logistics.entities.ShipmentRoute;
 import org.bme.micro_futar.logistics.entities.ShipmentRouteCourier;
 import org.bme.micro_futar.logistics.mappers.ShipmentRouteCourierMapper;
@@ -123,8 +124,11 @@ public class ShipmentService {
     }
 
     @Transactional(readOnly = true)
-    public List<ShipmentManualReviewDTO> getManualReviews() {
-        return shipmentManualReviewRepository.findAllByOrderByFlaggedAtDesc().stream()
+    public List<ShipmentManualReviewDTO> getManualReviews(boolean includeResolved) {
+        List<ShipmentManualReview> reviews = includeResolved
+                ? shipmentManualReviewRepository.findAllByOrderByFlaggedAtDesc()
+                : shipmentManualReviewRepository.findAllByResolvedAtIsNullOrderByFlaggedAtDesc();
+        return reviews.stream()
                 .map(review -> {
                     Shipment shipment = shipmentRepository.findById(review.getShipmentId()).orElse(null);
                     return ShipmentManualReviewDTO.builder()
@@ -134,6 +138,8 @@ public class ShipmentService {
                             .delivered(shipment != null && shipment.isDelivered())
                             .reason(review.getReason())
                             .flaggedAt(review.getFlaggedAt())
+                            .resolvedAt(review.getResolvedAt())
+                            .resolvedBy(review.getResolvedBy())
                             .build();
                 })
                 .toList();

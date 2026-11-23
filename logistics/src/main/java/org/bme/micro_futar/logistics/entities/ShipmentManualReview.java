@@ -10,7 +10,8 @@ import java.time.ZonedDateTime;
 /**
  * A canceled shipment that logistics could not cancel automatically (already picked up or delivered), so an
  * administrator has to deal with it. Owned by logistics, kept apart from the read-only {@link Shipment} copy so
- * that incoming shipment messages never overwrite it.
+ * that incoming shipment messages never overwrite it. Once resolved it stays resolved: a redelivered
+ * message does not reopen it.
  */
 @Data
 @Entity
@@ -20,4 +21,6 @@ public class ShipmentManualReview {
     private Long shipmentId;
     private String reason;
     private ZonedDateTime flaggedAt;
+    private ZonedDateTime resolvedAt;
+    private String resolvedBy;
 }

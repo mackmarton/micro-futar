@@ -18,4 +18,6 @@ public class ShipmentManualReviewDTO {
     private boolean delivered;
     private String reason;
     private ZonedDateTime flaggedAt;
+    private ZonedDateTime resolvedAt;
+    private String resolvedBy;
 }

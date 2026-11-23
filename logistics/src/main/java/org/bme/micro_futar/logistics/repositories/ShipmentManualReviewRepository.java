@@ -8,4 +8,6 @@ import java.util.List;
 public interface ShipmentManualReviewRepository extends JpaRepository<ShipmentManualReview, Long> {
 
     List<ShipmentManualReview> findAllByOrderByFlaggedAtDesc();
+
+    List<ShipmentManualReview> findAllByResolvedAtIsNullOrderByFlaggedAtDesc();
 }
