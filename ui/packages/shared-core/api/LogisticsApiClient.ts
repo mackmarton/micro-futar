@@ -136,6 +136,9 @@ export interface ShipmentManualReviewDTO {
   reason?: string;
   /** @format date-time */
   flaggedAt?: string;
+  /** @format date-time */
+  resolvedAt?: string;
+  resolvedBy?: string;
 }
 
 export interface CountryPriceDTO {
@@ -871,6 +874,20 @@ export class Api<
     /**
      * No description
      *
+     * @tags shipment-manual-review-controller
+     * @name Resolve
+     * @request POST:/api/logistics/shipment-manual-reviews/{shipmentId}/resolve
+     */
+    resolve: (shipmentId: number, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/logistics/shipment-manual-reviews/${shipmentId}/resolve`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags location-region-controller
      * @name GetAllRegions
      * @request GET:/api/logistics/regions
@@ -1398,10 +1415,17 @@ export class Api<
      * @name GetManualReviews
      * @request GET:/api/logistics/shipment-manual-reviews
      */
-    getManualReviews: (params: RequestParams = {}) =>
+    getManualReviews: (
+      query?: {
+        /** @default false */
+        includeResolved?: boolean;
+      },
+      params: RequestParams = {},
+    ) =>
       this.request<ShipmentManualReviewDTO[], any>({
         path: `/api/logistics/shipment-manual-reviews`,
         method: "GET",
+        query: query,
         ...params,
       }),
 

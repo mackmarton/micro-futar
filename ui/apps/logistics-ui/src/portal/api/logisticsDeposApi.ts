@@ -385,8 +385,13 @@ export const deleteCurrency = async (currencyId: number): Promise<void> =>
     await logisticsApi.api.deleteCurrency(currencyId, { format: 'json' });
   });
 
-export const getManualReviews = async (): Promise<ShipmentManualReviewDTO[]> =>
+export const getManualReviews = async (includeResolved = false): Promise<ShipmentManualReviewDTO[]> =>
   withAuthRedirect(async () => {
-    const response = await logisticsApi.api.getManualReviews({ format: 'json' });
+    const response = await logisticsApi.api.getManualReviews({ includeResolved }, { format: 'json' });
     return response.data ?? [];
+  });
+
+export const resolveManualReview = async (shipmentId: number): Promise<void> =>
+  withAuthRedirect(async () => {
+    await logisticsApi.api.resolve(shipmentId);
   });

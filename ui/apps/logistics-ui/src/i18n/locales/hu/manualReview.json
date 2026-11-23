@@ -11,10 +11,15 @@
       "recipientAddress": "Címzett címe",
       "status": "Állapot",
       "reason": "Ok",
-      "flaggedAt": "Megjelölve"
+      "flaggedAt": "Megjelölve",
+      "resolve": "Lezárás"
     },
     "statusDelivered": "Kézbesítve",
     "statusPickedUp": "Felvéve",
+    "resolveButton": "Megoldva",
+    "resolvedBy": "Lezárta: {{by}}, {{at}}",
+    "resolveFailed": "A lezárás nem sikerült.",
+    "showResolved": "Lezárt tételek mutatása",
     "tableTitle": "Kézi kezelést igénylő csomagok",
     "empty": "Nincs kézi kezelést igénylő csomag.",
     "mobileEyebrow": "Csomag"
