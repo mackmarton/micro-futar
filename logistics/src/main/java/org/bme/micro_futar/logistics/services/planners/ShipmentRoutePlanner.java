@@ -1,6 +1,8 @@
 package org.bme.micro_futar.logistics.services.planners;
 
 import lombok.RequiredArgsConstructor;
+import org.bme.micro_futar.logistics.dtos.DepoTransitDTO;
+import org.bme.micro_futar.shared.enums.TransportType;
 import org.bme.micro_futar.logistics.exceptions.NoRouteFoundException;
 import org.bme.micro_futar.logistics.services.*;
 import org.bme.micro_futar.logistics.services.fetchers.OpenRouteServiceFetcher;
@@ -35,7 +37,7 @@ public class ShipmentRoutePlanner {
                 shipment.getRecipientLocationCountryId()
         );
 
-        List<Long> cheapestRoute = findCheapestDepoRoute(
+        List<DepoTransitDTO> cheapestRoute = findCheapestTransits(
                 originDepo.getId(),
                 destinationDepo.getId(),
                 shipment.getPackageSizeId()
@@ -93,22 +95,13 @@ public class ShipmentRoutePlanner {
         return coordinates;
     }
 
-    private List<Long> findCheapestDepoRoute(Long originDepoId, Long destinationDepoId, Long packageSizeId) {
-        List<Long> route = depoRouteFinderService.findCheapestRoute(
-                originDepoId,
-                destinationDepoId,
-                packageSizeId
-        );
-
-        if (route.isEmpty()) {
-            throw new NoRouteFoundException(
-                    String.format("No route found between origin depo %d and destination depo %d", originDepoId, destinationDepoId));
-        }
-
-        return route;
+    private List<DepoTransitDTO> findCheapestTransits(Long originDepoId, Long destinationDepoId, Long packageSizeId) {
+        return depoRouteFinderService.findCheapestTransits(originDepoId, destinationDepoId, packageSizeId)
+                .orElseThrow(() -> new NoRouteFoundException(
+                        String.format("No route found between origin depo %d and destination depo %d", originDepoId, destinationDepoId)));
     }
 
-    private List<ShipmentRouteDTO> buildShipmentRoutes(Long shipmentId, DepoDTO originDepo, DepoDTO destinationDepo, List<Long> depoRoute,
+    private List<ShipmentRouteDTO> buildShipmentRoutes(Long shipmentId, DepoDTO originDepo, DepoDTO destinationDepo, List<DepoTransitDTO> transits,
                                                        String originAddress, String destinationAddress) {
         List<ShipmentRouteDTO> shipmentRoutes = new ArrayList<>();
         int routePartNumber = 0;
@@ -118,14 +111,16 @@ public class ShipmentRoutePlanner {
                 .routePartNumber(routePartNumber++)
                 .originAddress(originAddress)
                 .destinationDepoId(originDepo.getId())
+                .transportType(TransportType.ROAD)
                 .build());
 
-        for (int i = 1; i < depoRoute.size(); i++) {
+        for (DepoTransitDTO transit : transits) {
             shipmentRoutes.add(ShipmentRouteDTO.builder()
                     .shipmentId(shipmentId)
                     .routePartNumber(routePartNumber++)
-                    .originDepoId(depoRoute.get(i - 1))
-                    .destinationDepoId(depoRoute.get(i))
+                    .originDepoId(transit.getOriginDepoId())
+                    .destinationDepoId(transit.getDestinationDepoId())
+                    .transportType(transit.getTransportType() != null ? transit.getTransportType() : TransportType.ROAD)
                     .build());
         }
 
@@ -134,6 +129,7 @@ public class ShipmentRoutePlanner {
                 .routePartNumber(routePartNumber)
                 .originDepoId(destinationDepo.getId())
                 .destinationAddress(destinationAddress)
+                .transportType(TransportType.ROAD)
                 .build());
 
         return shipmentRoutes;

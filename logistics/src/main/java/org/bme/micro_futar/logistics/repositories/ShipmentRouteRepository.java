@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ShipmentRouteRepository extends JpaRepository<ShipmentRoute, Long> {
@@ -13,11 +14,25 @@ public interface ShipmentRouteRepository extends JpaRepository<ShipmentRoute, Lo
 
     List<ShipmentRoute> findByShipmentId(Long shipmentId);
 
-    @Query("SELECT sr FROM ShipmentRoute sr WHERE sr.originDepoId = :depoId AND sr.destinationAddress IS NOT NULL AND sr.fulfillmentTime IS NULL AND sr.canceled = false")
-    List<ShipmentRoute> findDeliveryRoutes(@Param("depoId") Long depoId);
+    /**
+     * Delivery legs without a live assignment (not failed, not canceled, and either for today/later or already
+     * picked up), whose previous leg is fulfilled.
+     */
+    @Query("SELECT sr FROM ShipmentRoute sr WHERE sr.originDepoId = :depoId AND sr.destinationAddress IS NOT NULL " +
+            "AND sr.fulfillmentTime IS NULL AND sr.canceled = false " +
+            "AND (sr.routePartNumber = 0 OR EXISTS (" +
+            "    SELECT r2 FROM ShipmentRoute r2 WHERE r2.shipmentId = sr.shipmentId " +
+            "    AND r2.routePartNumber = sr.routePartNumber - 1 AND r2.fulfillmentTime IS NOT NULL)) " +
+            "AND NOT EXISTS (SELECT 1 FROM ShipmentRouteCourier a WHERE a.shipmentRouteId = sr.id " +
+            "AND a.canceled = false AND COALESCE(a.failed, false) = false " +
+            "AND (a.dateAssignedFor >= :today OR COALESCE(a.pickedUpForDelivery, false) = true)) ")
+    List<ShipmentRoute> findDeliveryRoutes(@Param("depoId") Long depoId, @Param("today") LocalDate today);
 
-    @Query("SELECT sr FROM ShipmentRoute sr WHERE sr.destinationDepoId = :depoId AND sr.originAddress IS NOT NULL AND sr.routePartNumber = 0 AND sr.fulfillmentTime IS NULL AND sr.canceled = false")
-    List<ShipmentRoute> findPickupRoutes(@Param("depoId") Long depoId);
+    @Query("SELECT sr FROM ShipmentRoute sr WHERE sr.destinationDepoId = :depoId AND sr.originAddress IS NOT NULL AND sr.routePartNumber = 0 AND sr.fulfillmentTime IS NULL AND sr.canceled = false " +
+            "AND NOT EXISTS (SELECT 1 FROM ShipmentRouteCourier a WHERE a.shipmentRouteId = sr.id " +
+            "AND a.canceled = false AND COALESCE(a.failed, false) = false " +
+            "AND (a.dateAssignedFor >= :today OR COALESCE(a.pickedUpForDelivery, false) = true)) ")
+    List<ShipmentRoute> findPickupRoutes(@Param("depoId") Long depoId, @Param("today") LocalDate today);
 
     @Query("SELECT r1 FROM ShipmentRoute r1 " +
             "WHERE r1.originDepoId = :depoId " +
@@ -30,6 +45,9 @@ public interface ShipmentRouteRepository extends JpaRepository<ShipmentRoute, Lo
             "    WHERE r2.shipmentId = r1.shipmentId " +
             "    AND r2.routePartNumber = r1.routePartNumber - 1 " +
             "    AND r2.fulfillmentTime IS NOT NULL" +
-            ")")
-    List<ShipmentRoute> findCrossDepoRoutesForDepo(@Param("depoId") Long depoId);
+            ") " +
+            "AND NOT EXISTS (SELECT 1 FROM ShipmentRouteCourier a WHERE a.shipmentRouteId = r1.id " +
+            "AND a.canceled = false AND COALESCE(a.failed, false) = false " +
+            "AND (a.dateAssignedFor >= :today OR COALESCE(a.pickedUpForDelivery, false) = true)) ")
+    List<ShipmentRoute> findCrossDepoRoutesForDepo(@Param("depoId") Long depoId, @Param("today") LocalDate today);
 }

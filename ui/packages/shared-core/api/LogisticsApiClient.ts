@@ -136,6 +136,7 @@ export interface ShipmentRouteDTO {
   /** @format date-time */
   fulfillmentTime?: string;
   canceled?: boolean;
+  transportType?: "ROAD" | "AIR";
 }
 
 export interface ShipmentManualReviewDTO {

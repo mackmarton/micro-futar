@@ -36,9 +36,24 @@ public class ShipmentRouteCourierService {
     }
 
     public List<ShipmentRouteCourierDTO> findByCourierIdAndDateAssignedFor(Long courierId, LocalDate date) {
-        return shipmentRouteCourierRepository.findByCourierIdAndDateAssignedFor(courierId, date).stream()
+        return shipmentRouteCourierRepository.findActiveByCourierIdAndDate(courierId, date).stream()
                 .map(shipmentRouteCourierMapper::toDTO)
                 .toList();
+    }
+
+    /**
+     * Marks assignments from earlier days that were never picked up, failed or fulfilled as failed
+     * (the courier never got to them), so their legs are assigned again. Returns how many were closed.
+     */
+    @Transactional
+    public int closeStaleAssignments(LocalDate today) {
+        List<ShipmentRouteCourier> stale = shipmentRouteCourierRepository.findStaleUnfinished(today);
+        for (ShipmentRouteCourier assignment : stale) {
+            assignment.setFailed(true);
+            // Sent to Kafka by KafkaProducerService only after this transaction commits.
+            eventPublisher.publishEvent(shipmentRouteCourierMapper.toDTO(shipmentRouteCourierRepository.save(assignment)));
+        }
+        return stale.size();
     }
 
     @Transactional

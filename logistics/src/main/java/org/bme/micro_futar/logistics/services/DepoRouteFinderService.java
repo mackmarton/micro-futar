@@ -13,6 +13,21 @@ public class DepoRouteFinderService {
     private final DepoTransitService depoTransitService;
 
     public List<Long> findCheapestRoute(Long originDepoId, Long destinationDepoId, Long packageSizeId) {
+        return findCheapestTransits(originDepoId, destinationDepoId, packageSizeId)
+                .map(transits -> {
+                    List<Long> depoIds = new ArrayList<>();
+                    depoIds.add(originDepoId);
+                    transits.forEach(t -> depoIds.add(t.getDestinationDepoId()));
+                    return depoIds;
+                })
+                .orElseGet(List::of);
+    }
+
+    /**
+     * The transits (edges) of the cheapest path, in order; empty list when origin equals destination,
+     * Optional.empty() when no path exists.
+     */
+    public Optional<List<DepoTransitDTO>> findCheapestTransits(Long originDepoId, Long destinationDepoId, Long packageSizeId) {
         List<DepoTransitDTO> allTransits = depoTransitService.getAllDepoTransits();
 
         List<DepoTransitDTO> relevantTransits = allTransits.stream()
@@ -39,17 +54,18 @@ public class DepoRouteFinderService {
 
         for (DepoTransitDTO transit : transits) {
             graph.computeIfAbsent(transit.getOriginDepoId(), k -> new ArrayList<>())
-                .add(new Edge(transit.getDestinationDepoId(), transit.getPrice()));
+                .add(new Edge(transit.getDestinationDepoId(), transit.getPrice(), transit));
         }
 
         return graph;
     }
 
-    private List<Long> dijkstra(Map<Long, List<Edge>> graph, Long start, Long end) {
+    private Optional<List<DepoTransitDTO>> dijkstra(Map<Long, List<Edge>> graph, Long start, Long end) {
         // Distance map: depoId -> minimum cost to reach it
         Map<Long, Double> distances = new HashMap<>();
         // Parent map: depoId -> previous depoId in shortest path
-        Map<Long, Long> parents = new HashMap<>();
+        Map<Long, Edge> parents = new HashMap<>();
+        Map<Long, Long> parentDepos = new HashMap<>();
         // Priority queue: sorts by distance
         PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparingDouble(n -> n.distance));
         // Visited set
@@ -72,7 +88,7 @@ public class DepoRouteFinderService {
 
             // If we reached the destination, reconstruct path
             if (currentDepoId.equals(end)) {
-                return reconstructPath(parents, start, end);
+                return Optional.of(reconstructPath(parents, parentDepos, start, end));
             }
 
             // Get neighbors
@@ -88,14 +104,15 @@ public class DepoRouteFinderService {
 
                 if (newDistance < currentDistance) {
                     distances.put(edge.destinationDepoId, newDistance);
-                    parents.put(edge.destinationDepoId, currentDepoId);
+                    parents.put(edge.destinationDepoId, edge);
+                    parentDepos.put(edge.destinationDepoId, currentDepoId);
                     pq.offer(new Node(edge.destinationDepoId, newDistance));
                 }
             }
         }
 
         // No path found
-        return Collections.emptyList();
+        return Optional.empty();
     }
 
     private Double dijkstraPrice(Map<Long, List<Edge>> graph, Long start, Long end) {
@@ -148,16 +165,13 @@ public class DepoRouteFinderService {
         return null;
     }
 
-    private List<Long> reconstructPath(Map<Long, Long> parents, Long start, Long end) {
-        List<Long> path = new ArrayList<>();
+    private List<DepoTransitDTO> reconstructPath(Map<Long, Edge> parents, Map<Long, Long> parentDepos, Long start, Long end) {
+        List<DepoTransitDTO> path = new ArrayList<>();
         Long current = end;
 
-        while (current != null) {
-            path.add(current);
-            if (current.equals(start)) {
-                break;
-            }
-            current = parents.get(current);
+        while (!current.equals(start)) {
+            path.add(parents.get(current).transit);
+            current = parentDepos.get(current);
         }
 
         Collections.reverse(path);
@@ -167,10 +181,12 @@ public class DepoRouteFinderService {
     private static class Edge {
         Long destinationDepoId;
         Double cost;
+        DepoTransitDTO transit;
 
-        Edge(Long destinationDepoId, Double cost) {
+        Edge(Long destinationDepoId, Double cost, DepoTransitDTO transit) {
             this.destinationDepoId = destinationDepoId;
             this.cost = cost;
+            this.transit = transit;
         }
     }
 

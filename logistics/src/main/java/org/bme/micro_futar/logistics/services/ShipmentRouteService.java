@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,20 +38,20 @@ public class ShipmentRouteService {
                 .map(shipmentRouteMapper::toDTO);
     }
 
-    public List<ShipmentRouteDTO> getDeliveryRoutes(Long depoId) {
-        return shipmentRouteRepository.findDeliveryRoutes(depoId).stream()
+    public List<ShipmentRouteDTO> getDeliveryRoutes(Long depoId, LocalDate today) {
+        return shipmentRouteRepository.findDeliveryRoutes(depoId, today).stream()
                 .map(shipmentRouteMapper::toDTO)
                 .toList();
     }
 
-    public List<ShipmentRouteDTO> getPickupRoutes(Long depoId) {
-        return shipmentRouteRepository.findPickupRoutes(depoId).stream()
+    public List<ShipmentRouteDTO> getPickupRoutes(Long depoId, LocalDate today) {
+        return shipmentRouteRepository.findPickupRoutes(depoId, today).stream()
                 .map(shipmentRouteMapper::toDTO)
                 .toList();
     }
 
-    public List<ShipmentRouteDTO> getCrossDepoRoutes(Long depoId) {
-        return shipmentRouteRepository.findCrossDepoRoutesForDepo(depoId).stream()
+    public List<ShipmentRouteDTO> getCrossDepoRoutes(Long depoId, LocalDate today) {
+        return shipmentRouteRepository.findCrossDepoRoutesForDepo(depoId, today).stream()
                 .map(shipmentRouteMapper::toDTO)
                 .toList();
     }

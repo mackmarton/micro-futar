@@ -2,10 +2,13 @@ package org.bme.micro_futar.courier.entities;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import org.bme.micro_futar.shared.enums.TransportType;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.ZonedDateTime;
@@ -30,4 +33,7 @@ public class ShipmentRoute {
     private ZonedDateTime fulfillmentTime;
     @ColumnDefault("false")
     private boolean canceled;
+    @Nullable
+    @Enumerated(EnumType.STRING)
+    private TransportType transportType;
 }

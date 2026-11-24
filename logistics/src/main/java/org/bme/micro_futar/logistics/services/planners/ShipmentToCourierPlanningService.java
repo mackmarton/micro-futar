@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.logistics.services.*;
 import org.bme.micro_futar.shared.dtos.*;
 import org.bme.micro_futar.shared.enums.CourierType;
+import org.bme.micro_futar.shared.enums.TransportType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ public class ShipmentToCourierPlanningService {
     @Transactional
     public Map<String, Object> planShipmentsForDepo(Long depoId) {
         LocalDate today = LocalDate.now();
+        shipmentRouteCourierService.closeStaleAssignments(today);
         List<CourierDTO> deliveryCouriers = courierService.getCouriersByDepoIdAndType(depoId, CourierType.DELIVERY);
 
         if (deliveryCouriers.isEmpty()) {
@@ -35,9 +37,9 @@ public class ShipmentToCourierPlanningService {
             return createResult(0, 0, 0, "No delivery couriers available");
         }
 
-        List<ShipmentRouteDTO> deliveryRoutes = shipmentRouteService.getDeliveryRoutes(depoId);
+        List<ShipmentRouteDTO> deliveryRoutes = shipmentRouteService.getDeliveryRoutes(depoId, today);
 
-        List<ShipmentRouteDTO> pickupRoutes = shipmentRouteService.getPickupRoutes(depoId);
+        List<ShipmentRouteDTO> pickupRoutes = shipmentRouteService.getPickupRoutes(depoId, today);
 
         List<ShipmentRouteDTO> allRoutes = new ArrayList<>();
         allRoutes.addAll(deliveryRoutes);
@@ -67,8 +69,10 @@ public class ShipmentToCourierPlanningService {
         return createResult(assignedCount, allRoutes.size(), deliveryCouriers.size(), "Planning completed successfully");
     }
 
+    @Transactional
     public Map<String, Object> planCrossDepoShipmentsForDepo(Long depoId) {
         LocalDate today = LocalDate.now();
+        shipmentRouteCourierService.closeStaleAssignments(today);
         List<CourierDTO> couriers = courierService.getCouriersByDepoIdAndType(depoId, CourierType.CROSS_DEPO);
 
         if (couriers.isEmpty()) {
@@ -76,7 +80,7 @@ public class ShipmentToCourierPlanningService {
             return createResult(0, 0, 0, "No delivery couriers available");
         }
 
-        List<ShipmentRouteDTO> crossDepoRoutes = shipmentRouteService.getCrossDepoRoutes(depoId);
+        List<ShipmentRouteDTO> crossDepoRoutes = shipmentRouteService.getCrossDepoRoutes(depoId, today);
 
         if (crossDepoRoutes.isEmpty()) {
             log.info("No pending cross depo shipment routes found for depo {}", depoId);
@@ -124,6 +128,7 @@ public class ShipmentToCourierPlanningService {
 
         CourierCapacity capacity = new CourierCapacity();
         capacity.courierId = courier.getId();
+        capacity.qualifiedFor = courier.getQualifiedFor();
         capacity.maxVolume = vehicle.getMaximumPackableVolume();
         capacity.remainingVolume = vehicle.getMaximumPackableVolume();
 
@@ -142,8 +147,9 @@ public class ShipmentToCourierPlanningService {
         return capacity;
     }
 
-    private int assignShipmentsToCouriers(List<ShipmentRouteDTO> routes, Map<Long, CourierCapacity> courierCapacities, LocalDate date) {
+    private int assignShipmentsToCouriers(List<ShipmentRouteDTO> routeList, Map<Long, CourierCapacity> courierCapacities, LocalDate date) {
         int assignedCount = 0;
+        List<ShipmentRouteDTO> routes = new ArrayList<>(routeList);
 
         if (routes.size() > 1) {
             routes.sort((r1, r2) -> {
@@ -156,7 +162,7 @@ public class ShipmentToCourierPlanningService {
         for (ShipmentRouteDTO route : routes) {
             double volume = getShipmentVolume(route.getShipmentId());
 
-            CourierCapacity selectedCourier = findBestCourier(courierCapacities, volume);
+            CourierCapacity selectedCourier = findBestCourier(courierCapacities, volume, route.getTransportType());
 
             if (selectedCourier != null) {
                 ShipmentRouteCourierDTO assignment = ShipmentRouteCourierDTO.builder()
@@ -181,11 +187,17 @@ public class ShipmentToCourierPlanningService {
         return assignedCount;
     }
 
-    private CourierCapacity findBestCourier(Map<Long, CourierCapacity> courierCapacities, double requiredVolume) {
+    private CourierCapacity findBestCourier(Map<Long, CourierCapacity> courierCapacities, double requiredVolume,
+                                            TransportType requiredType) {
+        // Routes without a transport type (created before it existed) are carried by road.
+        TransportType required = requiredType != null ? requiredType : TransportType.ROAD;
         CourierCapacity bestCourier = null;
         double smallestRemainingVolume = Double.MAX_VALUE;
 
         for (CourierCapacity capacity : courierCapacities.values()) {
+            if (capacity.qualifiedFor != required) {
+                continue;
+            }
             if ((capacity.remainingPackages > 0 && capacity.remainingVolume >= requiredVolume)
                     && (capacity.remainingVolume < smallestRemainingVolume)) {
                 bestCourier = capacity;
@@ -234,6 +246,7 @@ public class ShipmentToCourierPlanningService {
 
     private static class CourierCapacity {
         Long courierId;
+        TransportType qualifiedFor;
         double maxVolume;
         double remainingVolume;
         int maxPackages;
