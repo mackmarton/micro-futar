@@ -1,0 +1,45 @@
+{
+  "list": {
+    "title": "Base fees",
+    "eyebrow": "Logistics",
+    "heading": "Base fees",
+    "description": "Final price = base fee of the sender's country and package size + depo route price. A missing base fee counts as 0.",
+    "addNew": "Create new base fee",
+    "loading": "Loading base fees...",
+    "errorHeading": "Failed to load base fees.",
+    "columns": {
+      "country": "Sender country",
+      "packageSize": "Package size",
+      "price": "Base fee"
+    },
+    "tableTitle": "Base fee list",
+    "empty": "No base fee record available.",
+    "mobileEyebrow": "Base fee",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this base fee? Country prices are recalculated.",
+    "deleteFailed": "Delete failed."
+  },
+  "form": {
+    "eyebrow": "Base fee form",
+    "titleEdit": "Edit base fee",
+    "titleCreate": "Create base fee",
+    "headingEdit": "Edit base fee",
+    "headingCreate": "Create new base fee",
+    "backToList": "Back to base fees",
+    "loading": "Loading the base fee data...",
+    "errorHeading": "Failed to load the base fee data.",
+    "sectionTitle": "Base fee data",
+    "countryLabel": "Sender country",
+    "countryPlaceholder": "Select a country",
+    "packageSizeLabel": "Package size",
+    "packageSizePlaceholder": "Select a package size",
+    "priceLabel": "Base fee",
+    "pricePlaceholder": "e.g.: 990",
+    "countryRequired": "Select a country.",
+    "packageSizeRequired": "Select a package size.",
+    "priceInvalid": "The base fee must be zero or a positive number.",
+    "saveFailed": "Save failed.",
+    "submitCreate": "Create base fee",
+    "submitEdit": "Save changes"
+  }
+}

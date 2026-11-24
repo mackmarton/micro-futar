@@ -1,0 +1,45 @@
+{
+  "list": {
+    "title": "Alapdíjak",
+    "eyebrow": "Logisztika",
+    "heading": "Alapdíjak",
+    "description": "Végleges ár = a feladó országának és a csomagméretnek az alapdíja + a depóútvonal ára. A hiányzó alapdíj 0-nak számít.",
+    "addNew": "Új alapdíj létrehozása",
+    "loading": "Az alapdíjak betöltése folyamatban...",
+    "errorHeading": "Nem sikerült betölteni az alapdíjakat.",
+    "columns": {
+      "country": "Feladó országa",
+      "packageSize": "Csomagméret",
+      "price": "Alapdíj"
+    },
+    "tableTitle": "Alapdíj lista",
+    "empty": "Nincs elérhető alapdíj rekord.",
+    "mobileEyebrow": "Alapdíj",
+    "delete": "Törlés",
+    "deleteConfirm": "Biztosan törlöd ezt az alapdíjat? Az országárak újraszámolódnak.",
+    "deleteFailed": "A törlés nem sikerült."
+  },
+  "form": {
+    "eyebrow": "Alapdíj form",
+    "titleEdit": "Alapdíj szerkesztés",
+    "titleCreate": "Alapdíj létrehozás",
+    "headingEdit": "Alapdíj szerkesztés",
+    "headingCreate": "Új alapdíj létrehozás",
+    "backToList": "Vissza az alapdíjakhoz",
+    "loading": "Az alapdíj adatainak betöltése folyamatban...",
+    "errorHeading": "Az alapdíj adatainak betöltése sikertelen.",
+    "sectionTitle": "Alapdíj adatai",
+    "countryLabel": "Feladó országa",
+    "countryPlaceholder": "Válassz országot",
+    "packageSizeLabel": "Csomagméret",
+    "packageSizePlaceholder": "Válassz csomagméretet",
+    "priceLabel": "Alapdíj",
+    "pricePlaceholder": "Pl.: 990",
+    "countryRequired": "Az ország kiválasztása kötelező.",
+    "packageSizeRequired": "A csomagméret kiválasztása kötelező.",
+    "priceInvalid": "Az alapdíj legyen nulla vagy pozitív szám.",
+    "saveFailed": "A mentés nem sikerült.",
+    "submitCreate": "Alapdíj létrehozása",
+    "submitEdit": "Módosítás mentése"
+  }
+}

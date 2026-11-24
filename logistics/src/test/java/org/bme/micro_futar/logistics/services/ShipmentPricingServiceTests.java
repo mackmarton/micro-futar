@@ -1,7 +1,7 @@
 package org.bme.micro_futar.logistics.services;
 
-import org.bme.micro_futar.logistics.entities.CountryPrice;
-import org.bme.micro_futar.logistics.repositories.CountryPriceRepository;
+import org.bme.micro_futar.logistics.entities.CountryBaseFee;
+import org.bme.micro_futar.logistics.repositories.CountryBaseFeeRepository;
 import org.bme.micro_futar.shared.dtos.ShipmentDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 class ShipmentPricingServiceTests {
 
     @Mock
-    private CountryPriceRepository countryPriceRepository;
+    private CountryBaseFeeRepository countryBaseFeeRepository;
 
     @InjectMocks
     private ShipmentPricingService shipmentPricingService;
@@ -36,39 +36,37 @@ class ShipmentPricingServiceTests {
         shipment.setMaxPrice(3000.0);
     }
 
-    private void givenMinPrice(double minPrice) {
-        CountryPrice countryPrice = new CountryPrice();
-        countryPrice.setMinPrice(minPrice);
-        countryPrice.setMaxPrice(3000.0);
-        when(countryPriceRepository.findByOriginCountryIdAndDestinationCountryIdAndPackageSizeId(1L, 2L, 3L))
-                .thenReturn(Optional.of(countryPrice));
+    private void givenBaseFee(double price) {
+        CountryBaseFee fee = new CountryBaseFee();
+        fee.setPrice(price);
+        when(countryBaseFeeRepository.findByCountryIdAndPackageSizeId(1L, 3L)).thenReturn(Optional.of(fee));
     }
 
     @Test
-    void routePriceWithinRangeIsUsed() {
-        givenMinPrice(1000.0);
-
-        assertThat(shipmentPricingService.finalPrice(shipment, 2490.0)).isEqualByComparingTo("2490");
-    }
-
-    @Test
-    void routePriceIsCappedAtAuthorizedMaximum() {
-        givenMinPrice(1000.0);
-
-        assertThat(shipmentPricingService.finalPrice(shipment, 3500.0)).isEqualByComparingTo("3000");
-    }
-
-    @Test
-    void sameDepoRouteIsRaisedToMinimum() {
-        givenMinPrice(1000.0);
+    void sameDepoCostsOnlyTheBaseFee() {
+        givenBaseFee(1000.0);
 
         assertThat(shipmentPricingService.finalPrice(shipment, 0.0)).isEqualByComparingTo("1000");
     }
 
     @Test
-    void minimumAboveAuthorizedMaximumFallsBackToMaximum() {
-        givenMinPrice(4000.0);
+    void differentDeposCostBaseFeePlusRoute() {
+        givenBaseFee(1000.0);
 
-        assertThat(shipmentPricingService.finalPrice(shipment, 0.0)).isEqualByComparingTo("3000");
+        assertThat(shipmentPricingService.finalPrice(shipment, 1490.0)).isEqualByComparingTo("2490");
+    }
+
+    @Test
+    void priceAboveAuthorizedMaximumIsCapped() {
+        givenBaseFee(1000.0);
+
+        assertThat(shipmentPricingService.finalPrice(shipment, 2500.0)).isEqualByComparingTo("3000");
+    }
+
+    @Test
+    void missingBaseFeeCountsAsZero() {
+        when(countryBaseFeeRepository.findByCountryIdAndPackageSizeId(1L, 3L)).thenReturn(Optional.empty());
+
+        assertThat(shipmentPricingService.finalPrice(shipment, 1490.0)).isEqualByComparingTo("1490");
     }
 }

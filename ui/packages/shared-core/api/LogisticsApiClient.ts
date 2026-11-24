@@ -90,6 +90,17 @@ export interface CourierDTO {
   deleted?: boolean;
 }
 
+export interface CountryBaseFeeDTO {
+  /** @format int64 */
+  id?: number;
+  /** @format int64 */
+  countryId?: number;
+  /** @format int64 */
+  packageSizeId?: number;
+  /** @format double */
+  price?: number;
+}
+
 export interface LocationCountryDTO {
   /** @format int64 */
   id?: number;
@@ -748,6 +759,54 @@ export class Api<
     /**
      * No description
      *
+     * @tags country-base-fee-controller
+     * @name GetCountryBaseFeeById
+     * @request GET:/api/logistics/country-base-fees/{id}
+     */
+    getCountryBaseFeeById: (id: number, params: RequestParams = {}) =>
+      this.request<CountryBaseFeeDTO, any>({
+        path: `/api/logistics/country-base-fees/${id}`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags country-base-fee-controller
+     * @name UpdateCountryBaseFee
+     * @request PUT:/api/logistics/country-base-fees/{id}
+     */
+    updateCountryBaseFee: (
+      id: number,
+      data: CountryBaseFeeDTO,
+      params: RequestParams = {},
+    ) =>
+      this.request<CountryBaseFeeDTO, any>({
+        path: `/api/logistics/country-base-fees/${id}`,
+        method: "PUT",
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags country-base-fee-controller
+     * @name DeleteCountryBaseFee
+     * @request DELETE:/api/logistics/country-base-fees/{id}
+     */
+    deleteCountryBaseFee: (id: number, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/api/logistics/country-base-fees/${id}`,
+        method: "DELETE",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags location-country-controller
      * @name GetCountryById
      * @request GET:/api/logistics/countries/{id}
@@ -1303,6 +1362,39 @@ export class Api<
       this.request<object, any>({
         path: `/api/logistics/country-prices`,
         method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags country-base-fee-controller
+     * @name GetAllCountryBaseFees
+     * @request GET:/api/logistics/country-base-fees
+     */
+    getAllCountryBaseFees: (params: RequestParams = {}) =>
+      this.request<CountryBaseFeeDTO[], any>({
+        path: `/api/logistics/country-base-fees`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags country-base-fee-controller
+     * @name CreateCountryBaseFee
+     * @request POST:/api/logistics/country-base-fees
+     */
+    createCountryBaseFee: (
+      data: CountryBaseFeeDTO,
+      params: RequestParams = {},
+    ) =>
+      this.request<CountryBaseFeeDTO, any>({
+        path: `/api/logistics/country-base-fees`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
 

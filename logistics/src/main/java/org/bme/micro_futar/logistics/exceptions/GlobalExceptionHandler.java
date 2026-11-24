@@ -14,4 +14,14 @@ public class GlobalExceptionHandler {
         problem.setProperty("field", e.getField());
         return problem;
     }
+
+    @ExceptionHandler(DuplicateEntityException.class)
+    public ProblemDetail handleDuplicate(DuplicateEntityException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ProblemDetail handleIllegalArgument(IllegalArgumentException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
 }

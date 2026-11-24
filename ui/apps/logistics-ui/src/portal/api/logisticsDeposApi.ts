@@ -1,6 +1,7 @@
 import { resolveApiBaseUrl, withAuthRedirect } from '@package/shared-core';
 import {
   Api,
+  type CountryBaseFeeDTO,
   type CourierDTO,
   type CurrencyDTO,
   type DepoDTO,
@@ -394,4 +395,41 @@ export const getManualReviews = async (includeResolved = false): Promise<Shipmen
 export const resolveManualReview = async (shipmentId: number): Promise<void> =>
   withAuthRedirect(async () => {
     await logisticsApi.api.resolve(shipmentId);
+  });
+
+export const getAllCountryBaseFees = async (): Promise<CountryBaseFeeDTO[]> =>
+  withAuthRedirect(async () => {
+    const response = await logisticsApi.api.getAllCountryBaseFees({ format: 'json' });
+    return response.data ?? [];
+  });
+
+export const getCountryBaseFeeById = async (countryBaseFeeId: number): Promise<CountryBaseFeeDTO> =>
+  withAuthRedirect(async () => {
+    const response = await logisticsApi.api.getCountryBaseFeeById(countryBaseFeeId, { format: 'json' });
+
+    if (!response.data) {
+      throw new Error('Alapdíj nem található.');
+    }
+
+    return response.data;
+  });
+
+export const createCountryBaseFee = async (countryBaseFee: CountryBaseFeeDTO): Promise<CountryBaseFeeDTO> =>
+  withAuthRedirect(async () => {
+    const response = await logisticsApi.api.createCountryBaseFee(countryBaseFee, { format: 'json' });
+    return response.data ?? countryBaseFee;
+  });
+
+export const updateCountryBaseFee = async (
+  countryBaseFeeId: number,
+  countryBaseFee: CountryBaseFeeDTO,
+): Promise<CountryBaseFeeDTO> =>
+  withAuthRedirect(async () => {
+    const response = await logisticsApi.api.updateCountryBaseFee(countryBaseFeeId, countryBaseFee, { format: 'json' });
+    return response.data ?? countryBaseFee;
+  });
+
+export const deleteCountryBaseFee = async (countryBaseFeeId: number): Promise<void> =>
+  withAuthRedirect(async () => {
+    await logisticsApi.api.deleteCountryBaseFee(countryBaseFeeId, { format: 'json' });
   });

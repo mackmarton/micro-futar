@@ -1,11 +1,15 @@
 package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.bme.micro_futar.logistics.entities.CountryBaseFee;
 import org.bme.micro_futar.logistics.entities.CountryPrice;
+import org.bme.micro_futar.logistics.events.CountryBaseFeeChangedEvent;
 import org.bme.micro_futar.logistics.events.DepoChangedEvent;
 import org.bme.micro_futar.logistics.events.DepoTransitChangedEvent;
 import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.CountryPriceMapper;
+import org.bme.micro_futar.logistics.repositories.CountryBaseFeeRepository;
 import org.bme.micro_futar.logistics.repositories.CountryPriceRepository;
 import org.bme.micro_futar.shared.dtos.CountryPriceDTO;
 import org.bme.micro_futar.shared.dtos.DepoDTO;
@@ -13,9 +17,14 @@ import org.bme.micro_futar.shared.dtos.PackageSizeDTO;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CountryPriceService {
@@ -26,6 +35,7 @@ public class CountryPriceService {
     private final DepoService depoService;
     private final DepoRouteFinderService depoRouteFinderService;
     private final PackageSizeService packageSizeService;
+    private final CountryBaseFeeRepository countryBaseFeeRepository;
 
     public List<CountryPriceDTO> getAllCountryPrices() {
         return countryPriceRepository.findAll().stream()
@@ -39,6 +49,12 @@ public class CountryPriceService {
     }
 
     public void recalculate() {
+        Map<List<Long>, Double> baseFees = new HashMap<>();
+        for (CountryBaseFee fee : countryBaseFeeRepository.findAll()) {
+            baseFees.put(List.of(fee.getCountryId(), fee.getPackageSizeId()), fee.getPrice());
+        }
+        Set<List<Long>> warnedMissing = new HashSet<>();
+
         List<DepoDTO> allDepos = depoService.getAllDepos();
         List<PackageSizeDTO> allPackageSizes = packageSizeService.getAllPackageSizes();
 
@@ -53,20 +69,29 @@ public class CountryPriceService {
                     List<DepoDTO> originDepos = depoService.getAllDeposByCountryId(originCountryId);
                     List<DepoDTO> destinationDepos = depoService.getAllDeposByCountryId(destinationCountryId);
 
+                    Double baseFee = baseFees.get(List.of(originCountryId, packageSize.getId()));
+                    if (baseFee == null) {
+                        if (warnedMissing.add(List.of(originCountryId, packageSize.getId()))) {
+                            log.warn("No base fee for country {} and package size {}, counting it as 0",
+                                    originCountryId, packageSize.getId());
+                        }
+                        baseFee = 0.0;
+                    }
+
                     Double minPrice = null;
                     Double maxPrice = null;
 
                     for (DepoDTO originDepo : originDepos) {
                         for (DepoDTO destinationDepo : destinationDepos) {
-                            if (originDepo.equals(destinationDepo)) continue;
+                            Double routePrice = originDepo.equals(destinationDepo)
+                                    ? Double.valueOf(0.0)
+                                    : depoRouteFinderService.findCheapestRoutePrice(
+                                            originDepo.getId(),
+                                            destinationDepo.getId(),
+                                            packageSize.getId());
 
-                            Double price = depoRouteFinderService.findCheapestRoutePrice(
-                                    originDepo.getId(),
-                                    destinationDepo.getId(),
-                                    packageSize.getId()
-                            );
-
-                            if (price == null) continue;
+                            if (routePrice == null) continue;
+                            double price = baseFee + routePrice;
 
                             if (minPrice == null || price < minPrice) {
                                 minPrice = price;
@@ -114,6 +139,11 @@ public class CountryPriceService {
 
     @EventListener
     public void handleDepoChanged(DepoChangedEvent event) {
+        recalculate();
+    }
+
+    @EventListener
+    public void handleCountryBaseFeeChanged(CountryBaseFeeChangedEvent event) {
         recalculate();
     }
 

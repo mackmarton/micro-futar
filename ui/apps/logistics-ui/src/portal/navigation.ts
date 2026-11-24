@@ -40,6 +40,13 @@ export const useLogisticsNavigationItems = (): NonNullable<PortalLayoutProps['na
         onlyLoggedIn: true,
       },
       {
+        label: t('nav.countryBaseFees'),
+        href: '#/portal/country-base-fees',
+        sideIcon: 'request_quote',
+        bottomIcon: 'request_quote',
+        onlyLoggedIn: true,
+      },
+      {
         label: t('nav.vehicles'),
         href: '#/portal/vehicles',
         sideIcon: 'delivery_truck_speed',

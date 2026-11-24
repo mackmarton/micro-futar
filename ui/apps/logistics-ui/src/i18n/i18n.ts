@@ -5,6 +5,7 @@ import huDepo from './locales/hu/depo.json';
 import huCourier from './locales/hu/courier.json';
 import huLocation from './locales/hu/location.json';
 import huPackageSize from './locales/hu/packageSize.json';
+import huCountryBaseFee from './locales/hu/countryBaseFee.json';
 import huVehicle from './locales/hu/vehicle.json';
 import huCurrency from './locales/hu/currency.json';
 import huManualReview from './locales/hu/manualReview.json';
@@ -14,6 +15,7 @@ import enDepo from './locales/en/depo.json';
 import enCourier from './locales/en/courier.json';
 import enLocation from './locales/en/location.json';
 import enPackageSize from './locales/en/packageSize.json';
+import enCountryBaseFee from './locales/en/countryBaseFee.json';
 import enVehicle from './locales/en/vehicle.json';
 import enCurrency from './locales/en/currency.json';
 import enManualReview from './locales/en/manualReview.json';
@@ -32,6 +34,7 @@ const resources = {
     courier: huCourier,
     location: huLocation,
     packageSize: huPackageSize,
+    countryBaseFee: huCountryBaseFee,
     vehicle: huVehicle,
     currency: huCurrency,
     manualReview: huManualReview,
@@ -43,6 +46,7 @@ const resources = {
     courier: enCourier,
     location: enLocation,
     packageSize: enPackageSize,
+    countryBaseFee: enCountryBaseFee,
     vehicle: enVehicle,
     currency: enCurrency,
     manualReview: enManualReview,
@@ -71,7 +75,7 @@ void i18next.use(initReactI18next).init({
   lng: readStoredLocale(),
   fallbackLng: DEFAULT_LOCALE,
   defaultNS: 'common',
-  ns: ['common', 'depo', 'courier', 'location', 'packageSize', 'vehicle', 'currency', 'manualReview', 'landing'],
+  ns: ['common', 'depo', 'courier', 'location', 'packageSize', 'countryBaseFee', 'vehicle', 'currency', 'manualReview', 'landing'],
   resources,
   interpolation: { escapeValue: false },
   react: { useSuspense: false },

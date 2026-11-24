@@ -1,6 +1,7 @@
 package org.bme.micro_futar.logistics.services;
 
 import lombok.RequiredArgsConstructor;
+import org.bme.micro_futar.logistics.dtos.CountryBaseFeeDTO;
 import org.bme.micro_futar.logistics.dtos.DepoTransitDTO;
 import org.bme.micro_futar.logistics.exceptions.InvalidReferenceException;
 import org.bme.micro_futar.logistics.repositories.CourierRepository;
@@ -67,6 +68,20 @@ public class ReferenceValidator {
         if (transit.getOriginDepoId() != null && transit.getOriginDepoId().equals(transit.getDestinationDepoId())) {
             throw new InvalidReferenceException("destinationDepoId",
                     "originDepoId and destinationDepoId must differ (both are " + transit.getOriginDepoId() + ")");
+        }
+    }
+
+    public void validate(CountryBaseFeeDTO fee) {
+        requireExists("countryId", "LocationCountry", fee.getCountryId(), locationCountryRepository::existsByIdAndDeletedFalse);
+        requireExists("packageSizeId", "PackageSize", fee.getPackageSizeId(), packageSizeRepository::existsByIdAndDeletedFalse);
+        if (fee.getCountryId() == null) {
+            throw new InvalidReferenceException("countryId", "countryId is required");
+        }
+        if (fee.getPackageSizeId() == null) {
+            throw new InvalidReferenceException("packageSizeId", "packageSizeId is required");
+        }
+        if (fee.getPrice() == null || fee.getPrice() < 0) {
+            throw new IllegalArgumentException("price must be zero or positive");
         }
     }
 

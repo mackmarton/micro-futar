@@ -1,5 +1,6 @@
 package org.bme.micro_futar.logistics.services;
 
+import org.bme.micro_futar.logistics.dtos.CountryBaseFeeDTO;
 import org.bme.micro_futar.logistics.dtos.DepoTransitDTO;
 import org.bme.micro_futar.logistics.exceptions.InvalidReferenceException;
 import org.bme.micro_futar.logistics.repositories.CourierRepository;
@@ -243,5 +244,44 @@ class ReferenceValidatorTests {
     void assignmentWithUnknownShipmentRouteIsRejected() {
         assertRejected(() -> validator.validate(assignment(8L, 99L)), "shipmentRouteId",
                 "ShipmentRoute 99 (shipmentRouteId) does not exist or has been deleted");
+    }
+
+    // ---- CountryBaseFee
+
+    private CountryBaseFeeDTO baseFee(Long countryId, Long packageSizeId, Double price) {
+        CountryBaseFeeDTO dto = new CountryBaseFeeDTO();
+        dto.setCountryId(countryId);
+        dto.setPackageSizeId(packageSizeId);
+        dto.setPrice(price);
+        return dto;
+    }
+
+    @Test
+    void validBaseFeeIsAccepted() {
+        assertThatCode(() -> validator.validate(baseFee(2L, 6L, 500.0))).doesNotThrowAnyException();
+    }
+
+    @Test
+    void baseFeeWithUnknownCountryIsRejected() {
+        assertRejected(() -> validator.validate(baseFee(99L, 6L, 500.0)), "countryId",
+                "LocationCountry 99 (countryId) does not exist or has been deleted");
+    }
+
+    @Test
+    void baseFeeWithUnknownPackageSizeIsRejected() {
+        assertRejected(() -> validator.validate(baseFee(2L, 99L, 500.0)), "packageSizeId",
+                "PackageSize 99 (packageSizeId) does not exist or has been deleted");
+    }
+
+    @Test
+    void baseFeeWithoutReferencesIsRejected() {
+        assertRejected(() -> validator.validate(baseFee(null, 6L, 500.0)), "countryId", "required");
+        assertRejected(() -> validator.validate(baseFee(2L, null, 500.0)), "packageSizeId", "required");
+    }
+
+    @Test
+    void negativeOrMissingBaseFeePriceIsRejected() {
+        assertThatThrownBy(() -> validator.validate(baseFee(2L, 6L, -1.0))).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> validator.validate(baseFee(2L, 6L, null))).isInstanceOf(IllegalArgumentException.class);
     }
 }

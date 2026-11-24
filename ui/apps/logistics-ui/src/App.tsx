@@ -45,6 +45,12 @@ const LogisticsCountryFormPage = lazy(() =>
 const LogisticsCityFormPage = lazy(() =>
   import('./portal/location/city/LogisticsCityFormPage').then((module) => ({ default: module.LogisticsCityFormPage })),
 );
+const LogisticsCountryBaseFeesPage = lazy(() =>
+  import('./portal/country-base-fee/LogisticsCountryBaseFeesPage').then((module) => ({ default: module.LogisticsCountryBaseFeesPage })),
+);
+const LogisticsCountryBaseFeeFormPage = lazy(() =>
+  import('./portal/country-base-fee/LogisticsCountryBaseFeeFormPage').then((module) => ({ default: module.LogisticsCountryBaseFeeFormPage })),
+);
 const LogisticsPackageSizesPage = lazy(() =>
   import('./portal/package-size/LogisticsPackageSizesPage').then((module) => ({ default: module.LogisticsPackageSizesPage })),
 );
@@ -116,6 +122,9 @@ function App() {
           <Route path="locations/cities" element={<LogisticsCitiesPage />} />
           <Route path="locations/cities/new" element={<LogisticsCityFormPage />} />
           <Route path="locations/cities/:cityId/edit" element={<LogisticsCityFormPage />} />
+          <Route path="country-base-fees" element={<LogisticsCountryBaseFeesPage />} />
+          <Route path="country-base-fees/new" element={<LogisticsCountryBaseFeeFormPage />} />
+          <Route path="country-base-fees/:countryBaseFeeId/edit" element={<LogisticsCountryBaseFeeFormPage />} />
           <Route path="package-sizes" element={<LogisticsPackageSizesPage />} />
           <Route path="package-sizes/new" element={<LogisticsPackageSizeFormPage />} />
           <Route path="package-sizes/:packageSizeId/edit" element={<LogisticsPackageSizeFormPage />} />
