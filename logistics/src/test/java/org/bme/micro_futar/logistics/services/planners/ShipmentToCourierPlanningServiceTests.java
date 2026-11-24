@@ -106,6 +106,17 @@ class ShipmentToCourierPlanningServiceTests {
     }
 
     @Test
+    void courierWithoutQualificationIsTreatedAsRoadCourier() {
+        ShipmentRouteDTO route = crossDepoRoute(TransportType.ROAD);
+        stubCommon(List.of(courier(1, null)), route, CourierType.CROSS_DEPO);
+        when(shipmentRouteService.getCrossDepoRoutes(eq(DEPO), any())).thenReturn(List.of(route));
+
+        service.planCrossDepoShipmentsForDepo(DEPO);
+
+        verify(shipmentRouteCourierService).save(any());
+    }
+
+    @Test
     void planningClosesStaleAssignmentsBeforeLookingForLegs() {
         when(courierService.getCouriersByDepoIdAndType(DEPO, CourierType.DELIVERY)).thenReturn(List.of(courier(1, TransportType.ROAD)));
         when(shipmentRouteService.getDeliveryRoutes(eq(DEPO), any())).thenReturn(List.of());

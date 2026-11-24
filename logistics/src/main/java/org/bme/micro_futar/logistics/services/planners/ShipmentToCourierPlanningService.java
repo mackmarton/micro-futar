@@ -128,7 +128,7 @@ public class ShipmentToCourierPlanningService {
 
         CourierCapacity capacity = new CourierCapacity();
         capacity.courierId = courier.getId();
-        capacity.qualifiedFor = courier.getQualifiedFor();
+        capacity.qualifiedFor = courier.getQualifiedFor() != null ? courier.getQualifiedFor() : TransportType.ROAD;
         capacity.maxVolume = vehicle.getMaximumPackableVolume();
         capacity.remainingVolume = vehicle.getMaximumPackableVolume();
 
