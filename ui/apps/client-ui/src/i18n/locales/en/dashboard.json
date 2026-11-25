@@ -6,6 +6,8 @@
   "loading": "Loading shipments...",
   "redirectingToLogin": "Redirecting to login...",
   "error": {
+    "loginAgain": "Log in again",
+    "emailNotVerified": "Your email address hasn't been verified yet. Please confirm it using the email we sent you, then log in again.",
     "generic": "Couldn't load your shipments. Please try again.",
     "retry": "Try again"
   },
