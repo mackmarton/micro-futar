@@ -2,6 +2,7 @@ package org.bme.micro_futar.api_gateway.config;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -20,7 +21,7 @@ public class RedirectUriSessionWebFilter implements WebFilter {
     public static final String REDIRECT_URL = "REDIRECT_URL";
     private static final String REDIRECT_URI_PARAM = "redirect_uri";
     private static final String LOGIN_PATH_PREFIX = "/oauth2/authorization/keycloak";
-    private static final String LOGOUT_PATH_PREFIX = "/logout";
+    private static final String LOGOUT_PATH = "/logout";
     private static final Set<String> ALLOWED_SCHEMES = Set.of("http", "https");
     private static final String ROOT_DOMAIN = "micro-futar.hu";
     private static final String LOCALHOST = "localhost";
@@ -28,7 +29,8 @@ public class RedirectUriSessionWebFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String requestPath = exchange.getRequest().getPath().value();
-        if (!requestPath.startsWith(LOGIN_PATH_PREFIX) && !requestPath.startsWith(LOGOUT_PATH_PREFIX)) {
+        boolean isLogout = LOGOUT_PATH.equals(requestPath) && HttpMethod.POST.equals(exchange.getRequest().getMethod());
+        if (!isLogout && !requestPath.startsWith(LOGIN_PATH_PREFIX)) {
             return chain.filter(exchange);
         }
 
@@ -46,6 +48,13 @@ public class RedirectUriSessionWebFilter implements WebFilter {
 
         if (!isAllowedRedirectUri(parsedRedirectUri)) {
             return rejectInvalidRedirectUri(exchange);
+        }
+
+        // Kijelentkezésnél nem nyúlunk a munkamenethez: egy idegen oldalról, süti nélkül érkező POST új munkamenetet
+        // nyitna, és a válasz sütije felülírná a felhasználó élő munkamenetét.
+        if (isLogout) {
+            exchange.getAttributes().put(REDIRECT_URL, redirectUri);
+            return chain.filter(exchange);
         }
 
         return exchange.getSession()

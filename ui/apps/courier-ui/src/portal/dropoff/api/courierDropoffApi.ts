@@ -1,16 +1,11 @@
-import { resolveApiBaseUrl } from '@package/shared-core';
+import { gatewayApiConfig } from '@package/shared-core';
 import {
   Api,
   type ShipmentRouteCourierDTO,
 } from '@package/shared-core/api/CourierApiClient';
 import { fetchMyAssignments } from '../../myAssignmentsApi.ts';
 
-const courierApiClient = new Api({
-  baseUrl: resolveApiBaseUrl(),
-  baseApiParams: {
-    credentials: 'include',
-  },
-});
+const courierApiClient = new Api(gatewayApiConfig());
 
 export const fetchCourierPickedUpAssignmentsForToday = async (signal?: AbortSignal): Promise<ShipmentRouteCourierDTO[]> => {
   const response = await courierApiClient.api.findAllPickedUpAssignmentsForCourierForCurrentDay({

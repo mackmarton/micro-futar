@@ -1,18 +1,12 @@
 import { Api, type PaymentStatusResponseDTO } from '@package/shared-core/api/PaymentsApiClient';
-import { resolveApiBaseUrl } from '@package/shared-core';
+import { gatewayApiConfig } from '@package/shared-core';
 import type { AppLocale } from '../../i18n/createI18nInstance.ts';
 
 export type PaymentStatus = NonNullable<PaymentStatusResponseDTO['status']>;
 
 const PAYMENT_TOKEN_HEADER = 'X-Payment-Token';
 
-const paymentsApiClient = new Api({
-    baseUrl: resolveApiBaseUrl(),
-    baseApiParams: {
-        // A bejelentkezett feladó token nélkül, a session alapján is fizethet.
-        credentials: 'include',
-    },
-});
+const paymentsApiClient = new Api(gatewayApiConfig());
 
 /** A generált kliens a hibás választ (HTTP státusszal) dobja tovább. */
 export const getHttpStatus = (error: unknown): number | undefined => {

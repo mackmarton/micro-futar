@@ -94,6 +94,14 @@ copies of entities they need (e.g. `LocationCity`, `PackageSize`, `Depo`, `Shipm
   (which include `OpenApiGenerationTest`) before regenerating a client so `target/openapi.json` is
   up to date.
 
+## CSRF protection (gateway)
+
+The gateway authenticates with a session cookie, so every `POST`/`PUT`/`PATCH`/`DELETE` on `/api/**` must send
+`X-Requested-With: micro-futar` (`app.csrf.*`; exempt: the Stripe webhook), otherwise it gets 403
+`CSRF_HEADER_MISSING`. In the UI, create generated clients with `new Api(gatewayApiConfig())`, and for other calls
+use `apiClient` or `gatewayFetch` from `@package/shared-core`; never plain `fetch` against the gateway. Logout is a
+`POST /logout?redirect_uri=...` form submission (no header, protected by `SameSite=Lax`).
+
 ## Common commands
 
 ### Backend (Java 25, Maven; each service is an independent Maven module — no reactor/parent pom)

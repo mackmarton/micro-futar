@@ -42,7 +42,15 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
     const logout = useCallback(() => {
         const logoutUrl = new URL(buildApiUrl('/logout'), window.location.origin);
         logoutUrl.searchParams.set('redirect_uri', window.location.href);
-        window.location.href = logoutUrl.toString();
+
+        // A gateway csak POST-ra jelentkeztet ki. Teljes oldalas navigáció kell az átirányításhoz, ezért rejtett
+        // űrlap; egyedi fejlécet nem tud küldeni, a /logout útvonalat a SameSite=Lax süti védi.
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = logoutUrl.toString();
+        form.hidden = true;
+        document.body.appendChild(form);
+        form.submit();
     }, []);
 
     const hasRole = useCallback((role: string) => {

@@ -1,4 +1,4 @@
-import { resolveApiBaseUrl, withAuthRedirect } from '@package/shared-core';
+import { gatewayApiConfig, withAuthRedirect } from '@package/shared-core';
 import {
   Api,
   type CountryBaseFeeDTO,
@@ -20,12 +20,7 @@ export type DepoWithLookups = DepoDTO & {
   countryName?: string;
 };
 
-const logisticsApi = new Api({
-  baseUrl: resolveApiBaseUrl(),
-  baseApiParams: {
-    credentials: 'include',
-  },
-});
+const logisticsApi = new Api(gatewayApiConfig());
 
 export const getAllDepos = async (): Promise<DepoDTO[]> =>
   withAuthRedirect(async () => {

@@ -25,24 +25,24 @@ public class SessionRedirectAuthenticationSuccessHandler
 
     @Override
     public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
-        return doRedirect(webFilterExchange);
+        // A bejelentkezés több kérésen át tart, ezért a cím a munkamenetben várakozik.
+        return webFilterExchange.getExchange().getSession()
+                .flatMap(session -> redirect(webFilterExchange, session.getAttributes().remove(REDIRECT_URL)));
     }
 
     @Override
     public Mono<Void> onLogoutSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
-        return doRedirect(webFilterExchange);
+        // A kijelentkezés egyetlen kérés, a címet a RedirectUriSessionWebFilter a kérés attribútumába teszi.
+        return redirect(webFilterExchange, webFilterExchange.getExchange().getAttribute(REDIRECT_URL));
     }
 
-    private Mono<Void> doRedirect(WebFilterExchange webFilterExchange) {
-        return webFilterExchange.getExchange().getSession().flatMap(session -> {
-            Object redirectUrlAttribute = session.getAttributes().remove(REDIRECT_URL);
-            String redirectUrl = redirectUrlAttribute != null
-                    ? redirectUrlAttribute.toString()
-                    : defaultRedirectUrl;
+    private Mono<Void> redirect(WebFilterExchange webFilterExchange, Object redirectUrlAttribute) {
+        String redirectUrl = redirectUrlAttribute != null
+                ? redirectUrlAttribute.toString()
+                : defaultRedirectUrl;
 
-            webFilterExchange.getExchange().getResponse().setStatusCode(HttpStatus.FOUND);
-            webFilterExchange.getExchange().getResponse().getHeaders().setLocation(URI.create(redirectUrl));
-            return webFilterExchange.getExchange().getResponse().setComplete();
-        });
+        webFilterExchange.getExchange().getResponse().setStatusCode(HttpStatus.FOUND);
+        webFilterExchange.getExchange().getResponse().getHeaders().setLocation(URI.create(redirectUrl));
+        return webFilterExchange.getExchange().getResponse().setComplete();
     }
 }

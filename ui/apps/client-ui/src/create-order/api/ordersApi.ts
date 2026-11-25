@@ -5,7 +5,7 @@ import type {CountryPriceDTO} from '@package/shared-core/api/OrdersApiClient';
 import type {ShipmentDTO} from '@package/shared-core/api/OrdersApiClient';
 import type {CurrencyDTO} from '@package/shared-core/api/OrdersApiClient';
 import type {CreateShipmentResponseDTO} from '@package/shared-core/api/OrdersApiClient';
-import { resolveApiBaseUrl } from '@package/shared-core';
+import { gatewayApiConfig } from '@package/shared-core';
 
 export type CountryOption = {
     value: string;
@@ -64,12 +64,7 @@ export type CreateShipmentPayload = Required<Pick<
 >>;
 
 
-const ordersApiClient = new Api({
-    baseUrl: resolveApiBaseUrl(),
-    baseApiParams: {
-        credentials: 'include',
-    },
-});
+const ordersApiClient = new Api(gatewayApiConfig());
 
 const isValidCountry = (
     country: LocationCountryDTO,

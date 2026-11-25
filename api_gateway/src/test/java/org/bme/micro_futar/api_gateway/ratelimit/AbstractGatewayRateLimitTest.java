@@ -37,7 +37,7 @@ import java.net.InetSocketAddress;
         "RATE_LIMIT_TRUSTED_PROXY_COUNT=1"
 })
 @Import(AbstractGatewayRateLimitTest.ClientRegistrationTestConfig.class)
-abstract class AbstractGatewayRateLimitTest {
+public abstract class AbstractGatewayRateLimitTest {
 
     private static final HttpServer BACKEND = startBackend();
 
@@ -56,6 +56,7 @@ abstract class AbstractGatewayRateLimitTest {
         return client.method(method).uri(path)
                 .header("X-Forwarded-For", forwardedFor)
                 .header("Origin", "http://localhost:5173")
+                .header("X-Requested-With", "micro-futar")
                 .exchange();
     }
 

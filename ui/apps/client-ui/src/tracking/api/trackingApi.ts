@@ -1,12 +1,7 @@
 import { Api, type TrackingDTO } from '@package/shared-core/api/TrackingApiClient';
-import { resolveApiBaseUrl } from '@package/shared-core';
+import { gatewayApiConfig } from '@package/shared-core';
 
-const trackingApiClient = new Api({
-  baseUrl: resolveApiBaseUrl(),
-  baseApiParams: {
-    credentials: 'include',
-  },
-});
+const trackingApiClient = new Api(gatewayApiConfig());
 
 export const fetchTrackingByParcelNumber = async (
   parcelNumber: string,

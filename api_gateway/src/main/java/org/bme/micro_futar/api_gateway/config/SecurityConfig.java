@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
@@ -23,8 +24,15 @@ public class SecurityConfig {
 
     private final List<String> allowedOrigins;
 
-    public SecurityConfig(@Value("${app.cors.allowed-origins}") List<String> allowedOrigins) {
+    private final CsrfHeaderWebFilter csrfHeaderWebFilter;
+
+    public SecurityConfig(
+            @Value("${app.cors.allowed-origins}") List<String> allowedOrigins,
+            @Value("${app.csrf.header-name}") String csrfHeaderName,
+            @Value("${app.csrf.header-value}") String csrfHeaderValue,
+            @Value("${app.csrf.exempt-paths}") List<String> csrfExemptPaths) {
         this.allowedOrigins = allowedOrigins;
+        this.csrfHeaderWebFilter = new CsrfHeaderWebFilter(csrfHeaderName, csrfHeaderValue, csrfExemptPaths);
     }
 
     @Bean
@@ -45,10 +53,13 @@ public class SecurityConfig {
                         .authenticationSuccessHandler(sessionRedirectAuthenticationSuccessHandler)
                 )
                 .logout(logout -> logout
-                        .requiresLogout(ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/logout"))
+                        .requiresLogout(ServerWebExchangeMatchers.pathMatchers(HttpMethod.POST, "/logout"))
                         .logoutSuccessHandler(sessionRedirectAuthenticationSuccessHandler)
                 )
+                // A tokenes CSRF-védelem helyett egyedi fejlécet követelünk meg: a felületek más aldomainen futnak,
+                // a gateway sütijét nem tudnák kiolvasni. A /logout űrlappal érkezik, azt a SameSite=Lax süti védi.
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .addFilterAt(csrfHeaderWebFilter, SecurityWebFiltersOrder.CSRF)
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint((exchange, ex) -> {
                             if (exchange.getRequest().getPath().value().startsWith("/api/")) {

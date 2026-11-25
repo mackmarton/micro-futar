@@ -136,6 +136,10 @@ spring:
 
 app:
   default-redirect-url: ${DEFAULT_REDIRECT_URL}
+  csrf:
+    header-name: ${CSRF_HEADER_NAME:X-Requested-With}
+    header-value: ${CSRF_HEADER_VALUE:micro-futar}
+    exempt-paths: ${CSRF_EXEMPT_PATHS:/api/payments/webhooks/stripe}
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS}
   rate-limit:

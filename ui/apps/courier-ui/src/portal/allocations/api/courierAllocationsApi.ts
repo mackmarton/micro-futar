@@ -1,4 +1,4 @@
-import { resolveApiBaseUrl } from '@package/shared-core';
+import { gatewayApiConfig } from '@package/shared-core';
 import { Api, type MyAssignmentDTO } from '@package/shared-core/api/CourierApiClient';
 import { fetchMyAssignments } from '../../myAssignmentsApi.ts';
 
@@ -18,12 +18,7 @@ export type CourierAllocation = {
   longitude: number;
 };
 
-const courierApiClient = new Api({
-  baseUrl: resolveApiBaseUrl(),
-  baseApiParams: {
-    credentials: 'include',
-  },
-});
+const courierApiClient = new Api(gatewayApiConfig());
 
 export const pickUpParcel = async (assignmentId: number): Promise<void> => {
   await courierApiClient.api.pickUpParcel(assignmentId);
