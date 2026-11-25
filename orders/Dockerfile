@@ -13,8 +13,13 @@ COPY orders ./
 RUN mvn clean package -DskipTests
 
 # Stage 2: Run the Jar
-FROM eclipse-temurin:25-jdk-jammy
+FROM eclipse-temurin:25-jre-jammy
+RUN groupadd --system --gid 1000 app \
+ && useradd --system --uid 1000 --gid 1000 --no-create-home \
+    --home-dir /nonexistent --shell /usr/sbin/nologin app
 WORKDIR /app
-COPY --from=builder /build/orders/target/*.jar app.jar
+RUN chown 1000:1000 /app
+COPY --from=builder --chown=1000:1000 /build/orders/target/*.jar app.jar
+USER 1000:1000
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

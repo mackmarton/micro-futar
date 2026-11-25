@@ -52,6 +52,9 @@ spec:
               key: {{ .Values.config.mail.passwordSecretKey }}
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
         readinessProbe:
           httpGet:
             path: /actuator/health/readiness
@@ -66,3 +69,6 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 15
           failureThreshold: 3
+      volumes:
+      - name: tmp
+        emptyDir: {}

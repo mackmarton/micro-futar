@@ -76,8 +76,3 @@ config:
     logistics: http://logistics.micro-futar-apps-prod:8080
     courier: http://courier.micro-futar-apps-prod:8080
     payment: http://payments.micro-futar-apps-prod:8080
-
-podSecurityContext:
-  runAsNonRoot: true
-  runAsUser: 1000
-  fsGroup: 1000

@@ -52,3 +52,9 @@ spec:
               key: {{ .Values.config.redis.passwordSecretKey }}
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+      volumes:
+      - name: tmp
+        emptyDir: {}

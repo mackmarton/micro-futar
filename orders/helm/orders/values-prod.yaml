@@ -47,11 +47,6 @@ config:
     issuer_uri: https://auth.micro-futar.hu/realms/micro-futar-realm
     expected_audience: api-gateway-client
 
-podSecurityContext:
-  runAsNonRoot: true
-  runAsUser: 1000
-  fsGroup: 1000
-
 kafka:
   topics:
     location_region_topic: location-regions

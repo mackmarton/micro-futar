@@ -94,6 +94,10 @@ services:
       dockerfile: Dockerfile
     image: local/orders:latest
     container_name: orders
+    user: "1000:1000"
+    read_only: true
+    tmpfs:
+      - /tmp
     ports:
       - "8081:8080"
     networks:
@@ -119,6 +123,10 @@ services:
       dockerfile: Dockerfile
     image: local/logistics:latest
     container_name: logistics
+    user: "1000:1000"
+    read_only: true
+    tmpfs:
+      - /tmp
     ports:
       - "8082:8080"
     networks:
@@ -144,6 +152,10 @@ services:
       dockerfile: Dockerfile
     image: local/courier:latest
     container_name: courier
+    user: "1000:1000"
+    read_only: true
+    tmpfs:
+      - /tmp
     ports:
       - "8083:8080"
     networks:
@@ -169,6 +181,10 @@ services:
       dockerfile: Dockerfile
     image: local/tracking:latest
     container_name: tracking
+    user: "1000:1000"
+    read_only: true
+    tmpfs:
+      - /tmp
     ports:
       - "8084:8080"
     networks:
@@ -195,6 +211,10 @@ services:
       dockerfile: payments/Dockerfile
     image: local/payments:latest
     container_name: payments
+    user: "1000:1000"
+    read_only: true
+    tmpfs:
+      - /tmp
     ports:
       - "8086:8080"
     networks:
