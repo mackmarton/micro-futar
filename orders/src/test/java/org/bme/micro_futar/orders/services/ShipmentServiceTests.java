@@ -2,6 +2,7 @@ package org.bme.micro_futar.orders.services;
 
 import org.bme.micro_futar.orders.dtos.CreateShipmentResponseDTO;
 import org.bme.micro_futar.orders.entities.Shipment;
+import org.bme.micro_futar.orders.exceptions.LocationValidationException;
 import org.bme.micro_futar.orders.exceptions.PriceNotAvailableException;
 import org.bme.micro_futar.orders.kafka.ShipmentNotificationProducer;
 import org.bme.micro_futar.orders.kafka.ShipmentProducer;
@@ -60,6 +61,9 @@ class ShipmentServiceTests {
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
+
+    @Mock
+    private LocationCheckService locationCheckService;
 
     @InjectMocks
     private ShipmentService shipmentService;
@@ -187,6 +191,35 @@ class ShipmentServiceTests {
         assertThatThrownBy(() -> shipmentService.newShipment(shipmentDTO))
                 .isInstanceOf(PriceNotAvailableException.class);
         verify(shipmentRepository, never()).save(any());
+    }
+
+    @Test
+    void testNewShipment_ChecksSenderAndRecipientLocation() {
+        when(countryPriceService.findPriceByCountriesAndSize(anyLong(), anyLong(), anyLong()))
+                .thenReturn(Optional.of(countryPriceDTO));
+        when(shipmentMapper.toEntity(shipmentDTO)).thenReturn(shipmentEntity);
+        when(shipmentRepository.save(shipmentEntity)).thenReturn(shipmentEntity);
+        when(shipmentMapper.toDTO(shipmentEntity)).thenReturn(shipmentDTO);
+
+        shipmentService.newShipment(shipmentDTO);
+
+        verify(locationCheckService).check(LocationValidationException.Party.SENDER, 1L, 1L, 1.234, 1.234);
+        verify(locationCheckService).check(LocationValidationException.Party.RECIPIENT, 2L, 2L, 1.234, 1.234);
+    }
+
+    @Test
+    void testNewShipment_RejectedLocationCreatesNothing() {
+        org.mockito.Mockito.lenient().doThrow(new LocationValidationException(
+                        LocationValidationException.Code.LOCATION_TOO_FAR_FROM_CITY,
+                        LocationValidationException.Party.RECIPIENT, "too far"))
+                .when(locationCheckService).check(
+                        org.mockito.ArgumentMatchers.eq(LocationValidationException.Party.RECIPIENT),
+                        anyLong(), anyLong(), org.mockito.ArgumentMatchers.anyDouble(), org.mockito.ArgumentMatchers.anyDouble());
+
+        assertThatThrownBy(() -> shipmentService.newShipment(shipmentDTO))
+                .isInstanceOf(LocationValidationException.class);
+        verify(shipmentRepository, never()).save(any());
+        verifyNoInteractions(eventPublisher);
     }
 
     @Test

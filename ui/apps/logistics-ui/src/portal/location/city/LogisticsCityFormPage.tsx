@@ -2,10 +2,12 @@ import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FormSection, PrecisionInput } from '@package/shared-ui';
+import { FormSection, PrecisionInput, useAuth } from '@package/shared-ui';
+import { LocationMapPicker } from '@package/shared-ui/LocationMapPicker';
 import type { LocationCityDTO } from '@package/shared-core/api/LogisticsApiClient';
 import {
   createCity,
+  geocodeCity,
   getAllCountries,
   getCityById,
   getCountryById,
@@ -18,7 +20,58 @@ import { LanguageSwitcher } from '../../../i18n/LanguageSwitcher';
 type CityFormState = {
   name: string;
   countryId: string;
+  centerLatitude: string;
+  centerLongitude: string;
+  bboxMinLatitude: string;
+  bboxMinLongitude: string;
+  bboxMaxLatitude: string;
+  bboxMaxLongitude: string;
 };
+
+type GeoField = Exclude<keyof CityFormState, 'name' | 'countryId'>;
+
+const GEO_FIELDS: GeoField[] = [
+  'centerLatitude',
+  'centerLongitude',
+  'bboxMinLatitude',
+  'bboxMinLongitude',
+  'bboxMaxLatitude',
+  'bboxMaxLongitude',
+];
+
+// Roughly the middle of Hungary, shown while the city has no centre yet.
+const DEFAULT_MAP_CENTER = { latitude: 47.1625, longitude: 19.5033 };
+
+const emptyFormState = (countryId = ''): CityFormState => ({
+  name: '',
+  countryId,
+  centerLatitude: '',
+  centerLongitude: '',
+  bboxMinLatitude: '',
+  bboxMinLongitude: '',
+  bboxMaxLatitude: '',
+  bboxMaxLongitude: '',
+});
+
+const numberToField = (value?: number) => (typeof value === 'number' ? String(value) : '');
+
+const parseNumber = (value: string): number | null => {
+  if (!value.trim()) {
+    return null;
+  }
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : Number.NaN;
+};
+
+const withGeo = (state: CityFormState, city: LocationCityDTO): CityFormState => ({
+  ...state,
+  centerLatitude: numberToField(city.centerLatitude),
+  centerLongitude: numberToField(city.centerLongitude),
+  bboxMinLatitude: numberToField(city.bboxMinLatitude),
+  bboxMinLongitude: numberToField(city.bboxMinLongitude),
+  bboxMaxLatitude: numberToField(city.bboxMaxLatitude),
+  bboxMaxLongitude: numberToField(city.bboxMaxLongitude),
+});
 
 const parseSelectedId = (value: string | null) => {
   const parsed = Number(value);
@@ -26,8 +79,8 @@ const parseSelectedId = (value: string | null) => {
 };
 
 const toFormState = (city: LocationCityDTO): CityFormState => ({
+  ...withGeo(emptyFormState(typeof city.countryId === 'number' ? String(city.countryId) : ''), city),
   name: city.name ?? '',
-  countryId: typeof city.countryId === 'number' ? String(city.countryId) : '',
 });
 
 const validateForm = (formState: CityFormState, t: (key: string) => string): string | null => {
@@ -39,13 +92,79 @@ const validateForm = (formState: CityFormState, t: (key: string) => string): str
     return t('city.form.countryRequired');
   }
 
+  const values = Object.fromEntries(GEO_FIELDS.map((field) => [field, parseNumber(formState[field])])) as Record<
+    GeoField,
+    number | null
+  >;
+  if (GEO_FIELDS.some((field) => Number.isNaN(values[field]))) {
+    return t('city.form.invalidCoordinates');
+  }
+
+  const latitudes = [values.centerLatitude, values.bboxMinLatitude, values.bboxMaxLatitude];
+  const longitudes = [values.centerLongitude, values.bboxMinLongitude, values.bboxMaxLongitude];
+  if (
+    latitudes.some((value) => value !== null && (value < -90 || value > 90)) ||
+    longitudes.some((value) => value !== null && (value < -180 || value > 180))
+  ) {
+    return t('city.form.invalidCoordinates');
+  }
+
+  if ((values.centerLatitude === null) !== (values.centerLongitude === null)) {
+    return t('city.form.invalidCenter');
+  }
+
+  const bboxValues = [values.bboxMinLatitude, values.bboxMinLongitude, values.bboxMaxLatitude, values.bboxMaxLongitude];
+  const filledBboxValues = bboxValues.filter((value) => value !== null).length;
+  if (filledBboxValues !== 0 && filledBboxValues !== 4) {
+    return t('city.form.invalidBbox');
+  }
+  if (
+    filledBboxValues === 4 &&
+    ((values.bboxMinLatitude as number) > (values.bboxMaxLatitude as number) ||
+      (values.bboxMinLongitude as number) > (values.bboxMaxLongitude as number))
+  ) {
+    return t('city.form.invalidBbox');
+  }
+
   return null;
 };
 
-const buildPayload = (formState: CityFormState): LocationCityDTO => ({
-  name: formState.name.trim(),
-  countryId: Number(formState.countryId),
-});
+// Geo values that are left empty are omitted: the server then keeps whatever it has stored.
+const buildPayload = (formState: CityFormState): LocationCityDTO => {
+  const payload: LocationCityDTO = {
+    name: formState.name.trim(),
+    countryId: Number(formState.countryId),
+  };
+  for (const field of GEO_FIELDS) {
+    const value = parseNumber(formState[field]);
+    if (value !== null) {
+      payload[field] = value;
+    }
+  }
+  return payload;
+};
+
+const GeoNumberInput = ({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}) => (
+  <label className="block">
+    <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3 block">{label}</span>
+    <input
+      type="number"
+      step="any"
+      inputMode="decimal"
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      className="w-full bg-surface-container-lowest border-none rounded-lg p-4 focus:ring-0 border-b-2 border-transparent focus:border-surface-tint transition-all"
+    />
+  </label>
+);
 
 export const LogisticsCityFormPage = () => {
   const { t } = useTranslation('location');
@@ -62,8 +181,12 @@ export const LogisticsCityFormPage = () => {
   const preselectedCountryId = parseSelectedId(searchParams.get('countryId'));
   const fallbackCountryId = preselectedCountryId !== null ? String(preselectedCountryId) : '';
 
+  const { hasRole } = useAuth();
+  const isAdmin = hasRole('ADMIN');
+
   const [draftFormState, setDraftFormState] = useState<CityFormState | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [regeocodeMessage, setRegeocodeMessage] = useState<string | null>(null);
 
   const countriesQuery = useQuery({
     queryKey: ['logistics', 'locations', 'all-countries'],
@@ -79,10 +202,10 @@ export const LogisticsCityFormPage = () => {
 
   const initialFormState = useMemo<CityFormState>(() => {
     if (isEditMode) {
-      return cityQuery.data ? toFormState(cityQuery.data) : { name: '', countryId: '' };
+      return cityQuery.data ? toFormState(cityQuery.data) : emptyFormState();
     }
 
-    return { name: '', countryId: fallbackCountryId };
+    return emptyFormState(fallbackCountryId);
   }, [cityQuery.data, fallbackCountryId, isEditMode]);
 
   const formState = draftFormState ?? initialFormState;
@@ -118,6 +241,18 @@ export const LogisticsCityFormPage = () => {
     },
   });
 
+  const regeocodeMutation = useMutation({
+    mutationFn: () => geocodeCity(cityId as number),
+    onSuccess: (city) => {
+      queryClient.setQueryData(['logistics', 'locations', 'city', cityId], city);
+      setDraftFormState((previous) => withGeo(previous ?? initialFormState, city));
+      setValidationError(null);
+      setRegeocodeMessage(t('city.form.regeocodeDone'));
+      void queryClient.invalidateQueries({ queryKey: ['logistics', 'locations', 'cities'] });
+    },
+    onError: () => setRegeocodeMessage(null),
+  });
+
   if (!hasValidCityId) {
     return <Navigate to="/portal/locations/cities" replace />;
   }
@@ -128,7 +263,36 @@ export const LogisticsCityFormPage = () => {
       [key]: value,
     }));
     setValidationError(null);
+    setRegeocodeMessage(null);
   };
+
+  const centerLatitude = parseNumber(formState.centerLatitude);
+  const centerLongitude = parseNumber(formState.centerLongitude);
+  const hasCenter =
+    centerLatitude !== null && centerLongitude !== null && !Number.isNaN(centerLatitude) && !Number.isNaN(centerLongitude);
+  const markerPosition = hasCenter
+    ? { latitude: centerLatitude as number, longitude: centerLongitude as number }
+    : DEFAULT_MAP_CENTER;
+
+  const bboxNumbers = [
+    parseNumber(formState.bboxMinLatitude),
+    parseNumber(formState.bboxMinLongitude),
+    parseNumber(formState.bboxMaxLatitude),
+    parseNumber(formState.bboxMaxLongitude),
+  ];
+  const mapBounds = bboxNumbers.every((value) => value !== null && !Number.isNaN(value))
+    ? {
+        minLatitude: bboxNumbers[0] as number,
+        minLongitude: bboxNumbers[1] as number,
+        maxLatitude: bboxNumbers[2] as number,
+        maxLongitude: bboxNumbers[3] as number,
+      }
+    : null;
+
+  const savedCity = cityQuery.data;
+  const geocodedAtLabel = savedCity?.geocodedAt
+    ? new Date(savedCity.geocodedAt).toLocaleString()
+    : t('city.form.neverGeocoded');
 
   const handleSubmit = () => {
     const errorMessage = validateForm(formState, t);
@@ -239,6 +403,108 @@ export const LogisticsCityFormPage = () => {
           >
             {tCommon('buttons.cancel')}
           </button>
+        </div>
+      </FormSection>
+
+      <FormSection icon="map" title={t('city.form.geoTitle')} className="mt-6">
+        <p className="font-body text-on-surface-variant">{t('city.form.geoHint')}</p>
+
+        {isEditMode ? (
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <span className="font-body text-on-surface">
+              {t('city.form.geocodedAt')}: {geocodedAtLabel}
+            </span>
+            <span
+              className={
+                savedCity?.geoManual
+                  ? 'rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-800'
+                  : 'rounded-full bg-surface-container-lowest px-2 py-0.5 text-xs font-semibold text-on-surface-variant'
+              }
+            >
+              {savedCity?.geoManual ? t('city.form.manualYes') : t('city.form.manualNo')}
+            </span>
+            {isAdmin ? (
+              <button
+                type="button"
+                onClick={() => regeocodeMutation.mutate()}
+                disabled={regeocodeMutation.isPending}
+                className="inline-flex items-center rounded-lg bg-surface-container-lowest px-4 py-2 font-body font-semibold text-on-surface transition-colors hover:bg-surface-container disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {regeocodeMutation.isPending ? t('city.form.regeocoding') : t('city.form.regeocode')}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+
+        {regeocodeMutation.isError ? (
+          <p className="mt-3 font-body text-red-700" role="alert">
+            {(regeocodeMutation.error as Error)?.message || t('city.form.regeocodeFailed')}
+          </p>
+        ) : null}
+        {regeocodeMessage ? (
+          <p className="mt-3 font-body text-on-surface" role="status">
+            {regeocodeMessage}
+          </p>
+        ) : null}
+
+        <p className="mt-6 text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+          {t('city.form.centerLabel')}
+        </p>
+        <p className="mt-1 font-body text-sm text-on-surface-variant">{t('city.form.centerHint')}</p>
+        <div className="mt-3">
+          <LocationMapPicker
+            center={markerPosition}
+            markerPosition={markerPosition}
+            zoom={hasCenter ? 11 : 6}
+            bounds={mapBounds}
+            onMarkerChange={(position) => {
+              setDraftFormState((previous) => ({
+                ...(previous ?? initialFormState),
+                centerLatitude: position.latitude.toFixed(6),
+                centerLongitude: position.longitude.toFixed(6),
+              }));
+              setValidationError(null);
+              setRegeocodeMessage(null);
+            }}
+          />
+        </div>
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <GeoNumberInput
+            label={t('city.form.centerLatitude')}
+            value={formState.centerLatitude}
+            onChange={(value) => handleInputChange('centerLatitude', value)}
+          />
+          <GeoNumberInput
+            label={t('city.form.centerLongitude')}
+            value={formState.centerLongitude}
+            onChange={(value) => handleInputChange('centerLongitude', value)}
+          />
+        </div>
+
+        <p className="mt-6 text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+          {t('city.form.bboxTitle')}
+        </p>
+        <div className="mt-3 grid gap-4 md:grid-cols-2">
+          <GeoNumberInput
+            label={t('city.form.bboxMinLatitude')}
+            value={formState.bboxMinLatitude}
+            onChange={(value) => handleInputChange('bboxMinLatitude', value)}
+          />
+          <GeoNumberInput
+            label={t('city.form.bboxMinLongitude')}
+            value={formState.bboxMinLongitude}
+            onChange={(value) => handleInputChange('bboxMinLongitude', value)}
+          />
+          <GeoNumberInput
+            label={t('city.form.bboxMaxLatitude')}
+            value={formState.bboxMaxLatitude}
+            onChange={(value) => handleInputChange('bboxMaxLatitude', value)}
+          />
+          <GeoNumberInput
+            label={t('city.form.bboxMaxLongitude')}
+            value={formState.bboxMaxLongitude}
+            onChange={(value) => handleInputChange('bboxMaxLongitude', value)}
+          />
         </div>
       </FormSection>
     </EntityFormShell>

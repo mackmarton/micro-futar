@@ -68,7 +68,17 @@
   "submit": {
     "missingLocation": "A rendeléshez érvényes ország és város kiválasztása szükséges.",
     "success": "A rendelést rögzítettük, átirányítjuk a fizetéshez...",
-    "genericError": "A rendelés mentése nem sikerült. Kérjük próbálja újra."
+    "genericError": "A rendelés mentése nem sikerült. Kérjük próbálja újra.",
+    "locationErrors": {
+      "LOCATION_TOO_FAR_FROM_CITY": "A térképen kijelölt hely túl messze van a megadott várostól.",
+      "INVALID_COORDINATES": "A térképen kijelölt hely érvénytelen. Kérjük jelölje ki újra a pontos helyet.",
+      "CITY_NOT_FOUND": "A kiválasztott város nem található. Kérjük válasszon másik várost.",
+      "CITY_COUNTRY_MISMATCH": "A kiválasztott város nem tartozik a megadott országhoz."
+    },
+    "locationErrorSummary": {
+      "sender": "A feladó címénél a térképen kijelölt hellyel van probléma, kérjük javítsa.",
+      "recipient": "A címzett címénél a térképen kijelölt hellyel van probléma, kérjük javítsa."
+    }
   },
   "geocode": {
     "noResult": "Nem találtunk pontos találatot a megadott címhez.",

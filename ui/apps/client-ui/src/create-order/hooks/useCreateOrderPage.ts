@@ -20,6 +20,24 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type AddressCardRole = 'sender' | 'recipient';
 
+// Az orders 400-as válasza géppel feldolgozható hibakódot és a hibás felet adja vissza.
+const LOCATION_ERROR_CODES = [
+  'LOCATION_TOO_FAR_FROM_CITY',
+  'INVALID_COORDINATES',
+  'CITY_NOT_FOUND',
+  'CITY_COUNTRY_MISMATCH',
+] as const;
+type LocationErrorCode = (typeof LOCATION_ERROR_CODES)[number];
+
+const readLocationError = (error: unknown): { code: LocationErrorCode; role: AddressCardRole } | null => {
+  const body = (error as { error?: { code?: unknown; party?: unknown } } | null)?.error;
+  const code = LOCATION_ERROR_CODES.find((candidate) => candidate === body?.code);
+  if (!code || (body?.party !== 'SENDER' && body?.party !== 'RECIPIENT')) {
+    return null;
+  }
+  return { code, role: body.party === 'SENDER' ? 'sender' : 'recipient' };
+};
+
 type AddressLocationState = {
   center: MapCoordinate;
   markerPosition: MapCoordinate;
@@ -608,7 +626,20 @@ export const useCreateOrderPage = (locale: AppLocale) => {
       }
     } catch (error) {
       console.error('Failed to create shipment.', error);
-      setSubmitErrorMessage(t('submit.genericError'));
+      const locationError = readLocationError(error);
+      if (locationError) {
+        // A hibaüzenet a hibás címkártya térképénél jelenik meg, az összesítőnél csak egy rövid jelzés.
+        setAddressLocations((previous) => ({
+          ...previous,
+          [locationError.role]: {
+            ...previous[locationError.role],
+            geocodeError: t(`submit.locationErrors.${locationError.code}`),
+          },
+        }));
+        setSubmitErrorMessage(t(`submit.locationErrorSummary.${locationError.role}`));
+      } else {
+        setSubmitErrorMessage(t('submit.genericError'));
+      }
     } finally {
       setIsSubmitting(false);
     }

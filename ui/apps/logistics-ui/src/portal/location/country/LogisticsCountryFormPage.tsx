@@ -19,6 +19,7 @@ type CountryFormState = {
   name: string;
   regionId: string;
   currencyCode: string;
+  isoCode: string;
 };
 
 const parseSelectedId = (value: string | null) => {
@@ -30,6 +31,7 @@ const toFormState = (country: LocationCountryDTO): CountryFormState => ({
   name: country.name ?? '',
   regionId: typeof country.regionId === 'number' ? String(country.regionId) : '',
   currencyCode: country.currencyCode ?? '',
+  isoCode: country.isoCode ?? '',
 });
 
 const validateForm = (formState: CountryFormState, t: (key: string) => string): string | null => {
@@ -41,6 +43,10 @@ const validateForm = (formState: CountryFormState, t: (key: string) => string): 
     return t('country.form.regionRequired');
   }
 
+  if (formState.isoCode.trim() && !/^[A-Za-z]{2}$/.test(formState.isoCode.trim())) {
+    return t('country.form.isoCodeInvalid');
+  }
+
   return null;
 };
 
@@ -48,6 +54,7 @@ const buildPayload = (formState: CountryFormState): LocationCountryDTO => ({
   name: formState.name.trim(),
   regionId: Number(formState.regionId),
   currencyCode: formState.currencyCode || undefined,
+  isoCode: formState.isoCode.trim().toUpperCase() || undefined,
 });
 
 export const LogisticsCountryFormPage = () => {
@@ -90,10 +97,10 @@ export const LogisticsCountryFormPage = () => {
     if (isEditMode) {
       return countryQuery.data
         ? toFormState(countryQuery.data)
-        : { name: '', regionId: '', currencyCode: '' };
+        : { name: '', regionId: '', currencyCode: '', isoCode: '' };
     }
 
-    return { name: '', regionId: fallbackRegionId, currencyCode: '' };
+    return { name: '', regionId: fallbackRegionId, currencyCode: '', isoCode: '' };
   }, [countryQuery.data, fallbackRegionId, isEditMode]);
 
   const formState = draftFormState ?? initialFormState;
@@ -204,6 +211,13 @@ export const LogisticsCountryFormPage = () => {
               ))}
             </select>
           </label>
+
+          <PrecisionInput
+            label={t('country.form.isoCodeLabel')}
+            value={formState.isoCode}
+            onChange={(event) => handleInputChange('isoCode', event.target.value.toUpperCase().slice(0, 2))}
+            placeholder={t('country.form.isoCodePlaceholder')}
+          />
 
           <label className="block">
             <span className="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-3 block">

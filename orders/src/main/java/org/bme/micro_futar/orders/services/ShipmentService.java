@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.orders.dtos.CreateShipmentResponseDTO;
 import org.bme.micro_futar.orders.entities.Shipment;
+import org.bme.micro_futar.orders.exceptions.LocationValidationException.Party;
 import org.bme.micro_futar.orders.exceptions.PriceNotAvailableException;
 import org.bme.micro_futar.orders.kafka.ShipmentNotificationProducer;
 import org.bme.micro_futar.orders.kafka.ShipmentProducer;
@@ -41,6 +42,7 @@ public class ShipmentService {
     private final ShipmentProducer shipmentProducer;
     private final ShipmentNotificationProducer shipmentNotificationProducer;
     private final ApplicationEventPublisher eventPublisher;
+    private final LocationCheckService locationCheckService;
 
     /**
      * Creates the shipment in {@link PaymentStatus#PENDING} state. It is handed to logistics only once the sender
@@ -48,6 +50,12 @@ public class ShipmentService {
      */
     @Transactional
     public CreateShipmentResponseDTO newShipment(ShipmentDTO shipmentDTO) {
+        // Coordinates come from the browser (a draggable map marker), so they must fit the chosen city.
+        locationCheckService.check(Party.SENDER, shipmentDTO.getSenderLocationCountryId(),
+                shipmentDTO.getSenderLocationCityId(), shipmentDTO.getSenderLatitude(), shipmentDTO.getSenderLongitude());
+        locationCheckService.check(Party.RECIPIENT, shipmentDTO.getRecipientLocationCountryId(),
+                shipmentDTO.getRecipientLocationCityId(), shipmentDTO.getRecipientLatitude(), shipmentDTO.getRecipientLongitude());
+
         // Price and currency are decided here, never taken from the client.
         CountryPriceDTO countryPrice = countryPriceService.findPriceByCountriesAndSize(
                         shipmentDTO.getSenderLocationCountryId(), shipmentDTO.getRecipientLocationCountryId(),

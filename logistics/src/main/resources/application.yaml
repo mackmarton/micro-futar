@@ -38,6 +38,10 @@ jwt:
 
 open-route-service:
   api-key: ${OPEN_ROUTE_SERVICE_API_KEY}
+  connect-timeout-ms: ${OPEN_ROUTE_SERVICE_CONNECT_TIMEOUT_MS:2000}
+  read-timeout-ms: ${OPEN_ROUTE_SERVICE_READ_TIMEOUT_MS:5000}
+  # pause between two geocoding calls of the bulk run (ORS geocoding quota is per minute)
+  geocode-delay-ms: ${OPEN_ROUTE_SERVICE_GEOCODE_DELAY_MS:700}
 kafka:
   topics:
     location-region-topic: ${LOCATION_REGION_TOPIC}

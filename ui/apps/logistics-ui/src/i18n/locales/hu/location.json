@@ -75,7 +75,10 @@
       "regionRequired": "A régió kiválasztása kötelező.",
       "saveFailed": "A mentés nem sikerült.",
       "submitCreate": "Ország létrehozása",
-      "submitEdit": "Módosítás mentése"
+      "submitEdit": "Módosítás mentése",
+      "isoCodeLabel": "ISO országkód",
+      "isoCodePlaceholder": "Pl.: HU",
+      "isoCodeInvalid": "Az ISO országkód pontosan két betű (pl. HU)."
     }
   },
   "city": {
@@ -91,11 +94,25 @@
       "errorHeading": "Nem sikerült betölteni a városokat.",
       "columns": {
         "id": "ID",
-        "name": "Város"
+        "name": "Város",
+        "geo": "Geo-adat"
       },
       "tableTitle": "Város lista",
       "empty": "A kiválasztott országhoz nem tartozik város.",
-      "mobileEyebrow": "Város"
+      "mobileEyebrow": "Város",
+      "geo": {
+        "present": "Van",
+        "missing": "Hiányzik",
+        "manual": "Kézi"
+      },
+      "geocodeMissing": {
+        "button": "Hiányzó geokódolás pótlása",
+        "busy": "Geokódolás folyamatban...",
+        "running": "Geokódolás folyamatban: {{processed}} / {{total}} város feldolgozva.",
+        "done": "Geokódolás kész: {{geocoded}} város geokódolva, {{notFound}} városnál nem volt találat, {{failed}} városnál hiba történt.",
+        "failed": "A geokódolás megszakadt. Próbáld újra később.",
+        "error": "A geokódolás indítása nem sikerült."
+      }
     },
     "form": {
       "eyebrow": "Helyszín form",
@@ -116,7 +133,29 @@
       "countryRequired": "Az ország kiválasztása kötelező.",
       "saveFailed": "A mentés nem sikerült.",
       "submitCreate": "Város létrehozása",
-      "submitEdit": "Módosítás mentése"
+      "submitEdit": "Módosítás mentése",
+      "geoTitle": "Geo-adatok",
+      "geoHint": "A pontosságot a csomagfeladás koordináta-ellenőrzése használja. A kézi módosítás után az automatikus geokódolás nem írja felül az adatokat.",
+      "centerLabel": "Városközpont",
+      "centerHint": "Kattints a térképre vagy húzd a jelölőt a középpont módosításához.",
+      "centerLatitude": "Középpont szélesség",
+      "centerLongitude": "Középpont hosszúság",
+      "bboxTitle": "Befoglaló téglalap",
+      "bboxMinLatitude": "Min. szélesség",
+      "bboxMinLongitude": "Min. hosszúság",
+      "bboxMaxLatitude": "Max. szélesség",
+      "bboxMaxLongitude": "Max. hosszúság",
+      "geocodedAt": "Geokódolva",
+      "neverGeocoded": "Még nem volt geokódolva",
+      "manualYes": "Kézzel beállított adat",
+      "manualNo": "ORS-ből származó adat",
+      "regeocode": "Újrageokódolás az ORS-ből",
+      "regeocoding": "Újrageokódolás...",
+      "regeocodeFailed": "Az újrageokódolás nem sikerült.",
+      "regeocodeDone": "A geo-adatok frissültek.",
+      "invalidCoordinates": "A koordináták érvénytelenek (szélesség -90..90, hosszúság -180..180).",
+      "invalidBbox": "A befoglaló téglalapnál mind a négy érték kötelező, és a minimum nem lehet nagyobb a maximumnál.",
+      "invalidCenter": "A középpont szélességét és hosszúságát együtt kell megadni."
     }
   }
 }

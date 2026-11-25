@@ -75,7 +75,10 @@
       "regionRequired": "Selecting a region is required.",
       "saveFailed": "Save failed.",
       "submitCreate": "Create country",
-      "submitEdit": "Save changes"
+      "submitEdit": "Save changes",
+      "isoCodeLabel": "ISO country code",
+      "isoCodePlaceholder": "E.g. HU",
+      "isoCodeInvalid": "The ISO country code must be exactly two letters (e.g. HU)."
     }
   },
   "city": {
@@ -91,11 +94,25 @@
       "errorHeading": "Failed to load cities.",
       "columns": {
         "id": "ID",
-        "name": "City"
+        "name": "City",
+        "geo": "Geo data"
       },
       "tableTitle": "City list",
       "empty": "No city belongs to the selected country.",
-      "mobileEyebrow": "City"
+      "mobileEyebrow": "City",
+      "geo": {
+        "present": "Present",
+        "missing": "Missing",
+        "manual": "Manual"
+      },
+      "geocodeMissing": {
+        "button": "Geocode missing cities",
+        "busy": "Geocoding in progress...",
+        "running": "Geocoding in progress: {{processed}} / {{total}} cities processed.",
+        "done": "Geocoding finished: {{geocoded}} cities geocoded, {{notFound}} not found, {{failed}} failed.",
+        "failed": "Geocoding was interrupted. Please try again later.",
+        "error": "Could not start geocoding."
+      }
     },
     "form": {
       "eyebrow": "Location form",
@@ -116,7 +133,29 @@
       "countryRequired": "Selecting a country is required.",
       "saveFailed": "Save failed.",
       "submitCreate": "Create city",
-      "submitEdit": "Save changes"
+      "submitEdit": "Save changes",
+      "geoTitle": "Geo data",
+      "geoHint": "Used by the coordinate check when a shipment is created. After a manual edit, automatic geocoding no longer overwrites the data.",
+      "centerLabel": "City centre",
+      "centerHint": "Click the map or drag the marker to change the centre.",
+      "centerLatitude": "Centre latitude",
+      "centerLongitude": "Centre longitude",
+      "bboxTitle": "Bounding box",
+      "bboxMinLatitude": "Min latitude",
+      "bboxMinLongitude": "Min longitude",
+      "bboxMaxLatitude": "Max latitude",
+      "bboxMaxLongitude": "Max longitude",
+      "geocodedAt": "Geocoded at",
+      "neverGeocoded": "Never geocoded",
+      "manualYes": "Set manually",
+      "manualNo": "From ORS",
+      "regeocode": "Re-geocode from ORS",
+      "regeocoding": "Re-geocoding...",
+      "regeocodeFailed": "Re-geocoding failed.",
+      "regeocodeDone": "Geo data updated.",
+      "invalidCoordinates": "Invalid coordinates (latitude -90..90, longitude -180..180).",
+      "invalidBbox": "All four bounding box values are required and each minimum must not exceed its maximum.",
+      "invalidCenter": "Centre latitude and longitude must be set together."
     }
   }
 }

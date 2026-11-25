@@ -16,7 +16,11 @@ public class OpenRouteServiceFetcher {
     @Value("${open-route-service.api-key}")
     private String apiKey;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public OpenRouteServiceFetcher(RestTemplate orsRestTemplate) {
+        this.restTemplate = orsRestTemplate;
+    }
 
     @SuppressWarnings("unchecked")
     public int getClosestIndexByDuration(double[] origin, List<double[]> destinations) {

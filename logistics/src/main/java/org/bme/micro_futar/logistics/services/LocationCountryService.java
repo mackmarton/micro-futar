@@ -43,6 +43,7 @@ public class LocationCountryService {
     @Transactional
     public LocationCountryDTO createCountry(LocationCountryDTO locationCountryDTO) {
         locationCountryDTO.setCurrencyCode(resolveCurrencyCode(locationCountryDTO.getCurrencyCode()));
+        locationCountryDTO.setIsoCode(normalizeIsoCode(locationCountryDTO.getIsoCode()));
         referenceValidator.validate(locationCountryDTO);
         LocationCountry locationCountry = locationCountryMapper.toEntity(locationCountryDTO);
         locationCountry.setDeleted(false);
@@ -58,6 +59,7 @@ public class LocationCountryService {
             throw new IllegalArgumentException("Path ID does not match DTO ID");
         }
         locationCountryDTO.setCurrencyCode(resolveCurrencyCode(locationCountryDTO.getCurrencyCode()));
+        locationCountryDTO.setIsoCode(normalizeIsoCode(locationCountryDTO.getIsoCode()));
 
         return locationCountryRepository.findById(id)
                 .map(existingCountry -> {
@@ -91,5 +93,17 @@ public class LocationCountryService {
             return DEFAULT_CURRENCY_CODE;
         }
         return currencyCode;
+    }
+
+    /** ISO 3166-1 alpha-2: two letters, upper case; blank means unset. */
+    private static String normalizeIsoCode(String isoCode) {
+        if (isoCode == null || isoCode.isBlank()) {
+            return null;
+        }
+        String normalized = isoCode.trim().toUpperCase(java.util.Locale.ROOT);
+        if (!normalized.matches("[A-Z]{2}")) {
+            throw new IllegalArgumentException("isoCode must be a two-letter ISO 3166-1 alpha-2 code");
+        }
+        return normalized;
     }
 }

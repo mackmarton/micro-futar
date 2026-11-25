@@ -13,6 +13,9 @@ public interface LocationCityRepository extends JpaRepository<LocationCity, Long
 
     List<LocationCity> findAllByCountryId(Long countryId);
 
+    /** Cities the bulk geocoding has to fill in (deleted rows are filtered by @SQLRestriction). */
+    List<LocationCity> findAllByCenterLatitudeIsNullAndGeoManualFalse();
+
     // Native query: bypasses @SQLRestriction so consumers also learn about deleted rows
     @Query(value = "SELECT * FROM location_city", nativeQuery = true)
     List<LocationCity> findAllIncludingDeleted();

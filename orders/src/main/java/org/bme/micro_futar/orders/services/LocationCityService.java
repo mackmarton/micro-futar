@@ -48,6 +48,14 @@ public class LocationCityService {
                 locationCity.setCountryId(locationCityDTO.getCountryId());
                 locationCity.setName(locationCityDTO.getName());
                 locationCity.setDeleted(locationCityDTO.isDeleted());
+                locationCity.setCenterLatitude(locationCityDTO.getCenterLatitude());
+                locationCity.setCenterLongitude(locationCityDTO.getCenterLongitude());
+                locationCity.setBboxMinLatitude(locationCityDTO.getBboxMinLatitude());
+                locationCity.setBboxMinLongitude(locationCityDTO.getBboxMinLongitude());
+                locationCity.setBboxMaxLatitude(locationCityDTO.getBboxMaxLatitude());
+                locationCity.setBboxMaxLongitude(locationCityDTO.getBboxMaxLongitude());
+                locationCity.setGeocodedAt(locationCityDTO.getGeocodedAt());
+                locationCity.setGeoManual(locationCityDTO.isGeoManual());
             } else {
                 locationCity = locationCityMapper.toEntity(locationCityDTO);
             }

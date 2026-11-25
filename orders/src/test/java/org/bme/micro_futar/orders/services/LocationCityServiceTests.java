@@ -125,4 +125,23 @@ class LocationCityServiceTests {
         verify(locationCityMapper).toEntity(cityDTO1);
         verify(locationCityRepository).save(city1);
     }
+
+    @Test
+    void saveLocationCityCopiesGeoDataOntoExistingCity() {
+        LocationCityDTO geoDto = LocationCityDTO.builder()
+                .id(1L).name("Budapest").countryId(1L)
+                .centerLatitude(47.49).centerLongitude(19.04)
+                .bboxMinLatitude(47.35).bboxMinLongitude(18.9).bboxMaxLatitude(47.65).bboxMaxLongitude(19.3)
+                .geocodedAt(java.time.ZonedDateTime.now()).geoManual(true)
+                .build();
+        when(locationCityRepository.findById(1L)).thenReturn(Optional.of(city1));
+        when(locationCityRepository.save(city1)).thenReturn(city1);
+
+        LocationCity saved = locationCityService.saveLocationCity(geoDto);
+
+        assertThat(saved.getCenterLatitude()).isEqualTo(47.49);
+        assertThat(saved.getBboxMaxLongitude()).isEqualTo(19.3);
+        assertThat(saved.getGeocodedAt()).isEqualTo(geoDto.getGeocodedAt());
+        assertThat(saved.isGeoManual()).isTrue();
+    }
 }

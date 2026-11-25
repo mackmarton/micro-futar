@@ -24,4 +24,19 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleIllegalArgument(IllegalArgumentException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
+
+    @ExceptionHandler(GeocodingException.class)
+    public ProblemDetail handleGeocodingUnavailable(GeocodingException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_GATEWAY, "The geocoding service is unavailable");
+    }
+
+    @ExceptionHandler(GeocodingNotFoundException.class)
+    public ProblemDetail handleGeocodingNotFound(GeocodingNotFoundException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, e.getMessage());
+    }
+
+    @ExceptionHandler(GeocodeJobRunningException.class)
+    public ProblemDetail handleGeocodeJobRunning(GeocodeJobRunningException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
+    }
 }

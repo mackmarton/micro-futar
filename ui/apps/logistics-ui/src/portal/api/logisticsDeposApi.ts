@@ -6,6 +6,7 @@ import {
   type CurrencyDTO,
   type DepoDTO,
   type DepoTransitDTO,
+  type GeocodeJobStatusDTO,
   type LocationCityDTO,
   type LocationCountryDTO,
   type LocationRegionDTO,
@@ -117,6 +118,24 @@ export const updateCity = async (cityId: number, city: LocationCityDTO): Promise
   withAuthRedirect(async () => {
     const response = await logisticsApi.api.updateCity(cityId, city, { format: 'json' });
     return response.data ?? city;
+  });
+
+export const geocodeMissingCities = async (): Promise<GeocodeJobStatusDTO> =>
+  withAuthRedirect(async () => {
+    const response = await logisticsApi.api.geocodeMissing({ format: 'json' });
+    return response.data;
+  });
+
+export const getGeocodeMissingStatus = async (): Promise<GeocodeJobStatusDTO> =>
+  withAuthRedirect(async () => {
+    const response = await logisticsApi.api.geocodeMissingStatus({ format: 'json' });
+    return response.data;
+  });
+
+export const geocodeCity = async (cityId: number): Promise<LocationCityDTO> =>
+  withAuthRedirect(async () => {
+    const response = await logisticsApi.api.geocodeCity(cityId, { format: 'json' });
+    return response.data;
   });
 
 export const getCountriesByRegionId = async (regionId: number): Promise<LocationCountryDTO[]> =>

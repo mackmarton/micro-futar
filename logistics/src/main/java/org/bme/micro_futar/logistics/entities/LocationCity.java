@@ -11,6 +11,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.time.ZonedDateTime;
+
 @Data
 @Entity
 @NoArgsConstructor
@@ -25,4 +27,14 @@ public class LocationCity {
     @Column(nullable = false)
     @ColumnDefault("false")
     private boolean deleted;
+    private Double centerLatitude;
+    private Double centerLongitude;
+    private Double bboxMinLatitude;
+    private Double bboxMinLongitude;
+    private Double bboxMaxLatitude;
+    private Double bboxMaxLongitude;
+    private ZonedDateTime geocodedAt;
+    @Column(nullable = false)
+    @ColumnDefault("false")
+    private boolean geoManual;
 }

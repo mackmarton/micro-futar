@@ -108,6 +108,7 @@ export interface LocationCountryDTO {
   regionId?: number;
   name?: string;
   currencyCode?: string;
+  isoCode?: string;
   deleted?: boolean;
 }
 
@@ -118,6 +119,39 @@ export interface LocationCityDTO {
   countryId?: number;
   name?: string;
   deleted?: boolean;
+  /** @format double */
+  centerLatitude?: number;
+  /** @format double */
+  centerLongitude?: number;
+  /** @format double */
+  bboxMinLatitude?: number;
+  /** @format double */
+  bboxMinLongitude?: number;
+  /** @format double */
+  bboxMaxLatitude?: number;
+  /** @format double */
+  bboxMaxLongitude?: number;
+  /** @format date-time */
+  geocodedAt?: string;
+  geoManual?: boolean;
+}
+
+export interface GeocodeJobStatusDTO {
+  state?: "IDLE" | "RUNNING" | "DONE" | "FAILED";
+  /** @format int32 */
+  total?: number;
+  /** @format int32 */
+  processed?: number;
+  /** @format int32 */
+  geocoded?: number;
+  /** @format int32 */
+  notFound?: number;
+  /** @format int32 */
+  failed?: number;
+  /** @format date-time */
+  startedAt?: string;
+  /** @format date-time */
+  finishedAt?: string;
 }
 
 export interface ShipmentRouteDTO {
@@ -1476,6 +1510,34 @@ export class Api<
     /**
      * No description
      *
+     * @tags location-city-controller
+     * @name GeocodeCity
+     * @request POST:/api/logistics/cities/{id}/geocode
+     */
+    geocodeCity: (id: number, params: RequestParams = {}) =>
+      this.request<LocationCityDTO, any>({
+        path: `/api/logistics/cities/${id}/geocode`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags location-city-controller
+     * @name GeocodeMissing
+     * @request POST:/api/logistics/cities/geocode-missing
+     */
+    geocodeMissing: (params: RequestParams = {}) =>
+      this.request<GeocodeJobStatusDTO, any>({
+        path: `/api/logistics/cities/geocode-missing`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @tags shipment-route-controller
      * @name GetAllShipmentRoutes
      * @request GET:/api/logistics/shipment-routes
@@ -1594,6 +1656,20 @@ export class Api<
     getCountryPriceById: (id: number, params: RequestParams = {}) =>
       this.request<CountryPriceDTO, any>({
         path: `/api/logistics/country-prices/${id}`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags location-city-controller
+     * @name GeocodeMissingStatus
+     * @request GET:/api/logistics/cities/geocode-missing/status
+     */
+    geocodeMissingStatus: (params: RequestParams = {}) =>
+      this.request<GeocodeJobStatusDTO, any>({
+        path: `/api/logistics/cities/geocode-missing/status`,
         method: "GET",
         ...params,
       }),

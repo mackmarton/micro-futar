@@ -113,6 +113,7 @@ export interface LocationCountryDTO {
   regionId?: number;
   name?: string;
   currencyCode?: string;
+  isoCode?: string;
   deleted?: boolean;
 }
 
@@ -123,6 +124,21 @@ export interface LocationCityDTO {
   countryId?: number;
   name?: string;
   deleted?: boolean;
+  /** @format double */
+  centerLatitude?: number;
+  /** @format double */
+  centerLongitude?: number;
+  /** @format double */
+  bboxMinLatitude?: number;
+  /** @format double */
+  bboxMinLongitude?: number;
+  /** @format double */
+  bboxMaxLatitude?: number;
+  /** @format double */
+  bboxMaxLongitude?: number;
+  /** @format date-time */
+  geocodedAt?: string;
+  geoManual?: boolean;
 }
 
 export type QueryParamsType = Record<string | number, any>;

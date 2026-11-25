@@ -25,20 +25,34 @@ export type MapCoordinate = {
   longitude: number;
 };
 
+export type MapBounds = {
+  minLatitude: number;
+  minLongitude: number;
+  maxLatitude: number;
+  maxLongitude: number;
+};
+
 export type LocationMapPickerProps = {
   center: MapCoordinate;
   markerPosition: MapCoordinate;
   onMarkerChange: (value: MapCoordinate) => void;
+  /** Initial zoom level, default 15 (street level). */
+  zoom?: number;
+  /** Optional rectangle drawn on the map (display only, not editable on the map). */
+  bounds?: MapBounds | null;
 };
 
 export const LocationMapPicker = ({
   center,
   markerPosition,
   onMarkerChange,
+  zoom = 15,
+  bounds = null,
 }: LocationMapPickerProps) => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
+  const rectangleRef = useRef<L.Rectangle | null>(null);
   const onMarkerChangeRef = useRef(onMarkerChange);
 
   useEffect(() => {
@@ -53,7 +67,7 @@ export const LocationMapPicker = ({
     const map = L.map(mapContainerRef.current, {
       zoomControl: true,
       attributionControl: true,
-    }).setView([center.latitude, center.longitude], 15);
+    }).setView([center.latitude, center.longitude], zoom);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
@@ -90,8 +104,43 @@ export const LocationMapPicker = ({
       map.remove();
       mapRef.current = null;
       markerRef.current = null;
+      rectangleRef.current = null;
     };
+    // The map is created once; later center/marker/bounds changes are applied by the effects below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const minLatitude = bounds?.minLatitude;
+  const minLongitude = bounds?.minLongitude;
+  const maxLatitude = bounds?.maxLatitude;
+  const maxLongitude = bounds?.maxLongitude;
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) {
+      return;
+    }
+
+    rectangleRef.current?.remove();
+    rectangleRef.current = null;
+
+    if (
+      minLatitude === undefined ||
+      minLongitude === undefined ||
+      maxLatitude === undefined ||
+      maxLongitude === undefined
+    ) {
+      return;
+    }
+
+    rectangleRef.current = L.rectangle(
+      [
+        [minLatitude, minLongitude],
+        [maxLatitude, maxLongitude],
+      ],
+      { color: '#2563eb', weight: 2, fillOpacity: 0.08, interactive: false },
+    ).addTo(map);
+  }, [minLatitude, minLongitude, maxLatitude, maxLongitude]);
 
   useEffect(() => {
     if (!mapRef.current || !markerRef.current) {

@@ -68,7 +68,17 @@
   "submit": {
     "missingLocation": "A valid country and city selection is required to place the order.",
     "success": "Your order has been placed, redirecting you to payment...",
-    "genericError": "Couldn't save the order. Please try again."
+    "genericError": "Couldn't save the order. Please try again.",
+    "locationErrors": {
+      "LOCATION_TOO_FAR_FROM_CITY": "The location marked on the map is too far from the selected city.",
+      "INVALID_COORDINATES": "The location marked on the map is invalid. Please mark the exact location again.",
+      "CITY_NOT_FOUND": "The selected city could not be found. Please choose another city.",
+      "CITY_COUNTRY_MISMATCH": "The selected city does not belong to the selected country."
+    },
+    "locationErrorSummary": {
+      "sender": "There is a problem with the map location of the sender's address, please correct it.",
+      "recipient": "There is a problem with the map location of the recipient's address, please correct it."
+    }
   },
   "geocode": {
     "noResult": "We couldn't find an exact match for the given address.",

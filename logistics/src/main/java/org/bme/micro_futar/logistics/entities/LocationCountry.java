@@ -25,6 +25,7 @@ public class LocationCountry {
     private String name;
     @ColumnDefault("'HUF'")
     private String currencyCode;
+    private String isoCode;
 
     @Column(nullable = false)
     @ColumnDefault("false")
