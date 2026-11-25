@@ -99,6 +99,9 @@ services:
     networks:
       - microservice-net
     environment:
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_ISSUER_URI: http://localhost:8090/realms/micro-futar-realm
+      KEYCLOAK_EXPECTED_AUDIENCE: api-gateway-client
       DATASOURCE_URL: jdbc:postgresql://postgres:5432/orders_db
       DATASOURCE_USERNAME: orders_db
       DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
@@ -121,6 +124,9 @@ services:
     networks:
       - microservice-net
     environment:
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_ISSUER_URI: http://localhost:8090/realms/micro-futar-realm
+      KEYCLOAK_EXPECTED_AUDIENCE: api-gateway-client
       DATASOURCE_URL: jdbc:postgresql://postgres:5432/logistics_db
       DATASOURCE_USERNAME: logistics_db
       DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
@@ -143,6 +149,9 @@ services:
     networks:
       - microservice-net
     environment:
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_ISSUER_URI: http://localhost:8090/realms/micro-futar-realm
+      KEYCLOAK_EXPECTED_AUDIENCE: api-gateway-client
       DATASOURCE_URL: jdbc:postgresql://postgres:5432/courier_db
       DATASOURCE_USERNAME: courier_db
       DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
@@ -194,6 +203,8 @@ services:
       SERVER_PORT: 8080
       SPRING_PROFILE: local
       KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_ISSUER_URI: http://localhost:8090/realms/micro-futar-realm
+      KEYCLOAK_EXPECTED_AUDIENCE: api-gateway-client
       DATASOURCE_URL: jdbc:postgresql://postgres:5432/payments_db
       DATASOURCE_USERNAME: payments_db
       DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}

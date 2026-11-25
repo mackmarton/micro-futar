@@ -44,6 +44,8 @@ config:
     bootstrapServers: kafka.micro-futar-services-prod:9092
   keycloak:
     url: https://auth.micro-futar.hu
+    issuer_uri: https://auth.micro-futar.hu/realms/micro-futar-realm
+    expected_audience: api-gateway-client
 
 podSecurityContext:
   runAsNonRoot: true

@@ -1,3 +1,6 @@
+jwt:
+  auth:
+    expected-issuer: ${KEYCLOAK_ISSUER_URI:http://localhost:8090/realms/micro-futar-realm}
 spring:
   jpa:
     generate-ddl: true

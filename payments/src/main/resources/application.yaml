@@ -34,6 +34,8 @@ jwt:
     converter:
       resource-id: api-gateway-client
       principal-attribute: preferred_username
+    expected-issuer: ${KEYCLOAK_ISSUER_URI}
+    expected-audience: ${KEYCLOAK_EXPECTED_AUDIENCE:api-gateway-client}
 kafka:
   topics:
     payment-request-topic: ${PAYMENT_REQUEST_TOPIC}

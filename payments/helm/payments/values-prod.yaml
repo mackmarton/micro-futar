@@ -49,6 +49,8 @@ config:
   clientUiUrl: https://micro-futar.hu
   keycloak:
     url: https://auth.micro-futar.hu
+    issuer_uri: https://auth.micro-futar.hu/realms/micro-futar-realm
+    expected_audience: api-gateway-client
 
 podSecurityContext:
   runAsNonRoot: true

@@ -85,7 +85,9 @@ copies of entities they need (e.g. `LocationCity`, `PackageSize`, `Depo`, `Shipm
 - Auth: the gateway performs the Keycloak login and token relay; each backend service is an OAuth2
   resource server validating the JWT against Keycloak's JWK set
   (`jwt.auth.converter` config maps the `api-gateway-client` JWT claims to Spring Security
-  authorities; see `config/auth/JwtAuthConverter.java` in each service).
+  authorities; see `config/auth/JwtAuthConverter.java` in each service). `config/auth/JwtDecoderConfig.java`
+  also checks the issuer (`KEYCLOAK_ISSUER_URI`, the public Keycloak address) and the audience
+  (`KEYCLOAK_EXPECTED_AUDIENCE`), so Keycloak needs an audience mapper for `api-gateway-client`.
 - Each backend service exposes OpenAPI at build/test time (`springdoc-openapi`); the UI's
   `generate-*-api` scripts run `swagger-typescript-api` against `<service>/target/openapi.json` to
   regenerate the typed clients in `ui/packages/shared-core/api`. Run the relevant service's tests

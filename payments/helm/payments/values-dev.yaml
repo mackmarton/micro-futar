@@ -33,6 +33,8 @@ config:
   clientUiUrl: http://localhost:8070
   keycloak:
     url: http://keycloak.micro-futar-services-dev:80/auth
+    issuer_uri: http://keycloak.micro-futar-services-dev:80/auth/realms/micro-futar-realm
+    expected_audience: api-gateway-client
 
 kafka:
   topics:

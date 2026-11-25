@@ -35,6 +35,9 @@ jwt:
     converter:
       resource-id: api-gateway-client
       principal-attribute: preferred_username
+    # the iss claim carries the public Keycloak address, which differs from KEYCLOAK_URL
+    expected-issuer: ${KEYCLOAK_ISSUER_URI}
+    expected-audience: ${KEYCLOAK_EXPECTED_AUDIENCE:api-gateway-client}
 
 open-route-service:
   api-key: ${OPEN_ROUTE_SERVICE_API_KEY}
