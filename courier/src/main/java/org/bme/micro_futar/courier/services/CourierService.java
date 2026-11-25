@@ -42,6 +42,12 @@ public class CourierService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<CourierDTO> findByEmail(String email) {
+        return courierRepository.findByEmail(email)
+                .map(courierMapper::toDTO);
+    }
+
+    @Transactional(readOnly = true)
     public Long findIdByEmail(String email) {
         return courierRepository.findByEmail(email).orElseThrow().getId();
     }

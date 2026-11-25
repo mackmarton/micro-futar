@@ -5,12 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.courier.services.CourierService;
 import org.bme.micro_futar.shared.dtos.CourierDTO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/couriers")
 @RequiredArgsConstructor
 public class CourierController {

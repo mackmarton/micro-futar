@@ -6,6 +6,7 @@ import org.bme.micro_futar.courier.services.ShipmentRouteCourierService;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
 import org.bme.micro_futar.shared.exceptions.UnauthorizedException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ public class ShipmentRouteCourierController {
     private final ShipmentRouteCourierService shipmentRouteCourierService;
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ShipmentRouteCourierDTO> findById(@PathVariable Long id) {
         return shipmentRouteCourierService.findById(id)
                 .map(ResponseEntity::ok)

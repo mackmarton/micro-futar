@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.courier.services.VehicleService;
 import org.bme.micro_futar.shared.dtos.VehicleDTO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/vehicles")
 @RequiredArgsConstructor
 public class VehicleController {

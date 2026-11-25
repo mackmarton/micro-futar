@@ -27,7 +27,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/v3/api-docs", "/actuator/health/**").permitAll()
-                        .anyRequest().hasRole("USER"));
+                        .anyRequest().hasAnyRole("USER", "ADMIN"));
         http.oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter))
                 .authenticationEntryPoint(customAuthenticationEntryPoint)

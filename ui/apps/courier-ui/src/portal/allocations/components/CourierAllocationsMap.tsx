@@ -38,7 +38,7 @@ export const CourierAllocationsMap = ({ allocations }: CourierAllocationsMapProp
   const points = useMemo(
     () =>
       allocations.map((allocation) => ({
-        id: `${allocation.assignmentId ?? allocation.shipmentRouteId ?? allocation.shipmentId ?? 'allocation'}-${allocation.parcelNumber}`,
+        id: `${allocation.assignmentId ?? allocation.shipmentRouteId ?? 'allocation'}-${allocation.parcelNumber}`,
         assignmentId: allocation.assignmentId,
         latitude: allocation.latitude,
         longitude: allocation.longitude,

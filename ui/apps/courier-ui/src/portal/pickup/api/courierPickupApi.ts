@@ -1,11 +1,11 @@
 import { resolveApiBaseUrl } from '@package/shared-core';
 import {
   Api,
-  type ShipmentRouteCourierDTO,
+  type MyAssignmentDTO,
   type PackageSizeDTO,
-  type ShipmentDTO,
-  type ShipmentRouteDTO,
+  type ShipmentRouteCourierDTO,
 } from '@package/shared-core/api/CourierApiClient';
+import { fetchMyAssignments } from '../../myAssignmentsApi.ts';
 
 const courierApiClient = new Api({
   baseUrl: resolveApiBaseUrl(),
@@ -58,9 +58,9 @@ export type ManifestShipment = {
 
 const getAssignmentStatus = (
   assignment: ShipmentRouteCourierDTO,
-  route?: ShipmentRouteDTO | null,
+  details?: MyAssignmentDTO,
 ): ManifestAssignmentStatus => {
-  if (route?.fulfillmentTime) {
+  if (details?.fulfillmentTime) {
     return 'droppedAtDepot';
   }
 
@@ -85,26 +85,12 @@ const toPackageSizeNameById = (packageSizes: PackageSizeDTO[]): Map<number, stri
   );
 };
 
-const isNonEmpty = (value: string | null | undefined): value is string => {
-  return typeof value === 'string' && value.trim().length > 0;
-};
+const toAssignmentTypeLabel = (assignmentType: MyAssignmentDTO['assignmentType']): ManifestShipment['assignmentType'] => {
+  if (assignmentType === 'PICKUP') {
+    return 'Pickup';
+  }
 
-const fetchShipmentRouteById = async (shipmentRouteId: number, signal?: AbortSignal): Promise<ShipmentRouteDTO | null> => {
-  const response = await courierApiClient.api.findById2(shipmentRouteId, {
-    signal,
-    format: 'json',
-  });
-
-  return response.data ?? null;
-};
-
-const fetchShipmentById = async (shipmentId: number, signal?: AbortSignal): Promise<ShipmentDTO | null> => {
-  const response = await courierApiClient.api.findById1(shipmentId, {
-    signal,
-    format: 'json',
-  });
-
-  return response.data ?? null;
+  return assignmentType === 'DELIVERY' ? 'Delivery' : '-';
 };
 
 export const fetchManifestShipmentsForAssignments = async (
@@ -115,105 +101,35 @@ export const fetchManifestShipmentsForAssignments = async (
     return [];
   }
 
-  const packageSizesResponse = await courierApiClient.api.findAll3({
-    signal,
-    format: 'json',
-  });
+  const [packageSizesResponse, myAssignments] = await Promise.all([
+    courierApiClient.api.findAll3({
+      signal,
+      format: 'json',
+    }),
+    fetchMyAssignments(signal),
+  ]);
   const packageSizes = Array.isArray(packageSizesResponse.data) ? packageSizesResponse.data : [];
   const packageSizeNameById = toPackageSizeNameById(packageSizes);
+  const detailsByAssignmentId = new Map(myAssignments.map((details) => [details.assignmentId, details]));
 
-  const manifestRows = await Promise.all(
-    assignments.map(async (assignment) => {
-      const assignmentId = assignment.id ?? null;
-      const shipmentRouteId = assignment.shipmentRouteId ?? null;
-      const pickedUpForDelivery = Boolean(assignment.pickedUpForDelivery);
-      const failed = Boolean(assignment.failed);
+  return assignments.map((assignment) => {
+    const details = detailsByAssignmentId.get(assignment.id);
+    const packageSizeId = details?.packageSizeId;
 
-      if (!shipmentRouteId) {
-        return {
-          assignmentId,
-          shipmentRouteId,
-          assignmentType: '-',
-          parcelNumber: '-',
-          contact: '-',
-          routeAddress: '-',
-          pickedUpForDelivery,
-          failed,
-          packageSize: '-',
-          status: getAssignmentStatus(assignment),
-        } satisfies ManifestShipment;
-      }
-
-      try {
-        const route = await fetchShipmentRouteById(shipmentRouteId, signal);
-        const status = getAssignmentStatus(assignment, route);
-        const shipmentId = route?.shipmentId;
-        if (!shipmentId) {
-          return {
-            assignmentId,
-            shipmentRouteId,
-            assignmentType: '-',
-            parcelNumber: '-',
-            contact: '-',
-            routeAddress: '-',
-            pickedUpForDelivery,
-            failed,
-            packageSize: '-',
-            status,
-          } satisfies ManifestShipment;
-        }
-
-        const shipment = await fetchShipmentById(shipmentId, signal);
-        const assignmentType = isNonEmpty(route.originAddress)
-          ? 'Pickup'
-          : isNonEmpty(route.destinationAddress)
-            ? 'Delivery'
-            : '-';
-        const contact =
-          assignmentType === 'Pickup'
-            ? (shipment?.senderName?.trim() || '-')
-            : assignmentType === 'Delivery'
-              ? (shipment?.recipientName?.trim() || '-')
-              : '-';
-        const routeAddress =
-          assignmentType === 'Pickup'
-            ? (route.originAddress?.trim() || '-')
-            : assignmentType === 'Delivery'
-              ? (route.destinationAddress?.trim() || '-')
-              : '-';
-        const packageSizeName =
-          typeof shipment?.packageSizeId === 'number'
-            ? (packageSizeNameById.get(shipment.packageSizeId) ?? `#${shipment.packageSizeId}`)
-            : '-';
-
-        return {
-          assignmentId,
-          shipmentRouteId,
-          assignmentType,
-          parcelNumber: shipment?.parcelNumber?.trim() || '-',
-          contact,
-          routeAddress,
-          pickedUpForDelivery,
-          failed,
-          packageSize: packageSizeName,
-          status,
-        } satisfies ManifestShipment;
-      } catch {
-        return {
-          assignmentId,
-          shipmentRouteId,
-          assignmentType: '-',
-          parcelNumber: '-',
-          contact: '-',
-          routeAddress: '-',
-          pickedUpForDelivery,
-          failed,
-          packageSize: '-',
-          status: getAssignmentStatus(assignment),
-        } satisfies ManifestShipment;
-      }
-    }),
-  );
-
-  return manifestRows;
+    return {
+      assignmentId: assignment.id ?? null,
+      shipmentRouteId: assignment.shipmentRouteId ?? null,
+      assignmentType: toAssignmentTypeLabel(details?.assignmentType),
+      parcelNumber: details?.parcelNumber?.trim() || '-',
+      contact: details?.contactName?.trim() || '-',
+      routeAddress: details?.address?.trim() || '-',
+      pickedUpForDelivery: Boolean(assignment.pickedUpForDelivery),
+      failed: Boolean(assignment.failed),
+      packageSize:
+        typeof packageSizeId === 'number'
+          ? (packageSizeNameById.get(packageSizeId) ?? `#${packageSizeId}`)
+          : '-',
+      status: getAssignmentStatus(assignment, details),
+    } satisfies ManifestShipment;
+  });
 };

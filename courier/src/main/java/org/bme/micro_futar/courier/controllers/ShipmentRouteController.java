@@ -5,12 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.courier.services.ShipmentRouteService;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteDTO;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
 @RestController
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/shipment-routes")
 @RequiredArgsConstructor
 public class ShipmentRouteController {

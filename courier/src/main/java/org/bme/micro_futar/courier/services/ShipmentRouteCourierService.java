@@ -2,6 +2,7 @@ package org.bme.micro_futar.courier.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bme.micro_futar.courier.config.auth.VerifiedEmails;
 import org.bme.micro_futar.courier.entities.AssignmentProgress;
 import org.bme.micro_futar.courier.entities.ShipmentRouteCourier;
 import org.bme.micro_futar.courier.kafka.KafkaProducerService;
@@ -11,11 +12,8 @@ import org.bme.micro_futar.courier.repositories.ShipmentRouteCourierRepository;
 import org.bme.micro_futar.shared.dtos.AssignmentStatusEventDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
 import org.bme.micro_futar.shared.enums.AssignmentStatus;
-import org.bme.micro_futar.shared.exceptions.EmailNotVerifiedException;
 import org.bme.micro_futar.shared.exceptions.UnauthorizedException;
-import org.bme.micro_futar.shared.utils.VerifiedEmail;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -202,13 +200,6 @@ public class ShipmentRouteCourierService {
     }
 
     private Long getCourierIdByAuthentication(Authentication authentication) {
-        return courierService.findIdByEmail(extractVerifiedEmail(authentication));
-    }
-
-    private static String extractVerifiedEmail(Authentication authentication) {
-        if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
-            return VerifiedEmail.from(jwt.getClaims()).orElseThrow(EmailNotVerifiedException::new);
-        }
-        throw new EmailNotVerifiedException();
+        return courierService.findIdByEmail(VerifiedEmails.require(authentication));
     }
 }

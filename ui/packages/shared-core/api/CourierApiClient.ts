@@ -111,6 +111,47 @@ export interface PackageSizeDTO {
   deleted?: boolean;
 }
 
+export interface MyProfileDTO {
+  /** @format int64 */
+  id?: number;
+  name?: string;
+  email?: string;
+  telephone?: string;
+  qualifiedFor?: "ROAD" | "AIR";
+  courierType?: "CROSS_DEPO" | "DELIVERY";
+  /** @format int64 */
+  depoId?: number;
+  vehicle?: MyVehicleDTO;
+}
+
+export interface MyVehicleDTO {
+  registrationNumber?: string;
+  /** @format double */
+  maximumPackableVolume?: number;
+}
+
+export interface MyAssignmentDTO {
+  /** @format int64 */
+  assignmentId?: number;
+  /** @format int64 */
+  shipmentRouteId?: number;
+  assignmentType?: "PICKUP" | "DELIVERY";
+  pickedUpForDelivery?: boolean;
+  failed?: boolean;
+  /** @format date-time */
+  fulfillmentTime?: string;
+  parcelNumber?: string;
+  /** @format int64 */
+  packageSizeId?: number;
+  contactName?: string;
+  contactPhone?: string;
+  address?: string;
+  /** @format double */
+  latitude?: number;
+  /** @format double */
+  longitude?: number;
+}
+
 export interface DepoDTO {
   /** @format int64 */
   id?: number;
@@ -629,6 +670,48 @@ export class Api<
     findById4: (id: number, params: RequestParams = {}) =>
       this.request<PackageSizeDTO, any>({
         path: `/api/courier/package-sizes/${id}`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags me-controller
+     * @name FindMyProfile
+     * @request GET:/api/courier/me
+     */
+    findMyProfile: (params: RequestParams = {}) =>
+      this.request<MyProfileDTO, any>({
+        path: `/api/courier/me`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags me-controller
+     * @name FindMyAssignments
+     * @request GET:/api/courier/me/assignments
+     */
+    findMyAssignments: (params: RequestParams = {}) =>
+      this.request<MyAssignmentDTO[], any>({
+        path: `/api/courier/me/assignments`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags me-controller
+     * @name FindMyAssignment
+     * @request GET:/api/courier/me/assignments/{assignmentId}
+     */
+    findMyAssignment: (assignmentId: number, params: RequestParams = {}) =>
+      this.request<MyAssignmentDTO, any>({
+        path: `/api/courier/me/assignments/${assignmentId}`,
         method: "GET",
         ...params,
       }),

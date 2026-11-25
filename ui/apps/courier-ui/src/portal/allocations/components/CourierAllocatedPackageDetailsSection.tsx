@@ -27,11 +27,10 @@ export const CourierAllocatedPackageDetailsSection = ({
   const { t } = useTranslation(['allocations', 'common']);
   const isDelivery = selectedAllocation.assignmentType === 'Delivery';
   const contactLabel = isDelivery ? t('allocations:details.contactLabel.recipient') : t('allocations:details.contactLabel.sender');
-  // selectedAllocation.{senderName,recipientName,senderPhone,recipientPhone,routeAddress,parcelNumber}
-  // a shipment DTO-ból jönnek a backendről, szabadszöveges adatok - nem fordítjuk.
-  const contactName = isDelivery ? selectedAllocation.recipientName : selectedAllocation.senderName;
+  // selectedAllocation.{contactName,contactPhone,routeAddress,parcelNumber}
+  // a hozzárendelés DTO-jából jönnek a backendről, szabadszöveges adatok - nem fordítjuk.
+  const { contactName, contactPhone } = selectedAllocation;
   const locationLabel = isDelivery ? t('allocations:details.locationLabel.delivery') : t('allocations:details.locationLabel.pickup');
-  const contactPhone = isDelivery ? selectedAllocation.recipientPhone : selectedAllocation.senderPhone;
   const hasCallablePhone = contactPhone.trim().length > 0 && contactPhone !== '-';
   const navigationHref = `https://www.google.com/maps/dir/?api=1&destination=${selectedAllocation.latitude},${selectedAllocation.longitude}&travelmode=driving`;
   const assignmentTypeLabel = t(

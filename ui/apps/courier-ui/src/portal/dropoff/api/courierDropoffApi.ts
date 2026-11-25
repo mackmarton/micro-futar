@@ -3,6 +3,7 @@ import {
   Api,
   type ShipmentRouteCourierDTO,
 } from '@package/shared-core/api/CourierApiClient';
+import { fetchMyAssignments } from '../../myAssignmentsApi.ts';
 
 const courierApiClient = new Api({
   baseUrl: resolveApiBaseUrl(),
@@ -31,31 +32,12 @@ export const countPendingDropoffsForAssignments = async (
     return 0;
   }
 
-  const routes = await Promise.all(
-    countCandidates.map(async (assignment) => {
-      if (typeof assignment.shipmentRouteId !== 'number') {
-        return null;
-      }
-
-      try {
-        const response = await courierApiClient.api.findById2(assignment.shipmentRouteId, {
-          signal,
-          format: 'json',
-        });
-        return response.data ?? null;
-      } catch {
-        return null;
-      }
-    }),
+  const myAssignments = await fetchMyAssignments(signal);
+  const fulfilledIds = new Set(
+    myAssignments.filter((details) => details.fulfillmentTime).map((details) => details.assignmentId),
   );
 
-  return routes.reduce((count, route) => {
-    if (route?.fulfillmentTime) {
-      return count;
-    }
-
-    return count + 1;
-  }, 0);
+  return countCandidates.filter((assignment) => !fulfilledIds.has(assignment.id)).length;
 };
 
 export const fulfillAllPickupsForCurrentDay = async (): Promise<void> => {

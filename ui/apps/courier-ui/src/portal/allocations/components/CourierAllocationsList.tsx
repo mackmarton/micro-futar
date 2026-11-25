@@ -50,7 +50,7 @@ export const CourierAllocationsList = ({ allocations, isLoading }: CourierAlloca
         header: t('allocations:table.columns.contact'),
         mobileLabel: t('allocations:table.columns.contact'),
         // sender/recipient név a backendről jön, szabadszöveges adat - nem fordítjuk.
-        cell: (allocation) => (allocation.assignmentType === 'Pickup' ? allocation.senderName : allocation.recipientName),
+        cell: (allocation) => allocation.contactName,
       },
       {
         id: 'routeAddress',
@@ -84,7 +84,7 @@ export const CourierAllocationsList = ({ allocations, isLoading }: CourierAlloca
     <DataTable
       data={allocations}
       rowKey={(allocation, index) =>
-        `${allocation.assignmentId ?? allocation.shipmentRouteId ?? allocation.shipmentId ?? 'allocation'}-${index}`
+        `${allocation.assignmentId ?? allocation.shipmentRouteId ?? 'allocation'}-${index}`
       }
       title={t('allocations:table.title')}
       columns={columns}
