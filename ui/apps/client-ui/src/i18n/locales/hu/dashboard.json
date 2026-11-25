@@ -6,6 +6,8 @@
   "loading": "Küldemények betöltése...",
   "redirectingToLogin": "Átirányítás a bejelentkezéshez...",
   "error": {
+    "loginAgain": "Bejelentkezés újra",
+    "emailNotVerified": "Az e-mail címed még nincs megerősítve. Kérjük, erősítsd meg a kapott levélben, majd jelentkezz be újra.",
     "generic": "Nem sikerült betölteni a küldeményeket. Próbáld újra.",
     "retry": "Újrapróbálás"
   },

@@ -12,3 +12,8 @@ export const toErrorMessage = (error: unknown, fallback: string): string => {
 
   return fallback;
 };
+
+// A generált kliens a hibás választ `{ status, error: <törzs> }` alakban dobja; a kódot a backend
+// ProblemDetail-je adja. Csak `format: 'json'` hívásoknál van feldolgozott törzs.
+export const isEmailNotVerifiedError = (error: unknown): boolean =>
+  (error as { error?: { code?: unknown } } | null | undefined)?.error?.code === 'EMAIL_NOT_VERIFIED';

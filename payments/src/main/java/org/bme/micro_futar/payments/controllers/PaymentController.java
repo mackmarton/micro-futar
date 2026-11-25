@@ -1,5 +1,6 @@
 package org.bme.micro_futar.payments.controllers;
 
+import org.bme.micro_futar.shared.utils.VerifiedEmail;
 import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.payments.dtos.CheckoutRequestDTO;
 import org.bme.micro_futar.payments.dtos.CheckoutResponseDTO;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * Orders can be placed without an account, so these endpoints are public. Ownership is proven with the payment
- * token orders returned when the shipment was created (never put in the URL), or by a logged-in sender's email.
+ * token orders returned when the shipment was created (never put in the URL), or by a logged-in sender's verified email.
  */
 @RestController
 @RequiredArgsConstructor
@@ -38,12 +39,10 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.getStatus(shipmentId, paymentToken, extractUserEmail(authentication)));
     }
 
+    /** Null unless the email is verified; ownership then has to be proven with the payment token. */
     private static String extractUserEmail(Authentication authentication) {
         if (authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) {
-            String email = jwtAuthenticationToken.getToken().getClaimAsString("email");
-            if (email != null && !email.isBlank()) {
-                return email;
-            }
+            return VerifiedEmail.from(jwtAuthenticationToken.getToken().getClaims()).orElse(null);
         }
         return null;
     }

@@ -5,11 +5,12 @@ import { LanguageSwitcher } from '../../i18n/LanguageSwitcher.tsx';
 import { CourierAllocationsList } from './components/CourierAllocationsList.tsx';
 import { CourierAllocationsMap } from './components/CourierAllocationsMap.tsx';
 import { useCourierAllocations } from './hooks/useCourierAllocations.ts';
+import { LoadErrorButton } from '../LoadErrorButton.tsx';
 
 export const CourierAllocatedPackagesPage = () => {
   const { t } = useTranslation(['allocations', 'common']);
   const courierNavigationItems = useCourierNavigationItems();
-  const { allocations, isLoading, errorMessage, retry } = useCourierAllocations();
+  const { allocations, isLoading, errorMessage, isEmailNotVerified, retry } = useCourierAllocations();
 
   return (
     <PortalLayout
@@ -32,15 +33,7 @@ export const CourierAllocatedPackagesPage = () => {
         {errorMessage ? (
           <section className="rounded-xl bg-surface-container-low p-6 md:p-7">
             <p className="font-body text-sm text-red-600">{errorMessage}</p>
-            <button
-              type="button"
-              onClick={() => {
-                void retry();
-              }}
-              className="mt-4 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-medium text-on-primary"
-            >
-              {t('common:actions.retry')}
-            </button>
+            <LoadErrorButton isEmailNotVerified={isEmailNotVerified} onRetry={retry} />
           </section>
         ) : null}
 

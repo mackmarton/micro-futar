@@ -15,10 +15,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -179,5 +183,37 @@ class ShipmentControllerTests {
                 .andExpect(jsonPath("$.shipment.price").value(200.0))
                 .andExpect(jsonPath("$.shipment.senderName").value("John Doe"))
                 .andExpect(jsonPath("$.shipment.recipientName").value("Jane Smith"));
+    }
+
+    @Test
+    void verifiedEmailGetsOwnShipments() throws Exception {
+        ShipmentDTO shipment = new ShipmentDTO();
+        shipment.setId(7L);
+        when(shipmentService.getShipmentsForUser("john@example.com")).thenReturn(List.of(shipment));
+
+        mockMvc.perform(get("/api/shipments").with(jwt().jwt(token -> token
+                        .claim("email", "john@example.com")
+                        .claim("email_verified", true))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(7));
+    }
+
+    @Test
+    void unverifiedEmailIsForbiddenWithMachineReadableCode() throws Exception {
+        mockMvc.perform(get("/api/shipments").with(jwt().jwt(token -> token
+                        .claim("email", "john@example.com")
+                        .claim("email_verified", false))))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.code").value("EMAIL_NOT_VERIFIED"));
+
+        verifyNoInteractions(shipmentService);
+    }
+
+    @Test
+    void shipmentListWithoutTokenIsUnauthorized() throws Exception {
+        mockMvc.perform(get("/api/shipments"))
+                .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(shipmentService);
     }
 }

@@ -64,7 +64,8 @@ class ShipmentRouteCourierServiceTests {
     @BeforeEach
     void setUp() {
         authentication = new JwtAuthenticationToken(
-                Jwt.withTokenValue("t").header("alg", "none").claim("email", "courier@example.com").build());
+                Jwt.withTokenValue("t").header("alg", "none").claim("email", "courier@example.com")
+                        .claim("email_verified", true).build());
         entity = new ShipmentRouteCourier();
         entity.setId(5L);
         entity.setCourierId(2L);

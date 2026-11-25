@@ -4,12 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.bme.micro_futar.orders.dtos.CreateShipmentResponseDTO;
 import org.bme.micro_futar.orders.services.ShipmentService;
 import org.bme.micro_futar.shared.dtos.ShipmentDTO;
+import org.bme.micro_futar.shared.exceptions.EmailNotVerifiedException;
+import org.bme.micro_futar.shared.utils.VerifiedEmail;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,10 +30,10 @@ public class ShipmentController {
 
     @GetMapping
     public ResponseEntity<List<ShipmentDTO>> getShipmentsForUser(Authentication authentication){
-        String userEmail = extractUserEmail(authentication);
-        if (userEmail == null) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof Jwt jwt)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        String userEmail = VerifiedEmail.from(jwt.getClaims()).orElseThrow(EmailNotVerifiedException::new);
         return ResponseEntity.ok(shipmentService.getShipmentsForUser(userEmail));
     }
 
@@ -41,27 +42,5 @@ public class ShipmentController {
     public ResponseEntity<Map<String, String>> republishShipments() {
         int count = shipmentService.republishAllShipments();
         return ResponseEntity.ok(Map.of("status", "success", "message", count + " shipments sent to Kafka"));
-    }
-
-    private String extractUserEmail(Authentication authentication) {
-        if (authentication == null) {
-            return null;
-        }
-
-        if (authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) {
-            String email = jwtAuthenticationToken.getToken().getClaimAsString("email");
-            if (email != null && !email.isBlank()) {
-                return email;
-            }
-        }
-
-        if (authentication.getPrincipal() instanceof Jwt jwt) {
-            String email = jwt.getClaimAsString("email");
-            if (email != null && !email.isBlank()) {
-                return email;
-            }
-        }
-
-        return null;
     }
 }

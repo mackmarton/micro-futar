@@ -1,5 +1,6 @@
 package org.bme.micro_futar.orders.exceptions;
 
+import org.bme.micro_futar.shared.exceptions.EmailNotVerifiedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,6 +15,14 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
         problem.setProperty("code", e.getCode().name());
         problem.setProperty("party", e.getParty().name());
+        return problem;
+    }
+
+    /** The caller is logged in, but their email is not verified: {@code code} is EMAIL_NOT_VERIFIED. */
+    @ExceptionHandler(EmailNotVerifiedException.class)
+    public ProblemDetail handleEmailNotVerified(EmailNotVerifiedException e) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, e.getMessage());
+        problem.setProperty("code", EmailNotVerifiedException.CODE);
         return problem;
     }
 }

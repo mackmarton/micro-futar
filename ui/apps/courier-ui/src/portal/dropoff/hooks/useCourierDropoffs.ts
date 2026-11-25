@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { toErrorMessage } from '@package/shared-core';
+import { isEmailNotVerifiedError, toErrorMessage } from '@package/shared-core';
 import type { ShipmentRouteCourierDTO } from '@package/shared-core/api/CourierApiClient';
 import {
   countPendingDropoffsForAssignments,
@@ -13,6 +13,7 @@ type UseCourierDropoffsResult = {
   waitingDropoffCount: number;
   isLoading: boolean;
   errorMessage: string | null;
+  isEmailNotVerified: boolean;
   retry: () => Promise<void>;
 };
 
@@ -55,17 +56,21 @@ export const useCourierDropoffs = (): UseCourierDropoffsResult => {
           ?? assignments.filter((assignment) => !assignment.failed && assignment.pickedUpForDelivery).length);
   const isLoading = dropoffsQuery.isPending || (assignments.length > 0 && dropoffCountQuery.isPending);
   const dropoffErrorFallback = t('loadError');
-  const errorMessage = dropoffsQuery.isError
-    ? toErrorMessage(dropoffsQuery.error, dropoffErrorFallback)
-    : dropoffCountQuery.isError
-      ? toErrorMessage(dropoffCountQuery.error, dropoffErrorFallback)
-      : null;
+  const isEmailNotVerified = dropoffsQuery.isError && isEmailNotVerifiedError(dropoffsQuery.error);
+  const errorMessage = isEmailNotVerified
+    ? t('common:errors.emailNotVerified')
+    : dropoffsQuery.isError
+      ? toErrorMessage(dropoffsQuery.error, dropoffErrorFallback)
+      : dropoffCountQuery.isError
+        ? toErrorMessage(dropoffCountQuery.error, dropoffErrorFallback)
+        : null;
 
   return {
     assignments,
     waitingDropoffCount,
     isLoading,
     errorMessage,
+    isEmailNotVerified,
     retry,
   };
 };

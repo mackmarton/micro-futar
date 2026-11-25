@@ -11,10 +11,11 @@ import org.bme.micro_futar.courier.repositories.ShipmentRouteCourierRepository;
 import org.bme.micro_futar.shared.dtos.AssignmentStatusEventDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
 import org.bme.micro_futar.shared.enums.AssignmentStatus;
+import org.bme.micro_futar.shared.exceptions.EmailNotVerifiedException;
 import org.bme.micro_futar.shared.exceptions.UnauthorizedException;
+import org.bme.micro_futar.shared.utils.VerifiedEmail;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -201,30 +202,13 @@ public class ShipmentRouteCourierService {
     }
 
     private Long getCourierIdByAuthentication(Authentication authentication) {
-        String courierEmail = extractUserEmail(authentication);
-        return courierService.findIdByEmail(courierEmail);
+        return courierService.findIdByEmail(extractVerifiedEmail(authentication));
     }
 
-    private String extractUserEmail(Authentication authentication) {
-        if (authentication == null) {
-            return null;
+    private static String extractVerifiedEmail(Authentication authentication) {
+        if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
+            return VerifiedEmail.from(jwt.getClaims()).orElseThrow(EmailNotVerifiedException::new);
         }
-
-        if (authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) {
-            String email = jwtAuthenticationToken.getToken().getClaimAsString("email");
-            if (email != null && !email.isBlank()) {
-                return email;
-            }
-        }
-
-        if (authentication.getPrincipal() instanceof Jwt jwt) {
-            String email = jwt.getClaimAsString("email");
-            if (email != null && !email.isBlank()) {
-                return email;
-            }
-        }
-
-        return null;
+        throw new EmailNotVerifiedException();
     }
 }
-

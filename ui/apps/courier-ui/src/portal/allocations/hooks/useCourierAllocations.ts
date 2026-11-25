@@ -1,13 +1,14 @@
 import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { toErrorMessage } from '@package/shared-core';
+import { isEmailNotVerifiedError, toErrorMessage } from '@package/shared-core';
 import { fetchCourierAllocationsForCurrentDay, type CourierAllocation } from '../api/courierAllocationsApi.ts';
 
 type UseCourierAllocationsResult = {
   allocations: CourierAllocation[];
   isLoading: boolean;
   errorMessage: string | null;
+  isEmailNotVerified: boolean;
   retry: () => Promise<void>;
 };
 
@@ -23,12 +24,17 @@ export const useCourierAllocations = (): UseCourierAllocationsResult => {
     await allocationsQuery.refetch();
   }, [allocationsQuery]);
 
+  const isEmailNotVerified = allocationsQuery.isError && isEmailNotVerifiedError(allocationsQuery.error);
+
   return {
     allocations: allocationsQuery.data ?? [],
     isLoading: allocationsQuery.isPending,
-    errorMessage: allocationsQuery.isError
-      ? toErrorMessage(allocationsQuery.error, t('list.loadError'))
-      : null,
+    errorMessage: !allocationsQuery.isError
+      ? null
+      : isEmailNotVerified
+        ? t('common:errors.emailNotVerified')
+        : toErrorMessage(allocationsQuery.error, t('list.loadError')),
+    isEmailNotVerified,
     retry,
   };
 };

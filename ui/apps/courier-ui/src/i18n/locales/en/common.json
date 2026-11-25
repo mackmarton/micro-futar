@@ -1,4 +1,7 @@
 {
+  "errors": {
+    "emailNotVerified": "Your email address hasn't been verified yet. Please confirm it using the email we sent you, then log in again."
+  },
   "brand": {
     "title": "Courier",
     "subtitle": "Courier Portal"
@@ -9,6 +12,7 @@
     "dropoff": "Package dropoff"
   },
   "actions": {
+    "loginAgain": "Log in again",
     "retry": "Retry",
     "open": "Open",
     "call": "Call",

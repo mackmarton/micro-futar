@@ -2,13 +2,14 @@ import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { ShipmentRouteCourierDTO } from '@package/shared-core/api/CourierApiClient';
-import { toErrorMessage } from '@package/shared-core';
+import { isEmailNotVerifiedError, toErrorMessage } from '@package/shared-core';
 import { fetchCourierPickupsForToday } from '../api/courierPickupApi.ts';
 
 type UseCourierPickupsResult = {
   assignments: ShipmentRouteCourierDTO[];
   isLoading: boolean;
   errorMessage: string | null;
+  isEmailNotVerified: boolean;
   retry: () => Promise<void>;
 };
 
@@ -24,12 +25,17 @@ export const useCourierPickups = (): UseCourierPickupsResult => {
     await pickupsQuery.refetch();
   }, [pickupsQuery]);
 
+  const isEmailNotVerified = pickupsQuery.isError && isEmailNotVerifiedError(pickupsQuery.error);
+
   return {
     assignments: pickupsQuery.data ?? [],
     isLoading: pickupsQuery.isPending,
-    errorMessage: pickupsQuery.isError
-      ? toErrorMessage(pickupsQuery.error, t('loadError'))
-      : null,
+    errorMessage: !pickupsQuery.isError
+      ? null
+      : isEmailNotVerified
+        ? t('common:errors.emailNotVerified')
+        : toErrorMessage(pickupsQuery.error, t('loadError')),
+    isEmailNotVerified,
     retry,
   };
 };

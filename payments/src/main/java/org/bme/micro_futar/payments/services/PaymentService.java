@@ -184,8 +184,8 @@ public class PaymentService {
     }
 
     /**
-     * The sender proves ownership with the payment token from order creation, or, when logged in, with the email
-     * in their JWT (so they can also pay from another device, where the token is not stored).
+     * The sender proves ownership with the payment token from order creation, or, when logged in, with the verified
+     * email in their JWT (so they can also pay from another device, where the token is not stored).
      */
     private Payment findOwnedPayment(Long shipmentId, String paymentToken, String userEmail) {
         Payment payment = paymentRepository.findByShipmentId(shipmentId)

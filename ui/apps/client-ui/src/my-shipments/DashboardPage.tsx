@@ -21,7 +21,7 @@ export const DashboardPage = ({locale}: DashboardPageProps) => {
     const paymentHrefFor = useCallback((shipmentId: number) => `${paymentHref}?shipmentId=${shipmentId}`, [paymentHref]);
     const {user, isLoading: isAuthLoading, login} = useAuth();
     const isLoggedIn = !isAuthLoading && user !== null;
-    const {shipments, stats, isLoading, errorMessage, retry} = useUserShipments(paymentHrefFor, isLoggedIn);
+    const {shipments, stats, isLoading, errorMessage, isEmailNotVerified, retry} = useUserShipments(paymentHrefFor, isLoggedIn);
 
     // A saját csomagok csak bejelentkezve érhetők el: vendéget a bejelentkezésre küldjük, onnan
     // ide tér vissza.
@@ -80,14 +80,19 @@ export const DashboardPage = ({locale}: DashboardPageProps) => {
                             <button
                                 type="button"
                                 onClick={() => {
-                                    void retry();
+                                    // Ellenőrizetlen e-mailnél csak új token segít, az újratöltés nem.
+                                    if (isEmailNotVerified) {
+                                        login();
+                                    } else {
+                                        void retry();
+                                    }
                                 }}
                                 className="inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-lg font-medium hover:bg-on-primary-container transition-all"
                             >
                                 <span className="material-symbols-outlined" aria-hidden="true">
-                                    refresh
+                                    {isEmailNotVerified ? 'login' : 'refresh'}
                                 </span>
-                                {t('dashboard:error.retry')}
+                                {isEmailNotVerified ? t('dashboard:error.loginAgain') : t('dashboard:error.retry')}
                             </button>
                         </section>
                     ) : null}

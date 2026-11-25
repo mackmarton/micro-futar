@@ -11,6 +11,7 @@ import {
     pickUpAllDeliveryShipmentsForCurrentDay,
 } from './api/courierPickupApi.ts';
 import { useCourierAllocations } from '../allocations/hooks/useCourierAllocations.ts';
+import { LoadErrorButton } from '../LoadErrorButton.tsx';
 
 const toAssignmentKey = (assignmentId: number | null | undefined, shipmentRouteId: number | null | undefined): string => {
     return `${assignmentId ?? 'missing-id'}:${shipmentRouteId ?? 'missing-route'}`;
@@ -19,7 +20,7 @@ const toAssignmentKey = (assignmentId: number | null | undefined, shipmentRouteI
 export const CourierPickupPage = () => {
     const { t } = useTranslation(['pickup', 'common']);
     const courierNavigationItems = useCourierNavigationItems();
-    const {assignments, isLoading, errorMessage, retry} = useCourierPickups();
+    const {assignments, isLoading, errorMessage, isEmailNotVerified, retry} = useCourierPickups();
     const {allocations, retry: retryAllocations} = useCourierAllocations();
     const deliveryAssignmentKeys = useMemo(
         () =>
@@ -109,15 +110,7 @@ export const CourierPickupPage = () => {
                 {errorMessage ? (
                     <section className="rounded-xl bg-surface-container-low p-6 md:p-7">
                         <p className="font-body text-sm text-red-600">{errorMessage}</p>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                void retry();
-                            }}
-                            className="mt-4 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-medium text-on-primary"
-                        >
-                            {t('common:actions.retry')}
-                        </button>
+                        <LoadErrorButton isEmailNotVerified={isEmailNotVerified} onRetry={retry} />
                     </section>
                 ) : null}
 

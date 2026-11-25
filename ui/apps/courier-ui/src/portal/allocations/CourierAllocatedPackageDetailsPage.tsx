@@ -14,12 +14,13 @@ import {
 import { CourierAllocationsMap } from './components/CourierAllocationsMap.tsx';
 import { CourierAllocatedPackageDetailsSection } from './components/CourierAllocatedPackageDetailsSection.tsx';
 import { useCourierAllocations } from './hooks/useCourierAllocations.ts';
+import { LoadErrorButton } from '../LoadErrorButton.tsx';
 
 export const CourierAllocatedPackageDetailsPage = () => {
   const { t } = useTranslation(['allocations', 'common']);
   const courierNavigationItems = useCourierNavigationItems();
   const { assignmentId } = useParams<{ assignmentId: string }>();
-  const { allocations, isLoading, errorMessage, retry } = useCourierAllocations();
+  const { allocations, isLoading, errorMessage, isEmailNotVerified, retry } = useCourierAllocations();
   const parsedAssignmentId = Number(assignmentId);
   const isAssignmentIdValid = Number.isFinite(parsedAssignmentId);
 
@@ -106,15 +107,7 @@ export const CourierAllocatedPackageDetailsPage = () => {
         {errorMessage ? (
           <section className="rounded-xl bg-surface-container-low p-6 md:p-7">
             <p className="text-sm text-red-600">{errorMessage}</p>
-            <button
-              type="button"
-              onClick={() => {
-                void retry();
-              }}
-              className="mt-4 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-medium text-on-primary"
-            >
-              {t('common:actions.retry')}
-            </button>
+            <LoadErrorButton isEmailNotVerified={isEmailNotVerified} onRetry={retry} />
           </section>
         ) : null}
 

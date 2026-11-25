@@ -6,6 +6,7 @@ import { LanguageSwitcher } from '../../i18n/LanguageSwitcher.tsx';
 import { ManifestDataTable } from '../pickup/components/ManifestDataTable.tsx';
 import { fulfillAllPickupsForCurrentDay } from './api/courierDropoffApi.ts';
 import { useCourierDropoffs } from './hooks/useCourierDropoffs.ts';
+import { LoadErrorButton } from '../LoadErrorButton.tsx';
 
 const toDropoffAllErrorMessage = (error: unknown, fallbackMessage: string): string => {
   if (typeof error === 'object' && error !== null && 'error' in error) {
@@ -25,7 +26,7 @@ const toDropoffAllErrorMessage = (error: unknown, fallbackMessage: string): stri
 export const CourierDropoffPage = () => {
   const { t } = useTranslation(['dropoff', 'common']);
   const courierNavigationItems = useCourierNavigationItems();
-  const { assignments, waitingDropoffCount, isLoading, errorMessage, retry } = useCourierDropoffs();
+  const { assignments, waitingDropoffCount, isLoading, errorMessage, isEmailNotVerified, retry } = useCourierDropoffs();
 
   const dropoffAllMutation = useMutation({
     mutationFn: fulfillAllPickupsForCurrentDay,
@@ -86,15 +87,7 @@ export const CourierDropoffPage = () => {
         {errorMessage ? (
           <section className="rounded-xl bg-surface-container-low p-6 md:p-7">
             <p className="font-body text-sm text-red-600">{errorMessage}</p>
-            <button
-              type="button"
-              onClick={() => {
-                void retry();
-              }}
-              className="mt-4 inline-flex items-center rounded-lg bg-primary px-4 py-2 font-body font-medium text-on-primary"
-            >
-              {t('common:actions.retry')}
-            </button>
+            <LoadErrorButton isEmailNotVerified={isEmailNotVerified} onRetry={retry} />
           </section>
         ) : null}
 

@@ -1,4 +1,7 @@
 {
+  "errors": {
+    "emailNotVerified": "Az e-mail címed még nincs megerősítve. Kérjük, erősítsd meg a kapott levélben, majd jelentkezz be újra."
+  },
   "brand": {
     "title": "Futár",
     "subtitle": "Futár Portál"
@@ -9,6 +12,7 @@
     "dropoff": "Csomag leadás"
   },
   "actions": {
+    "loginAgain": "Bejelentkezés újra",
     "retry": "Újratöltés",
     "open": "Megnyitás",
     "call": "Hívás",
