@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.courier.services.ShipmentRouteCourierService;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
-import org.bme.micro_futar.shared.exceptions.UnauthorizedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -53,8 +52,6 @@ public class ShipmentRouteCourierController {
             shipmentRouteCourierService.pickUpParcel(id, authentication);
         } catch (NoSuchElementException _) {
             return ResponseEntity.notFound().build();
-        } catch (UnauthorizedException _) {
-            return ResponseEntity.status(401).build();
         }
         return ResponseEntity.ok().build();
     }
@@ -65,8 +62,6 @@ public class ShipmentRouteCourierController {
             shipmentRouteCourierService.fulfillAssignment(id, authentication);
         } catch (NoSuchElementException _) {
             return ResponseEntity.notFound().build();
-        } catch (UnauthorizedException _) {
-            return ResponseEntity.status(401).build();
         }
         return ResponseEntity.ok().build();
     }
@@ -83,8 +78,6 @@ public class ShipmentRouteCourierController {
             shipmentRouteCourierService.failAssignment(id, authentication);
         } catch (NoSuchElementException _) {
             return ResponseEntity.notFound().build();
-        } catch (UnauthorizedException _) {
-            return ResponseEntity.status(401).build();
         }
         return ResponseEntity.ok().build();
     }

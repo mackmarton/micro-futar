@@ -18,8 +18,10 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -41,6 +43,8 @@ class CourierAccessControlTests {
     private MockMvc mockMvc;
     @Autowired
     private JwtAuthConverter jwtAuthConverter;
+    @Autowired
+    private AssignmentProgressRepository assignmentProgressRepository;
     @Autowired
     private CourierRepository courierRepository;
     @Autowired
@@ -166,6 +170,21 @@ class CourierAccessControlTests {
     void assignmentThatIsNotOwnAndActiveIsNotFound(long assignmentId) throws Exception {
         mockMvc.perform(get("/api/me/assignments/" + assignmentId).with(token(OWN_EMAIL, "courier-user")))
                 .andExpect(status().isNotFound());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "/api/shipment-route-couriers/pickup/9103",
+            "/api/shipment-route-couriers/9103/fulfill",
+            "/api/shipment-route-couriers/9103/fail",
+            "/api/shipment-route-couriers/pickup/999999",
+            "/api/shipment-route-couriers/999999/fulfill",
+            "/api/shipment-route-couriers/999999/fail"
+    })
+    void actingOnAnAssignmentThatIsNotOwnIsNotFound(String url) throws Exception {
+        mockMvc.perform(post(url).with(token(OWN_EMAIL, "courier-user")))
+                .andExpect(status().isNotFound());
+        assertFalse(assignmentProgressRepository.existsById(OTHERS));
     }
 
     @Test

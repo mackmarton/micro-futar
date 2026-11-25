@@ -12,7 +12,6 @@ import org.bme.micro_futar.courier.repositories.ShipmentRouteCourierRepository;
 import org.bme.micro_futar.shared.dtos.AssignmentStatusEventDTO;
 import org.bme.micro_futar.shared.dtos.ShipmentRouteCourierDTO;
 import org.bme.micro_futar.shared.enums.AssignmentStatus;
-import org.bme.micro_futar.shared.exceptions.UnauthorizedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -192,11 +191,9 @@ public class ShipmentRouteCourierService {
 
     private ShipmentRouteCourierDTO findOwnAssignment(Long id, Authentication authentication) {
         Long courierId = getCourierIdByAuthentication(authentication);
-        var shipmentRouteCourier = findById(id).orElseThrow();
-        if (!Objects.equals(shipmentRouteCourier.getCourierId(), courierId)) {
-            throw new UnauthorizedException();
-        }
-        return shipmentRouteCourier;
+        return findById(id)
+                .filter(assignment -> Objects.equals(assignment.getCourierId(), courierId))
+                .orElseThrow();
     }
 
     private Long getCourierIdByAuthentication(Authentication authentication) {
