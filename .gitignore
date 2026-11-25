@@ -65,3 +65,4 @@ ui/design/
 
 graphify-out/
 .claude/
+.env
