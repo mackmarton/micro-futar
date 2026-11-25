@@ -136,6 +136,10 @@ spring:
 
 app:
   default-redirect-url: ${DEFAULT_REDIRECT_URL}
+  redirect:
+    allowed-schemes: ${REDIRECT_ALLOWED_SCHEMES:}
+    allowed-hosts: ${REDIRECT_ALLOWED_HOSTS:}
+    allowed-domain-suffixes: ${REDIRECT_ALLOWED_DOMAIN_SUFFIXES:}
   csrf:
     header-name: ${CSRF_HEADER_NAME:X-Requested-With}
     header-value: ${CSRF_HEADER_VALUE:micro-futar}

@@ -14,6 +14,9 @@ data:
   COOKIE_SECURE: {{ .Values.config.cookie.secure | quote }}
   DEFAULT_REDIRECT_URL: {{ .Values.config.defaultRedirectUrl | quote }}
   CORS_ALLOWED_ORIGINS: {{ .Values.config.corsAllowedOrigins | quote }}
+  REDIRECT_ALLOWED_SCHEMES: {{ .Values.config.redirect.allowedSchemes | quote }}
+  REDIRECT_ALLOWED_HOSTS: {{ .Values.config.redirect.allowedHosts | quote }}
+  REDIRECT_ALLOWED_DOMAIN_SUFFIXES: {{ .Values.config.redirect.allowedDomainSuffixes | quote }}
   ORDER_SERVICE_URI: {{ .Values.config.services.order | quote }}
   TRACKING_SERVICE_URI: {{ .Values.config.services.tracking | quote }}
   LOGISTICS_SERVICE_URI: {{ .Values.config.services.logistics | quote }}

@@ -4,6 +4,9 @@ logging:
     org.springframework.security: DEBUG
 
 app:
+  redirect:
+    allowed-schemes: ${REDIRECT_ALLOWED_SCHEMES:http,https}
+    allowed-hosts: ${REDIRECT_ALLOWED_HOSTS:localhost}
   rate-limit:
     # Helyben (mvn spring-boot:run, docker-compose) nincs proxy; a helyi Helm telepítés env változóval írja felül.
     trusted-proxy-count: ${RATE_LIMIT_TRUSTED_PROXY_COUNT:0}

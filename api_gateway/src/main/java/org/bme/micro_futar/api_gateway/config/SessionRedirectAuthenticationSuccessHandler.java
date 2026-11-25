@@ -18,9 +18,13 @@ public class SessionRedirectAuthenticationSuccessHandler
     public static final String REDIRECT_URL = "REDIRECT_URL";
     private final String defaultRedirectUrl;
 
+    private final RedirectUriPolicy redirectUriPolicy;
+
     public SessionRedirectAuthenticationSuccessHandler(
-            @Value("${app.default-redirect-url}") String defaultRedirectUrl) {
+            @Value("${app.default-redirect-url}") String defaultRedirectUrl,
+            RedirectUriPolicy redirectUriPolicy) {
         this.defaultRedirectUrl = defaultRedirectUrl;
+        this.redirectUriPolicy = redirectUriPolicy;
     }
 
     @Override
@@ -37,7 +41,8 @@ public class SessionRedirectAuthenticationSuccessHandler
     }
 
     private Mono<Void> redirect(WebFilterExchange webFilterExchange, Object redirectUrlAttribute) {
-        String redirectUrl = redirectUrlAttribute != null
+        // A munkamenet (Redis) túlélheti a lista szigorítását, ezért a tárolt címet újra ellenőrizzük.
+        String redirectUrl = redirectUrlAttribute != null && redirectUriPolicy.isAllowed(redirectUrlAttribute.toString())
                 ? redirectUrlAttribute.toString()
                 : defaultRedirectUrl;
 

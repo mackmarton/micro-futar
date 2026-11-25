@@ -10,10 +10,6 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import java.net.URI;
-import java.util.Locale;
-import java.util.Set;
-
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RedirectUriSessionWebFilter implements WebFilter {
@@ -22,9 +18,12 @@ public class RedirectUriSessionWebFilter implements WebFilter {
     private static final String REDIRECT_URI_PARAM = "redirect_uri";
     private static final String LOGIN_PATH_PREFIX = "/oauth2/authorization/keycloak";
     private static final String LOGOUT_PATH = "/logout";
-    private static final Set<String> ALLOWED_SCHEMES = Set.of("http", "https");
-    private static final String ROOT_DOMAIN = "micro-futar.hu";
-    private static final String LOCALHOST = "localhost";
+
+    private final RedirectUriPolicy redirectUriPolicy;
+
+    public RedirectUriSessionWebFilter(RedirectUriPolicy redirectUriPolicy) {
+        this.redirectUriPolicy = redirectUriPolicy;
+    }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -39,14 +38,7 @@ public class RedirectUriSessionWebFilter implements WebFilter {
             return chain.filter(exchange);
         }
 
-        URI parsedRedirectUri;
-        try {
-            parsedRedirectUri = URI.create(redirectUri);
-        } catch (IllegalArgumentException ex) {
-            return rejectInvalidRedirectUri(exchange);
-        }
-
-        if (!isAllowedRedirectUri(parsedRedirectUri)) {
+        if (!redirectUriPolicy.isAllowed(redirectUri)) {
             return rejectInvalidRedirectUri(exchange);
         }
 
@@ -62,24 +54,6 @@ public class RedirectUriSessionWebFilter implements WebFilter {
                     session.getAttributes().put(REDIRECT_URL, redirectUri);
                     return chain.filter(exchange);
                 });
-    }
-
-    private boolean isAllowedRedirectUri(URI redirectUri) {
-        String scheme = redirectUri.getScheme();
-        String host = redirectUri.getHost();
-        if (scheme == null || host == null) {
-            return false;
-        }
-
-        String normalizedScheme = scheme.toLowerCase(Locale.ROOT);
-        String normalizedHost = host.toLowerCase(Locale.ROOT);
-        if (!ALLOWED_SCHEMES.contains(normalizedScheme)) {
-            return false;
-        }
-
-        return normalizedHost.equals(LOCALHOST)
-                || normalizedHost.equals(ROOT_DOMAIN)
-                || normalizedHost.endsWith("." + ROOT_DOMAIN);
     }
 
     private Mono<Void> rejectInvalidRedirectUri(ServerWebExchange exchange) {

@@ -35,6 +35,10 @@ config:
     secure: false
   defaultRedirectUrl: http://localhost:8070/
   corsAllowedOrigins: http://localhost:8070,http://localhost:5173,http://localhost:5174,http://localhost:5175
+  redirect:
+    allowedSchemes: "http,https"
+    allowedHosts: "localhost"
+    allowedDomainSuffixes: ""
   oauth:
     clientSecretName: api-gateway-client-secret-dev
     clientSecretKey: CLIENT_SECRET

@@ -34,6 +34,9 @@ import java.net.InetSocketAddress;
         "CLIENT_SECRET=test",
         "DEFAULT_REDIRECT_URL=http://localhost:5173/",
         "CORS_ALLOWED_ORIGINS=http://localhost:5173",
+        "REDIRECT_ALLOWED_SCHEMES=http,https",
+        "REDIRECT_ALLOWED_HOSTS=localhost",
+        "REDIRECT_ALLOWED_DOMAIN_SUFFIXES=micro-futar.hu",
         "RATE_LIMIT_TRUSTED_PROXY_COUNT=1"
 })
 @Import(AbstractGatewayRateLimitTest.ClientRegistrationTestConfig.class)
