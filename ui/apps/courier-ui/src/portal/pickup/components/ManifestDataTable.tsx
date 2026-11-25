@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { DataTable } from '@package/shared-ui';
 import type { DataTableColumn } from '@package/shared-ui';
-import { toErrorMessage } from '@package/shared-core';
+import { toErrorMessage, retryUnlessRateLimited } from '@package/shared-core';
 import type { ShipmentRouteCourierDTO } from '@package/shared-core/api/CourierApiClient';
 import {
   fetchManifestShipmentsForAssignments,
@@ -90,7 +90,7 @@ export const ManifestDataTable = ({ assignments }: ManifestDataTableProps) => {
     queryKey: ['courier-manifest-shipments', queryKeySuffix],
     queryFn: ({ signal }) => fetchManifestShipmentsForAssignments(assignments, signal),
     enabled: assignments.length > 0,
-    retry: 1,
+    retry: retryUnlessRateLimited(1),
   });
 
   const shipments = manifestQuery.data ?? [];

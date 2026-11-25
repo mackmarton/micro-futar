@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { fetchPackageSizeOptions, type PackageSizeOption } from '../api/ordersApi.ts';
 import { queryKeys } from '../../shared/queryKeys.ts';
+import { retryUnlessRateLimited, toRateLimitMessage } from '@package/shared-core';
 
 type UsePackageSizesResult = {
   packageSizeOptions: PackageSizeOption[];
@@ -17,7 +18,7 @@ export const usePackageSizes = (): UsePackageSizesResult => {
     queryKey: queryKeys.packageSizes,
     queryFn: ({ signal }) => fetchPackageSizeOptions(signal),
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnlessRateLimited(2),
   });
 
   const retry = useCallback(() => {
@@ -27,7 +28,7 @@ export const usePackageSizes = (): UsePackageSizesResult => {
   return {
     packageSizeOptions: packageSizesQuery.data ?? [],
     isLoading: packageSizesQuery.isPending,
-    errorMessage: packageSizesQuery.isError ? t('dataErrors.packageSizes') : null,
+    errorMessage: packageSizesQuery.isError ? (toRateLimitMessage(packageSizesQuery.error) ?? t('dataErrors.packageSizes')) : null,
     retry,
   };
 };

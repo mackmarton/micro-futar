@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { fetchCityOptionsByCountryId, type CityOption } from '../api/ordersApi.ts';
 import { queryKeys } from '../../shared/queryKeys.ts';
+import { retryUnlessRateLimited, toRateLimitMessage } from '@package/shared-core';
 
 type UseCitiesResult = {
   cityOptions: CityOption[];
@@ -19,7 +20,7 @@ export const useCities = (countryId: string): UseCitiesResult => {
     queryFn: ({ signal }) => fetchCityOptionsByCountryId(countryId, signal),
     enabled: isEnabled,
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnlessRateLimited(2),
   });
 
   const retry = useCallback(() => {
@@ -32,7 +33,7 @@ export const useCities = (countryId: string): UseCitiesResult => {
   return {
     cityOptions: isEnabled ? (citiesQuery.data ?? []) : [],
     isLoading: isEnabled ? citiesQuery.isPending : false,
-    errorMessage: isEnabled && citiesQuery.isError ? t('dataErrors.cities') : null,
+    errorMessage: isEnabled && citiesQuery.isError ? (toRateLimitMessage(citiesQuery.error) ?? t('dataErrors.cities')) : null,
     retry,
   };
 };

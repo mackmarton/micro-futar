@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { ShipmentRouteCourierDTO } from '@package/shared-core/api/CourierApiClient';
-import { isEmailNotVerifiedError, toErrorMessage } from '@package/shared-core';
+import { isEmailNotVerifiedError, toErrorMessage, retryUnlessRateLimited } from '@package/shared-core';
 import { fetchCourierPickupsForToday } from '../api/courierPickupApi.ts';
 
 type UseCourierPickupsResult = {
@@ -18,7 +18,7 @@ export const useCourierPickups = (): UseCourierPickupsResult => {
   const pickupsQuery = useQuery({
     queryKey: ['courier-pickups-today'],
     queryFn: ({ signal }) => fetchCourierPickupsForToday(signal),
-    retry: 1,
+    retry: retryUnlessRateLimited(1),
   });
 
   const retry = useCallback(async () => {

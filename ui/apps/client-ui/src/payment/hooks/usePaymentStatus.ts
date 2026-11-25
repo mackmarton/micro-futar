@@ -20,7 +20,7 @@ export const usePaymentStatus = (
         // A 404 (nem a feladóé / ismeretlen) és a 409 (még nem ért be) nem javul újrapróbálással gyorsan.
         retry: (failureCount, error) => {
             const status = getHttpStatus(error);
-            return status === 409 ? failureCount < 5 : status !== 404 && failureCount < 1;
+            return status === 409 ? failureCount < 5 : status !== 404 && status !== 429 && failureCount < 1;
         },
         refetchInterval: (query) =>
             pollWhilePending && query.state.data?.status === 'PENDING' ? POLL_INTERVAL_MS : false,

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { fetchCountryPrices, type CountryPriceOption } from '../api/ordersApi.ts';
 import { queryKeys } from '../../shared/queryKeys.ts';
+import { retryUnlessRateLimited, toRateLimitMessage } from '@package/shared-core';
 
 type UseCountryPricesResult = {
   countryPrices: CountryPriceOption[];
@@ -22,7 +23,7 @@ export const useCountryPrices = (
     queryFn: ({ signal }) => fetchCountryPrices(originCountryId, destinationCountryId, signal),
     enabled: isEnabled,
     staleTime: 60 * 1000,
-    retry: 1,
+    retry: retryUnlessRateLimited(1),
   });
 
   const retry = useCallback(() => {
@@ -36,7 +37,7 @@ export const useCountryPrices = (
     countryPrices: isEnabled ? (countryPricesQuery.data ?? []) : [],
     isLoading: isEnabled ? countryPricesQuery.isPending : false,
     errorMessage: isEnabled && countryPricesQuery.isError
-      ? t('dataErrors.countryPrices')
+      ? (toRateLimitMessage(countryPricesQuery.error) ?? t('dataErrors.countryPrices'))
       : null,
     retry,
   };

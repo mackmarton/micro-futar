@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { isEmailNotVerifiedError, toErrorMessage } from '@package/shared-core';
+import { isEmailNotVerifiedError, toErrorMessage, retryUnlessRateLimited } from '@package/shared-core';
 import type { Shipment } from '../components/ShipmentTable.tsx';
 import type { ShipmentStatsObject } from '../components/ShipmentStats.tsx';
 import { fetchShipmentsForUser } from '../api/shipmentsApi.ts';
@@ -31,7 +31,7 @@ export const useUserShipments = (
     queryKey: queryKeys.userShipments,
     queryFn: ({ signal }) => fetchShipmentsForUser(signal),
     enabled,
-    retry: 1,
+    retry: retryUnlessRateLimited(1),
   });
 
   const shipments = useMemo<Shipment[]>(() => {

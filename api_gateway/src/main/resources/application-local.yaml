@@ -2,3 +2,9 @@ logging:
   level:
     org.springframework.cloud.gateway: DEBUG
     org.springframework.security: DEBUG
+
+app:
+  rate-limit:
+    # Helyben (mvn spring-boot:run, docker-compose) nincs proxy; a helyi Helm telepítés env változóval írja felül.
+    trusted-proxy-count: ${RATE_LIMIT_TRUSTED_PROXY_COUNT:0}
+    redis-timeout: ${RATE_LIMIT_REDIS_TIMEOUT:200ms}

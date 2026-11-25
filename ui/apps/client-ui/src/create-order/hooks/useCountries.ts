@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { fetchCountryOptions, type CountryOption } from '../api/ordersApi.ts';
 import { queryKeys } from '../../shared/queryKeys.ts';
+import { retryUnlessRateLimited, toRateLimitMessage } from '@package/shared-core';
 
 type UseCountriesResult = {
   countryOptions: CountryOption[];
@@ -17,7 +18,7 @@ export const useCountries = (): UseCountriesResult => {
     queryKey: queryKeys.countries,
     queryFn: ({ signal }) => fetchCountryOptions(signal),
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: retryUnlessRateLimited(2),
   });
 
   const retry = useCallback(() => {
@@ -27,7 +28,7 @@ export const useCountries = (): UseCountriesResult => {
   return {
     countryOptions: countriesQuery.data ?? [],
     isLoading: countriesQuery.isPending,
-    errorMessage: countriesQuery.isError ? t('dataErrors.countries') : null,
+    errorMessage: countriesQuery.isError ? (toRateLimitMessage(countriesQuery.error) ?? t('dataErrors.countries')) : null,
     retry,
   };
 };

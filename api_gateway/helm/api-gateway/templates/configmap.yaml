@@ -19,3 +19,17 @@ data:
   LOGISTICS_SERVICE_URI: {{ .Values.config.services.logistics | quote }}
   COURIER_SERVICE_URI: {{ .Values.config.services.courier | quote }}
   PAYMENT_SERVICE_URI: {{ .Values.config.services.payment | quote }}
+  RATE_LIMIT_TRUSTED_PROXY_COUNT: {{ .Values.config.rateLimit.trustedProxyCount | quote }}
+  RATE_LIMIT_REDIS_TIMEOUT: {{ .Values.config.rateLimit.redisTimeout | quote }}
+  RATE_LIMIT_SHIPMENT_CREATE_REPLENISH_RATE: {{ .Values.config.rateLimit.shipmentCreate.replenishRate | quote }}
+  RATE_LIMIT_SHIPMENT_CREATE_BURST_CAPACITY: {{ .Values.config.rateLimit.shipmentCreate.burstCapacity | quote }}
+  RATE_LIMIT_SHIPMENT_CREATE_REQUESTED_TOKENS: {{ .Values.config.rateLimit.shipmentCreate.requestedTokens | quote }}
+  RATE_LIMIT_CHECKOUT_REPLENISH_RATE: {{ .Values.config.rateLimit.checkout.replenishRate | quote }}
+  RATE_LIMIT_CHECKOUT_BURST_CAPACITY: {{ .Values.config.rateLimit.checkout.burstCapacity | quote }}
+  RATE_LIMIT_CHECKOUT_REQUESTED_TOKENS: {{ .Values.config.rateLimit.checkout.requestedTokens | quote }}
+  RATE_LIMIT_TRACKING_REPLENISH_RATE: {{ .Values.config.rateLimit.tracking.replenishRate | quote }}
+  RATE_LIMIT_TRACKING_BURST_CAPACITY: {{ .Values.config.rateLimit.tracking.burstCapacity | quote }}
+  RATE_LIMIT_TRACKING_REQUESTED_TOKENS: {{ .Values.config.rateLimit.tracking.requestedTokens | quote }}
+  RATE_LIMIT_DEFAULT_REPLENISH_RATE: {{ .Values.config.rateLimit.default.replenishRate | quote }}
+  RATE_LIMIT_DEFAULT_BURST_CAPACITY: {{ .Values.config.rateLimit.default.burstCapacity | quote }}
+  RATE_LIMIT_DEFAULT_REQUESTED_TOKENS: {{ .Values.config.rateLimit.default.requestedTokens | quote }}

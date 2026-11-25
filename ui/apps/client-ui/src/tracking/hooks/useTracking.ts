@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { toErrorMessage } from '@package/shared-core';
+import { toErrorMessage, retryUnlessRateLimited } from '@package/shared-core';
 import { fetchTrackingByParcelNumber } from '../api/trackingApi.ts';
 import { mapTrackingDtoToDetails, type TrackingDetailsViewModel } from '../mappers/trackingMapper.ts';
 import type { AppLocale } from '../../i18n/createI18nInstance.ts';
@@ -41,7 +41,7 @@ export const useTracking = (): UseTrackingResult => {
           return mappedDetails;
         },
         staleTime: 30 * 1000,
-        retry: 1,
+        retry: retryUnlessRateLimited(1),
       });
 
       return details;

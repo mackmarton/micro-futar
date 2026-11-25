@@ -12,6 +12,7 @@ import { useCountries } from './useCountries.ts';
 import { useCountryPrices } from './useCountryPrices.ts';
 import { usePackageSizes } from './usePackageSizes.ts';
 import type { AppLocale } from '../../i18n/createI18nInstance.ts';
+import { toRateLimitMessage } from '@package/shared-core';
 
 // Az ártábla (a depók közötti szakaszárak) forintban van, a fizetés is forintban történik.
 const PRICE_CURRENCY_SYMBOL = 'Ft';
@@ -638,7 +639,7 @@ export const useCreateOrderPage = (locale: AppLocale) => {
         }));
         setSubmitErrorMessage(t(`submit.locationErrorSummary.${locationError.role}`));
       } else {
-        setSubmitErrorMessage(t('submit.genericError'));
+        setSubmitErrorMessage(toRateLimitMessage(error) ?? t('submit.genericError'));
       }
     } finally {
       setIsSubmitting(false);

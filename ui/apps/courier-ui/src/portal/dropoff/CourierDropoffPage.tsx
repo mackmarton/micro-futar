@@ -7,6 +7,7 @@ import { ManifestDataTable } from '../pickup/components/ManifestDataTable.tsx';
 import { fulfillAllPickupsForCurrentDay } from './api/courierDropoffApi.ts';
 import { useCourierDropoffs } from './hooks/useCourierDropoffs.ts';
 import { LoadErrorButton } from '../LoadErrorButton.tsx';
+import { toRateLimitMessage } from '@package/shared-core';
 
 const toDropoffAllErrorMessage = (error: unknown, fallbackMessage: string): string => {
   if (typeof error === 'object' && error !== null && 'error' in error) {
@@ -35,7 +36,8 @@ export const CourierDropoffPage = () => {
     },
   });
   const dropoffAllErrorMessage = dropoffAllMutation.isError
-    ? toDropoffAllErrorMessage(dropoffAllMutation.error, t('dropoff:dropoffAllError'))
+    ? (toRateLimitMessage(dropoffAllMutation.error) ??
+      toDropoffAllErrorMessage(dropoffAllMutation.error, t('dropoff:dropoffAllError')))
     : null;
 
   return (

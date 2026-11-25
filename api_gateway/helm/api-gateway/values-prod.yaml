@@ -50,6 +50,26 @@ config:
   oauth:
     clientSecretName: api-gateway-client-secret-prod
     clientSecretKey: CLIENT_SECRET
+  rateLimit:
+    # Traefik az egyetlen proxy a gateway előtt.
+    trustedProxyCount: 1
+    redisTimeout: 200ms
+    shipmentCreate:
+      replenishRate: 1
+      burstCapacity: 120
+      requestedTokens: 12
+    checkout:
+      replenishRate: 1
+      burstCapacity: 60
+      requestedTokens: 6
+    tracking:
+      replenishRate: 2
+      burstCapacity: 20
+      requestedTokens: 1
+    default:
+      replenishRate: 20
+      burstCapacity: 60
+      requestedTokens: 1
   services:
     order: http://orders.micro-futar-apps-prod:8080
     tracking: http://tracking.micro-futar-apps-prod:8080

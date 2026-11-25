@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { isEmailNotVerifiedError, toErrorMessage } from '@package/shared-core';
+import { isEmailNotVerifiedError, toErrorMessage, retryUnlessRateLimited } from '@package/shared-core';
 import type { ShipmentRouteCourierDTO } from '@package/shared-core/api/CourierApiClient';
 import {
   countPendingDropoffsForAssignments,
@@ -22,7 +22,7 @@ export const useCourierDropoffs = (): UseCourierDropoffsResult => {
   const dropoffsQuery = useQuery({
     queryKey: ['courier-dropoffs-today'],
     queryFn: ({ signal }) => fetchCourierPickedUpAssignmentsForToday(signal),
-    retry: 1,
+    retry: retryUnlessRateLimited(1),
   });
   const assignments = useMemo(
     () => dropoffsQuery.data ?? [],
@@ -42,7 +42,7 @@ export const useCourierDropoffs = (): UseCourierDropoffsResult => {
     queryKey: ['courier-dropoffs-pending-count', dropoffCountQueryKeySuffix],
     queryFn: ({ signal }) => countPendingDropoffsForAssignments(assignments, signal),
     enabled: assignments.length > 0,
-    retry: 1,
+    retry: retryUnlessRateLimited(1),
   });
 
   const retry = useCallback(async () => {

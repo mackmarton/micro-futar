@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { isEmailNotVerifiedError, toErrorMessage } from '@package/shared-core';
+import { isEmailNotVerifiedError, toErrorMessage, retryUnlessRateLimited } from '@package/shared-core';
 import { fetchCourierAllocationsForCurrentDay, type CourierAllocation } from '../api/courierAllocationsApi.ts';
 
 type UseCourierAllocationsResult = {
@@ -17,7 +17,7 @@ export const useCourierAllocations = (): UseCourierAllocationsResult => {
   const allocationsQuery = useQuery({
     queryKey: ['courier-allocations-current-day'],
     queryFn: ({ signal }) => fetchCourierAllocationsForCurrentDay(signal),
-    retry: 1,
+    retry: retryUnlessRateLimited(1),
   });
 
   const retry = useCallback(async () => {

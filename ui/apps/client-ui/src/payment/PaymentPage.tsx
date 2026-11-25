@@ -11,6 +11,7 @@ import { getHttpStatus, type PaymentStatus } from './api/paymentsApi.ts';
 import { usePaymentStatus } from './hooks/usePaymentStatus.ts';
 import { clearPaymentToken, loadPaymentToken } from './paymentTokenStore.ts';
 import { redirectToCheckout } from './redirectToCheckout.ts';
+import { toRateLimitMessage } from '@package/shared-core';
 
 export type PaymentPageProps = {
     locale: AppLocale;
@@ -91,7 +92,7 @@ const PaymentContent = ({ locale }: PaymentPageProps) => {
             await redirectToCheckout(shipmentId, paymentToken, locale);
         } catch (error) {
             console.error('Failed to start checkout.', error);
-            setCheckoutError(t('checkoutError'));
+            setCheckoutError(toRateLimitMessage(error) ?? t('checkoutError'));
             setIsRedirecting(false);
         }
     };
@@ -111,7 +112,7 @@ const PaymentContent = ({ locale }: PaymentPageProps) => {
                 tone="error"
                 icon="search_off"
                 title={notFound ? t('notFound.title') : t('error.title')}
-                text={notFound ? t('notFound.text') : t('error.text')}
+                text={notFound ? t('notFound.text') : (toRateLimitMessage(statusQuery.error) ?? t('error.text'))}
             />
         );
     }
