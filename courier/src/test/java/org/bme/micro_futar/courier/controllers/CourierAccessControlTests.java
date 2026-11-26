@@ -105,8 +105,14 @@ class CourierAccessControlTests {
 
     @Test
     void adminRoleOfAnotherPortalGrantsNothing() throws Exception {
-        mockMvc.perform(get("/api/shipments").with(token(OWN_EMAIL, "logistics-admin")))
+        mockMvc.perform(get("/api/package-sizes").with(token(OWN_EMAIL, "logistics-admin")))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void commonAdminRoleGrantsAccess() throws Exception {
+        mockMvc.perform(get("/api/package-sizes").with(token(OWN_EMAIL, "admin")))
+                .andExpect(status().isOk());
     }
 
     @Test

@@ -63,7 +63,7 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
         resource = (Map<String, Object>) resourceAccess.get(resourceId);
         resourceRoles = (Collection<String>) resource.get("roles");
         return resourceRoles.stream()
-                .filter(r -> r.startsWith("logistics-"))
+                .filter(r -> r.equals("admin") || r.equals("logistics-user"))
                 .map(r -> r.replace("logistics-", ""))
                 .map(r -> new SimpleGrantedAuthority("ROLE_" + r.toUpperCase(Locale.ROOT)))
                 .collect(Collectors.toSet());

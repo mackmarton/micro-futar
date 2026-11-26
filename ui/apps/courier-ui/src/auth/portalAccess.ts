@@ -6,5 +6,5 @@ export const hasCourierPortalAccess = (user: User | null): boolean => {
   }
 
   const normalizedRoles = (user.roles ?? []).map((role) => role.toLowerCase());
-  return normalizedRoles.includes('courier-admin') || normalizedRoles.includes('courier-user');
+  return normalizedRoles.includes('admin') || normalizedRoles.includes('courier-user');
 };
