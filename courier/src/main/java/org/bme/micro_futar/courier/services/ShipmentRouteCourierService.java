@@ -43,10 +43,6 @@ public class ShipmentRouteCourierService {
                 .map(entity -> toDTOs(List.of(entity)).getFirst());
     }
 
-    public List<ShipmentRouteCourierDTO> findAll() {
-        return toDTOs(shipmentRouteCourierRepository.findAll());
-    }
-
     public List<ShipmentRouteCourierDTO> findAllForCourierForCurrentDay(Authentication authentication) {
         Long courierId = getCourierIdByAuthentication(authentication);
         return toDTOs(shipmentRouteCourierRepository.findAllByCourierIdAndDateAssignedForAndCanceledFalse(courierId, LocalDate.now()));
@@ -131,10 +127,6 @@ public class ShipmentRouteCourierService {
                 .ifPresent(route -> shipmentNotificationService.notifyDeliveryFailed(route, assignment.getId()));
     }
 
-    /**
-     * A canceled assignment can no longer be fulfilled or failed, unless the courier already picked the parcel up:
-     * it is physically with them, so what they report is kept (and logistics flags the shipment for manual handling).
-     */
     private static boolean rejectedByCancellation(ShipmentRouteCourierDTO assignment, AssignmentProgress progress,
                                                   String action) {
         if (!assignment.isCanceled()) {

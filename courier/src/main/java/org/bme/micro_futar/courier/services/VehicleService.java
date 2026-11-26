@@ -34,12 +34,4 @@ public class VehicleService {
         return vehicleRepository.findById(id)
                 .map(vehicleMapper::toDTO);
     }
-
-    @Transactional(readOnly = true)
-    public List<VehicleDTO> findAll() {
-        log.debug("Finding all vehicles");
-        return vehicleRepository.findAll().stream()
-                .map(vehicleMapper::toDTO)
-                .toList();
-    }
 }

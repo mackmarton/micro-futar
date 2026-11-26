@@ -32,17 +32,6 @@ public class ShipmentRouteService {
                 .map(shipmentRouteMapper::toDTO);
     }
 
-    public List<ShipmentRouteDTO> findAll() {
-        log.debug("Finding all shipmentRoutes");
-        return shipmentRouteRepository.findAll().stream()
-                .map(shipmentRouteMapper::toDTO)
-                .toList();
-    }
-
-    /**
-     * Reports the leg as fulfilled to logistics, which owns the route. On the delivery leg it also reports the
-     * delivery to orders, which owns the shipment. Callers guard against fulfilling a leg twice.
-     */
     public void fulfillShipmentRoute(long shipmentRouteId, ZonedDateTime fulfilledAt) {
         var shipmentRoute = findById(shipmentRouteId).orElseThrow();
         kafkaProducerService.sendShipmentRouteFulfilled(ShipmentRouteFulfilledEventDTO.builder()
@@ -59,7 +48,6 @@ public class ShipmentRouteService {
         }
     }
 
-    /** Upserts the read-only copy of the route owned by logistics; courier never publishes routes. */
     @Transactional
     public ShipmentRouteDTO saveWithoutTopicSend(ShipmentRouteDTO shipmentRouteDTO) {
         log.info("Saving shipmentRoute: {}", shipmentRouteDTO);

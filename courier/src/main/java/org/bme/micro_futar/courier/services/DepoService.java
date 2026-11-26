@@ -34,13 +34,5 @@ public class DepoService {
         return depoRepository.findById(id)
                 .map(depoMapper::toDTO);
     }
-
-    @Transactional(readOnly = true)
-    public List<DepoDTO> findAll() {
-        log.debug("Finding all depos");
-        return depoRepository.findAll().stream()
-                .map(depoMapper::toDTO)
-                .toList();
-    }
 }
 

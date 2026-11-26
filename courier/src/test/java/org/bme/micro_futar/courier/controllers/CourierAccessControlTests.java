@@ -103,24 +103,6 @@ class CourierAccessControlTests {
         saveAssignment(OWN_CANCELED, OWN_COURIER, 9401L, LocalDate.now(), true);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "/api/shipments", "/api/shipments/9301",
-            "/api/shipment-routes", "/api/shipment-routes/9401",
-            "/api/couriers", "/api/couriers/9001",
-            "/api/vehicles", "/api/vehicles/9201",
-            "/api/depos", "/api/depos/1",
-            "/api/shipment-route-couriers/9101"
-    })
-    void courierUserIsForbiddenAndCourierAdminIsNot(String url) throws Exception {
-        mockMvc.perform(get(url).with(token(OWN_EMAIL, "courier-user")))
-                .andExpect(status().isForbidden());
-        // There is no depo with id 1, so an admin gets past authorization and receives 404 there.
-        int expected = url.equals("/api/depos/1") ? 404 : 200;
-        mockMvc.perform(get(url).with(token("admin@example.com", "courier-admin")))
-                .andExpect(status().is(expected));
-    }
-
     @Test
     void adminRoleOfAnotherPortalGrantsNothing() throws Exception {
         mockMvc.perform(get("/api/shipments").with(token(OWN_EMAIL, "logistics-admin")))

@@ -35,13 +35,6 @@ public class CourierService {
     }
 
     @Transactional(readOnly = true)
-    public List<CourierDTO> findAll() {
-        return courierRepository.findAll().stream()
-                .map(courierMapper::toDTO)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
     public Optional<CourierDTO> findByEmail(String email) {
         return courierRepository.findByEmail(email)
                 .map(courierMapper::toDTO);

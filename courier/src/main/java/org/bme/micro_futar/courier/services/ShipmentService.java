@@ -20,7 +20,6 @@ public class ShipmentService {
     private final ShipmentMapper shipmentMapper;
     private final ShipmentRepository shipmentRepository;
 
-    /** Upserts the read-only copy of the shipment that orders owns; courier never publishes shipments. */
     @Transactional
     public ShipmentDTO saveWithoutTopicSend(ShipmentDTO shipmentDTO) {
         log.info("Saving shipment: {}", shipmentDTO);
@@ -35,11 +34,5 @@ public class ShipmentService {
                 .map(shipmentMapper::toDTO);
     }
 
-    @Transactional(readOnly = true)
-    public List<ShipmentDTO> findAll() {
-        return shipmentRepository.findAll().stream()
-                .map(shipmentMapper::toDTO)
-                .toList();
-    }
 }
 
