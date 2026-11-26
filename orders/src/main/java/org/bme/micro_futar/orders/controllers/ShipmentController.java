@@ -38,7 +38,7 @@ public class ShipmentController {
     }
 
     @PostMapping("republish")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('LOGISTICS-ADMIN')")
     public ResponseEntity<Map<String, String>> republishShipments() {
         int count = shipmentService.republishAllShipments();
         return ResponseEntity.ok(Map.of("status", "success", "message", count + " shipments sent to Kafka"));
