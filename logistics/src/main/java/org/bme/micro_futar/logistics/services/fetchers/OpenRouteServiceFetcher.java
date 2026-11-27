@@ -13,8 +13,13 @@ import java.util.*;
 @Service
 public class OpenRouteServiceFetcher {
 
+    static final String MATRIX_URL = "https://api.openrouteservice.org/v2/matrix/driving-car";
+
     @Value("${open-route-service.api-key}")
     private String apiKey;
+
+    @Value("${open-route-service.matrix-url:" + MATRIX_URL + "}")
+    private String matrixUrl = MATRIX_URL;
 
     private final RestTemplate restTemplate;
 
@@ -27,7 +32,6 @@ public class OpenRouteServiceFetcher {
         if (destinations.size() == 1) {
             return 0;
         }
-        String url = "https://api.openrouteservice.org/v2/matrix/driving-car";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", apiKey);
@@ -47,7 +51,7 @@ public class OpenRouteServiceFetcher {
         payload.put("metrics", Collections.singletonList("duration"));
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
-        ResponseEntity<Map<String, Object>> res = restTemplate.postForEntity(url, entity, (Class<Map<String, Object>>) (Class<?>) Map.class);
+        ResponseEntity<Map<String, Object>> res = restTemplate.postForEntity(matrixUrl, entity, (Class<Map<String, Object>>) (Class<?>) Map.class);
         Map<String, Object> body = res.getBody();
         if (body == null) {
             throw new IllegalStateException("No response body from matrix service");
