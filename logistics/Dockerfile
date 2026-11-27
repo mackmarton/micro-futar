@@ -7,6 +7,8 @@ WORKDIR /build/shared
 RUN mvn clean install -DskipTests
 
 WORKDIR /build/logistics
+COPY logistics/pom.xml ./
+RUN mvn dependency:go-offline --batch-mode
 COPY logistics ./
 RUN mvn clean package -DskipTests
 

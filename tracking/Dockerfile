@@ -7,6 +7,8 @@ WORKDIR /build/shared
 RUN mvn clean install -DskipTests
 
 WORKDIR /build/tracking
+COPY tracking/pom.xml ./
+RUN mvn dependency:go-offline --batch-mode
 COPY tracking ./
 RUN mvn clean package -DskipTests
 

@@ -9,6 +9,8 @@ RUN mvn clean install -DskipTests
 
 # Now build the api_gateway service
 WORKDIR /build/api_gateway
+COPY api_gateway/pom.xml ./
+RUN mvn dependency:go-offline --batch-mode
 COPY api_gateway ./
 RUN mvn clean package -DskipTests
 

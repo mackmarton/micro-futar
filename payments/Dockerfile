@@ -7,8 +7,9 @@ COPY shared ./shared
 WORKDIR /build/shared
 RUN mvn clean install -DskipTests
 
-# Now build the payments service
 WORKDIR /build/payments
+COPY payments/pom.xml ./
+RUN mvn dependency:go-offline --batch-mode
 COPY payments ./
 RUN mvn clean package -DskipTests
 

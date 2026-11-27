@@ -9,6 +9,8 @@ RUN mvn clean install -DskipTests
 
 # Now build the orders service
 WORKDIR /build/orders
+COPY orders/pom.xml ./
+RUN mvn dependency:go-offline --batch-mode
 COPY orders ./
 RUN mvn clean package -DskipTests
 

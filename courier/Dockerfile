@@ -8,6 +8,8 @@ RUN mvn clean install -DskipTests
 
 
 WORKDIR /build/courier
+COPY courier/pom.xml ./
+RUN mvn dependency:go-offline --batch-mode
 COPY courier ./
 RUN mvn clean package -DskipTests
 
