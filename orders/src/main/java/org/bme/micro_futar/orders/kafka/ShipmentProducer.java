@@ -8,7 +8,6 @@ import org.bme.micro_futar.shared.exceptions.KafkaException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
@@ -27,7 +26,6 @@ public class ShipmentProducer {
         sendShipmentToTopic(shipmentDTO);
     }
 
-    @Transactional
     public void sendShipmentToTopic(ShipmentDTO shipmentDTO) {
         log.info("Sending shipment message to Kafka: {}", shipmentDTO);
         try {
