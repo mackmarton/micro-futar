@@ -1,5 +1,6 @@
 package org.bme.micro_futar.logistics.services;
 
+import org.bme.micro_futar.logistics.support.TestFixtures;
 import org.bme.micro_futar.logistics.dtos.CountryBaseFeeDTO;
 import org.bme.micro_futar.logistics.dtos.DepoTransitDTO;
 import org.bme.micro_futar.logistics.exceptions.InvalidReferenceException;
@@ -75,10 +76,7 @@ class ReferenceValidatorTests {
     // ---- LocationCountry
 
     private LocationCountryDTO country(Long regionId, String currencyCode) {
-        LocationCountryDTO dto = new LocationCountryDTO();
-        dto.setRegionId(regionId);
-        dto.setCurrencyCode(currencyCode);
-        return dto;
+        return TestFixtures.hungary(regionId).currencyCode(currencyCode).build();
     }
 
     @Test
@@ -102,15 +100,13 @@ class ReferenceValidatorTests {
 
     @Test
     void cityWithValidCountryIsAccepted() {
-        LocationCityDTO dto = new LocationCityDTO();
-        dto.setCountryId(2L);
+        LocationCityDTO dto = TestFixtures.budapest(2L).build();
         assertThatCode(() -> validator.validate(dto)).doesNotThrowAnyException();
     }
 
     @Test
     void cityWithUnknownCountryIsRejected() {
-        LocationCityDTO dto = new LocationCityDTO();
-        dto.setCountryId(99L);
+        LocationCityDTO dto = TestFixtures.budapest(99L).build();
         assertRejected(() -> validator.validate(dto), "countryId",
                 "LocationCountry 99 (countryId) does not exist or has been deleted");
     }
@@ -118,10 +114,7 @@ class ReferenceValidatorTests {
     // ---- Depo
 
     private DepoDTO depo(Long countryId, Long cityId) {
-        DepoDTO dto = new DepoDTO();
-        dto.setLocationCountryId(countryId);
-        dto.setLocationCityId(cityId);
-        return dto;
+        return TestFixtures.budapestDepo(countryId, cityId);
     }
 
     @Test
@@ -157,11 +150,7 @@ class ReferenceValidatorTests {
     // ---- DepoTransit
 
     private DepoTransitDTO transit(Long origin, Long destination, Long packageSize) {
-        DepoTransitDTO dto = new DepoTransitDTO();
-        dto.setOriginDepoId(origin);
-        dto.setDestinationDepoId(destination);
-        dto.setPackageSizeId(packageSize);
-        return dto;
+        return TestFixtures.transit(origin, destination, packageSize);
     }
 
     @Test
@@ -195,10 +184,7 @@ class ReferenceValidatorTests {
     // ---- Courier
 
     private CourierDTO courier(Long depoId, Long vehicleId) {
-        CourierDTO dto = new CourierDTO();
-        dto.setDepoId(depoId);
-        dto.setVehicleId(vehicleId);
-        return dto;
+        return TestFixtures.courier(depoId, vehicleId);
     }
 
     @Test
@@ -249,9 +235,7 @@ class ReferenceValidatorTests {
     // ---- CountryBaseFee
 
     private CountryBaseFeeDTO baseFee(Long countryId, Long packageSizeId, Double price) {
-        CountryBaseFeeDTO dto = new CountryBaseFeeDTO();
-        dto.setCountryId(countryId);
-        dto.setPackageSizeId(packageSizeId);
+        CountryBaseFeeDTO dto = TestFixtures.baseFee(countryId, packageSizeId);
         dto.setPrice(price);
         return dto;
     }

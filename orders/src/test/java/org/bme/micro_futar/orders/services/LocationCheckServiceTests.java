@@ -1,5 +1,6 @@
 package org.bme.micro_futar.orders.services;
 
+import org.bme.micro_futar.orders.support.TestFixtures;
 import org.bme.micro_futar.orders.entities.LocationCity;
 import org.bme.micro_futar.orders.exceptions.LocationValidationException;
 import org.bme.micro_futar.orders.exceptions.LocationValidationException.Code;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class LocationCheckServiceTests {
 
-    private static final long COUNTRY = 1L;
+    private static final long COUNTRY = TestFixtures.HUNGARY_ID;
     private static final long CITY = 10L;
 
     @Mock
@@ -34,10 +35,12 @@ class LocationCheckServiceTests {
     @BeforeEach
     void setUp() {
         service = new LocationCheckService(cityRepository, 3, 25);
-        city = new LocationCity();
-        city.setId(CITY);
-        city.setName("Budapest");
-        city.setCountryId(COUNTRY);
+        city = TestFixtures.entity(TestFixtures.budapest()
+                .id(CITY)
+                .centerLatitude(null).centerLongitude(null)
+                .bboxMinLatitude(null).bboxMinLongitude(null)
+                .bboxMaxLatitude(null).bboxMaxLongitude(null)
+                .build());
         lenient().when(cityRepository.findById(CITY)).thenReturn(Optional.of(city));
     }
 

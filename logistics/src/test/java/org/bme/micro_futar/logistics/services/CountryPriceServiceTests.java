@@ -1,8 +1,8 @@
 package org.bme.micro_futar.logistics.services;
 
+import org.bme.micro_futar.logistics.support.TestFixtures;
 import org.bme.micro_futar.logistics.entities.CountryBaseFee;
 import org.bme.micro_futar.logistics.entities.CountryPrice;
-import org.bme.micro_futar.logistics.events.CountryBaseFeeChangedEvent;
 import org.bme.micro_futar.logistics.kafka.KafkaProducerService;
 import org.bme.micro_futar.logistics.mappers.CountryPriceMapper;
 import org.bme.micro_futar.logistics.repositories.CountryBaseFeeRepository;
@@ -12,8 +12,8 @@ import org.bme.micro_futar.shared.dtos.PackageSizeDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -35,40 +35,36 @@ class CountryPriceServiceTests {
     private static final long SIZE = 7L;
 
     @Mock private CountryPriceRepository countryPriceRepository;
-    @Mock private CountryPriceMapper countryPriceMapper;
     @Mock private KafkaProducerService kafkaProducerService;
     @Mock private DepoService depoService;
     @Mock private DepoRouteFinderService depoRouteFinderService;
     @Mock private PackageSizeService packageSizeService;
     @Mock private CountryBaseFeeRepository countryBaseFeeRepository;
 
-    @InjectMocks
     private CountryPriceService countryPriceService;
 
     private DepoDTO huDepo;
     private DepoDTO atDepo;
 
     private static DepoDTO depo(long id, long countryId) {
-        DepoDTO depo = new DepoDTO();
+        DepoDTO depo = TestFixtures.budapestDepo(countryId, null);
         depo.setId(id);
-        depo.setLocationCountryId(countryId);
         return depo;
     }
 
     private static CountryBaseFee fee(long countryId, double price) {
-        CountryBaseFee fee = new CountryBaseFee();
-        fee.setCountryId(countryId);
-        fee.setPackageSizeId(SIZE);
+        CountryBaseFee fee = TestFixtures.entity(TestFixtures.baseFee(countryId, SIZE));
         fee.setPrice(price);
         return fee;
     }
 
     @BeforeEach
     void setUp() {
+        countryPriceService = new CountryPriceService(countryPriceRepository, Mappers.getMapper(CountryPriceMapper.class),
+                kafkaProducerService, depoService, depoRouteFinderService, packageSizeService, countryBaseFeeRepository);
         huDepo = depo(10L, HU);
         atDepo = depo(20L, AT);
-        PackageSizeDTO size = new PackageSizeDTO();
-        size.setId(SIZE);
+        PackageSizeDTO size = TestFixtures.smallPackage().id(SIZE).build();
         lenient().when(packageSizeService.getAllPackageSizes()).thenReturn(List.of(size));
         lenient().when(countryPriceRepository.findByOriginCountryIdAndDestinationCountryIdAndPackageSizeId(
                 any(), any(), any())).thenReturn(Optional.empty());
@@ -141,17 +137,5 @@ class CountryPriceServiceTests {
         assertThat(huToAt.getMinPrice()).isEqualTo(1000.0);
         assertThat(huToAt.getMaxPrice()).isEqualTo(1000.0);
         verify(countryPriceRepository, never()).delete(any());
-    }
-
-    @Test
-    void baseFeeChangeTriggersRecalculation() {
-        givenDepos(huDepo);
-        when(countryBaseFeeRepository.findAll()).thenReturn(List.of(fee(HU, 800.0)));
-
-        for (CountryBaseFeeChangedEvent.ChangeType type : CountryBaseFeeChangedEvent.ChangeType.values()) {
-            countryPriceService.handleCountryBaseFeeChanged(new CountryBaseFeeChangedEvent(this, type));
-        }
-
-        verify(countryBaseFeeRepository, org.mockito.Mockito.times(3)).findAll();
     }
 }

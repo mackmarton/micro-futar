@@ -1,0 +1,26 @@
+# Everything that does not come from a container; database and Kafka are set by TestcontainersConfiguration.
+SERVER_PORT: 8080
+KEYCLOAK_URL: http://keycloak.invalid
+KEYCLOAK_ISSUER_URI: http://keycloak.invalid/realms/micro-futar-realm
+API_GATEWAY_URL: http://localhost:8085
+OPEN_ROUTE_SERVICE_API_KEY: test-key
+# the bulk geocoding does not have to spare a quota here
+OPEN_ROUTE_SERVICE_GEOCODE_DELAY_MS: 0
+
+kafka:
+  topics:
+    location-region-topic: location-regions
+    location-country-topic: location-countries
+    location-city-topic: location-cities
+    country-price-topic: country-prices
+    package-size-topic: package-sizes
+    shipment-topic: shipments
+    depo-topic: depos
+    shipment-route-courier-topic: shipment-route-couriers
+    shipment-route-fulfilled-topic: shipment-route-fulfilled
+    assignment-status-topic: assignment-status
+    shipment-route-topic: shipment-routes
+    courier-topic: couriers
+    vehicle-topic: vehicles
+    currency-topic: currencies
+    shipment-priced-topic: shipment-priced

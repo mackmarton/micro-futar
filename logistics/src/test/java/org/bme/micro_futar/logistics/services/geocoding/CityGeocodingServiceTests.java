@@ -1,5 +1,6 @@
 package org.bme.micro_futar.logistics.services.geocoding;
 
+import org.bme.micro_futar.logistics.support.TestFixtures;
 import org.bme.micro_futar.logistics.entities.LocationCity;
 import org.bme.micro_futar.logistics.entities.LocationCountry;
 import org.bme.micro_futar.logistics.exceptions.GeocodingException;
@@ -41,26 +42,20 @@ class CityGeocodingServiceTests {
     @BeforeEach
     void setUp() {
         service = new CityGeocodingService(cityRepository, countryRepository, client, cityService);
-        LocationCountry hungary = new LocationCountry();
+        LocationCountry hungary = TestFixtures.entity(TestFixtures.hungary(1L).build());
         hungary.setId(1L);
-        hungary.setIsoCode("HU");
         lenient().when(countryRepository.findById(1L)).thenReturn(Optional.of(hungary));
-        LocationCountry noIso = new LocationCountry();
+        LocationCountry noIso = TestFixtures.entity(TestFixtures.austria(1L).isoCode(null).build());
         noIso.setId(2L);
         lenient().when(countryRepository.findById(2L)).thenReturn(Optional.of(noIso));
     }
 
     private static LocationCityDTO dto(String name, long countryId) {
-        return LocationCityDTO.builder().countryId(countryId).name(name).build();
+        return TestFixtures.budapest(countryId).name(name).build();
     }
 
     private static LocationCity city(long id, String name, boolean manual) {
-        LocationCity city = new LocationCity();
-        city.setId(id);
-        city.setName(name);
-        city.setCountryId(1L);
-        city.setGeoManual(manual);
-        return city;
+        return TestFixtures.entity(TestFixtures.budapest(1L).id(id).name(name).geoManual(manual).build());
     }
 
     @Test

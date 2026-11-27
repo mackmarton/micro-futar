@@ -1,0 +1,14 @@
+# Everything that does not come from a container; database and Kafka are set by TestcontainersConfiguration.
+SERVER_PORT: 8080
+KEYCLOAK_URL: http://keycloak.invalid
+KEYCLOAK_ISSUER_URI: http://keycloak.invalid/realms/micro-futar-realm
+API_GATEWAY_URL: http://localhost:8085
+STRIPE_SECRET_KEY: sk_test_dummy
+STRIPE_WEBHOOK_SECRET: whsec_dummy
+CLIENT_UI_URL: http://localhost:5173
+
+kafka:
+  topics:
+    payment-request-topic: payment-requests
+    payment-status-topic: payment-statuses
+    shipment-priced-topic: shipment-priced

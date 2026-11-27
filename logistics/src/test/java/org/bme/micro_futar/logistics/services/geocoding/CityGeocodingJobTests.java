@@ -1,5 +1,6 @@
 package org.bme.micro_futar.logistics.services.geocoding;
 
+import org.bme.micro_futar.logistics.support.TestFixtures;
 import org.bme.micro_futar.logistics.dtos.GeocodeJobStatusDTO;
 import org.bme.micro_futar.logistics.dtos.GeocodeJobStatusDTO.State;
 import org.bme.micro_futar.logistics.entities.LocationCity;
@@ -25,9 +26,7 @@ class CityGeocodingJobTests {
     @Mock private LocationCityRepository cityRepository;
 
     private static LocationCity city(long id) {
-        LocationCity city = new LocationCity();
-        city.setId(id);
-        return city;
+        return TestFixtures.entity(TestFixtures.budapest(TestFixtures.HUNGARY_ID).id(id).build());
     }
 
     @Test

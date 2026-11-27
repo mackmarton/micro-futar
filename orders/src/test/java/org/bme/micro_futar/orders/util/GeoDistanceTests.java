@@ -49,7 +49,7 @@ class GeoDistanceTests {
     }
 
     @Test
-    void validCoordinates() {
+    void missingNotANumberAndOutOfRangeCoordinatesAreInvalid() {
         assertThat(GeoDistance.isValidCoordinate(47.5, 19.0)).isTrue();
         assertThat(GeoDistance.isValidCoordinate(90.0, 180.0)).isTrue();
         assertThat(GeoDistance.isValidCoordinate(90.1, 0.0)).isFalse();

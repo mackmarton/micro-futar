@@ -1,23 +1,19 @@
 package org.bme.micro_futar.logistics.repositories;
 
-import org.bme.micro_futar.logistics.EnableTestContainers;
+import org.bme.micro_futar.logistics.IntegrationTest;
 import org.bme.micro_futar.logistics.entities.ShipmentRoute;
 import org.bme.micro_futar.logistics.entities.ShipmentRouteCourier;
+import org.bme.micro_futar.logistics.support.TestFixtures;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** Which legs are offered to the courier planning; needs Docker. */
-@EnableTestContainers
-@SpringBootTest
-@Transactional
+/** Which legs are offered to the courier planning. */
+@IntegrationTest
 class ShipmentRouteRepositoryTests {
 
     private static final long DEPO = 7L;
@@ -28,9 +24,7 @@ class ShipmentRouteRepositoryTests {
     @Autowired private ShipmentRouteCourierRepository assignments;
 
     private ShipmentRoute route(long shipmentId, int part, Long origin, Long destination, String originAddr, String destAddr, boolean fulfilled) {
-        ShipmentRoute r = new ShipmentRoute();
-        r.setShipmentId(shipmentId);
-        r.setRoutePartNumber(part);
+        ShipmentRoute r = TestFixtures.route(shipmentId, part);
         r.setOriginDepoId(origin);
         r.setDestinationDepoId(destination);
         r.setOriginAddress(originAddr);
@@ -42,10 +36,7 @@ class ShipmentRouteRepositoryTests {
     }
 
     private ShipmentRouteCourier assign(ShipmentRoute route, LocalDate date, boolean failed, boolean pickedUp, boolean canceled) {
-        ShipmentRouteCourier a = new ShipmentRouteCourier();
-        a.setCourierId(1L);
-        a.setShipmentRouteId(route.getId());
-        a.setDateAssignedFor(date);
+        ShipmentRouteCourier a = TestFixtures.assignment(route.getId(), date);
         a.setFailed(failed);
         a.setPickedUpForDelivery(pickedUp);
         a.setCanceled(canceled);

@@ -1,0 +1,2 @@
+# application.yaml activates ${SPRING_PROFILE}; every test runs with the test profile.
+SPRING_PROFILE: test

@@ -40,7 +40,7 @@ public class ShipmentRouteService {
     }
 
     public List<ShipmentRouteDTO> findAllFulfilledByShipmentId(Long shipmentId) {
-        return shipmentRouteRepository.findAllByShipmentIdEqualsAndFulfillmentTimeIsNotNull(shipmentId).stream()
+        return shipmentRouteRepository.findAllByShipmentIdEqualsAndFulfillmentTimeIsNotNullOrderByRoutePartNumber(shipmentId).stream()
                 .map(shipmentRouteMapper::toDTO)
                 .toList();
     }

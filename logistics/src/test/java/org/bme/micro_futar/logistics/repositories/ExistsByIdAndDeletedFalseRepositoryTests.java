@@ -1,6 +1,6 @@
 package org.bme.micro_futar.logistics.repositories;
 
-import org.bme.micro_futar.logistics.EnableTestContainers;
+import org.bme.micro_futar.logistics.IntegrationTest;
 import org.bme.micro_futar.logistics.entities.Courier;
 import org.bme.micro_futar.logistics.entities.Currency;
 import org.bme.micro_futar.logistics.entities.Depo;
@@ -11,19 +11,15 @@ import org.bme.micro_futar.logistics.entities.PackageSize;
 import org.bme.micro_futar.logistics.entities.Vehicle;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** Proves the existence checks used by ReferenceValidator treat soft-deleted rows as absent (needs Docker). */
-@EnableTestContainers
-@SpringBootTest
-@Transactional
+/** Proves the existence checks used by ReferenceValidator treat soft-deleted rows as absent. */
+@IntegrationTest
 class ExistsByIdAndDeletedFalseRepositoryTests {
 
     @Autowired private LocationRegionRepository regionRepository;
@@ -48,17 +44,17 @@ class ExistsByIdAndDeletedFalseRepositoryTests {
     }
 
     @Test
-    void region() {
+    void softDeletedRegionDoesNotExist() {
         assertSoftDeleteIsHonoured(regionRepository, new LocationRegion(), LocationRegion::getId, regionRepository::existsByIdAndDeletedFalse);
     }
 
     @Test
-    void country() {
+    void softDeletedCountryDoesNotExist() {
         assertSoftDeleteIsHonoured(countryRepository, new LocationCountry(), LocationCountry::getId, countryRepository::existsByIdAndDeletedFalse);
     }
 
     @Test
-    void city() {
+    void softDeletedCityDoesNotExist() {
         assertSoftDeleteIsHonoured(cityRepository, new LocationCity(), LocationCity::getId, cityRepository::existsByIdAndDeletedFalse);
     }
 
@@ -75,7 +71,7 @@ class ExistsByIdAndDeletedFalseRepositoryTests {
     }
 
     @Test
-    void currencyByCode() {
+    void softDeletedCurrencyCodeDoesNotExist() {
         Currency currency = new Currency();
         currency.setCode("ZZZ");
         Currency saved = currencyRepository.saveAndFlush(currency);
@@ -87,22 +83,22 @@ class ExistsByIdAndDeletedFalseRepositoryTests {
     }
 
     @Test
-    void depo() {
+    void softDeletedDepoDoesNotExist() {
         assertSoftDeleteIsHonoured(depoRepository, new Depo(), Depo::getId, depoRepository::existsByIdAndDeletedFalse);
     }
 
     @Test
-    void packageSize() {
+    void softDeletedPackageSizeDoesNotExist() {
         assertSoftDeleteIsHonoured(packageSizeRepository, new PackageSize(), PackageSize::getId, packageSizeRepository::existsByIdAndDeletedFalse);
     }
 
     @Test
-    void courier() {
+    void softDeletedCourierDoesNotExist() {
         assertSoftDeleteIsHonoured(courierRepository, new Courier(), Courier::getId, courierRepository::existsByIdAndDeletedFalse);
     }
 
     @Test
-    void vehicle() {
+    void softDeletedVehicleDoesNotExist() {
         assertSoftDeleteIsHonoured(vehicleRepository, new Vehicle(), Vehicle::getId, vehicleRepository::existsByIdAndDeletedFalse);
     }
 }

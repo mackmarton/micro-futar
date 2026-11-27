@@ -43,13 +43,19 @@ public class TrackingService {
         return Optional.of(trackingDTO);
     }
 
+    /** Null while the master data of the depot has not arrived yet; it is replicated on separate topics. */
     private String getPlace(ShipmentRouteDTO shipmentRoute) {
         if (shipmentRoute.getDestinationAddress() != null) {
             return shipmentRoute.getDestinationAddress();
         }
-        DepoDTO depo = depoService.findById(shipmentRoute.getDestinationDepoId()).orElseThrow();
-        LocationCountryDTO locationCountry = locationCountryService.getCountryById(depo.getLocationCountryId()).orElseThrow();
-        LocationCityDTO locationCity = locationCityService.getCityById(depo.getLocationCityId()).orElseThrow();
-        return locationCity.getName() + ", " + locationCountry.getName();
+        return depoService.findById(shipmentRoute.getDestinationDepoId())
+                .flatMap(this::getPlace)
+                .orElse(null);
+    }
+
+    private Optional<String> getPlace(DepoDTO depo) {
+        return locationCityService.getCityById(depo.getLocationCityId())
+                .flatMap(city -> locationCountryService.getCountryById(depo.getLocationCountryId())
+                        .map(country -> city.getName() + ", " + country.getName()));
     }
 }

@@ -3,6 +3,7 @@ package org.bme.micro_futar.courier.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bme.micro_futar.courier.entities.Courier;
+import org.bme.micro_futar.courier.exceptions.CourierNotFoundException;
 import org.bme.micro_futar.courier.mappers.CourierMapper;
 import org.bme.micro_futar.courier.repositories.CourierRepository;
 import org.bme.micro_futar.shared.dtos.CourierDTO;
@@ -42,7 +43,7 @@ public class CourierService {
 
     @Transactional(readOnly = true)
     public Long findIdByEmail(String email) {
-        return courierRepository.findByEmail(email).orElseThrow().getId();
+        return courierRepository.findByEmail(email).orElseThrow(CourierNotFoundException::new).getId();
     }
 }
 

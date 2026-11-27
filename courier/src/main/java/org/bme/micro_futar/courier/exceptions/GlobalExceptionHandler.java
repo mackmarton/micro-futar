@@ -16,4 +16,9 @@ public class GlobalExceptionHandler {
         problem.setProperty("code", EmailNotVerifiedException.CODE);
         return problem;
     }
+
+    @ExceptionHandler(CourierNotFoundException.class)
+    public ProblemDetail handleCourierNotFound(CourierNotFoundException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+    }
 }

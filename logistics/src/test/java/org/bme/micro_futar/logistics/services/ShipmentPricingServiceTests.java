@@ -2,6 +2,7 @@ package org.bme.micro_futar.logistics.services;
 
 import org.bme.micro_futar.logistics.entities.CountryBaseFee;
 import org.bme.micro_futar.logistics.repositories.CountryBaseFeeRepository;
+import org.bme.micro_futar.logistics.support.TestFixtures;
 import org.bme.micro_futar.shared.dtos.ShipmentDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,18 +29,14 @@ class ShipmentPricingServiceTests {
 
     @BeforeEach
     void setUp() {
-        shipment = new ShipmentDTO();
-        shipment.setId(1L);
-        shipment.setSenderLocationCountryId(1L);
-        shipment.setRecipientLocationCountryId(2L);
-        shipment.setPackageSizeId(3L);
-        shipment.setMaxPrice(3000.0);
+        shipment = TestFixtures.shipment(1L).maxPrice(3000.0).build();
     }
 
     private void givenBaseFee(double price) {
         CountryBaseFee fee = new CountryBaseFee();
         fee.setPrice(price);
-        when(countryBaseFeeRepository.findByCountryIdAndPackageSizeId(1L, 3L)).thenReturn(Optional.of(fee));
+        when(countryBaseFeeRepository.findByCountryIdAndPackageSizeId(
+                TestFixtures.HUNGARY_ID, TestFixtures.SMALL_PACKAGE_ID)).thenReturn(Optional.of(fee));
     }
 
     @Test
@@ -65,7 +62,8 @@ class ShipmentPricingServiceTests {
 
     @Test
     void missingBaseFeeCountsAsZero() {
-        when(countryBaseFeeRepository.findByCountryIdAndPackageSizeId(1L, 3L)).thenReturn(Optional.empty());
+        when(countryBaseFeeRepository.findByCountryIdAndPackageSizeId(
+                TestFixtures.HUNGARY_ID, TestFixtures.SMALL_PACKAGE_ID)).thenReturn(Optional.empty());
 
         assertThat(shipmentPricingService.finalPrice(shipment, 1490.0)).isEqualByComparingTo("1490");
     }

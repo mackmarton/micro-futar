@@ -1,18 +1,14 @@
 package org.bme.micro_futar.logistics.repositories;
 
-import org.bme.micro_futar.logistics.EnableTestContainers;
+import org.bme.micro_futar.logistics.IntegrationTest;
 import org.bme.micro_futar.logistics.entities.CountryBaseFee;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** A soft-deleted base fee must not be found, so its (country, size) key is free again (needs Docker). */
-@EnableTestContainers
-@SpringBootTest
-@Transactional
+/** A soft-deleted base fee must not be found, so its (country, size) key is free again. */
+@IntegrationTest
 class CountryBaseFeeRepositoryTests {
 
     @Autowired private CountryBaseFeeRepository repository;

@@ -30,6 +30,7 @@
 		<java.version>25</java.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
 		<sonar.organization>mackmarton</sonar.organization>
+		<sonar.coverage.exclusions>**/*Application.java,**/config/OpenApiConfig.java,**/dtos/**,**/entities/**</sonar.coverage.exclusions>
     </properties>
 	<dependencies>
         <dependency>
@@ -92,6 +93,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-testcontainers</artifactId>
 			<scope>test</scope>
@@ -124,6 +130,15 @@
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
 			<version>0.8.16</version>
+			<configuration>
+				<!-- keep in step with sonar.coverage.exclusions -->
+				<excludes>
+					<exclude>**/*Application.class</exclude>
+					<exclude>**/config/OpenApiConfig.class</exclude>
+					<exclude>**/dtos/**</exclude>
+					<exclude>**/entities/**</exclude>
+				</excludes>
+			</configuration>
 			<executions>
 				<execution>
 					<id>prepare-agent</id>

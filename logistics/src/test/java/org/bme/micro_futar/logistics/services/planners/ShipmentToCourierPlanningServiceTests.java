@@ -1,5 +1,6 @@
 package org.bme.micro_futar.logistics.services.planners;
 
+import org.bme.micro_futar.logistics.support.TestFixtures;
 import org.bme.micro_futar.logistics.services.*;
 import org.bme.micro_futar.shared.dtos.*;
 import org.bme.micro_futar.shared.enums.CourierType;
@@ -41,24 +42,21 @@ class ShipmentToCourierPlanningServiceTests {
     }
 
     private CourierDTO courier(long id, TransportType type) {
-        CourierDTO c = new CourierDTO();
+        CourierDTO c = TestFixtures.courier(DEPO, id);
         c.setId(id);
-        c.setVehicleId(id);
         c.setQualifiedFor(type);
         return c;
     }
 
     private void stubCommon(List<CourierDTO> couriers, ShipmentRouteDTO route, CourierType courierType) {
         when(courierService.getCouriersByDepoIdAndType(DEPO, courierType)).thenReturn(couriers);
-        VehicleDTO vehicle = new VehicleDTO();
+        VehicleDTO vehicle = TestFixtures.vehicle();
         vehicle.setMaximumPackableVolume(1000.0);
         when(vehicleService.getVehicleById(anyLong())).thenReturn(Optional.of(vehicle));
-        ShipmentDTO shipment = mock(ShipmentDTO.class);
-        when(shipment.getPackageSizeId()).thenReturn(1L);
+        ShipmentDTO shipment = TestFixtures.shipment(5L).build();
         when(shipmentService.getShipmentById(any())).thenReturn(shipment);
-        PackageSizeDTO size = mock(PackageSizeDTO.class);
-        when(size.getMaxLength()).thenReturn(1.0);
-        when(packageSizeService.getPackageSizeById(1L)).thenReturn(Optional.of(size));
+        PackageSizeDTO size = TestFixtures.smallPackage().id(TestFixtures.SMALL_PACKAGE_ID).maxLength(1.0).build();
+        when(packageSizeService.getPackageSizeById(TestFixtures.SMALL_PACKAGE_ID)).thenReturn(Optional.of(size));
         when(shipmentRouteCourierService.countByCourierIdAndDate(anyLong(), any())).thenReturn(0L);
         when(shipmentRouteCourierService.findByCourierIdAndDateAssignedFor(anyLong(), any())).thenReturn(List.of());
     }

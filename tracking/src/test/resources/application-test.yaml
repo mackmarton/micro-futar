@@ -1,0 +1,26 @@
+# Everything that does not come from a container; database and Kafka are set by TestcontainersConfiguration.
+SERVER_PORT: 8080
+API_GATEWAY_URL: http://localhost:8085
+MAIL_HOST: localhost
+MAIL_PORT: 1025
+MAIL_USERNAME: ""
+MAIL_PASSWORD: ""
+MAIL_SMTP_AUTH: false
+MAIL_SSL_ENABLED: false
+MAIL_STARTTLS_ENABLED: false
+MAIL_FROM: noreply@micro-futar.hu
+TRACKING_PAGE_URL: http://localhost:5173/portal/tracking
+
+kafka:
+  topics:
+    shipment-topic: shipments
+    shipment-notification-topic: shipment-notifications
+    depo-topic: depos
+    shipment-route-topic: shipment-routes
+    location-country-topic: location-countries
+    location-city-topic: location-cities
+
+notification:
+  sender:
+    # tests trigger sending themselves
+    poll-interval-ms: 3600000

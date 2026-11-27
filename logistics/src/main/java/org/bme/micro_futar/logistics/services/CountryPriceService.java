@@ -108,13 +108,7 @@ public class CountryPriceService {
                             );
 
                     if (minPrice == null) {
-                        optionalCountryPrice.ifPresent(existingCountryPrice -> {
-                            CountryPriceDTO deletedCountryPrice = countryPriceMapper.toDTO(existingCountryPrice);
-                            // Soft delete via @SQLDelete
-                            countryPriceRepository.delete(existingCountryPrice);
-                            deletedCountryPrice.setDeleted(true);
-                            kafkaProducerService.sendCountryPrice(deletedCountryPrice);
-                        });
+                        optionalCountryPrice.ifPresent(this::deletePrice);
                         continue;
                     }
 
@@ -135,6 +129,20 @@ public class CountryPriceService {
                 }
             }
         }
+
+        // The loops above only visit countries with a depo, the prices of the others are no longer valid.
+        countryPriceRepository.findAll().stream()
+                .filter(price -> !allCountryIds.contains(price.getOriginCountryId())
+                        || !allCountryIds.contains(price.getDestinationCountryId()))
+                .forEach(this::deletePrice);
+    }
+
+    private void deletePrice(CountryPrice countryPrice) {
+        CountryPriceDTO deletedCountryPrice = countryPriceMapper.toDTO(countryPrice);
+        // Soft delete via @SQLDelete
+        countryPriceRepository.delete(countryPrice);
+        deletedCountryPrice.setDeleted(true);
+        kafkaProducerService.sendCountryPrice(deletedCountryPrice);
     }
 
     @EventListener

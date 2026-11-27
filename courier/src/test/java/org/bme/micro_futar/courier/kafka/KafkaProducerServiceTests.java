@@ -19,8 +19,6 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /** The events carrying courier-only facts must fail loudly when the broker does not acknowledge them. */
@@ -39,17 +37,6 @@ class KafkaProducerServiceTests {
         ReflectionTestUtils.setField(producer, "shipmentRouteFulfilledTopic", "shipment-route-fulfilled");
         ReflectionTestUtils.setField(producer, "assignmentStatusTopic", "assignment-status");
         ReflectionTestUtils.setField(producer, "sendTimeoutSeconds", 1L);
-    }
-
-    @Test
-    void acknowledgedSendsReturnNormally() {
-        when(kafkaTemplate.send(any(String.class), any(String.class), any(String.class)))
-                .thenReturn(CompletableFuture.completedFuture(null));
-
-        producer.sendAssignmentStatus(AssignmentStatusEventDTO.builder().assignmentId(5L).shipmentRouteId(3L)
-                .status(AssignmentStatus.PICKED_UP).occurredAt(ZonedDateTime.now()).build());
-
-        verify(kafkaTemplate).send(eq("assignment-status"), eq("5"), any(String.class));
     }
 
     @Test

@@ -1,0 +1,19 @@
+# Everything that does not come from a container; database and Kafka are set by TestcontainersConfiguration.
+SERVER_PORT: 8080
+KEYCLOAK_URL: http://keycloak.invalid
+KEYCLOAK_ISSUER_URI: http://keycloak.invalid/realms/micro-futar-realm
+API_GATEWAY_URL: http://localhost:8085
+
+kafka:
+  topics:
+    package-size-topic: package-sizes
+    shipment-topic: shipments
+    shipment-delivered-topic: shipment-delivered
+    shipment-notification-topic: shipment-notifications
+    depo-topic: depos
+    shipment-route-courier-topic: shipment-route-couriers
+    shipment-route-fulfilled-topic: shipment-route-fulfilled
+    assignment-status-topic: assignment-status
+    shipment-route-topic: shipment-routes
+    courier-topic: couriers
+    vehicle-topic: vehicles

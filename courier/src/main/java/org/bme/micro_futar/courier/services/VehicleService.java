@@ -31,7 +31,9 @@ public class VehicleService {
     @Transactional(readOnly = true)
     public Optional<VehicleDTO> findById(Long id) {
         log.debug("Finding vehicle by id: {}", id);
+        // loading by key bypasses the notDeleted filter
         return vehicleRepository.findById(id)
+                .filter(vehicle -> !vehicle.isDeleted())
                 .map(vehicleMapper::toDTO);
     }
 }
