@@ -1,4 +1,4 @@
-name: SonarQube
+name: SonarQube payments
 on:
   push:
     branches: [ main ]
@@ -14,7 +14,7 @@ on:
       - '.github/workflows/sonar-payments.yml'
 jobs:
   build:
-    name: Build and analyze
+    name: Build and analyze payments
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

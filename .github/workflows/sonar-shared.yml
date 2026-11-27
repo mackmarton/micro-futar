@@ -1,4 +1,4 @@
-name: SonarQube
+name: SonarQube shared
 on:
   push:
     branches: [ main ]
@@ -10,7 +10,7 @@ on:
       - 'shared/**'
 jobs:
   build:
-    name: Build and analyze
+    name: Build and analyze shared
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

@@ -1,4 +1,4 @@
-name: SonarQube
+name: SonarQube api-gateway
 on:
   push:
     branches: [ main ]
@@ -14,7 +14,7 @@ on:
       - '.github/workflows/sonar-api-gateway.yml'
 jobs:
   build:
-    name: Build and analyze
+    name: Build and analyze api-gateway
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

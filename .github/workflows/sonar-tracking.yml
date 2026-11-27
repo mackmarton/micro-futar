@@ -1,4 +1,4 @@
-name: SonarQube
+name: SonarQube tracking
 on:
   push:
     branches: [ main ]
@@ -14,7 +14,7 @@ on:
       - '.github/workflows/sonar-tracking.yml'
 jobs:
   build:
-    name: Build and analyze
+    name: Build and analyze tracking
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

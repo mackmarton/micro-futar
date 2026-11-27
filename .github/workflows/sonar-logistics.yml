@@ -1,4 +1,4 @@
-name: SonarQube
+name: SonarQube logistics
 on:
   push:
     branches: [main]
@@ -14,7 +14,7 @@ on:
       - ".github/workflows/sonar-logistics.yml"
 jobs:
   build:
-    name: Build and analyze
+    name: Build and analyze logistics
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
