@@ -4,12 +4,12 @@ on:
     branches: [ main ]
     paths:
       - 'courier/**'
-      - '.github/workflows/ci-courier.yml'
+      - '.github/workflows/sonar-courier.yml'
   pull_request:
     branches: [ main ]
     paths:
       - 'courier/**'
-      - '.github/workflows/ci-courier.yml'
+      - '.github/workflows/sonar-courier.yml'
 jobs:
   build:
     name: Build and analyze

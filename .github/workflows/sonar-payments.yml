@@ -4,12 +4,12 @@ on:
     branches: [ main ]
     paths:
       - 'payments/**'
-      - '.github/workflows/ci-payments.yml'
+      - '.github/workflows/sonar-payments.yml'
   pull_request:
     branches: [ main ]
     paths:
       - 'payments/**'
-      - '.github/workflows/ci-payments.yml'
+      - '.github/workflows/sonar-payments.yml'
 jobs:
   build:
     name: Build and analyze

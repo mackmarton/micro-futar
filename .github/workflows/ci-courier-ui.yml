@@ -14,6 +14,10 @@ on:
       - 'ui/packages/**'
       - '.github/workflows/ci-courier-ui.yml'
 
+concurrency:
+  group: ci-courier-ui-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
     name: Lint and build courier-ui
@@ -45,6 +49,8 @@ jobs:
     name: Build and push courier-ui project image
     runs-on: ubuntu-latest
     needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
     permissions:
       contents: read
       packages: write

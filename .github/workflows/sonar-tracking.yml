@@ -4,12 +4,12 @@ on:
     branches: [ main ]
     paths:
       - 'tracking/**'
-      - '.github/workflows/ci-tracking.yml'
+      - '.github/workflows/sonar-tracking.yml'
   pull_request:
     branches: [ main ]
     paths:
       - 'tracking/**'
-      - '.github/workflows/ci-tracking.yml'
+      - '.github/workflows/sonar-tracking.yml'
 jobs:
   build:
     name: Build and analyze

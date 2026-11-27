@@ -4,12 +4,12 @@ on:
     branches: [ main ]
     paths:
       - 'orders/**'
-      - '.github/workflows/ci-orders.yml'
+      - '.github/workflows/sonar-orders.yml'
   pull_request:
     branches: [ main ]
     paths:
       - 'orders/**'
-      - '.github/workflows/ci-orders.yml'
+      - '.github/workflows/sonar-orders.yml'
 jobs:
   build:
     name: Build and analyze
