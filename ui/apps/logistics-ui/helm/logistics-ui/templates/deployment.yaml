@@ -36,6 +36,19 @@ spec:
         - name: http
           containerPort: 80
           protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          initialDelaySeconds: 3
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 20
+          failureThreshold: 3
         envFrom:
         - configMapRef:
             name: {{ include "logistics-ui.fullname" . }}-config
