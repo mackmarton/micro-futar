@@ -1,11 +1,51 @@
 #!/usr/bin/env node
-// Creates the data the test users need beyond their Keycloak accounts: a courier record for courier@e2e.test.
-// Logs in through the gateway as the dispatcher, like the browser does. Safe to run repeatedly. No dependencies.
+// Creates the data the e2e tests and a manual try-out need: currencies, region, countries, cities, depots, depot
+// transits, base fees, package size, vehicle and the courier record of courier@e2e.test. Logs in through the gateway
+// as the dispatcher, like the browser does. Safe to run repeatedly. No dependencies.
 // `node e2e/scripts/seed.mjs --check` only logs in with all three users and calls the API as each of them.
+// The Playwright data setup imports `seed` and `MASTER_DATA` from here.
 import http from 'node:http';
+import { pathToFileURL } from 'node:url';
 
 const GATEWAY = 'http://localhost:8085';
 const CSRF = { 'X-Requested-With': 'micro-futar' };
+export const MASTER_DATA = {
+  region: { name: 'Közép-Európa' },
+  currencies: [
+    { code: 'HUF', name: 'Magyar forint', symbol: 'Ft' },
+    { code: 'EUR', name: 'Euró', symbol: '€' },
+  ],
+  countries: [
+    { name: 'Magyarország', isoCode: 'HU', currencyCode: 'HUF' },
+    { name: 'Ausztria', isoCode: 'AT', currencyCode: 'EUR' },
+  ],
+  // One depot per country, so a domestic shipment always has the same two legs: sender -> depot -> recipient.
+  depots: [
+    {
+      isoCode: 'HU',
+      city: 'Budapest',
+      name: 'Budapest Angyalföld depó',
+      zip: '1134',
+      address: 'Váci út 45',
+      latitude: 47.5256,
+      longitude: 19.0626,
+    },
+    {
+      isoCode: 'AT',
+      city: 'Bécs',
+      name: 'Wien Erdberg depó',
+      zip: '1030',
+      address: 'Erdberger Lände 28',
+      latitude: 48.2012,
+      longitude: 16.4122,
+    },
+  ],
+  packageSize: { name: 'S', maxLength: 30 },
+  baseFeeByCountry: { HU: 1990, AT: 4490 },
+  depotTransitPrice: 3500,
+  vehicle: { registrationNumber: 'AEF-421', maximumPackableVolume: 10_000_000 },
+};
+
 const USERS = {
   sender: ['sender@e2e.test', 'e2e-sender-pass'],
   dispatcher: ['dispatcher@e2e.test', 'e2e-dispatcher-pass'],
@@ -79,27 +119,119 @@ async function getJson(call, path) {
   return JSON.parse(response.text);
 }
 
-async function seed() {
-  const dispatcher = await login(USERS.dispatcher);
-  const couriers = await getJson(dispatcher, '/api/logistics/couriers');
-  if (couriers.some((courier) => courier.email === USERS.courier[0])) {
-    console.log('Courier record already exists');
-    return;
+async function sendJson(call, method, path, body) {
+  const text = JSON.stringify(body);
+  const response = await call(`${GATEWAY}${path}`, {
+    method,
+    headers: { ...CSRF, 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(text) },
+    body: text,
+  });
+  if (response.status !== 200 && response.status !== 201) {
+    throw new Error(`${method} ${path}: HTTP ${response.status} ${response.text}`);
   }
-  const body = JSON.stringify({
-    name: 'Csaba Courier',
+  return JSON.parse(response.text);
+}
+
+/** The existing entity that matches, or a newly created one. */
+async function ensure(call, path, matches, body) {
+  const existing = (await getJson(call, path)).find(matches);
+  if (existing) return existing;
+  const created = await sendJson(call, 'POST', path, body);
+  console.log(`Created ${path} ${body.name ?? body.code ?? body.registrationNumber ?? created.id}`);
+  return created;
+}
+
+export async function seed() {
+  const dispatcher = await login(USERS.dispatcher);
+  const api = '/api/logistics';
+
+  for (const currency of MASTER_DATA.currencies) {
+    await ensure(dispatcher, `${api}/currencies`, (c) => c.code === currency.code, currency);
+  }
+  const region = await ensure(dispatcher, `${api}/regions`, (r) => r.name === MASTER_DATA.region.name, MASTER_DATA.region);
+
+  const countries = {};
+  for (const country of MASTER_DATA.countries) {
+    countries[country.isoCode] = await ensure(dispatcher, `${api}/countries`, (c) => c.isoCode === country.isoCode, {
+      ...country,
+      regionId: region.id,
+    });
+  }
+
+  const packageSize = await ensure(
+    dispatcher,
+    `${api}/package-sizes`,
+    (p) => p.name === MASTER_DATA.packageSize.name,
+    MASTER_DATA.packageSize,
+  );
+
+  // Base fees come before the depots and transits: every one of these writes recalculates the country prices.
+  for (const [isoCode, price] of Object.entries(MASTER_DATA.baseFeeByCountry)) {
+    const countryId = countries[isoCode].id;
+    await ensure(
+      dispatcher,
+      `${api}/country-base-fees`,
+      (fee) => fee.countryId === countryId && fee.packageSizeId === packageSize.id,
+      { countryId, packageSizeId: packageSize.id, price },
+    );
+  }
+
+  const depots = {};
+  for (const { isoCode, city, ...depot } of MASTER_DATA.depots) {
+    const countryId = countries[isoCode].id;
+    // The city is geocoded by logistics on creation (ORS mock); orders validates shipment coordinates against it.
+    const { id: locationCityId } = await ensure(
+      dispatcher,
+      `${api}/cities`,
+      (c) => c.countryId === countryId && c.name === city,
+      { countryId, name: city },
+    );
+    depots[isoCode] = await ensure(dispatcher, `${api}/depos`, (d) => d.name === depot.name, {
+      ...depot,
+      locationCountryId: countryId,
+      locationCityId,
+    });
+  }
+
+  for (const [from, to] of [
+    ['HU', 'AT'],
+    ['AT', 'HU'],
+  ]) {
+    const transit = {
+      originDepoId: depots[from].id,
+      destinationDepoId: depots[to].id,
+      packageSizeId: packageSize.id,
+    };
+    await ensure(
+      dispatcher,
+      `${api}/depo-transits`,
+      (t) => Object.entries(transit).every(([key, value]) => t[key] === value),
+      { ...transit, transportType: 'ROAD', price: MASTER_DATA.depotTransitPrice },
+    );
+  }
+
+  const vehicle = await ensure(
+    dispatcher,
+    `${api}/vehicles`,
+    (v) => v.registrationNumber === MASTER_DATA.vehicle.registrationNumber,
+    MASTER_DATA.vehicle,
+  );
+
+  const courier = {
+    name: 'Kovács Csaba',
     email: USERS.courier[0],
     telephone: '+36301234567',
     qualifiedFor: 'ROAD',
     courierType: 'DELIVERY',
-  });
-  const response = await dispatcher(`${GATEWAY}/api/logistics/couriers`, {
-    method: 'POST',
-    headers: { ...CSRF, 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) },
-    body,
-  });
-  if (response.status !== 201) throw new Error(`Creating the courier: HTTP ${response.status} ${response.text}`);
-  console.log('Courier record created');
+    depoId: depots.HU.id,
+    vehicleId: vehicle.id,
+  };
+  const existing = await ensure(dispatcher, `${api}/couriers`, (c) => c.email === courier.email, courier);
+  if (existing.depoId !== courier.depoId || existing.vehicleId !== courier.vehicleId) {
+    await sendJson(dispatcher, 'PUT', `${api}/couriers/${existing.id}`, { ...courier, id: existing.id });
+    console.log('Courier record updated with depot and vehicle');
+  }
+  console.log('Seed complete');
 }
 
 async function check() {
@@ -116,7 +248,9 @@ async function check() {
   }
 }
 
-await (process.argv.includes('--check') ? check() : seed()).catch((error) => {
-  console.error(error.message);
-  process.exit(1);
-});
+if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
+  await (process.argv.includes('--check') ? check() : seed()).catch((error) => {
+    console.error(error.message);
+    process.exit(1);
+  });
+}

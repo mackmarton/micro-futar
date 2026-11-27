@@ -6,7 +6,7 @@ Keycloak a tesztrealmmel, valamint az OpenRouteService és a Stripe helyettesít
 ## Előfeltételek
 
 - Docker Desktop (Compose v2), a Docker VM-nek **legalább 10 GB** memória (a stack kb. 6 GB-ot használ, a build többet).
-- Node 22+ a seed scripthez.
+- Node 22+ a seed scripthez és a Playwright-tesztekhez.
 - A `keycloak` hostnév a gépen. A böngésző és a konténerek ugyanazon a címen (`http://keycloak:8180`) érik el a
   Keycloakot, ezért egyezik a tokenek kibocsátója (`iss`). Egyszer kell felvenni:
 
@@ -26,8 +26,37 @@ docker compose --profile apps up -d --build --wait
 node e2e/scripts/seed.mjs
 ```
 
-A `--wait` akkor tér vissza, amikor minden konténer healthy. A seed a futár felhasználóhoz tartozó futár-rekordot
-hozza létre (enélkül a `/api/courier/me` 404); többször is futtatható.
+A `--wait` akkor tér vissza, amikor minden konténer healthy. A seed a törzsadatokat tölti fel a diszpécserként:
+pénznemek, régió, Magyarország és Ausztria, Budapest és Bécs egy-egy depóval, depóközi szakaszok, alapdíjak,
+csomagméret, jármű, valamint a futár felhasználóhoz tartozó futár-rekord. Többször is futtatható. A tesztekhez nem kell
+külön lefuttatni, a setupjuk meghívja.
+
+## Playwright-tesztek
+
+Futó stack mellett, egyszeri előkészítés:
+
+```bash
+cd e2e && npm ci && npx playwright install chromium
+```
+
+A tesztek:
+
+```bash
+cd e2e && npm test
+```
+
+Riport (hibánál trace, képernyőkép és videó):
+
+```bash
+cd e2e && npm run report
+```
+
+- Egy forgatókönyv: `npm test -- -g guestShipment` (a két setup projekt előtte lefut).
+- Típusellenőrzés: `npm run typecheck`.
+- A bejelentkezett munkamenetek az `.auth/` mappába kerülnek (nincsenek verziókezelve).
+- A tesztek többször futtathatók ugyanazon a stacken. Tiszta adatbázishoz: `docker compose ... down -v`.
+- Mit fednek le és milyen szabályok szerint készülnek: [TESTING.md](../TESTING.md#e2e-playwright).
+- A UI módosítása után az érintett image-et újra kell építeni (`docker compose --profile apps up -d --build --wait`).
 
 Ha kevés a memória a párhuzamos buildhez, építsd sorban:
 
