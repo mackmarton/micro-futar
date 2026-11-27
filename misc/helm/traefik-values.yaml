@@ -8,6 +8,12 @@ ports:
   web:
     expose:
       default: true
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          permanent: true
   websecure:
     expose:
       default: true
