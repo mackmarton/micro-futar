@@ -45,6 +45,7 @@ kafka:
 stripe:
   secret-key: ${STRIPE_SECRET_KEY}
   webhook-secret: ${STRIPE_WEBHOOK_SECRET}
+  api-base: ${STRIPE_API_BASE:https://api.stripe.com}
 
 url:
   api-gateway: ${API_GATEWAY_URL:http://localhost:8085}
