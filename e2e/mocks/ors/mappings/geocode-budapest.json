@@ -1,0 +1,45 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPath": "/geocode/search",
+    "queryParameters": {
+      "text": {
+        "matches": "(?iu)(budapest)"
+      },
+      "boundary.country": {
+        "equalTo": "HU"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "country_a": "HUN"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              19.0402,
+              47.4979
+            ]
+          },
+          "bbox": [
+            18.925,
+            47.349,
+            19.335,
+            47.613
+          ]
+        }
+      ]
+    }
+  }
+}

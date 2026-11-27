@@ -1,0 +1,45 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPath": "/geocode/search",
+    "queryParameters": {
+      "text": {
+        "matches": "(?iu)(debrecen)"
+      },
+      "boundary.country": {
+        "equalTo": "HU"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "country_a": "HUN"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              21.6273,
+              47.5316
+            ]
+          },
+          "bbox": [
+            21.45,
+            47.42,
+            21.78,
+            47.65
+          ]
+        }
+      ]
+    }
+  }
+}

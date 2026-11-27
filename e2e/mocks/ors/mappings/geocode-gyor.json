@@ -1,0 +1,45 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPath": "/geocode/search",
+    "queryParameters": {
+      "text": {
+        "matches": "(?iu)(gy[\u0151o]r)"
+      },
+      "boundary.country": {
+        "equalTo": "HU"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "country_a": "HUN"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              17.6504,
+              47.6875
+            ]
+          },
+          "bbox": [
+            17.55,
+            47.62,
+            17.75,
+            47.75
+          ]
+        }
+      ]
+    }
+  }
+}

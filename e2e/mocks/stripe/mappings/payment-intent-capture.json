@@ -1,0 +1,9 @@
+{
+  "request": { "method": "POST", "urlPathPattern": "/v1/payment_intents/[^/]+/capture" },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "body": "{{formData request.body 'form' urlDecode=true}}{\"id\":\"{{request.pathSegments.[2]}}\",\"object\":\"payment_intent\",\"status\":\"succeeded\",\"amount_capturable\":0,\"amount_received\":{{form.amount_to_capture}} }",
+    "transformers": ["response-template"]
+  }
+}

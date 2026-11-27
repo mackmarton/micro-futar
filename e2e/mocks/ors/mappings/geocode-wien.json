@@ -1,0 +1,45 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPath": "/geocode/search",
+    "queryParameters": {
+      "text": {
+        "matches": "(?iu)(b[\u00e9e]cs|wien|vienna)"
+      },
+      "boundary.country": {
+        "equalTo": "AT"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "country_a": "AUT"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              16.3738,
+              48.2082
+            ]
+          },
+          "bbox": [
+            16.182,
+            48.118,
+            16.578,
+            48.323
+          ]
+        }
+      ]
+    }
+  }
+}

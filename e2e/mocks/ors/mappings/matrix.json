@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPath": "/v2/matrix/driving-car"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": "{{val (jsonPath request.body '$.locations[0][0]') assign='lon'}}{{val (jsonPath request.body '$.locations[0][1]') assign='lat'}}{\"durations\":[[{{#each (jsonPath request.body '$.locations') as |location|}}{{#unless @first}}{{val (math location.0 '-' lon) assign='dx'}}{{val (math location.1 '-' lat) assign='dy'}}{{math (math (replace dx '-' '') '*' 4500) '+' (math (replace dy '-' '') '*' 6660)}}{{#unless @last}},{{/unless}}{{/unless}}{{/each}}]]}",
+    "transformers": [
+      "response-template"
+    ]
+  }
+}

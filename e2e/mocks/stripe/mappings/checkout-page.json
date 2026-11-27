@@ -1,0 +1,8 @@
+{
+  "request": { "method": "GET", "urlPathPattern": "/checkout/[^/]+" },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "text/html; charset=utf-8" },
+    "body": "<!doctype html><title>Stripe mock checkout</title><h1>Stripe mock checkout</h1><p>The payment is simulated with a signed webhook.</p>"
+  }
+}

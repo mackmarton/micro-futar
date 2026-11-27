@@ -1,0 +1,45 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPath": "/geocode/search",
+    "queryParameters": {
+      "text": {
+        "matches": "(?iu)(graz)"
+      },
+      "boundary.country": {
+        "equalTo": "AT"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "country_a": "AUT"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              15.4395,
+              47.0707
+            ]
+          },
+          "bbox": [
+            15.35,
+            47.01,
+            15.53,
+            47.13
+          ]
+        }
+      ]
+    }
+  }
+}

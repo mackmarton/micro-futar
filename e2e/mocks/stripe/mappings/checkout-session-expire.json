@@ -1,0 +1,9 @@
+{
+  "request": { "method": "POST", "urlPathPattern": "/v1/checkout/sessions/[^/]+/expire" },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "body": "{\"id\":\"{{request.pathSegments.[3]}}\",\"object\":\"checkout.session\",\"status\":\"expired\"}",
+    "transformers": ["response-template"]
+  }
+}

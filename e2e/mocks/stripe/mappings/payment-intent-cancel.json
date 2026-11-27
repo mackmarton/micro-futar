@@ -1,0 +1,9 @@
+{
+  "request": { "method": "POST", "urlPathPattern": "/v1/payment_intents/[^/]+/cancel" },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "body": "{\"id\":\"{{request.pathSegments.[2]}}\",\"object\":\"payment_intent\",\"status\":\"canceled\"}",
+    "transformers": ["response-template"]
+  }
+}

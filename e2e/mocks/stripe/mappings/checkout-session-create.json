@@ -1,0 +1,9 @@
+{
+  "request": { "method": "POST", "urlPath": "/v1/checkout/sessions" },
+  "response": {
+    "status": 200,
+    "headers": { "Content-Type": "application/json" },
+    "body": "{{formData request.body 'form' urlDecode=true}}{{val (randomValue length=24 type='ALPHANUMERIC') assign='id'}}{\"id\":\"cs_test_{{id}}\",\"object\":\"checkout.session\",\"status\":\"open\",\"client_reference_id\":\"{{form.client_reference_id}}\",\"url\":\"http://localhost:12111/checkout/cs_test_{{id}}\"}",
+    "transformers": ["response-template"]
+  }
+}
