@@ -7,6 +7,21 @@ server:
         same-site: lax
         secure: ${COOKIE_SECURE}
 
+# Külön porton fut, amely nincs benne a Kubernetes Service-ben, így kívülről (Traefik) nem érhető el.
+# A liveness és readiness csoport szándékosan nem függ külső rendszertől (Redis, Keycloak).
+management:
+  server:
+    port: ${MANAGEMENT_PORT:8087}
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+
 spring:
   application:
     name: api-gateway

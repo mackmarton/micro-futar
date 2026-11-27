@@ -42,8 +42,9 @@ public class SecurityConfig {
             LocaleAwareOAuth2AuthorizationRequestResolver localeAwareOAuth2AuthorizationRequestResolver) {
         http
                 .authorizeExchange(exchanges -> exchanges
-                        // Payments: guests pay with the payment token from order creation, Stripe calls the webhook with a signature. Both are verified by the payments service itself.
                         .pathMatchers("/api/orders/**", "/api/tracking/**", "/api/payments/**", "/api/auth/me")
+                        .permitAll()
+                        .pathMatchers("/actuator/health/**")
                         .permitAll()
                         .anyExchange()
                         .authenticated()
@@ -56,8 +57,6 @@ public class SecurityConfig {
                         .requiresLogout(ServerWebExchangeMatchers.pathMatchers(HttpMethod.POST, "/logout"))
                         .logoutSuccessHandler(sessionRedirectAuthenticationSuccessHandler)
                 )
-                // A tokenes CSRF-védelem helyett egyedi fejlécet követelünk meg: a felületek más aldomainen futnak,
-                // a gateway sütijét nem tudnák kiolvasni. A /logout űrlappal érkezik, azt a SameSite=Lax süti védi.
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .addFilterAt(csrfHeaderWebFilter, SecurityWebFiltersOrder.CSRF)
                 .exceptionHandling(exceptionHandling -> exceptionHandling

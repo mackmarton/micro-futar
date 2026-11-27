@@ -6,6 +6,7 @@ metadata:
     {{- include "api-gateway.labels" . | nindent 4 }}
 data:
   SERVER_PORT: {{ .Values.config.serverPort | quote }}
+  MANAGEMENT_PORT: {{ .Values.config.managementPort | quote }}
   SPRING_PROFILE: {{ .Values.config.springProfile | quote }}
   KEYCLOAK_URL: {{ .Values.config.keycloak.url | quote }}
   REDIS_HOST: {{ .Values.config.redis.host | quote }}

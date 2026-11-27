@@ -27,6 +27,8 @@ import java.net.InetSocketAddress;
         "spring.main.cloud-platform=kubernetes",
         "SPRING_PROFILE=test",
         "SERVER_PORT=0",
+        // Véletlen port: a gyorsítótárazott kontextusok nem ütközhetnek a fix management porton.
+        "MANAGEMENT_PORT=0",
         "COOKIE_DOMAIN=",
         "COOKIE_SECURE=false",
         "REDIS_PASSWORD=",

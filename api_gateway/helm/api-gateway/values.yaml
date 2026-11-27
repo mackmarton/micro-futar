@@ -12,3 +12,6 @@ securityContext:
   capabilities:
     drop:
       - ALL
+
+config:
+  managementPort: 8087
