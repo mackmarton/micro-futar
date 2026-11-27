@@ -129,7 +129,7 @@ export const CreateOrderPage = ({ locale }: CreateOrderPageProps) => {
             ) : null}
 
             <AddressCard {...senderAddressCardProps} />
-            <section className="rounded-2xl bg-surface-container-lowest p-4">
+            <section data-testid="sender-location" className="rounded-2xl bg-surface-container-lowest p-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('createOrder:map.senderCoordinatesLabel')}</p>
@@ -182,7 +182,7 @@ export const CreateOrderPage = ({ locale }: CreateOrderPageProps) => {
             </section>
 
             <AddressCard {...recipientAddressCardProps} />
-            <section className="rounded-2xl bg-surface-container-lowest p-4">
+            <section data-testid="recipient-location" className="rounded-2xl bg-surface-container-lowest p-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-on-surface-variant">{t('createOrder:map.recipientCoordinatesLabel')}</p>

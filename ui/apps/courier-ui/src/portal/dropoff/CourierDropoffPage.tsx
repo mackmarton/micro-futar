@@ -6,6 +6,7 @@ import { LanguageSwitcher } from '../../i18n/LanguageSwitcher.tsx';
 import { ManifestDataTable } from '../pickup/components/ManifestDataTable.tsx';
 import { fulfillAllPickupsForCurrentDay } from './api/courierDropoffApi.ts';
 import { useCourierDropoffs } from './hooks/useCourierDropoffs.ts';
+import { useRefreshCourierData } from '../useRefreshCourierData.ts';
 import { LoadErrorButton } from '../LoadErrorButton.tsx';
 import { toRateLimitMessage } from '@package/shared-core';
 
@@ -28,11 +29,12 @@ export const CourierDropoffPage = () => {
   const { t } = useTranslation(['dropoff', 'common']);
   const courierNavigationItems = useCourierNavigationItems();
   const { assignments, waitingDropoffCount, isLoading, errorMessage, isEmailNotVerified, retry } = useCourierDropoffs();
+  const refreshCourierData = useRefreshCourierData();
 
   const dropoffAllMutation = useMutation({
     mutationFn: fulfillAllPickupsForCurrentDay,
     onSuccess: () => {
-      void retry();
+      void refreshCourierData();
     },
   });
   const dropoffAllErrorMessage = dropoffAllMutation.isError

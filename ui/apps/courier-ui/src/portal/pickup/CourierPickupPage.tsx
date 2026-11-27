@@ -12,6 +12,7 @@ import {
 } from './api/courierPickupApi.ts';
 import { useCourierAllocations } from '../allocations/hooks/useCourierAllocations.ts';
 import { LoadErrorButton } from '../LoadErrorButton.tsx';
+import { useRefreshCourierData } from '../useRefreshCourierData.ts';
 
 const toAssignmentKey = (assignmentId: number | null | undefined, shipmentRouteId: number | null | undefined): string => {
     return `${assignmentId ?? 'missing-id'}:${shipmentRouteId ?? 'missing-route'}`;
@@ -21,7 +22,8 @@ export const CourierPickupPage = () => {
     const { t } = useTranslation(['pickup', 'common']);
     const courierNavigationItems = useCourierNavigationItems();
     const {assignments, isLoading, errorMessage, isEmailNotVerified, retry} = useCourierPickups();
-    const {allocations, retry: retryAllocations} = useCourierAllocations();
+    const {allocations} = useCourierAllocations();
+    const refreshCourierData = useRefreshCourierData();
     const deliveryAssignmentKeys = useMemo(
         () =>
             new Set(
@@ -44,8 +46,7 @@ export const CourierPickupPage = () => {
     const pickupAllMutation = useMutation({
         mutationFn: pickUpAllDeliveryShipmentsForCurrentDay,
         onSuccess: () => {
-            void retry();
-            void retryAllocations();
+            void refreshCourierData();
         },
     });
     const pickupAllErrorMessage = pickupAllMutation.isError

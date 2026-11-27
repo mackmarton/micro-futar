@@ -1,3 +1,17 @@
+# Infra + (with `--profile apps`) the whole stack, as used for local runs and the e2e tests; see e2e/README.md.
+# Everything here is test/development configuration. Production is configured by the Helm charts.
+
+name: micro-futar
+
+x-healthcheck: &healthcheck
+  interval: 5s
+  timeout: 5s
+  retries: 40
+  start_period: 20s
+
+# Test-only values; the realm import replaces ${E2E_CLIENT_SECRET} with the same value the gateway gets.
+x-client-secret: &client-secret ${E2E_CLIENT_SECRET:-e2e-only-client-secret}
+
 networks:
   microservice-net:
 
@@ -10,8 +24,8 @@ services:
     image: postgres:16-alpine
     container_name: postgres_multi_db
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER:-micro_futar}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-e2e-postgres-pass}
       POSTGRES_MULTIPLE_DATABASES: orders_db,logistics_db,courier_db,tracking_db,payments_db,keycloak_db
     volumes:
       - ./init-multiple-databases.sh:/docker-entrypoint-initdb.d/init-multiple-databases.sh
@@ -21,20 +35,23 @@ services:
     networks:
       - microservice-net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      <<: *healthcheck
+      # over TCP: the temporary server of the init scripts listens only on the socket
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${POSTGRES_USER:-micro_futar}"]
 
   zookeeper:
     image: bitnamilegacy/zookeeper:3.9.3-debian-12-r22
     container_name: zookeeper
     environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+      ZOO_HEAP_SIZE: 128
     ports:
       - "2181:2181"
     networks:
       - microservice-net
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/2181"]
 
   kafka:
     image: bitnamilegacy/kafka:3.9.0-debian-12-r9
@@ -42,40 +59,51 @@ services:
     ports:
       - "9092:9092"
     environment:
-      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-      - KAFKA_CFG_LISTENERS=INTERNAL://kafka:9090,EXTERNAL://:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka:9090,EXTERNAL://127.0.0.1:9092
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
-      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
-      - KAFKA_CFG_LOG_RETENTION_HOURS=8
-      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CFG_LISTENERS: INTERNAL://kafka:9090,EXTERNAL://:9092
+      KAFKA_CFG_ADVERTISED_LISTENERS: INTERNAL://kafka:9090,EXTERNAL://127.0.0.1:9092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CFG_LOG_RETENTION_HOURS: 8
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_HEAP_OPTS: -Xms128m -Xmx512m
     networks:
       - microservice-net
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server kafka:9090 --list >/dev/null 2>&1"]
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
 
+  # http://keycloak:8180 from the browser and from the containers alike, so the token issuer is the same everywhere
+  # (the host needs `127.0.0.1 keycloak` in /etc/hosts). Embedded database: every start imports a fresh test realm.
   keycloak:
-    image: quay.io/keycloak/keycloak:26.0
+    build:
+      context: ./ui
+      dockerfile: apps/keycloak-theme/Dockerfile
+    image: local/keycloak:latest
     container_name: keycloak
-    command: start-dev
+    entrypoint: ["/opt/bitnami/keycloak/bin/kc.sh"]
+    command: ["start-dev", "--import-realm", "--http-port=8180", "--hostname=http://keycloak:8180", "--health-enabled=true"]
     ports:
-      - "8090:8080"
+      - "8180:8180"
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak_db
-      KC_DB_USERNAME: keycloak_db
-      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
-      KC_HOSTNAME_STRICT: false
-      KC_HOSTNAME_STRICT_HTTPS: false
-      KC_HTTP_ENABLED: true
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-e2e-admin-pass}
+      KC_DB: dev-file
+      E2E_CLIENT_SECRET: *client-secret
+      JAVA_OPTS_KC_HEAP: -Xms128m -Xmx512m
+    volumes:
+      # the directory import requires the <realm name>-realm.json file name
+      - ./e2e/keycloak/micro-futar-e2e-realm.json:/opt/bitnami/keycloak/data/import/micro-futar-realm-realm.json:ro
     networks:
       - microservice-net
-    volumes:
-      - ./ui/apps/keycloak-theme/dist_keycloak/keycloak-theme-for-kc-all-other-versions.jar:/opt/keycloak/providers/keycloak-theme.jar
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/9000 && printf 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && head -n1 <&3 | grep -q ' 200 '"]
     depends_on:
-      postgres:
+      mailpit:
         condition: service_healthy
 
   mailpit:
@@ -86,12 +114,63 @@ services:
       - "8025:8025" # Web UI: http://localhost:8025
     networks:
       - microservice-net
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "/mailpit", "readyz"]
+
+  redis:
+    image: redis:8-alpine
+    container_name: redis
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "128mb"]
+    ports:
+      - "6379:6379"
+    networks:
+      - microservice-net
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "redis-cli", "ping"]
+
+  # OpenRouteService (matrix, geocoding) with recorded answers
+  ors-mock:
+    profiles: ["apps"]
+    image: wiremock/wiremock:3.13.1
+    container_name: ors-mock
+    command: ["--disable-banner"]
+    environment:
+      JAVA_OPTS: -Xms32m -Xmx192m
+    ports:
+      - "12110:8080"
+    volumes:
+      - ./e2e/mocks/ors/mappings:/home/wiremock/mappings:ro
+    networks:
+      - microservice-net
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/__admin/health"]
+
+  # Stripe API stand-in; webhooks are sent by the test, signed with STRIPE_WEBHOOK_SECRET
+  stripe-mock:
+    profiles: ["apps"]
+    image: wiremock/wiremock:3.13.1
+    container_name: stripe-mock
+    command: ["--disable-banner"]
+    environment:
+      JAVA_OPTS: -Xms32m -Xmx192m
+    ports:
+      - "12111:8080"
+    volumes:
+      - ./e2e/mocks/stripe/mappings:/home/wiremock/mappings:ro
+    networks:
+      - microservice-net
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/__admin/health"]
 
   orders:
     profiles: ["apps"]
     build:
-      context: ./orders
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: orders/Dockerfile
     image: local/orders:latest
     container_name: orders
     user: "1000:1000"
@@ -103,24 +182,33 @@ services:
     networks:
       - microservice-net
     environment:
-      KEYCLOAK_URL: http://keycloak:8080
-      KEYCLOAK_ISSUER_URI: http://localhost:8090/realms/micro-futar-realm
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx384m -XX:MaxMetaspaceSize=256m -XX:+UseSerialGC"
+      SERVER_PORT: 8080
+      SPRING_PROFILE: local
+      KEYCLOAK_URL: http://keycloak:8180
+      KEYCLOAK_ISSUER_URI: http://keycloak:8180/realms/micro-futar-realm
       KEYCLOAK_EXPECTED_AUDIENCE: api-gateway-client
+      API_GATEWAY_URL: http://localhost:8085
       DATASOURCE_URL: jdbc:postgresql://postgres:5432/orders_db
       DATASOURCE_USERNAME: orders_db
-      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-e2e-postgres-pass}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9090
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8080 && printf 'GET /actuator/health/readiness HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && head -n1 <&3 | grep -q ' 200 '"]
     depends_on:
       postgres:
         condition: service_healthy
       kafka:
-        condition: service_started
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
 
   logistics:
     profiles: ["apps"]
     build:
-      context: ./logistics
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: logistics/Dockerfile
     image: local/logistics:latest
     container_name: logistics
     user: "1000:1000"
@@ -132,24 +220,39 @@ services:
     networks:
       - microservice-net
     environment:
-      KEYCLOAK_URL: http://keycloak:8080
-      KEYCLOAK_ISSUER_URI: http://localhost:8090/realms/micro-futar-realm
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx384m -XX:MaxMetaspaceSize=256m -XX:+UseSerialGC"
+      SERVER_PORT: 8080
+      SPRING_PROFILE: local
+      KEYCLOAK_URL: http://keycloak:8180
+      KEYCLOAK_ISSUER_URI: http://keycloak:8180/realms/micro-futar-realm
       KEYCLOAK_EXPECTED_AUDIENCE: api-gateway-client
+      API_GATEWAY_URL: http://localhost:8085
       DATASOURCE_URL: jdbc:postgresql://postgres:5432/logistics_db
       DATASOURCE_USERNAME: logistics_db
-      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-e2e-postgres-pass}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9090
+      OPEN_ROUTE_SERVICE_API_KEY: e2e-dummy-key
+      OPEN_ROUTE_SERVICE_MATRIX_URL: http://ors-mock:8080/v2/matrix/driving-car
+      OPEN_ROUTE_SERVICE_GEOCODE_URL: http://ors-mock:8080/geocode/search
+      OPEN_ROUTE_SERVICE_GEOCODE_DELAY_MS: 0
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8080 && printf 'GET /actuator/health/readiness HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && head -n1 <&3 | grep -q ' 200 '"]
     depends_on:
       postgres:
         condition: service_healthy
       kafka:
-        condition: service_started
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+      ors-mock:
+        condition: service_healthy
 
   courier:
     profiles: ["apps"]
     build:
-      context: ./courier
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: courier/Dockerfile
     image: local/courier:latest
     container_name: courier
     user: "1000:1000"
@@ -161,24 +264,33 @@ services:
     networks:
       - microservice-net
     environment:
-      KEYCLOAK_URL: http://keycloak:8080
-      KEYCLOAK_ISSUER_URI: http://localhost:8090/realms/micro-futar-realm
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx384m -XX:MaxMetaspaceSize=256m -XX:+UseSerialGC"
+      SERVER_PORT: 8080
+      SPRING_PROFILE: local
+      KEYCLOAK_URL: http://keycloak:8180
+      KEYCLOAK_ISSUER_URI: http://keycloak:8180/realms/micro-futar-realm
       KEYCLOAK_EXPECTED_AUDIENCE: api-gateway-client
+      API_GATEWAY_URL: http://localhost:8085
       DATASOURCE_URL: jdbc:postgresql://postgres:5432/courier_db
       DATASOURCE_USERNAME: courier_db
-      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-e2e-postgres-pass}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9090
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8080 && printf 'GET /actuator/health/readiness HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && head -n1 <&3 | grep -q ' 200 '"]
     depends_on:
       postgres:
         condition: service_healthy
       kafka:
-        condition: service_started
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
 
   tracking:
     profiles: ["apps"]
     build:
-      context: ./tracking
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: tracking/Dockerfile
     image: local/tracking:latest
     container_name: tracking
     user: "1000:1000"
@@ -190,19 +302,26 @@ services:
     networks:
       - microservice-net
     environment:
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx384m -XX:MaxMetaspaceSize=256m -XX:+UseSerialGC"
+      SERVER_PORT: 8080
+      SPRING_PROFILE: local
       DATASOURCE_URL: jdbc:postgresql://postgres:5432/tracking_db
       DATASOURCE_USERNAME: tracking_db
-      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-e2e-postgres-pass}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9090
       MAIL_HOST: mailpit
       MAIL_PORT: 1025
+      TRACKING_PAGE_URL: http://localhost:5173/portal/tracking
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8080 && printf 'GET /actuator/health/readiness HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && head -n1 <&3 | grep -q ' 200 '"]
     depends_on:
       postgres:
         condition: service_healthy
       kafka:
-        condition: service_started
+        condition: service_healthy
       mailpit:
-        condition: service_started
+        condition: service_healthy
 
   payments:
     profiles: ["apps"]
@@ -220,21 +339,150 @@ services:
     networks:
       - microservice-net
     environment:
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx384m -XX:MaxMetaspaceSize=256m -XX:+UseSerialGC"
       SERVER_PORT: 8080
       SPRING_PROFILE: local
-      KEYCLOAK_URL: http://keycloak:8080
-      KEYCLOAK_ISSUER_URI: http://localhost:8090/realms/micro-futar-realm
+      KEYCLOAK_URL: http://keycloak:8180
+      KEYCLOAK_ISSUER_URI: http://keycloak:8180/realms/micro-futar-realm
       KEYCLOAK_EXPECTED_AUDIENCE: api-gateway-client
+      API_GATEWAY_URL: http://localhost:8085
       DATASOURCE_URL: jdbc:postgresql://postgres:5432/payments_db
       DATASOURCE_USERNAME: payments_db
-      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      # Stripe test-mode keys; the webhook secret comes from `stripe listen`
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-e2e-postgres-pass}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9090
+      STRIPE_API_BASE: ${STRIPE_API_BASE:-http://stripe-mock:8080}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_e2e_dummy}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_e2e_test_only}
       CLIENT_UI_URL: http://localhost:5173
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8080 && printf 'GET /actuator/health/readiness HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && head -n1 <&3 | grep -q ' 200 '"]
     depends_on:
       postgres:
         condition: service_healthy
       kafka:
-        condition: service_started
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+      stripe-mock:
+        condition: service_healthy
+
+  api_gateway:
+    profiles: ["apps"]
+    build:
+      context: .
+      dockerfile: api_gateway/Dockerfile
+    image: local/api-gateway:latest
+    container_name: api_gateway
+    user: "1000:1000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    ports:
+      - "8085:8085"
+    networks:
+      - microservice-net
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx256m -XX:MaxMetaspaceSize=256m -XX:+UseSerialGC"
+      SERVER_PORT: 8085
+      SPRING_PROFILE: local
+      KEYCLOAK_URL: http://keycloak:8180
+      CLIENT_SECRET: *client-secret
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ""
+      ORDER_SERVICE_URI: http://orders:8080
+      LOGISTICS_SERVICE_URI: http://logistics:8080
+      COURIER_SERVICE_URI: http://courier:8080
+      TRACKING_SERVICE_URI: http://tracking:8080
+      PAYMENT_SERVICE_URI: http://payments:8080
+      COOKIE_DOMAIN: ""
+      COOKIE_SECURE: "false"
+      DEFAULT_REDIRECT_URL: http://localhost:5173
+      REDIRECT_ALLOWED_SCHEMES: http
+      REDIRECT_ALLOWED_HOSTS: localhost
+      CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:5174,http://localhost:5175
+      RATE_LIMIT_SHIPMENT_CREATE_REQUESTED_TOKENS: 1
+      RATE_LIMIT_CHECKOUT_REQUESTED_TOKENS: 1
+      RATE_LIMIT_TRACKING_REPLENISH_RATE: 20
+      RATE_LIMIT_TRACKING_BURST_CAPACITY: 60
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_CLOUD_GATEWAY: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: INFO
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8087 && printf 'GET /actuator/health/readiness HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && head -n1 <&3 | grep -q ' 200 '"]
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      orders:
+        condition: service_healthy
+      logistics:
+        condition: service_healthy
+      courier:
+        condition: service_healthy
+      tracking:
+        condition: service_healthy
+      payments:
+        condition: service_healthy
+
+  client-ui:
+    profiles: ["apps"]
+    build:
+      context: ./ui
+      dockerfile: apps/client-ui/Dockerfile
+    image: local/client-ui:latest
+    container_name: client-ui
+    ports:
+      - "5173:80"
+    networks:
+      - microservice-net
+    environment:
+      VITE_API_BASE_URL: http://localhost:8085
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/healthz"]
+    depends_on:
+      api_gateway:
+        condition: service_healthy
+
+  logistics-ui:
+    profiles: ["apps"]
+    build:
+      context: ./ui
+      dockerfile: apps/logistics-ui/Dockerfile
+    image: local/logistics-ui:latest
+    container_name: logistics-ui
+    ports:
+      - "5174:80"
+    networks:
+      - microservice-net
+    environment:
+      VITE_API_BASE_URL: http://localhost:8085
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/healthz"]
+    depends_on:
+      api_gateway:
+        condition: service_healthy
+
+  courier-ui:
+    profiles: ["apps"]
+    build:
+      context: ./ui
+      dockerfile: apps/courier-ui/Dockerfile
+    image: local/courier-ui:latest
+    container_name: courier-ui
+    ports:
+      - "5175:80"
+    networks:
+      - microservice-net
+    environment:
+      VITE_API_BASE_URL: http://localhost:8085
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/healthz"]
+    depends_on:
+      api_gateway:
+        condition: service_healthy

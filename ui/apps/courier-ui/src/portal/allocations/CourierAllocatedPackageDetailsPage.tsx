@@ -15,12 +15,14 @@ import { CourierAllocationsMap } from './components/CourierAllocationsMap.tsx';
 import { CourierAllocatedPackageDetailsSection } from './components/CourierAllocatedPackageDetailsSection.tsx';
 import { useCourierAllocations } from './hooks/useCourierAllocations.ts';
 import { LoadErrorButton } from '../LoadErrorButton.tsx';
+import { useRefreshCourierData } from '../useRefreshCourierData.ts';
 
 export const CourierAllocatedPackageDetailsPage = () => {
   const { t } = useTranslation(['allocations', 'common']);
   const courierNavigationItems = useCourierNavigationItems();
   const { assignmentId } = useParams<{ assignmentId: string }>();
   const { allocations, isLoading, errorMessage, isEmailNotVerified, retry } = useCourierAllocations();
+  const refreshCourierData = useRefreshCourierData();
   const parsedAssignmentId = Number(assignmentId);
   const isAssignmentIdValid = Number.isFinite(parsedAssignmentId);
 
@@ -35,19 +37,19 @@ export const CourierAllocatedPackageDetailsPage = () => {
   const pickUpMutation = useMutation({
     mutationFn: pickUpParcel,
     onSuccess: () => {
-      void retry();
+      void refreshCourierData();
     },
   });
   const fulfillMutation = useMutation({
     mutationFn: fulfillShipmentRouteAssignment,
     onSuccess: () => {
-      void retry();
+      void refreshCourierData();
     },
   });
   const failMutation = useMutation({
     mutationFn: failShipmentRouteAssignment,
     onSuccess: () => {
-      void retry();
+      void refreshCourierData();
     },
   });
 

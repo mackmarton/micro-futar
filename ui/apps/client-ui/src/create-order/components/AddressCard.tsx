@@ -116,12 +116,14 @@ export const AddressCard = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <PrecisionInput
+                    id={`${iconName}-name`}
                     label={t('addressCard.nameLabel')}
                     value={value.name}
                     required
                     onChange={(event) => onChange('name', event.target.value)}
                 />
                 <PrecisionInput
+                    id={`${iconName}-phone`}
                     label={t('addressCard.phoneLabel')}
                     type="tel"
                     value={value.phone}
@@ -130,6 +132,7 @@ export const AddressCard = ({
                 />
                 <div className="md:col-span-2">
                     <PrecisionInput
+                        id={`${iconName}-email`}
                         label={t('addressCard.emailLabel')}
                         type="email"
                         value={value.email}
@@ -143,6 +146,7 @@ export const AddressCard = ({
 
                 <div className="grid grid-cols-3 gap-4 md:col-span-2">
                     <PrecisionInput
+                        id={`${iconName}-zip`}
                         label={t('addressCard.zipLabel')}
                         value={value.zipCode}
                         required
@@ -280,6 +284,7 @@ export const AddressCard = ({
                     ) : null}
                 </div>
                 <PrecisionInput
+                    id={`${iconName}-address`}
                     label={t('addressCard.addressLabel')}
                     value={value.address}
                     required
